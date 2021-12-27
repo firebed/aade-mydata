@@ -189,20 +189,20 @@ class ResponseType extends Type
     }
 
     /**
-     * @return ErrorType Λίστα Σφαλμάτων
+     * @return Errors Λίστα Σφαλμάτων
      */
-    public function getErrors(): ErrorType
+    public function getErrors(): Errors
     {
         return $this->get('errors');
     }
 
     /**
      * <h2>Λίστα Σφαλμάτων</h2>
-     * @param ErrorType $errorType
+     * @param Errors $errors
      * @return $this
      */
-    public function setErrors(ErrorType $errorType): self
+    public function setErrors(Errors $errors): self
     {
-        return $this->put('errors', $errorType);
+        return $this->put('errors', $errors);
     }
 }
