@@ -5,6 +5,7 @@ namespace Firebed\AadeMyData\Http;
 use Firebed\AadeMyData\Models\InvoicesDoc;
 use Firebed\AadeMyData\Models\ResponseDoc;
 use Firebed\AadeMyData\Parser\InvoicesDocXML;
+use GuzzleHttp\Exception\GuzzleException;
 
 class SendInvoices extends MyDataRequest
 {
@@ -13,6 +14,7 @@ class SendInvoices extends MyDataRequest
      * το στοιχείο InvoicesDoc, το οποίο περιέχει ένα ή περισσότερα παραστατικά.</p>
      *
      * @param InvoicesDoc $invoicesDoc InvoicesDoc
+     * @throws GuzzleException
      */
     public function handle(InvoicesDoc $invoicesDoc): ResponseDoc
     {

@@ -3,6 +3,7 @@
 namespace Firebed\AadeMyData\Http;
 
 use Firebed\AadeMyData\Models\ResponseDoc;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * <p>Αυτή η POST μέθοδος χρησιμοποιείται για την ακύρωση παραστατικού χωρίς
@@ -22,6 +23,7 @@ class CancelInvoice extends MyDataRequest
     /**
      * @param string      $mark            Μοναδικός αριθμός καταχώρησης παραστατικού προς ακύρωση
      * @param string|null $entityVatNumber ΑΦΜ οντότητας
+     * @throws GuzzleException
      */
     public function handle(string $mark, string $entityVatNumber = null): ResponseDoc
     {
