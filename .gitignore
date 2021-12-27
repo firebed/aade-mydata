@@ -3,3 +3,4 @@
 /node_modules/
 composer.lock
 kernel.php
+/src/TestInvoice.php
