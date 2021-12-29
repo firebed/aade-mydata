@@ -1,5 +1,5 @@
 {
-  "name": "firebed/laravel-aade-mydata",
+  "name": "firebed/aade-mydata",
   "type": "package",
   "description": "Implementation of requests for AADE myDATA.",
   "keywords": [
@@ -25,11 +25,6 @@
   "autoload": {
     "psr-4": {
       "Firebed\\AadeMyData\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Tests\\": "tests/"
     }
   },
   "config": {
