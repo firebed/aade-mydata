@@ -45,7 +45,7 @@ class PaymentMethodDetailType extends Type
      */
     public function setAmount(float $amount): self
     {
-        return $this->put('amount', $amount);
+        return $this->put('amount', number_format($amount, 2, '.', ''));
     }
 
     public function getPaymentMethodInfo(): ?string

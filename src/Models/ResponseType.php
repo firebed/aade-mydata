@@ -81,7 +81,7 @@ class ResponseType extends Type
      */
     public function getInvoiceUid(): ?string
     {
-        return $this->get('getInvoiceUid');
+        return $this->get('invoiceUid');
     }
 
     /**

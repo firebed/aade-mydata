@@ -40,9 +40,8 @@ class InvoicesDocXML
             }
 
             if (is_array($value)) {
-                $child = $parent->addChild($key);
-
                 foreach ($value as $v) {
+                    $child = $parent->addChild($key);
                     if ($v instanceof Type) {
                         $this->toXML($child, $v);
                     } else {
@@ -57,8 +56,13 @@ class InvoicesDocXML
             } elseif ($type instanceof ExpensesClassificationType) {
                 $parent->addChild("ecls:$key", $value, "https://www.aade.gr/myDATA/expensesClassificaton/v1.0");
             } else {
-                $parent->addChild($key, $value);
+                $parent->addChild($key, is_bool($value) ? $this->getValue($value) : $value);
             }
         }
+    }
+
+    private function getValue($value): string
+    {
+        return $value ? 'true' : 'false';
     }
 }
