@@ -1,30 +1,30 @@
-#ΑΑΔΕ myDATA
+# ΑΑΔΕ myDATA
 
-##Introduction
+## Introduction
 This package provides an expressive, fluent interface to ΑΑΔΕ myDATA invoicing REST API. It handles almost all the boilerplate code
 for sending, cancelling and requesting invoices.
 
-##Requirements
+## Requirements
 - PHP >= 8.0
 - guzzlehttp/guzzle >= 7.0
 
-##Installation
+## Installation
 To install through Composer, run the following command:
 ```
 composer require firebed/aade-mydata
 ```
 
-#Auto-loading
+# Auto-loading
 By default, the package's classes are loaded automatically. There is nothing for you to do here.
 In case the installation is done manually and not through the composer you will have to  require the necessary classes yourself (not recommended).
 
-##Documentation
+## Documentation
 <p>Official documentation: <a href="https://www.aade.gr/sites/default/files/2021-09/myDATA%20API%20Documentation_ERP_v1.0.3_official.pdf">AADE myDATA REST API documentation.</a></p>
 <p>In order to use this package, you will need first a <b>user id</b> and a <b>subscription key</b>. You can get these credentials by signing up to mydata rest api.</p>
 <div>Development: <a href="https://mydata-register.azurewebsites.net/">Sign up to mydata development api</a></div>
 <div>Production: <a href="https://www.aade.gr/mydata">Sign up to mydata production api</a></div>
 
-###Setup
+### Setup
 Once you have the user id and the subscription key use the following code to set the environment and the credentials:
 ```php
 $env = "dev"; // For production use "prod"
@@ -35,7 +35,7 @@ MyDataRequest::setEnvironment($env);
 MyDataRequest::setCredentials($user_id, $subscription_key);
 ```
 
-###Sending invoices
+### Sending invoices
 <div>You can refer to the official or this package's documentation to see the details about the parameters.</div>
 <div>Keep in mind that some parameters need to be in a specific order inside the xml request.</div>
 <div>For example, if you set the counterpart before the issuer myDATA will throw an error. Yeah, I know!</div>
@@ -80,14 +80,14 @@ foreach ($response->getResponseTypes() as $responseType) {
 }
 ```
 
-###Cancelling invoices
+### Cancelling invoices
 ```php
 $mark = "the-mark-of-invoice-to-cancel";
 $cancelInvoice = new CancelInvoice();
 $cancelInvoice->handle($mark)
 ```
 
-###Requesting transmitted invoices
+### Requesting transmitted invoices
 Transmitting invoices are the invoices that the entity hase issued itself.
 myDATA returns a xml response with chunks of invoices (1000 each time I believe). You can use the
 ```$nextPartitionKey```  and ```$nextRowKey``` to paginate the results. Also, if you provide a non-empty
@@ -102,7 +102,7 @@ $request = new RequestTransmittedDocs();
 $request->handle($mark, $nextPartitionKey, $nextRowKey);
 ```
 
-###Requesting invoices
+### Requesting invoices
 These invoices are issued by other companies and relate to this entity.
 
 ```php
@@ -114,18 +114,18 @@ $request = new RequestDocs();
 $request->handle($mark, $nextPartitionKey, $nextRowKey);
 ```
 
-###Sending expenses and income classifications
+### Sending expenses and income classifications
 <div>These features are not implemented yet.</div>
 <p>If you send invoices using your ERP application myDATA will not allow you to send invoices without classifying them first either way.
 When sending invoices from your ERP application using the SendInvoice api you will have to assign the classification for InvoiceSummaryType and for each InvoiceRowType.</p>
 
 In my opinion, sending classifications separately refer to providers and accountants, but I am not sure, correct me otherwise.
 
-###Contributing
+### Contributing
 Obviously, this package is not complete yet and all contributions are welcome. Your contribution will help
 me and others that struggle through the mess the Greek government has created. Thank you!
 
-###Licence
+### Licence
 <p>AADE myDATA is licenced under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.</p>
 
 <p>Copyright 2022 Okan Giritli</p>
