@@ -14,7 +14,7 @@ To install through Composer, run the following command:
 composer require firebed/aade-mydata
 ```
 
-# Auto-loading
+## Auto-loading
 By default, the package's classes are loaded automatically. There is nothing for you to do here.
 In case the installation is done manually and not through the composer you will have to  require the necessary classes yourself (not recommended).
 
