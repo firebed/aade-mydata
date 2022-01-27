@@ -208,7 +208,7 @@ class InvoiceType extends Type
     /**
      * @return InvoiceHeaderType Επικεφαλίδα Παραστατικού
      */
-    public function getHeader(): InvoiceHeaderType
+    public function getInvoiceHeader(): InvoiceHeaderType
     {
         return $this->get('invoiceHeader');
     }
