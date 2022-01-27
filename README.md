@@ -1,4 +1,4 @@
-# ΑΑΔΕ myDATA
+# ΑΑΔΕ - AADE myDATA
 
 ## Introduction
 
@@ -128,8 +128,6 @@ $request->handle($mark, $nextPartitionKey, $nextRowKey);
 <div>These features are not implemented yet.</div>
 <p>If you send invoices using your ERP application myDATA will not allow you to send invoices without classifying them first either way.
 When sending invoices from your ERP application using the SendInvoice api you will have to assign the classification for InvoiceSummaryType and for each InvoiceRowType.</p>
-
-In my opinion, sending classifications separately refer to providers and accountants, but I am not sure, correct me otherwise.
 
 ### Contributing
 
