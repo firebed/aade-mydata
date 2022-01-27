@@ -2,8 +2,6 @@
 
 namespace Firebed\AadeMyData\Models;
 
-use SimpleXMLElement;
-
 abstract class Type
 {
     protected array $attributes = [];
