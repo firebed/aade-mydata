@@ -392,7 +392,7 @@ class InvoiceRowType extends Type
      */
     public function setOtherTaxesPercentCategory(int $otherTaxesPercentCategory): self
     {
-        return $this->put('feesPercentCategory', $otherTaxesPercentCategory);
+        return $this->put('otherTaxesPercentCategory', $otherTaxesPercentCategory);
     }
 
     /**
