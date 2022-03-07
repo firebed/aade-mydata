@@ -1,0 +1,29 @@
+<?php
+
+namespace Firebed\AadeMyData\Enums;
+
+enum StampCategory: string
+{
+    /**
+     *  Συντελεστής 1,2 % [1,20%]
+     */
+    case TYPE_1 = "1";
+
+
+    /**
+     *  Συντελεστής 2,4 % [2,40%]
+     */
+    case TYPE_2 = "2";
+
+
+    /**
+     *  Συντελεστής 3,6 % [3,60%]
+     */
+    case TYPE_3 = "3";
+
+
+    /**
+     *  Λοιπές περιπτώσεις Χαρτοσήμου [ποσό]
+     */
+    case TYPE_4 = "4";
+}

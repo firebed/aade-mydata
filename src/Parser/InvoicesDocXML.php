@@ -2,67 +2,114 @@
 
 namespace Firebed\AadeMyData\Parser;
 
-use Firebed\AadeMyData\Models\ExpensesClassificationType;
-use Firebed\AadeMyData\Models\IncomeClassificationType;
+use Firebed\AadeMyData\Models\ExpensesClassification;
+use Firebed\AadeMyData\Models\IncomeClassification;
+use Firebed\AadeMyData\Models\InvoiceExpensesClassification;
+use Firebed\AadeMyData\Models\InvoiceIncomeClassification;
 use Firebed\AadeMyData\Models\InvoicesDoc;
 use Firebed\AadeMyData\Models\Type;
 use SimpleXMLElement;
 
 class InvoicesDocXML
 {
+    private const ICLS = 'https://www.aade.gr/myDATA/incomeClassificaton/v1.0';
+    private const ECLS = 'https://www.aade.gr/myDATA/expensesClassificaton/v1.0';
+
+    private array $class_map;
+
+    public function __construct()
+    {
+        $this->class_map = require __DIR__ . '/../../config/class_map.php';
+    }
+
     public function asXML(InvoicesDoc $invoicesDoc): string
     {
-        $xmlns = 'xmlns="http://www.aade.gr/myDATA/invoice/v1.0"';
-        $xsi = 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"';
-        $schemaLocation = 'xsi:schemaLocation="http://www.aade.gr/myDATA/invoice/v1.0/InvoicesDoc-v0.6.xsd"';
-        $icls = 'xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0"';
-        $ecls = 'xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0"';
+        $attributes = [
+            'xmlns'              => "http://www.aade.gr/myDATA/invoice/v1.0",
+            'xmlns:xsi'          => "http://www.w3.org/2001/XMLSchema-instance",
+            'xsi:schemaLocation' => "http://www.aade.gr/myDATA/invoice/v1.0/InvoicesDoc-v0.6.xsd",
+            'xmlns:icls'         => self::ICLS,
+            'xmlns:ecls'         => self::ECLS
+        ];
 
-        $xml = new SimpleXMLElement("<InvoicesDoc $xmlns $xsi $schemaLocation $icls $ecls/>");
+        $args = "";
+        array_walk($attributes, static function ($v, $k) use (&$args) {
+            $args .= "$k=\"$v\" ";
+        });
+
+        $xml = new SimpleXMLElement("<InvoicesDoc $args/>");
 
         $this->toXML($xml, $invoicesDoc);
 
         return $xml->asXML();
     }
 
-    /** @noinspection NullPointerExceptionInspection */
-    private function toXML(SimpleXMLElement $parent, Type $type): void
+    private function getQN(Type $type): string
     {
-        foreach ($type->properties() as $key => $value) {
-            if ($value === null) {
+        return array_search(get_class($type), $this->class_map, true);
+    }
+
+    private function toXML(?SimpleXMLElement $xml, Type $type): void
+    {
+        if ($xml === null) {
+            return;
+        }
+
+        foreach ($type->attributes() as $key => $property) {
+            if ($property instanceof Type) {
+                $child = $this->addNode($xml, $this->getQN($property));
+                $this->toXML($child, $property);
                 continue;
             }
-
-            if ($value instanceof Type) {
-                $child = $parent->addChild($key);
+        
+            if (!is_array($property)) {
+                $this->addNode($xml, $key, $property, $type);
+                continue;
+            }
+        
+            foreach ($property as $value) {
+                $child = $this->addNode($xml, $this->getQN($value));
                 $this->toXML($child, $value);
-                continue;
-            }
-
-            if (is_array($value)) {
-                foreach ($value as $v) {
-                    $child = $parent->addChild($key);
-                    if ($v instanceof Type) {
-                        $this->toXML($child, $v);
-                    } else {
-                        $child->addChild($key, $v);
-                    }
-                }
-                continue;
-            }
-
-            if ($type instanceof IncomeClassificationType) {
-                $parent->addChild("icls:$key", $value, "https://www.aade.gr/myDATA/incomeClassificaton/v1.0");
-            } elseif ($type instanceof ExpensesClassificationType) {
-                $parent->addChild("ecls:$key", $value, "https://www.aade.gr/myDATA/expensesClassificaton/v1.0");
-            } else {
-                $parent->addChild($key, is_bool($value) ? $this->getValue($value) : $value);
             }
         }
     }
 
-    private function getValue($value): string
+    private function addNode(?SimpleXMLElement $xml, string $key, mixed $value = null, Type $type = null): ?SimpleXMLElement
     {
-        return $value ? 'true' : 'false';
+        if ($xml === null) {
+            return null;
+        }
+
+        return $xml->addChild(
+            $this->getQualifiedName($key, $type),
+            $this->getValue($value),
+            $this->getNamespace($type)
+        );
+    }
+
+    private function getQualifiedName($qualifiedName, $type = null): string
+    {
+        return match (true) {
+            $type instanceof IncomeClassification, $type instanceof InvoiceIncomeClassification     => "icls:$qualifiedName",
+            $type instanceof ExpensesClassification, $type instanceof InvoiceExpensesClassification => "ecls:$qualifiedName",
+            default                                                                                 => $qualifiedName
+        };
+    }
+
+    private function getValue($value): string|null
+    {
+        return match (true) {
+            is_bool($value) => $value ? 'true' : 'false',
+            default         => $value
+        };
+    }
+
+    private function getNamespace($type = null): string|null
+    {
+        return match (true) {
+            $type instanceof IncomeClassification   => self::ICLS,
+            $type instanceof ExpensesClassification => self::ECLS,
+            default                                 => null
+        };
     }
 }

@@ -3,6 +3,6 @@
 namespace Firebed\AadeMyData\Models;
 
 
-class Issuer extends PartyType
+class Issuer extends Party
 {
 }

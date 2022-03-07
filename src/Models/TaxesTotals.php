@@ -2,16 +2,16 @@
 
 namespace Firebed\AadeMyData\Models;
 
-class TaxesTotals extends Type
-{
-    public function addTaxes(TaxTotalsType $taxes): self
-    {
-        return $this->put('', $taxes);
-    }
+use Countable;
+use Firebed\AadeMyData\Traits\HasIterator;
+use IteratorAggregate;
 
-    public function put($key, $value): self
+class TaxesTotals extends Type implements IteratorAggregate, Countable
+{
+    use HasIterator;
+
+    public function addTaxes(TaxTotals $taxes): void
     {
-        $this->attributes[] = $value;
-        return $this;
+        $this->attributes[] = $taxes;
     }
 }

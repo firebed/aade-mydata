@@ -2,8 +2,7 @@
 
 namespace Firebed\AadeMyData\Models;
 
-
-class Counterpart extends PartyType
+class Counterpart extends Party
 {
 
 }

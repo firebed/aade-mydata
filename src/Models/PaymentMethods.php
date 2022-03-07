@@ -2,16 +2,16 @@
 
 namespace Firebed\AadeMyData\Models;
 
-class PaymentMethods extends Type
-{
-    public function addPaymentMethod(PaymentMethodDetailType $paymentMethod): self
-    {
-        return $this->put('', $paymentMethod);
-    }
+use Countable;
+use Firebed\AadeMyData\Traits\HasIterator;
+use IteratorAggregate;
 
-    public function put($key, $value): self
+class PaymentMethods extends Type implements IteratorAggregate, Countable
+{
+    use HasIterator;
+
+    public function addPaymentMethod(PaymentMethodDetail $paymentMethod): void
     {
-        $this->attributes['paymentMethodDetails'][] = $value;
-        return $this;
+        $this->put('', $paymentMethod);
     }
 }

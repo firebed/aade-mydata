@@ -2,24 +2,11 @@
 
 namespace Firebed\AadeMyData\Models;
 
-class Errors extends Type
+use Countable;
+use Firebed\AadeMyData\Traits\HasIterator;
+use IteratorAggregate;
+
+class Errors extends Type implements IteratorAggregate, Countable
 {
-    /**
-     * @return ErrorType[]
-     */
-    public function getErrorsTypes(): array
-    {
-        return $this->properties();
-    }
-    
-    public function addError(ErrorType $error): self
-    {
-        return $this->put('', $error);
-    }
-    
-    public function put($key, $value): self
-    {
-        $this->attributes[] = $value;
-        return $this;
-    }
+    use HasIterator;
 }

@@ -4,45 +4,35 @@ namespace Firebed\AadeMyData\Models;
 
 
 /**
- * Στις περιπτώσεις που ο χρήστης καλέσει μια εκ των δυο μεθόδων λήψης δεδομένων
+ * <p>Στις περιπτώσεις που ο χρήστης καλέσει μια εκ των δυο μεθόδων λήψης δεδομένων
  * (RequestDocs, RequestTransmittedDocs), θα λάβει ένα αντικείμενο RequestedDoc
  * σε xml μορφή. Το αντικείμενο θα περιλαμβάνει λίστες παραστατικών, χαρακτηρισμών
  * εσόδων – εξόδων και ακυρώσεων παραστατικών οι οποίες έχουν mark μεγαλύτερο
  * από αυτό που εισήχθη ως παράμετρο, καθώς και το στοιχείο continuationToken,
  * σε περίπτωση που ο όγκος των δεδομένων υπερβαίνει το επιτρεπτό όριο και η
- * λήψη τους γίνει τμηματικά.
+ * λήψη τους γίνει τμηματικά.</p>
  *
- * <ul>
- * <li>Σε περίπτωση που θα επιστρέφεται το στοιχείο continuationToken τα πεδία
+ * <p>Σε περίπτωση που θα επιστρέφεται το στοιχείο continuationToken τα πεδία
  * nextPartitionKey και nextRowKey θα είναι συμπληρωμένα από την υπηρεσία και
  * χρησιμοποιούνται στην επόμενη κλήση της ίδιας μεθόδου που είχε καλεστεί από
- * τον χρήστη.</li>
- * </ul>
+ * τον χρήστη.</p>
  */
 class RequestedDoc extends Type
 {
     /**
-     * @return ContinuationTokenType|null Στοιχείο για την τμηματική λήψη αποτελεσμάτων
+     * @return ContinuationToken|null Στοιχείο για την τμηματική λήψη αποτελεσμάτων
      */
-    public function getContinuationToken(): ?ContinuationTokenType
+    public function getContinuationToken(): ?ContinuationToken
     {
         return $this->get('continuationToken');
     }
 
     /**
-     * <h2>Στοιχείο για την τμηματική λήψη αποτελεσμάτων</h2>
-     *
-     * <p>Σε περίπτωση που θα επιστρέφεται το στοιχείο continuationToken τα πεδία
-     * nextPartitionKey και nextRowKey θα είναι συμπληρωμένα από την υπηρεσία και
-     * χρησιμοποιούνται στην επόμενη κλήση της ίδιας μεθόδου που είχε καλεστεί από
-     * τον χρήστη.</p>l
-     *
-     * @param ContinuationTokenType $token
-     * @return $this
+     * @param ContinuationToken $continuationToken Στοιχείο για την τμηματική λήψη αποτελεσμάτων
      */
-    public function setContinuationToken(ContinuationTokenType $token): self
+    public function setContinuationToken(ContinuationToken $continuationToken): void
     {
-        return $this->put('continuationToken', $token);
+        $this->put('continuationToken', $continuationToken);
     }
 
     /**
@@ -54,13 +44,58 @@ class RequestedDoc extends Type
     }
 
     /**
-     * <h2>Λίστα Παραστατικών</h2>
-     *
-     * @param InvoicesDoc $invoicesDoc
-     * @return $this
+     * @param InvoicesDoc $invoicesDoc Λίστα Παραστατικών
      */
-    public function setInvoicesDoc(InvoicesDoc $invoicesDoc): self
+    public function setInvoicesDoc(InvoicesDoc $invoicesDoc): void
     {
-        return $this->put('invoicesDoc', $invoicesDoc);
+        $this->put('invoicesDoc', $invoicesDoc);
+    }
+
+    /**
+     * @return CancelledInvoice[]|null Λίστα ακυρώσεων
+     */
+    public function getCancelledInvoicesDoc(): ?array
+    {
+        return $this->get('cancelledInvoicesDoc');
+    }
+
+    /**
+     * @param CancelledInvoice[] $cancelledInvoicesDoc Λίστα ακυρώσεων
+     */
+    public function setCancelledInvoicesDoc(array $cancelledInvoicesDoc): void
+    {
+        $this->put('cancelledInvoicesDoc', $cancelledInvoicesDoc);
+    }
+
+    /**
+     * @return InvoiceIncomeClassification|null Λίστα Χαρακτηρισμών Εσόδων
+     */
+    public function getIncomeClassificationsDoc(): ?InvoiceIncomeClassification
+    {
+        return $this->get('incomeClassificationsDoc');
+    }
+
+    /**
+     * @param InvoiceIncomeClassification $incomeClassificationsDoc Λίστα Χαρακτηρισμών Εσόδων
+     */
+    public function setIncomeClassificationsDoc(InvoiceIncomeClassification $incomeClassificationsDoc): void
+    {
+        $this->put('incomeClassificationsDoc', $incomeClassificationsDoc);
+    }
+
+    /**
+     * @return InvoiceExpensesClassification|null Λίστα Χαρακτηρισμών Εξόδων
+     */
+    public function getExpensesClassificationsDoc(): ?InvoiceExpensesClassification
+    {
+        return $this->get('expensesClassificationsDoc');
+    }
+
+    /**
+     * @param InvoiceExpensesClassification $expensesClassificationsDoc Λίστα Χαρακτηρισμών Εξόδων
+     */
+    public function setExpensesClassificationsDoc(InvoiceExpensesClassification $expensesClassificationsDoc): void
+    {
+        $this->put('expensesClassificationsDoc', $expensesClassificationsDoc);
     }
 }

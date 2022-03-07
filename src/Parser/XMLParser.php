@@ -3,6 +3,7 @@
 namespace Firebed\AadeMyData\Parser;
 
 use Error;
+use InvalidArgumentException;
 use SimpleXMLElement;
 
 trait XMLParser
@@ -20,9 +21,6 @@ trait XMLParser
                 throw new Error("Encountered an error while parsing XML.");
             }
 
-            // If the current node has children then iterate through them recursively,
-            // otherwise put the tag's name with its value to the corresponding object
-            // of class Type as a property.
             $parent->put($current->getName(), $node->hasChildren() ? self::parse($current) : (string)$current);
         }
 
@@ -31,11 +29,14 @@ trait XMLParser
 
     private static function morph(string $name): mixed
     {
-        $type = self::$class_map[$name];
-        return new $type;
+        if (!array_key_exists($name, self::$class_map)) {
+            throw new InvalidArgumentException;
+        }
+        
+        return new self::$class_map[$name];
     }
 
-    private static function applyClassifications(SimpleXMLElement $node, object $parent): void
+    private static function applyClassifications(SimpleXMLElement $node, mixed $parent): void
     {
         if ($node->getName() === 'expensesClassification') {
             self::parseClassification($node, $parent, 'ecls');
@@ -44,7 +45,7 @@ trait XMLParser
         }
     }
 
-    private static function parseClassification(SimpleXMLElement $node, object $parent, string $namespace): void
+    private static function parseClassification(SimpleXMLElement $node, mixed $parent, string $namespace): void
     {
         $type = $node->xpath("$namespace:classificationType");
         $category = $node->xpath("$namespace:classificationCategory");

@@ -2,28 +2,16 @@
 
 namespace Firebed\AadeMyData\Models;
 
-class InvoicesDoc extends Type
+use Countable;
+use Firebed\AadeMyData\Traits\HasIterator;
+use IteratorAggregate;
+
+class InvoicesDoc extends Type implements IteratorAggregate, Countable
 {
-    /**
-     * @return InvoiceType[]
-     */
-    public function getInvoices(): array
-    {
-        return $this->attributes;
-    }
+    use HasIterator;
 
-    /**
-     * @param InvoiceType $invoice
-     * @return $this
-     */
-    public function addInvoice(InvoiceType $invoice): self
+    public function addInvoice(Invoice $invoice): void
     {
-        return $this->put('', $invoice);
-    }
-
-    public function put($key, $value): self
-    {
-        $this->attributes['invoice'][] = $value;
-        return $this;
+        $this->attributes[] = $invoice;
     }
 }
