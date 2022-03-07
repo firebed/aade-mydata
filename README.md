@@ -59,7 +59,7 @@ $invoice->setIssuer($issuer); // Firebed\AadeMyData\Models\Issuer
 $invoice->setCounterpart($counterpart); // Firebed\AadeMyData\Models\Counterpart
 $invoice->setInvoiceHeader($invoiceHeader); // Firebed\AadeMyData\Models\InvoiceHeader
 $invoice->addPaymentMethod($paymentMethod); // Firebed\AadeMyData\Models\PaymentMethodDetail
-$invoice->addInvoiceDetails($invoiceRow); // Firebed\AadeMyData\Models\InvoiceRow
+$invoice->addInvoiceDetails($invoiceDetails); // Firebed\AadeMyData\Models\InvoiceDetails
 $invoice->setInvoiceSummary($invoiceSummary); // Firebed\AadeMyData\Models\InvoiceSummary
             
 $invoicesDoc = new InvoicesDoc();
