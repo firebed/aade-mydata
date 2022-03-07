@@ -44,11 +44,6 @@ class InvoicesDocXML
         return $xml->asXML();
     }
 
-    private function getQN(Type $type): string
-    {
-        return array_search(get_class($type), $this->class_map, true);
-    }
-
     private function toXML(?SimpleXMLElement $xml, Type $type): void
     {
         if ($xml === null) {
@@ -57,18 +52,18 @@ class InvoicesDocXML
 
         foreach ($type->attributes() as $key => $property) {
             if ($property instanceof Type) {
-                $child = $this->addNode($xml, $this->getQN($property));
+                $child = $this->addNode($xml, $this->getTypeName($property));
                 $this->toXML($child, $property);
                 continue;
             }
-        
+
             if (!is_array($property)) {
                 $this->addNode($xml, $key, $property, $type);
                 continue;
             }
-        
+
             foreach ($property as $value) {
-                $child = $this->addNode($xml, $this->getQN($value));
+                $child = $this->addNode($xml, $this->getTypeName($value));
                 $this->toXML($child, $value);
             }
         }
@@ -87,12 +82,17 @@ class InvoicesDocXML
         );
     }
 
+    private function getTypeName(Type $type): string
+    {
+        return array_search(get_class($type), $this->class_map, true);
+    }
+
     private function getQualifiedName($qualifiedName, $type = null): string
     {
         return match (true) {
-            $type instanceof IncomeClassification, $type instanceof InvoiceIncomeClassification     => "icls:$qualifiedName",
-            $type instanceof ExpensesClassification, $type instanceof InvoiceExpensesClassification => "ecls:$qualifiedName",
-            default                                                                                 => $qualifiedName
+            $this->isIncomeClassification($type)   => "icls:$qualifiedName",
+            $this->isExpensesClassification($type) => "ecls:$qualifiedName",
+            default                                => $qualifiedName
         };
     }
 
@@ -107,9 +107,19 @@ class InvoicesDocXML
     private function getNamespace($type = null): string|null
     {
         return match (true) {
-            $type instanceof IncomeClassification   => self::ICLS,
-            $type instanceof ExpensesClassification => self::ECLS,
-            default                                 => null
+            $this->isIncomeClassification($type)   => self::ICLS,
+            $this->isExpensesClassification($type) => self::ECLS,
+            default                                => null
         };
+    }
+
+    private function isIncomeClassification($type): bool
+    {
+        return $type instanceof IncomeClassification || $type instanceof InvoiceIncomeClassification;
+    }
+
+    private function isExpensesClassification($type): bool
+    {
+        return $type instanceof ExpensesClassification || $type instanceof InvoiceExpensesClassification;
     }
 }
