@@ -1,6 +1,7 @@
 <?php
 
 use Firebed\AadeMyData\Models\Address;
+use Firebed\AadeMyData\Models\BookInfo;
 use Firebed\AadeMyData\Models\CancelledInvoice;
 use Firebed\AadeMyData\Models\CancelledInvoicesDoc;
 use Firebed\AadeMyData\Models\ContinuationToken;
@@ -19,6 +20,7 @@ use Firebed\AadeMyData\Models\InvoiceSummary;
 use Firebed\AadeMyData\Models\Issuer;
 use Firebed\AadeMyData\Models\PaymentMethodDetail;
 use Firebed\AadeMyData\Models\PaymentMethods;
+use Firebed\AadeMyData\Models\RequestedBookInfo;
 use Firebed\AadeMyData\Models\RequestedDoc;
 use Firebed\AadeMyData\Models\Response;
 use Firebed\AadeMyData\Models\ResponseDoc;
@@ -30,6 +32,8 @@ return [
     'InvoicesDoc'                => InvoicesDoc::class,
     'RequestedDoc'               => RequestedDoc::class,
     'ResponseDoc'                => ResponseDoc::class,
+    'RequestedBookInfo'          => RequestedBookInfo::class,
+    'bookInfo'                   => BookInfo::class,
     'address'                    => Address::class,
     'cancelledInvoice'           => CancelledInvoice::class,
     'cancelledInvoicesDoc'       => CancelledInvoicesDoc::class,

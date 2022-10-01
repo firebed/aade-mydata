@@ -2,7 +2,9 @@
 
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Enums\SpecialInvoiceCategory;
 use Firebed\AadeMyData\Enums\InvoiceType;
+use Firebed\AadeMyData\Enums\InvoiceVariationType;
 use Firebed\AadeMyData\Enums\MovePurpose;
 
 class InvoiceHeader extends Type
@@ -17,7 +19,7 @@ class InvoiceHeader extends Type
 
     /**
      * Σε περίπτωση μή έκδοσης σειράς παραστατικού, το πεδίο series πρέπει να έχει την τιμή 0
-     * 
+     *
      * @param string $series Σειρά παραστατικού
      */
     public function setSeries(string $series): void
@@ -99,7 +101,7 @@ class InvoiceHeader extends Type
 
     /**
      * Ο κωδικός νομισμάτων προέρχεται από την αντίστοιχη λίστα σύμφωνα με το πρότυπο ISO4217.
-     * 
+     *
      * @param string $currency Νόμισμα
      */
     public function setCurrency(string $currency): void
@@ -118,7 +120,7 @@ class InvoiceHeader extends Type
     /**
      * To πεδίο exchangeRate είναι η ισοτιμία του νομίσματος σε σχέση με το ευρώ.
      * Πρέπει να συμπληρώνεται μόνο όταν το νόμισμα δεν έχει τιμή EUR
-     * 
+     *
      * @param float $exchangeRate Ισοτιμία
      */
     public function setExchangeRate(float $exchangeRate): void
@@ -136,7 +138,7 @@ class InvoiceHeader extends Type
 
     /**
      * Το στοιχείο correlatedInvoices είναι λίστα και περιέχει τα ΜΑΡΚ των συσχετιζόμενων παραστατικών.
-     * 
+     *
      * @param string $correlatedInvoices Συσχετιζόμενα Παραστατικά
      */
     public function setCorrelatedInvoices(string $correlatedInvoices): void
@@ -235,11 +237,52 @@ class InvoiceHeader extends Type
     /**
      * Το πεδίο fuelInvoice ορίζει αν πρόκειται για παραστατικό πώλησης υγρών καυσίμων και
      * επιτρέπεται η αποστολή μόνο για την περίπτωση των παρόχων
-     * 
+     *
      * @param bool $fuelInvoice Ένδειξη Παραστατικό καυσίμων
      */
     public function setFuelInvoice(bool $fuelInvoice): void
     {
         $this->put('fuelInvoice', $fuelInvoice);
+    }
+
+    /**
+     * @return int|null Ειδική Κατηγορία Παραστατικού
+     */
+    public function getSpecialInvoiceCategory(): ?int
+    {
+        return $this->get('specialInvoiceCategory');
+    }
+
+    /**
+     * Οι πιθανές τιμές του πεδίου specialInvoiceCategory περιγράφονται αναλυτικά στον
+     * αντίστοιχα πίνακα του Παραρτήματος.
+     *
+     * @param SpecialInvoiceCategory|int $specialInvoiceCategory Ελάχιστη τιμή = 1, Μέγιστη τιμή = 4
+     * @return void
+     */
+    public function setSpecialInvoiceCategory(SpecialInvoiceCategory|int $specialInvoiceCategory): void
+    {
+        $this->put('specialInvoiceCategory', $specialInvoiceCategory);
+    }
+
+    /**
+     * @return int|null Τύπος Απόκλισης (Διαφοροποίησης) Παραστατικού
+     */
+    public function getInvoiceVariationType(): ?int
+    {
+        return $this->get('invoiceVariationType');
+    }
+
+    /**
+     * Οι πιθανές τιμές του πεδίου invoiceVariationType περιγράφονται αναλυτικά στον
+     * αντίστοιχα πίνακα του Παραρτήματος. Επίσης, λεπτομέρειες σχετικά με τον τρόπο
+     * χρήσης τους από επιχειρησιακής σκοπιάς περιγράφονται στο σχετικό επιχειρησιακό
+     * έγγραφο. (Δεν επιτρέπεται στην περίπτωση αποστολής μέσω παρόχων)
+     * @param InvoiceVariationType|int $invoiceVariationType Ελάχιστη τιμή = 1, Μέγιστη τιμή = 4
+     * @return void
+     */
+    public function setInvoiceVariationType(InvoiceVariationType|int $invoiceVariationType): void
+    {
+        $this->put('invoiceVariationType', $invoiceVariationType);
     }
 }

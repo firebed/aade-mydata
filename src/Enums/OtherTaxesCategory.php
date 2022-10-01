@@ -110,4 +110,10 @@ enum OtherTaxesCategory: string
      *  Επιβαρύνσεις Λοιπών Φόρων
      */
     case TAX_18 = "18";
+    
+
+    /**
+     *  ΕΦΚ ποσό
+     */
+    case TAX_19 = "19";
 }

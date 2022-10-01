@@ -52,12 +52,20 @@ class InvoiceDetails extends Type
      * (recType = 2) ή τους λοιπούς φόρους (recType = 3) αντίστοιχα, θα αποστέλλονται
      * στο πεδίο της καθαρής αξίας της γραμμής (netValue), ενώ τα αντίστοιχα πεδία
      * ποσό τέλους (feesAmount) ή ποσό λοιπών φόρων (otherTaxesAmount) δε θα συμπληρώνονται.</li
-     *
-     * <li>Επίσης στις γραμμές αυτές δεν επιτρέπεται η αποστολή άλλων ειδών
+     * Επίσης στις γραμμές αυτές δεν επιτρέπεται η αποστολή άλλων ειδών
      * φόρων/τελών/κρατήσεων/χαρτοσήμου (π.χ. σε μια γραμμή με recType = 2 δεν επιτρέπονται
      * στη γραμμή αυτή η αποστολή λοιπών φόρων/κρατήσεων/παρακρατούμενων/χαρτοσήμου).</li>
+     *
+     * <li>Η αποστολή με recType = 7 (αρνητικό πρόσημο αξιών) επιτρέπεται μόνο στην
+     * περίπτωση διαβίβασης παραστατικών 17.3, 17.4, 17.5 και 17.6 και με αυτόν τον
+     * τρόπο υποδηλώνεται ότι οι αξίες της γραμμής είναι αρνητικές (στα αντίστοιχα
+     * πεδία των αξιών οι τιμές αναγράφονται στις απόλυτες/θετικές τιμές τους).
+     * Σημειώνεται ότι στα αθροίσματα των αξιών στην ενότητα Περίληψη Παραστατικού
+     * (InvoiceSummaryType) θα διαβιβάζονται τα αθροίσματα των απόλυτων τιμών των
+     * αντίστοιχων αξιών των γραμμών ανεξάρτητα αν υπάρχουν γραμμές που φέρουν ή
+     * όχι την ένδειξη recType = 7.</li>
      * </ul>
-     * 
+     *
      * @param int $recType Είδος Γραμμής
      */
     public function setRecType(int $recType): void
@@ -74,6 +82,16 @@ class InvoiceDetails extends Type
     }
 
     /**
+     * Οι πιθανές τιμές για το πεδίο fuelCode (κωδικός καυσίμου) περιγράφονται
+     * αναλυτικά στον αντίστοιχο πίνακα του Παραρτήματος. Eπιτρέπεται η αποστολή του
+     * μόνο για την περίπτωση των παρόχων και εφόσον πρόκειται για παραστατικό
+     * καυσίμων (invoiceHeaderType.fuelInvoice = true). Η τιμή 999 χρησιμοποιείται στην
+     * περίπτωση που σε ένα παραστατικό εκτός από καύσιμα υπάρχει η ανάγκη
+     * τιμολόγησης και λοιπών χρεώσεων. Επιτρέπεται ανά παραστατικό μόνο μια γραμμή
+     * με αυτόν τον κωδικό και η καθαρή αξία αυτής της γραμμής θα πρέπει να είναι
+     * μικρότερη ή ίση από το άθροισμα της καθαρής αξίας των υπόλοιπων κωδικών
+     * καυσίμου του παραστατικού.
+     *
      * @param FuelCode|string $fuelCode Κωδικός Καυσίμου
      */
     public function setFuelCode(FuelCode|string $fuelCode): void
@@ -142,7 +160,7 @@ class InvoiceDetails extends Type
      * <li>Ελάχιστη τιμή = 0</li>
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
-     * 
+     *
      * @param float $netValue Καθαρή αξία
      */
     public function setNetValue(float $netValue): void
@@ -421,7 +439,7 @@ class InvoiceDetails extends Type
     /**
      * Συμπληρώνονται από τον χρήστη και χρησιμοποιούνται για πληροφοριακούς
      * λόγους προς την υπηρεσία.
-     * 
+     *
      * @param string $lineComments Σχόλια Γραμμής
      */
     public function setLineComments(string $lineComments): void
@@ -440,7 +458,7 @@ class InvoiceDetails extends Type
     /**
      * Αφορούν τον υποβάλλοντα (εκδότης – εσόδων) υποβάλλονται μαζί με το
      * παραστατικό με την αντίστοιχη χρήση του πεδίου incomeClassification.
-     * 
+     *
      * @param IncomeClassification[] $incomeClassification Χαρακτηρισμοί Εσόδων
      */
     public function setIncomeClassification(array $incomeClassification): void
@@ -450,7 +468,7 @@ class InvoiceDetails extends Type
 
     /**
      * Προσθήκη χαρακτηρισμού εσόδων.
-     * 
+     *
      * @param IncomeClassification $incomeClassification Χαρακτηρισμός Εσόδων
      */
     public function addIncomeClassification(IncomeClassification $incomeClassification): void
@@ -470,7 +488,7 @@ class InvoiceDetails extends Type
      * Οι χαρακτηρισμοί που αφορούν τον υποβάλλοντα (λήπτης εξόδων),
      * υποβάλλονται μαζί με το παραστατικό με την αντίστοιχη χρήση του
      * πεδίου expensesClassification.
-     * 
+     *
      * @param ExpensesClassification[] $expensesClassification Χαρακτηρισμοί Εξόδων
      */
     public function setExpensesClassification(array $expensesClassification): void
@@ -486,6 +504,43 @@ class InvoiceDetails extends Type
     public function addExpensesClassification(ExpensesClassification $expensesClassification): void
     {
         $this->push('expensesClassification', $expensesClassification);
+    }
+
+    /**
+     * @return float|null Ποσότητα Θερμοκρασίας 15 βαθμών
+     */
+    public function getQuantity15(): ?float
+    {
+        return $this->get('quantity15');
+    }
+
+    /**
+     * Αποδεκτό μόνο στην περίπτωση αποστολής από παρόχους και για την περίπτωση που το
+     * παραστατικό είναι παραστατικό καυσίμων.
+     *
+     * @param float|null $quantity15 Ελάχιστη τιμή = 0
+     */
+    public function setQuantity15(?float $quantity15): void
+    {
+        $this->put('quantity15', $quantity15);
+    }
+
+    /**
+     * @return string|null Περιγραφή Είδους
+     */
+    public function getItemDescr(): ?string
+    {
+        return $this->get('itemDescr');
+    }
+
+    /**
+     * Αποδεκτό μόνο στην περίπτωση παραστατικών της ειδικής κατηγορίας tax free.
+     *
+     * @param string|null $itemDescr Μέγιστο επιτρεπτό μήκος 300
+     */
+    public function setItemDescr(?string $itemDescr): void
+    {
+        $this->put('itemDescr', $itemDescr);
     }
 
     public function put($key, $value): void
