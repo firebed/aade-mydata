@@ -8,6 +8,7 @@ This package provides an expressive, fluent interface to ΑΑΔΕ myDATA invoici
 
 | Version | PHP | myDATA |
 |---------|-----|--------|
+| ^v.3.0  | 8.1 | v1.0.6 |
 | ^v.2.0  | 8.1 | v1.0.5 |
 | ^v.1.0  | 8.0 | v1.0.3 |
 
