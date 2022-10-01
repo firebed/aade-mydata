@@ -11,10 +11,11 @@ use GuzzleHttp\Exception\GuzzleException;
 
 class MyDataRequest
 {
-    private static string $user_id;
-    private static string $subscription_key;
-    private static string $env;
-    private string        $url;
+    private static ?string $user_id          = null;
+    private static ?string $subscription_key = null;
+    private static ?string $env              = null;
+    
+    private ?string        $url              = null;
 
     public function __construct()
     {
