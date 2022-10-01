@@ -2,7 +2,7 @@
 
 namespace Firebed\AadeMyData\Http;
 
-use Firebed\AadeMyData\Models\RequestedDoc;
+use Firebed\AadeMyData\Models\RequestedBookInfo;
 use GuzzleHttp\Exception\GuzzleException;
 
 class RequestMyExpenses extends MyDataRequest
@@ -25,21 +25,21 @@ class RequestMyExpenses extends MyDataRequest
      * <li>Στην περίπτωση που τα αποτελέσματα αναζήτησης ξεπερνούν σε μέγεθος το
      * μέγιστο επιτρεπτό όριο ο χρήστης θα τα λάβει τμηματικά. Τα πεδία
      * nextPartitionKey και nextRowKey θα εμπεριέχονται σε κάθε τμήμα των
-     * αποτελεσμάτων και θα χρησιμοποιούνται ως παράμετροι στην κλήση για την λήψη
+     * αποτελεσμάτων και θα χρησιμοποιούνται ως παράμετροι στην κλήση για τη λήψη
      * του επόμενου τμήματος αποτελεσμάτων.</li>
      * </ol>
      *
-     * @param string|null $dateFrom         Αρχή χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης dd/MM/yyyy
-     * @param string|null $dateTo           Τέλος χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης dd/MM/yyyy
+     * @param string      $dateFrom         Η αρχή χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης dd/MM/yyyy
+     * @param string      $dateTo           Το τέλος χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης dd/MM/yyyy
      * @param string|null $counterVatNumber ΑΦΜ αντισυμβαλλόμενου
      * @param string|null $entityVatNumber  ΑΦΜ οντότητας
      * @param string|null $invType          Τύπος παραστατικού
      * @param string|null $nextPartitionKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
      * @param string|null $nextRowKey       Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
-     * @return RequestedDoc
+     * @return RequestedBookInfo
      * @throws GuzzleException
      */
-    public function handle(string $dateFrom = null, string $dateTo = null, string $counterVatNumber = null, string $entityVatNumber = null, string $invType = null, string $nextPartitionKey = null, string $nextRowKey = null): RequestedDoc
+    public function handle(string $dateFrom, string $dateTo, string $counterVatNumber = null, string $entityVatNumber = null, string $invType = null, string $nextPartitionKey = null, string $nextRowKey = null): RequestedBookInfo
     {
         $query = compact('dateFrom', 'dateTo', 'counterVatNumber', 'entityVatNumber', 'invType', 'nextPartitionKey', 'nextRowKey');
         $query = array_filter($query);

@@ -3,7 +3,6 @@
 namespace Firebed\AadeMyData\Http;
 
 use Error;
-use Firebed\AadeMyData\Models\RequestedDoc;
 use Firebed\AadeMyData\Models\ResponseDoc;
 use Firebed\AadeMyData\Parser\RequestedDocParser;
 use Firebed\AadeMyData\Parser\ResponseDocParser;
@@ -64,12 +63,12 @@ class MyDataRequest
     /**
      * @throws GuzzleException
      */
-    protected function get(array $query): RequestedDoc
+    protected function get(array $query): mixed
     {
         self::validateCredentials();
 
         $response = $this->client()->get($this->url, ['query' => $query]);
-        
+
         return RequestedDocParser::parseXML(simplexml_load_string($response->getBody()));
     }
 
@@ -91,7 +90,7 @@ class MyDataRequest
 
         $response = $this->client()->post($this->url, $params);
         $xml = simplexml_load_string($response->getBody());
-        
+
         return ResponseDocParser::parseXML($xml);
     }
 

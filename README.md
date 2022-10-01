@@ -29,10 +29,19 @@ By default, the package's classes are loaded automatically. There is nothing for
 ## Documentation
 
 <p>Official myDATA webpage: <a href="https://www.aade.gr/mydata">AADE myDATA</a></p>
-<p>Official documentation: <a href="https://www.aade.gr/sites/default/files/2022-02/myDATA%20API%20Documentation_v1.0.5_official_erp.pdf">AADE myDATA REST API v1.0.5.</a></p>
+<p>Official documentation: <a href="https://www.aade.gr/sites/default/files/2022-09/myDATA%20API%20Documentation%20v1.0.6_official_erp.pdf">AADE myDATA REST API v1.0.6.</a></p>
 <p>In order to use this package, you will need first a <b>user id</b> and a <b>subscription key</b>. You can get these credentials by signing up to mydata rest api.</p>
 <div>Development: <a href="https://mydata-register.azurewebsites.net/">Sign up to mydata development api</a></div>
 <div>Production: <a href="https://www.aade.gr/mydata">Sign up to mydata production api</a></div>
+
+### Available methods
+
+- [SendInvoices](#SendInvoices)
+- [CancelInvoice](#CancelInvoice)
+- [RequestTransmittedDocs](#RequestTransmittedDocs)
+- [RequestDocs](#RequestDocs)
+- [RequestMyIncome](#RequestMyIncome)
+- [RequestMyExpenses](#RequestMyExpenses)
 
 ### Setup
 
@@ -47,12 +56,12 @@ MyDataRequest::setEnvironment($env);
 MyDataRequest::setCredentials($user_id, $subscription_key);
 ```
 
-### Sending invoices
+### SendInvoices
 
 <p>You can refer to the official or this package's documentation to see the details about the parameters.</p>
 <p>Keep in mind that some parameters need to be in a specific order inside the xml request.<br>
-For example, if you set the counterpart before the issuer myDATA will throw an error. Yeah, I know.<br>
-<p>Although, this behavior might have changed in the meantime, and it's time-consuming and pointless to track all these minor changes.</p>
+For example, if you set the counterpart before the issuer myDATA will throw an error.<br>
+</p>
 
 ```php
 $invoice = new Invoice();
@@ -99,7 +108,7 @@ if (!empty($errors)) {
 }
 ```
 
-### Cancelling invoices
+### CancelInvoice
 
 ```php
 $mark = "the-mark-of-invoice-to-cancel";
@@ -107,7 +116,7 @@ $cancelInvoice = new CancelInvoice();
 $cancelInvoice->handle($mark);
 ```
 
-### Requesting transmitted invoices
+### RequestTransmittedDocs
 
 Transmitted invoices are the invoices that the entity has issued itself. myDATA returns a xml response with chunks of invoices (1000 each time I believe). You can use the
 ```$nextPartitionKey```  and ```$nextRowKey``` to paginate the results. Also, if you provide a non-empty
@@ -122,7 +131,7 @@ $request = new RequestTransmittedDocs();
 $request->handle($mark, $nextPartitionKey, $nextRowKey);
 ```
 
-### Requesting invoices
+### RequestDocs
 
 These invoices are issued by other companies and relate to this entity.
 
@@ -133,6 +142,26 @@ $nextRowKey = null;
 
 $request = new RequestDocs();
 $request->handle($mark, $nextPartitionKey, $nextRowKey);
+```
+
+### RequestMyIncome
+
+```php
+$dateFrom = "01/01/2022";
+$dateTo = "31/12/2022";
+
+$request = new RequestMyIncome();
+$request->handle($dateFrom, $dateTo);
+```
+
+### RequestMyExpenses
+
+```php
+$dateFrom = "01/01/2022";
+$dateTo = "31/12/2022";
+
+$request = new RequestMyExpenses();
+$request->handle($dateFrom, $dateTo);
 ```
 
 ### Sending expenses and income classifications

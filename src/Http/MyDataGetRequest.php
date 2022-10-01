@@ -35,8 +35,8 @@ class MyDataGetRequest extends MyDataRequest
      * </ol>
      *
      * @param string      $mark              Μοναδικός αριθμός καταχώρησης
-     * @param string|null $dateFrom          Αρχή χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης dd/MM/yyyy
-     * @param string|null $dateTo            Τέλος χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης dd/MM/yyyy
+     * @param string|null $dateFrom          Η αρχή χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης dd/MM/yyyy
+     * @param string|null $dateTo            Το τέλος χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης dd/MM/yyyy
      * @param string|null $receiverVatNumber ΑΦΜ αντισυμβαλλόμενου
      * @param string|null $entityVatNumber   ΑΦΜ οντότητας
      * @param string|null $invType           Τύπος παραστατικού
