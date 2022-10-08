@@ -2,14 +2,23 @@
 
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Traits\HasFactory;
+
 class Response extends Type
 {
+    use HasFactory;
+    
     /**
      * @return int|null Αριθμός Σειράς Οντότητας εντός του υποβληθέντος xml
      */
     public function getIndex(): ?int
     {
         return $this->get('index');
+    }
+
+    public function setIndex(int $index): void
+    {
+        $this->put('index', $index);
     }
 
     /**
@@ -37,6 +46,11 @@ class Response extends Type
         return $this->get('statusCode');
     }
 
+    public function setStatusCode(string $statusCode): void
+    {
+        $this->put('statusCode', $statusCode);
+    }
+
     /**
      * Επιστρέφει μόνο στην περίπτωση που η υποβολή αφορούσε παραστατικό.
      *
@@ -45,6 +59,11 @@ class Response extends Type
     public function getInvoiceUid(): ?string
     {
         return $this->get('invoiceUid');
+    }
+
+    public function setInvoiceUid(string $invoiceUid): void
+    {
+        $this->put('invoiceUid', $invoiceUid);
     }
 
     /**
@@ -60,6 +79,11 @@ class Response extends Type
         return $this->get('invoiceMark');
     }
 
+    public function setInvoiceMark(string $invoiceMark): void
+    {
+        $this->put('invoiceMark', $invoiceMark);
+    }
+
     /**
      * Επιστρέφει μόνο στην περίπτωση που η υποβολή αφορούσε χαρακτηρισμό.
      *
@@ -68,6 +92,11 @@ class Response extends Type
     public function getClassificationMark(): ?string
     {
         return $this->get('classificationMark');
+    }
+
+    public function setClassificationMark(string $classificationMark): void
+    {
+        $this->put('classificationMark', $classificationMark);
     }
 
     /**
@@ -80,6 +109,11 @@ class Response extends Type
         return $this->get('authenticationCode');
     }
 
+    public function setAuthenticationCode(string $authenticationCode): void
+    {
+        $this->put('authenticationCode', $authenticationCode);
+    }
+
     /**
      * Επιστρέφει μόνο στην περίπτωση που η υποβολή αφορούσε ακύρωση παραστατικού.
      *
@@ -88,6 +122,11 @@ class Response extends Type
     public function getCancellationMark(): ?string
     {
         return $this->get('cancellationMark');
+    }
+
+    public function setCancellationMark(string $cancellationMark): void
+    {
+        $this->put('cancellationMark', $cancellationMark);
     }
 
     public function hasErrors(): bool

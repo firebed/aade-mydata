@@ -48,4 +48,9 @@ abstract class Type
     {
         return $this->attributes;
     }
+
+    public function setAttributes(array $attributes): void
+    {
+        $this->attributes = $attributes;
+    }
 }

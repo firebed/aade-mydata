@@ -3,37 +3,43 @@
 namespace Firebed\AadeMyData\Http;
 
 use Error;
+use Firebed\AadeMyData\Loader;
 use Firebed\AadeMyData\Models\ResponseDoc;
 use Firebed\AadeMyData\Parser\RequestedDocParser;
 use Firebed\AadeMyData\Parser\ResponseDocParser;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
-class MyDataRequest
+abstract class MyDataRequest
 {
     private static ?string $user_id          = null;
     private static ?string $subscription_key = null;
     private static ?string $env              = null;
-    
-    private ?string        $url              = null;
 
-    public function __construct()
+    private static mixed $mockResponse;
+
+    public static function mockResponse($mockResponse): void
     {
-        $urls = require __DIR__ . '/../../config/urls.php';
-
-        if (!array_key_exists(self::$env, $urls)) {
-            throw new Error("Invalid or missing environment value. Please invoke MyDataRequest::setEnvironment to set the environment value, possible values are [dev,prod].");
+        if (is_callable($mockResponse)) {
+            self::$mockResponse = $mockResponse;
+            return;
         }
 
-        $class = get_class($this);
-        if (!array_key_exists($class, $urls[self::$env])) {
-            throw new Error("Unspecified URL for " . basename($class));
-        }
-
-        $this->url = $urls[self::$env][$class];
+        self::$mockResponse = fn() => $mockResponse;
     }
 
-    public static function setCredentials($user_id, $subscription_key): void
+    public static function isMocking(): bool
+    {
+        return isset(self::$mockResponse);
+    }
+
+    public static function init(string $user_id, string $subscription_key, string $env): void
+    {
+        self::setCredentials($user_id, $subscription_key);
+        self::setEnvironment($env);
+    }
+
+    public static function setCredentials(string $user_id, string $subscription_key): void
     {
         self::$user_id = $user_id;
         self::$subscription_key = $subscription_key;
@@ -44,21 +50,14 @@ class MyDataRequest
         self::$env = $env;
     }
 
-    private static function validateCredentials(): void
-    {
-        if (empty(self::$user_id) || empty(self::$subscription_key)) {
-            throw new Error("Missing credentials. Please use MyDataRequest::setCredentials method to set your myDATA Rest API credentials.");
-        }
-    }
-
-    public function isDevelopment(): bool
+    public static function isDevelopment(): bool
     {
         return self::$env === 'dev';
     }
 
-    public function isProduction(): bool
+    public static function isProduction(): bool
     {
-        return !$this->isDevelopment();
+        return self::$env === 'prod';
     }
 
     /**
@@ -68,9 +67,15 @@ class MyDataRequest
     {
         self::validateCredentials();
 
-        $response = $this->client()->get($this->url, ['query' => $query]);
+        $url = Loader::getUrl(get_class($this), self::$env);
 
-        return RequestedDocParser::parseXML(simplexml_load_string($response->getBody()));
+        if (self::isMocking()) {
+            return self::mock();
+        }
+
+        $response = $this->client()->get($url, ['query' => $query]);
+
+        return RequestedDocParser::parseXML(simplexml_load_string($response->getBody()->getContents()));
     }
 
     /**
@@ -79,6 +84,12 @@ class MyDataRequest
     protected function post(array $query = null, string $body = null): ResponseDoc
     {
         self::validateCredentials();
+
+        $url = Loader::getUrl(get_class($this), self::$env);
+
+        if (self::isMocking()) {
+            return self::mock();
+        }
 
         $params = [];
         if (!empty($query)) {
@@ -89,13 +100,19 @@ class MyDataRequest
             $params['body'] = $body;
         }
 
-        $response = $this->client()->post($this->url, $params);
-        $xml = simplexml_load_string($response->getBody());
+        $response = $this->client()->post($url, $params);
+        $xml = simplexml_load_string($response->getBody()->getContents());
 
         return ResponseDocParser::parseXML($xml);
     }
 
-    protected function client(): Client
+    private function mock()
+    {
+        $callback = self::$mockResponse;
+        return $callback();
+    }
+
+    private function client(): Client
     {
         return new Client([
             'headers' => [
@@ -104,5 +121,12 @@ class MyDataRequest
                 'Content-Type'              => "text/xml"
             ],
         ]);
+    }
+
+    private static function validateCredentials(): void
+    {
+        if (empty(self::$user_id) || empty(self::$subscription_key)) {
+            throw new Error("Missing credentials. Please use MyDataRequest::setCredentials method to set your myDATA Rest API credentials.");
+        }
     }
 }
