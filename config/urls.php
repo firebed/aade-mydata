@@ -9,7 +9,7 @@ use Firebed\AadeMyData\Http\SendExpensesClassification;
 use Firebed\AadeMyData\Http\SendIncomeClassification;
 use Firebed\AadeMyData\Http\SendInvoices;
 
-$dev = 'https://mydata-dev.azure-api.net/';
+$dev = 'https://mydataapidev.aade.gr/';
 $prod = 'https://mydatapi.aade.gr/myDATA/';
 
 return [
