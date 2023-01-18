@@ -37,7 +37,7 @@ class InvoicesDocXML
             $args .= "$k=\"$v\" ";
         });
 
-        $xml = new SimpleXMLElement("<InvoicesDoc $args/>");
+        $xml = new SimpleXMLElement("<?xml version='1.0' encoding='UTF-8'?><InvoicesDoc $args/>");
 
         $this->toXML($xml, $invoicesDoc);
 
