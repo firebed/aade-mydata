@@ -2,10 +2,10 @@
 
 namespace Firebed\AadeMyData\Models;
 
-use Firebed\AadeMyData\Enums\SpecialInvoiceCategory;
 use Firebed\AadeMyData\Enums\InvoiceType;
 use Firebed\AadeMyData\Enums\InvoiceVariationType;
 use Firebed\AadeMyData\Enums\MovePurpose;
+use Firebed\AadeMyData\Enums\SpecialInvoiceCategory;
 
 class InvoiceHeader extends Type
 {
@@ -20,7 +20,7 @@ class InvoiceHeader extends Type
     /**
      * Σε περίπτωση μή έκδοσης σειράς παραστατικού, το πεδίο series πρέπει να έχει την τιμή 0
      *
-     * @param string $series Σειρά παραστατικού
+     * @param  string  $series  Σειρά παραστατικού
      */
     public function setSeries(string $series): void
     {
@@ -36,7 +36,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param string $aa ΑΑ Παραστατικού, μέγιστο επιτρεπτό μήκος 50
+     * @param  string  $aa  ΑΑ Παραστατικού, μέγιστο επιτρεπτό μήκος 50
      */
     public function setAa(string $aa): void
     {
@@ -52,7 +52,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param string $issueDate Ημερομηνία Έκδοσης Παραστατικού
+     * @param  string  $issueDate  Ημερομηνία Έκδοσης Παραστατικού
      */
     public function setIssueDate(string $issueDate): void
     {
@@ -68,7 +68,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param InvoiceType|string $invoiceType Είδος Παραστατικού
+     * @param  InvoiceType|string  $invoiceType  Είδος Παραστατικού
      */
     public function setInvoiceType(InvoiceType|string $invoiceType): void
     {
@@ -84,7 +84,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param bool $vatPaymentSuspension Αναστολή Καταβολής ΦΠΑ
+     * @param  bool  $vatPaymentSuspension  Αναστολή Καταβολής ΦΠΑ
      */
     public function setVatPaymentSuspension(bool $vatPaymentSuspension): void
     {
@@ -102,7 +102,7 @@ class InvoiceHeader extends Type
     /**
      * Ο κωδικός νομισμάτων προέρχεται από την αντίστοιχη λίστα σύμφωνα με το πρότυπο ISO4217.
      *
-     * @param string $currency Νόμισμα
+     * @param  string  $currency  Νόμισμα
      */
     public function setCurrency(string $currency): void
     {
@@ -121,7 +121,7 @@ class InvoiceHeader extends Type
      * To πεδίο exchangeRate είναι η ισοτιμία του νομίσματος σε σχέση με το ευρώ.
      * Πρέπει να συμπληρώνεται μόνο όταν το νόμισμα δεν έχει τιμή EUR
      *
-     * @param float $exchangeRate Ισοτιμία
+     * @param  float  $exchangeRate  Ισοτιμία
      */
     public function setExchangeRate(float $exchangeRate): void
     {
@@ -129,9 +129,9 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @return string|null Συσχετιζόμενα Παραστατικά
+     * @return array|null Συσχετιζόμενα Παραστατικά (ΜΑΡΚ)
      */
-    public function getCorrelatedInvoices(): ?string
+    public function getCorrelatedInvoices(): ?array
     {
         return $this->get('correlatedInvoices');
     }
@@ -139,11 +139,11 @@ class InvoiceHeader extends Type
     /**
      * Το στοιχείο correlatedInvoices είναι λίστα και περιέχει τα ΜΑΡΚ των συσχετιζόμενων παραστατικών.
      *
-     * @param string $correlatedInvoices Συσχετιζόμενα Παραστατικά
+     * @param  int  $correlatedInvoice  Συσχετιζόμενο Παραστατικό (ΜΑΡΚ)
      */
-    public function setCorrelatedInvoices(string $correlatedInvoices): void
+    public function addCorrelatedInvoice(int $correlatedInvoice): void
     {
-        $this->put('correlatedInvoices', $correlatedInvoices);
+        $this->push('correlatedInvoices', $correlatedInvoice);
     }
 
     /**
@@ -155,7 +155,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param bool $selfPricing Ένδειξη Αυτοτιμολόγησης
+     * @param  bool  $selfPricing  Ένδειξη Αυτοτιμολόγησης
      */
     public function setSelfPricing(bool $selfPricing): void
     {
@@ -171,7 +171,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param string $dispatchDate Ημερομηνία Έναρξης Αποστολής
+     * @param  string  $dispatchDate  Ημερομηνία Έναρξης Αποστολής
      */
     public function setDispatchDate(string $dispatchDate): void
     {
@@ -187,7 +187,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param string $dispatchTime Ώρα Έναρξης Αποστολής
+     * @param  string  $dispatchTime  Ώρα Έναρξης Αποστολής
      */
     public function setDispatchTime(string $dispatchTime): void
     {
@@ -203,7 +203,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param string $vehicleNumber Αριθμός Μεταφορικού Μέσου
+     * @param  string  $vehicleNumber  Αριθμός Μεταφορικού Μέσου
      */
     public function setVehicleNumber(string $vehicleNumber): void
     {
@@ -219,7 +219,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param MovePurpose|string $movePurpose Σκοπός Διακίνησης
+     * @param  MovePurpose|string  $movePurpose  Σκοπός Διακίνησης
      */
     public function setMovePurpose(MovePurpose|string $movePurpose): void
     {
@@ -238,7 +238,7 @@ class InvoiceHeader extends Type
      * Το πεδίο fuelInvoice ορίζει αν πρόκειται για παραστατικό πώλησης υγρών καυσίμων και
      * επιτρέπεται η αποστολή μόνο για την περίπτωση των παρόχων
      *
-     * @param bool $fuelInvoice Ένδειξη Παραστατικό καυσίμων
+     * @param  bool  $fuelInvoice  Ένδειξη Παραστατικό καυσίμων
      */
     public function setFuelInvoice(bool $fuelInvoice): void
     {
@@ -257,7 +257,7 @@ class InvoiceHeader extends Type
      * Οι πιθανές τιμές του πεδίου specialInvoiceCategory περιγράφονται αναλυτικά στον
      * αντίστοιχα πίνακα του Παραρτήματος.
      *
-     * @param SpecialInvoiceCategory|int $specialInvoiceCategory Ελάχιστη τιμή = 1, Μέγιστη τιμή = 4
+     * @param  SpecialInvoiceCategory|int  $specialInvoiceCategory  Ελάχιστη τιμή = 1, Μέγιστη τιμή = 10
      * @return void
      */
     public function setSpecialInvoiceCategory(SpecialInvoiceCategory|int $specialInvoiceCategory): void
@@ -278,11 +278,44 @@ class InvoiceHeader extends Type
      * αντίστοιχα πίνακα του Παραρτήματος. Επίσης, λεπτομέρειες σχετικά με τον τρόπο
      * χρήσης τους από επιχειρησιακής σκοπιάς περιγράφονται στο σχετικό επιχειρησιακό
      * έγγραφο. (Δεν επιτρέπεται στην περίπτωση αποστολής μέσω παρόχων)
-     * @param InvoiceVariationType|int $invoiceVariationType Ελάχιστη τιμή = 1, Μέγιστη τιμή = 4
+     * @param  InvoiceVariationType|int  $invoiceVariationType  Ελάχιστη τιμή = 1, Μέγιστη τιμή = 4
      * @return void
      */
     public function setInvoiceVariationType(InvoiceVariationType|int $invoiceVariationType): void
     {
         $this->put('invoiceVariationType', $invoiceVariationType);
+    }
+
+
+    /**
+     * @return array|null Λοιπές συσχετιζόμενες οντότητες
+     *
+     * @version 1.0.7
+     */
+    public function getOtherCorrelatedEntities(): ?array
+    {
+        return $this->get('otherCorrelatedEntities');
+    }
+
+    /**
+     * Λοιπές συσχετιζόμενες οντότητες
+     *
+     * @param  EntityType  $entityType
+     *
+     * @version 1.0.7
+     */
+    public function addOtherCorrelatedEntities(EntityType $entityType): void
+    {
+        $this->push('otherCorrelatedEntities', $entityType);
+    }
+
+    public function put($key, $value): void
+    {
+        if ($key === 'correlatedInvoices' || $key === 'otherCorrelatedEntities') {
+            $this->push($key, $value);
+            return;
+        }
+
+        parent::put($key, $value);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Firebed\AadeMyData\Models;
 
-abstract class Party extends Type
+class Party extends Type
 {
     /**
      * @return string|null Οποιοσδήποτε έγκυρος ΑΦΜ
@@ -158,5 +158,29 @@ abstract class Party extends Type
     public function setSupplyAccountNo(string $supplyAccountNo): void
     {
         $this->put('supplyAccountNo', $supplyAccountNo);
+    }
+
+    /**
+     * @return string|null Κωδ. Χώρας Έκδοσης Επίσημου Εγγράφου
+     * @version 1.0.7
+     */
+    public function getCountryDocumentId(): ?string
+    {
+        return $this->get('countryDocumentId');        
+    }
+
+    /**
+     * Ο κωδικός χώρας έκδοσης του επίσημου εγγράφου (π.χ διαβατηρίου), είναι
+     * επιτρεπτός μόνο στην περίπτωση διαβίβασης παραστατικών που ανήκουν στην
+     * Ειδική Κατηγορία Παραστατικού Tax free (το πεδίο της επικεφαλίδας του
+     * παραστατικού specialInvoiceCategory έχει την τιμή 4) και εφόσον έχει συμπληρωθεί
+     * το πεδίο αριθμός επίσημου εγγράφου (documentIdNo) και αφορά τον λήπτη του
+     * παραστατικού.
+     * 
+     * @version 1.0.7
+     */
+    public function setCountryDocumentId(string $countryDocumentId): void
+    {
+        $this->put('countryDocumentId', $countryDocumentId);        
     }
 }

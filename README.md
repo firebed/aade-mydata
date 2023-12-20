@@ -8,7 +8,7 @@ This package provides an expressive, fluent interface to ΑΑΔΕ myDATA invoici
 
 | Version | PHP | myDATA |
 |---------|-----|--------|
-| ^v.3.x  | 8.1 | v1.0.6 |
+| ^v.3.x  | 8.1 | v1.0.7 |
 | ^v.2.x  | 8.1 | v1.0.5 |
 | ^v.1.x  | 8.0 | v1.0.3 |
 
@@ -29,7 +29,7 @@ By default, the package's classes are loaded automatically. There is nothing for
 ## Documentation
 
 <p>Official myDATA webpage: <a href="https://www.aade.gr/mydata">AADE myDATA</a></p>
-<p>Official documentation: <a href="https://www.aade.gr/sites/default/files/2022-09/myDATA%20API%20Documentation%20v1.0.6_official_erp.pdf">AADE myDATA REST API v1.0.6.</a></p>
+<p>Official documentation: <a href="https://www.aade.gr/sites/default/files/2023-10/myDATA%20API%20Documentation%20v1.0.7_official_erp.pdf">AADE myDATA REST API v1.0.7.</a></p>
 <p>In order to use this package, you will need first a <b>user id</b> and a <b>subscription key</b>. You can get these credentials by signing up to mydata rest api.</p>
 <div>Development: <a href="https://mydata-dev-register.azurewebsites.net/">Sign up to mydata development api</a></div>
 <div>Production: <a href="https://www.aade.gr/mydata">Sign up to mydata production api</a></div>
@@ -54,6 +54,11 @@ $subscription_key = "your-subscription-key";
 
 MyDataRequest::setEnvironment($env);
 MyDataRequest::setCredentials($user_id, $subscription_key);
+```
+
+For development, you may need to disable client verification if you are not using https:
+```php
+MyDataRequest::verifyClient(false);
 ```
 
 ### SendInvoices
@@ -87,14 +92,15 @@ foreach ($response as $responseType) {
         // own and an invoice reference from myDATA, and you will have to relate these together. 
         // Each responseType has an index value which corresponds to the index of the invoice in 
         // the $invoicesDoc object, you can use this index value to find the invoice it is referred to.
-        // Afterwards, get the invoice's uid and mark values from the responseType,
-        // relate them with your local invoice and save them in your database.
+        // Retrieve the invoice's uid, mark, qr and other values from the responseType,
+        // then establish the correlation with your local invoice and persist these details in your database.
         $index = $responseType->getIndex();
         $uid = $responseType->getInvoiceUid();
         $mark = $responseType->getInvoiceMark();
         $cancelledByMark = $responseType->getCancellationMark();
+        $qrUrl = $responseType->getQrUrl();
 
-        dd(compact('index', 'uid', 'mark', 'cancelledByMark'));
+        dd(compact('index', 'uid', 'mark', 'cancelledByMark', 'qrUrl'));
     } else {
         // There were some errors for this specific invoice. See errors for details.
         foreach ($responseType->getErrors() as $error) {

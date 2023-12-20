@@ -135,6 +135,26 @@ class Response extends Type
     }
 
     /**
+     * @return string|null Το πεδίο qrUrl επιστρέφει μόνο στις υποβολές παραστατικών τύπου από 1.1 έως 11.5
+     * @version 1.0.7
+     */
+    public function getQrUrl(): ?string
+    {
+        return $this->get('qrUrl');
+    }
+
+    /**
+     * Χρησιμοποιείται από τα προγράμματα για τη δημιουργία QR Code τύπου Url
+     * 
+     * @param $qrUrl
+     * @version 1.0.7
+     */
+    public function setQrUrl($qrUrl): void
+    {
+        $this->put('qrUrl', $qrUrl);
+    }
+
+    /**
      * @return Errors|null Λίστα Σφαλμάτων
      */
     public function getErrors(): ?Errors

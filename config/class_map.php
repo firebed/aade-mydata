@@ -6,6 +6,7 @@ use Firebed\AadeMyData\Models\CancelledInvoice;
 use Firebed\AadeMyData\Models\CancelledInvoicesDoc;
 use Firebed\AadeMyData\Models\ContinuationToken;
 use Firebed\AadeMyData\Models\Counterpart;
+use Firebed\AadeMyData\Models\EntityType;
 use Firebed\AadeMyData\Models\Error;
 use Firebed\AadeMyData\Models\Errors;
 use Firebed\AadeMyData\Models\ExpensesClassification;
@@ -18,6 +19,7 @@ use Firebed\AadeMyData\Models\InvoiceIncomeClassification;
 use Firebed\AadeMyData\Models\InvoicesDoc;
 use Firebed\AadeMyData\Models\InvoiceSummary;
 use Firebed\AadeMyData\Models\Issuer;
+use Firebed\AadeMyData\Models\Party;
 use Firebed\AadeMyData\Models\PaymentMethodDetail;
 use Firebed\AadeMyData\Models\PaymentMethods;
 use Firebed\AadeMyData\Models\RequestedBookInfo;
@@ -27,6 +29,7 @@ use Firebed\AadeMyData\Models\ResponseDoc;
 use Firebed\AadeMyData\Models\Ship;
 use Firebed\AadeMyData\Models\TaxesTotals;
 use Firebed\AadeMyData\Models\TaxTotals;
+use Firebed\AadeMyData\Models\TransportDetailType;
 
 return [
     'InvoicesDoc'                => InvoicesDoc::class,
@@ -57,4 +60,7 @@ return [
     'response'                   => Response::class,
     'taxes'                      => TaxTotals::class,
     'taxesTotals'                => TaxesTotals::class,
+    'otherTransportDetails'      => TransportDetailType::class, // v1.0.7
+    'otherCorrelatedEntities'    => EntityType::class, // v1.0.7
+    'entityData'                 => Party::class // v1.0.7
 ];

@@ -60,8 +60,8 @@ final class Invoice extends Type
      * <li>Στην περίπτωση αδυναμίας επικοινωνίας του παρόχου με το myDATA κατά την έκδοση / διαβίβαση παραστατικού</li>
      * <li>Στην περίπτωση αδυναμίας επικοινωνίας του ERP με το myDATA κατά την έκδοση / διαβίβαση παραστατικού</li>
      * </ol>
-     * 
-     * @param int $transmissionFailure Κωδικός αδυναμίας επικοινωνίας παρόχου
+     *
+     * @param  int  $transmissionFailure  Κωδικός αδυναμίας επικοινωνίας παρόχου
      */
     public function setTransmissionFailure(int $transmissionFailure): void
     {
@@ -77,7 +77,7 @@ final class Invoice extends Type
     }
 
     /**
-     * @param Issuer $issuer Εκδότης Παραστατικού
+     * @param  Issuer  $issuer  Εκδότης Παραστατικού
      */
     public function setIssuer(Issuer $issuer): void
     {
@@ -93,7 +93,7 @@ final class Invoice extends Type
     }
 
     /**
-     * @param Counterpart $counterpart Λήπτης Παραστατικού
+     * @param  Counterpart  $counterpart  Λήπτης Παραστατικού
      */
     public function setCounterpart(Counterpart $counterpart): void
     {
@@ -110,8 +110,8 @@ final class Invoice extends Type
 
     /**
      * Προσθήκη τρόπου πληρωμής.
-     * 
-     * @param PaymentMethodDetail $paymentMethod Τρόπος Πληρωμής
+     *
+     * @param  PaymentMethodDetail  $paymentMethod  Τρόπος Πληρωμής
      */
     public function addPaymentMethod(PaymentMethodDetail $paymentMethod): void
     {
@@ -129,7 +129,7 @@ final class Invoice extends Type
     }
 
     /**
-     * @param InvoiceHeader $invoiceHeader Επικεφαλίδα Παραστατικού
+     * @param  InvoiceHeader  $invoiceHeader  Επικεφαλίδα Παραστατικού
      */
     public function setInvoiceHeader(InvoiceHeader $invoiceHeader): void
     {
@@ -146,8 +146,8 @@ final class Invoice extends Type
 
     /**
      * Προσθήκη γραμμής παραστατικού.
-     * 
-     * @param InvoiceDetails $invoiceDetails Γραμμή Παραστατικού
+     *
+     * @param  InvoiceDetails  $invoiceDetails  Γραμμή Παραστατικού
      */
     public function addInvoiceDetails(InvoiceDetails $invoiceDetails): void
     {
@@ -163,7 +163,7 @@ final class Invoice extends Type
     }
 
     /**
-     * @param InvoiceSummary $invoiceSummary Περίληψη Παραστατικού
+     * @param  InvoiceSummary  $invoiceSummary  Περίληψη Παραστατικού
      */
     public function setInvoiceSummary(InvoiceSummary $invoiceSummary): void
     {
@@ -175,14 +175,14 @@ final class Invoice extends Type
      * του ΦΠΑ, οι οποίοι αφορούν όλο το παραστατικό σαν σύνολο. Σε περίπτωση που ο
      * χρήστης κάνει χρήση αυτού του στοιχείου, δε θα μπορεί να εισάγει φόρους εκτός
      * του ΦΠΑ σε κάθε γραμμή του παραστατικού ξεχωριστά.
-     * 
+     *
      * @return TaxesTotals|null
      */
     public function getTaxesTotals(): ?TaxesTotals
     {
         return $this->get('taxesTotals');
     }
-    
+
     /**
      * Προσθήκη συνόλου φόρων.
      */
@@ -193,13 +193,48 @@ final class Invoice extends Type
         $this->put('taxesTotals', $taxesTotals);
     }
 
+    /**
+     * Συμπληρώνεται από την Υπηρεσία.
+     *
+     * Κωδικοποιημένο αλφαριθμητικό για να χρησιμοποιηθεί από τα
+     * προγράμματα για τη δημιουργία QR Code τύπου Url.
+     *
+     * @version 1.0.7
+     */
+    public function getQrCodeUrl(): ?string
+    {
+        return $this->get('qrCodeUrl');
+    }
+
+    /**
+     * @return TransportDetailType[]|null Λοιπές Λεπτομέρειες Διακίνησης (Ορισμός - Αλλαγή Μτφ Μέσων)
+     *
+     * @version 1.0.7
+     */
+    public function getOtherTransportDetails(): ?array
+    {
+        return $this->get('otherTransportDetails');
+    }
+
+    /**
+     * Προσθήκη Λεπτομέρειες Διακίνησης (Ορισμός - Αλλαγή Μτφ Μέσων).
+     *
+     * @param  TransportDetailType  $transportDetailType  Λεπτομέρειες Διακίνησης
+     *
+     * @version 1.0.7
+     */
+    public function addOtherTransportDetail(TransportDetailType $transportDetailType): void
+    {
+        $this->push('otherTransportDetails', $transportDetailType);
+    }
+
     public function put($key, $value): void
     {
-        if ($key === 'invoiceDetails') {
-            $this->addInvoiceDetails($value);
+        if ($key === 'invoiceDetails' || $key === 'otherTransportDetails') {
+            $this->push($key, $value);
             return;
         }
-        
+
         parent::put($key, $value);
     }
 }
