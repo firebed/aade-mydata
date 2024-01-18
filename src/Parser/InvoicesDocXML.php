@@ -63,8 +63,12 @@ class InvoicesDocXML
             }
 
             foreach ($property as $value) {
-                $child = $this->addNode($xml, $this->getTypeName($value));
-                $this->toXML($child, $value);
+                if ($value instanceof Type) {
+                    $child = $this->addNode($xml, $this->getTypeName($value));
+                    $this->toXML($child, $value);
+                    continue;
+                }
+                $this->addNode($xml, $key, $value, $type);
             }
         }
     }
