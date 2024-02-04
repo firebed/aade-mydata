@@ -1,5 +1,12 @@
 # ΑΑΔΕ - AADE myDATA
 
+
+## Reason for forking
+
+Changes for adding a Delivery note to an invoice.
+Added isDeliveryNote and components that can be used with it.
+Check out the SendInvoices sample code.
+
 ## Introduction
 
 This package provides an expressive, fluent interface to ΑΑΔΕ myDATA invoicing REST API. It handles almost all the boilerplate code for sending, cancelling and requesting invoices.
@@ -69,21 +76,181 @@ For example, if you set the counterpart before the issuer myDATA will throw an e
 </p>
 
 ```php
+$putDeliveryNote = true; //set true for put Delivery Note
+
+//***************************************************//Στοιχεία Εκδότη
+$issuer = new Issuer(); //Στοιχεία Εκδότη
+$issuer->setVatNumber('000000000'); //Οποιοσδήποτε έγκυρος ΑΦΜ εκδότη
+$issuer->setCountry('GR'); //Ο κωδικός της χώρας
+$issuer->setBranch(0); //Αρ. Εγκατάσ. Σε περίπτωση που η εγκατάσταση του εκδότη είναι η έδρα ή δεν υφίσταται, το πεδίο να έχει την τιμή 0
+
+if($putDeliveryNote){
+$issuer->setName('Επωνυμία εκδότη');//Επωνυμία εκδότη, είναι αποδεκτό στην περίπτωση Ένδειξη Παραστατικού Διακίνησης isDeliveryNote=rtue
+	$address = new Address(); //Διεύθυνση
+	$address->setStreet('Οδός Οδός'); //Οδός
+	$address->setNumber('40'); //Αριθμός Οδού
+	$address->setPostalCode('11855'); //Ταχυδρομικός Κώδικας
+	$address->setCity('Αθήνα'); //Όνομα πόλης
+$issuer->setAddress($address); //Διεύθυνση εκδότη, είναι αποδεκτό στην περίπτωση Ένδειξη Παραστατικού Διακίνησης isDeliveryNote=rtue
+}
+
+
+
+//***************************************************//Στοιχεία Λήπτη
+$counterpart = new Counterpart(); //Στοιχεία Λήπτη
+$counterpart->setVatNumber('000000000'); //Οποιοσδήποτε έγκυρος ΑΦΜ εκδότη
+$counterpart->setCountry('GR'); //Ο κωδικός της χώρας
+$counterpart->setBranch(0);//Αρ. Εγκατάσ. Σε περίπτωση που η εγκατάσταση του εκδότη είναι η έδρα ή δεν υφίσταται, το πεδίο να έχει την τιμή 0
+if($putDeliveryNote){
+$counterpart->setName('Επωνυμία λήπτη');//Επωνυμία λήπτη, είναι αποδεκτό στην περίπτωση Ένδειξη Παραστατικού Διακίνησης isDeliveryNote=rtue
+	$address = new Address(); //Διεύθυνση
+	$address->setStreet('Οδός Οδός'); //Οδός
+	$address->setNumber('45'); //Αριθμός Οδού
+	$address->setPostalCode('11855'); //Ταχυδρομικός Κώδικας
+	$address->setCity('Αθήνα'); //Όνομα πόλης
+$counterpart->setAddress($address); //Διεύθυνση λήπτη, είναι αποδεκτό στην περίπτωση Ένδειξη Παραστατικού Διακίνησης isDeliveryNote=rtue
+}
+
+
+
+//***************************************************//Γενικά Στοιχεία παραστατικού
+$invoiceHeader = new InvoiceHeader(); //Γενικά Στοιχεία παραστατικού
+$invoiceHeader->setSeries('0'); //Σειρά παραστατικού, Σε περίπτωση μή έκδοσης σειράς παραστατικού, το πεδίο series πρέπει να έχει την τιμή 0
+$invoiceHeader->setAa('1'); //ΑΑ Παραστατικού, μέγιστο επιτρεπτό μήκος 50
+$invoiceHeader->setIssueDate('2024-02-03'); //Ημερομηνία Έκδοσης Παραστατικού
+$invoiceHeader->setInvoiceType('1.1'); //Είδος Παραστατικού
+$invoiceHeader->setCurrency('EUR'); //Νόμισμα, Ο κωδικός νομισμάτων προέρχεται από την αντίστοιχη λίστα σύμφωνα με το πρότυπο ISO4217.
+
+if($putDeliveryNote){
+$invoiceHeader->setMovePurpose('1'); //Σκοπός Διακίνησης
+$otherDeliveryNoteHeader = new OtherDeliveryNoteHeader(); //Λοιπά Γενικά Στοιχεία Διακίνησης
+	$loadaddress = new LoadingAddress(); //Διεύθυνση Φόρτωσης
+	$loadaddress->setStreet('Οδός Οδός'); //Οδός
+	$loadaddress->setNumber('40'); //Αριθμός Οδού
+	$loadaddress->setPostalCode('11855'); //Ταχυδρομικός Κώδικας
+	$loadaddress->setCity('Αθήνα'); //Όνομα πόλης
+$otherDeliveryNoteHeader->setLoadingAddress($loadaddress); //Ορισμός, Διεύθυνση Φόρτωσης
+	$delivryaddress = new DeliveryAddress(); //Διεύθυνση Παράδοσης
+	$delivryaddress->setStreet('Οδός Οδός'); //Οδός
+	$delivryaddress->setNumber('45'); //Αριθμός Οδού
+	$delivryaddress->setPostalCode('11855'); //Ταχυδρομικός Κώδικας
+	$delivryaddress->setCity('Αθήνα'); //Όνομα πόλης
+$otherDeliveryNoteHeader->setDeliveryAddress($delivryaddress); //Ορισμός, Διεύθυνση Παράδοσης
+$invoiceHeader->setOtherDeliveryNoteHeader($otherDeliveryNoteHeader); //Ορισμός, Λοιπά Γενικά Στοιχεία Διακίνησης
+$invoiceHeader->setIsDeliveryNote(true); //Ένδειξη Παραστατικού Διακίνησης
+}
+
+
+
+//***************************************************//Στοιχεία Πληρωμών
+$paymentMethod = new PaymentMethodDetail(); //Στοιχεία Πληρωμών
+$paymentMethod->setType('3'); //Τύπος Πληρωμής
+$paymentMethod->setAmount(124.00); //Αναλογούν Ποσό
+$paymentMethod->setPaymentMethodInfo('Μετρητά'); //Λοιπές Πληροφορίες (Τρόπος Πληρωμής)
+
+
+
+
+//***************************************************//Λεπτομέρειες Παραστατικού
+//Add one new product
+$invoiceDetails = new InvoiceDetails(); //Λεπτομέρειες Παραστατικού
+$invoiceDetails->setLineNumber(1); //ΑΑ Γραμμής
+if($putDeliveryNote){
+$invoiceDetails->setItemCode('KE58'); //Κωδικός Είδους
+$invoiceDetails->setItemDescr('Είδος KE58'); //Περιγραφή Είδους
+$invoiceDetails->setQuantity(1); //Ποσότητα
+$invoiceDetails->setMeasurementUnit('1'); //Είδος Ποσότητας
+}
+$invoiceDetails->setNetValue(100.00); //Καθαρή Αξία
+$invoiceDetails->setVatCategory('1'); //Κατηγορία ΦΠΑ
+$invoiceDetails->setVatAmount(24.00); //Ποσό ΦΠΑ
+
+$incomeClassification = new IncomeClassification(); //Λίστα Χαρακτηρισμών Εσόδων
+$incomeClassification->setClassificationType('E3_561_001'); //Κωδικός Χαρακτηρισμού
+$incomeClassification->setClassificationCategory('category1_1'); //Κατηγορία Χαρακτηρισμού
+$incomeClassification->setAmount(100.00); //Ποσό
+$invoiceDetails->addIncomeClassification($incomeClassification); //Ορισμός, Λίστα Χαρακτηρισμών Εσόδων
+
+//Continue to new product or multiple products
+//ok let's add the second one too
+$invoiceDetailsb = new InvoiceDetails(); //Λεπτομέρειες Παραστατικού
+$invoiceDetailsb->setLineNumber(2); //ΑΑ Γραμμής
+if($putDeliveryNote){
+$invoiceDetailsb->setItemCode('BE51'); //Κωδικός Είδους
+$invoiceDetailsb->setItemDescr('Είδος BE51'); //Περιγραφή Είδους
+$invoiceDetailsb->setQuantity(1); //Ποσότητα
+$invoiceDetailsb->setMeasurementUnit('1'); //Είδος Ποσότητας
+}
+$invoiceDetailsb->setNetValue(100.00); //Καθαρή Αξία
+$invoiceDetailsb->setVatCategory('1'); //Κατηγορία ΦΠΑ
+$invoiceDetailsb->setVatAmount(24.00); //Ποσό ΦΠΑ
+
+$incomeClassification = new IncomeClassification(); //Λίστα Χαρακτηρισμών Εσόδων
+$incomeClassification->setClassificationType('E3_561_001'); //Κωδικός Χαρακτηρισμού
+$incomeClassification->setClassificationCategory('category1_2'); //Κατηγορία Χαρακτηρισμού
+$incomeClassification->setAmount(100.00); //Ποσό
+$invoiceDetailsb->addIncomeClassification($incomeClassification); //Ορισμός, Λίστα Χαρακτηρισμών Εσόδων
+
+
+
+
+//***************************************************//Συγκεντρωτικά Στοιχεία
+$invoiceSummary = new InvoiceSummary(); //Συγκεντρωτικά Στοιχεία
+$invoiceSummary->setTotalNetValue(200.00); //Σύνολο Καθαρής Αξίας
+$invoiceSummary->setTotalVatAmount(48.00); //Σύνολο ΦΠΑ
+$invoiceSummary->setTotalWithheldAmount(0.00); //Σύνολο Παρακρατήσεων Φόρων
+$invoiceSummary->setTotalFeesAmount(0.00); //Σύνολο Τελών
+$invoiceSummary->setTotalStampDutyAmount(0.00); //Σύνολο Χαρτοσήμου
+$invoiceSummary->setTotalOtherTaxesAmount(0.00); //Σύνολο Λοιπών Φόρων
+$invoiceSummary->setTotalDeductionsAmount(0.00); //Σύνολο Κρατήσεων
+$invoiceSummary->setTotalGrossValue(248.00); //Συνολική Αξία
+
+//IncomeClassification for first product
+$incomeClassification = new IncomeClassification(); //Λίστα Χαρακτηρισμών Εσόδων
+$incomeClassification->setClassificationType('E3_561_001'); //Κωδικός Χαρακτηρισμού
+$incomeClassification->setClassificationCategory('category1_1'); //Κατηγορία Χαρακτηρισμού
+$incomeClassification->setAmount(100.00); //Ποσό
+$invoiceSummary->addIncomeClassification($incomeClassification); //Ορισμός, Λίστα Χαρακτηρισμών Εσόδων
+
+//IncomeClassification for second product
+$incomeClassification = new IncomeClassification(); //Λίστα Χαρακτηρισμών Εσόδων
+$incomeClassification->setClassificationType('E3_561_001'); //Κωδικός Χαρακτηρισμού
+$incomeClassification->setClassificationCategory('category1_2'); //Κατηγορία Χαρακτηρισμού
+$incomeClassification->setAmount(100.00); //Ποσό
+$invoiceSummary->addIncomeClassification($incomeClassification); //Ορισμός, Λίστα Χαρακτηρισμών Εσόδων
+
+//Continue IncomeClassification for multiple products 
+
+
+
+
 $invoice = new Invoice();
 $invoice->setIssuer($issuer); // Firebed\AadeMyData\Models\Issuer
 $invoice->setCounterpart($counterpart); // Firebed\AadeMyData\Models\Counterpart
 $invoice->setInvoiceHeader($invoiceHeader); // Firebed\AadeMyData\Models\InvoiceHeader
 $invoice->addPaymentMethod($paymentMethod); // Firebed\AadeMyData\Models\PaymentMethodDetail
 $invoice->addInvoiceDetails($invoiceDetails); // Firebed\AadeMyData\Models\InvoiceDetails
+$invoice->addInvoiceDetails($invoiceDetailsb); // Firebed\AadeMyData\Models\InvoiceDetails
 $invoice->setInvoiceSummary($invoiceSummary); // Firebed\AadeMyData\Models\InvoiceSummary
             
 $invoicesDoc = new InvoicesDoc();
 $invoicesDoc->addInvoice($invoice);
 // You can add multiple invoices at once
 
+
+/*
+var_dump($invoicesDoc);
+exit();
+*/
+
 // Create the request
 $sendInvoices = new SendInvoices();
 $response = $sendInvoices->handle($invoicesDoc);
+
+
+function dd($testtt){
+	var_dump($testtt);
+}
 
 $errors = [];
 foreach ($response as $responseType) {
