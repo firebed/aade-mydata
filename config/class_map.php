@@ -31,6 +31,10 @@ use Firebed\AadeMyData\Models\TaxesTotals;
 use Firebed\AadeMyData\Models\TaxTotals;
 use Firebed\AadeMyData\Models\TransportDetailType;
 
+use Firebed\AadeMyData\Models\OtherDeliveryNoteHeader; //benim
+use Firebed\AadeMyData\Models\LoadingAddress; //benim
+use Firebed\AadeMyData\Models\DeliveryAddress; //benim
+
 return [
     'InvoicesDoc'                => InvoicesDoc::class,
     'RequestedDoc'               => RequestedDoc::class,
@@ -38,6 +42,9 @@ return [
     'RequestedBookInfo'          => RequestedBookInfo::class,
     'bookInfo'                   => BookInfo::class,
     'address'                    => Address::class,
+	'otherDeliveryNoteHeader'    => OtherDeliveryNoteHeader::class, //benim
+	'loadingAddress'    		 => LoadingAddress::class, //benim
+	'deliveryAddress'  			 => DeliveryAddress::class, //benim
     'cancelledInvoice'           => CancelledInvoice::class,
     'cancelledInvoicesDoc'       => CancelledInvoicesDoc::class,
     'continuationToken'          => ContinuationToken::class,
