@@ -83,6 +83,22 @@ class InvoiceHeader extends Type
         return $this->get('vatPaymentSuspension');
     }
 
+	/** benim
+	* @param bool $isDeliveryNote Ένδειξη Παραστατικού Διακίνησης
+	*/
+    public function setIsDeliveryNote(bool $isDeliveryNote): void
+    {
+        $this->put('isDeliveryNote', $isDeliveryNote);
+    }
+	
+	/** benim
+	* @param OtherDeliveryNoteHeader $otherDeliveryNoteHeader Λοιπά Γενικά Στοιχεία Διακίνησης.
+	*/
+    public function setOtherDeliveryNoteHeader(OtherDeliveryNoteHeader $otherDeliveryNoteHeader): void
+    {
+        $this->put('otherDeliveryNoteHeader', $otherDeliveryNoteHeader);
+    }
+	
     /**
      * @param  bool  $vatPaymentSuspension  Αναστολή Καταβολής ΦΠΑ
      */

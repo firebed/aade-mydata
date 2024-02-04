@@ -525,6 +525,24 @@ class InvoiceDetails extends Type
         $this->put('quantity15', $quantity15);
     }
 
+    /** benim
+     * @return string|null Κωδικός Είδους
+     */
+    public function getItemCode(): ?string
+    {
+        return $this->get('itemDescr');
+    }
+	
+    /** benim
+     * Προσθήκη Κωδικός Είδους.
+     *
+     * @param string|null $itemCode Μέγιστο επιτρεπτό μήκος 50
+     */
+    public function setItemCode(?string $itemCode): void
+    {
+        $this->put('itemCode', $itemCode);
+    }
+	
     /**
      * @return string|null Περιγραφή Είδους
      */
