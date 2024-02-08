@@ -77,4 +77,16 @@ enum SpecialInvoiceCategory: int
      * @version 1.0.7
      */
     case TYPE_10 = 10;
+
+
+    /**
+     *  Επίδομα Θέρμανσης
+     */
+    case TYPE_11 = 11;
+
+    
+    /**
+     *  Συναλλαγές εστίασης
+     */
+    case TYPE_12 = 12;
 }

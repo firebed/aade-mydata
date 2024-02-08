@@ -11,6 +11,13 @@ trait XMLParser
     private static function parse(SimpleXMLElement $node): mixed
     {
         $parent = self::morph($node->getName());
+        
+        if ($parent === null) {
+            // If a type doesn't exist in the current version
+            // returning null will omit the type instead
+            // of throwing an exception. 
+            return null;
+        }
 
         self::applyClassifications($node, $parent);
 
@@ -30,7 +37,7 @@ trait XMLParser
     private static function morph(string $name): mixed
     {
         if (!array_key_exists($name, self::$class_map)) {
-            throw new InvalidArgumentException;
+            return null;
         }
         
         return new self::$class_map[$name];

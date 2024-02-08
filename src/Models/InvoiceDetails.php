@@ -12,6 +12,22 @@ use Firebed\AadeMyData\Enums\VatCategory;
 use Firebed\AadeMyData\Enums\VatExemption;
 use Firebed\AadeMyData\Enums\WithheldPercentCategory;
 
+/**
+ * <ul>
+ *  <li>Τα πεδία otherMeasurementUnitQuantity και otherMeasurementUnitTitle
+ *  συμπληρώνονται υποχρεωτικά στην περίπτωση που έχει επιλεγεί measurementUnit
+ *  = 7 (Τεμάχια_Λοιπές Περιπτώσεις). Με την επιλογή measurementUnit = 7
+ *  (Τεμάχια_Λοιπές Περιπτώσεις) ως μονάδα μέτρησης για τις περιπτώσεις
+ *  παραστατικών διακίνησης, δίνεται η δυνατότητα να διαβιβαστεί η πληροφορία
+ *  μονάδας μέτρησης που δε συμπεριλαμβάνεται σε κάποια από τις διαθέσιμες τιμές
+ *  της λίστας, με αριθμητική απεικόνιση του πλήθους
+ *  (otherMeasurementUnitQuantity) που αντιστοιχεί στο είδος συσκευασίας και
+ *  σύντομη αναγραφή του είδους συσκευασίας στο λεκτικό πεδίο
+ *  (otherMeasurementUnitTitle) π.χ. 3_Παλέτες. Σημειώνεται ότι το πεδίο quantity
+ *  («Ποσότητα») σε κάθε περίπτωση αντιστοιχεί στο πλήθος των ειδών που
+ *  διακινούνται και όχι στο πλήθος των ειδών συσκευασίας.</li>
+ * </ul>
+ */
 class InvoiceDetails extends Type
 {
     /**
@@ -83,7 +99,7 @@ class InvoiceDetails extends Type
 
     /**
      * Οι πιθανές τιμές για το πεδίο fuelCode (κωδικός καυσίμου) περιγράφονται
-     * αναλυτικά στον αντίστοιχο πίνακα του Παραρτήματος. Eπιτρέπεται η αποστολή του
+     * αναλυτικά στον αντίστοιχο πίνακα του Παραρτήματος. Επιτρέπεται η αποστολή του
      * μόνο για την περίπτωση των παρόχων και εφόσον πρόκειται για παραστατικό
      * καυσίμων (invoiceHeaderType.fuelInvoice = true). Η τιμή 999 χρησιμοποιείται στην
      * περίπτωση που σε ένα παραστατικό εκτός από καύσιμα υπάρχει η ανάγκη
@@ -525,26 +541,9 @@ class InvoiceDetails extends Type
         $this->put('quantity15', $quantity15);
     }
 
-    /** benim
-     * @return string|null Κωδικός Είδους
-     */
-    public function getItemCode(): ?string
-    {
-        return $this->get('itemDescr');
-    }
-	
-    /** benim
-     * Προσθήκη Κωδικός Είδους.
-     *
-     * @param string|null $itemCode Μέγιστο επιτρεπτό μήκος 50
-     */
-    public function setItemCode(?string $itemCode): void
-    {
-        $this->put('itemCode', $itemCode);
-    }
-	
     /**
      * @return string|null Περιγραφή Είδους
+     * @version 1.0.8
      */
     public function getItemDescr(): ?string
     {
@@ -552,13 +551,100 @@ class InvoiceDetails extends Type
     }
 
     /**
-     * Αποδεκτό μόνο στην περίπτωση παραστατικών της ειδικής κατηγορίας tax free.
+     * Αποδεκτό μόνο στην περίπτωση παραστατικών της ειδικής κατηγορίας
+     * tax free ή που είναι τιμολόγια και δελτία αποστολής ή απλά
+     * δελτία διακίνησης (π.χ 9.3).
      *
-     * @param string|null $itemDescr Μέγιστο επιτρεπτό μήκος 300
+     * @param string|null $itemDescr Περιγραφή Είδους (Μέγιστο επιτρεπτό μήκος 300)
+     * @version 1.0.8
      */
     public function setItemDescr(?string $itemDescr): void
     {
         $this->put('itemDescr', $itemDescr);
+    }
+
+    /**
+     * @return mixed|null Κωδικός Taric
+     * @version 1.0.8
+     */
+    public function getTaricNo(): ?string
+    {
+        return $this->get('TaricNo');
+    }
+
+    /**
+     * Αποδεκτό μόνο στην περίπτωση παραστατικών που είναι τιμολόγια και
+     * δελτία αποστολής ή απλά δελτία διακίνησης (π.χ 9.3).
+     *
+     * @param string|null $taricNo Κωδικός Taric (Υποχρεωτικό μήκος 10)
+     * @version 1.0.8
+     */
+    public function setTaricNo(?string $taricNo): void
+    {
+        $this->put('TaricNo', $taricNo);
+    }
+
+    /**
+     * @return string|null Κωδικός Είδους
+     * @version 1.0.8
+     */
+    public function getItemCode(): ?string
+    {
+        return $this->get('itemCode');
+    }
+
+    /**
+     * Αποδεκτό μόνο στην περίπτωση παραστατικών που είναι τιμολόγια και
+     * δελτία αποστολής ή απλά δελτία διακίνησης (π.χ 9.3).
+     *
+     * @param string|null $itemCode Κωδικός Είδους (Μέγιστο επιτρεπτό μήκος 10)
+     * @version 1.0.8
+     */
+    public function setItemCode(?string $itemCode): void
+    {
+        $this->put('itemCode', $itemCode);
+    }
+
+    /**
+     * @return int|null Πλήθος Μονάδας Μέτρησης Τεμάχια Άλλα
+     * @version 1.0.8
+     */
+    public function getOtherMeasurementUnitQuantity(): ?int
+    {
+        return $this->get('otherMeasurementUnitQuantity');
+    }
+
+    /**
+     * Αποδεκτό μόνο στην περίπτωση που measurementUnit = 7
+     * (Τεμάχια_Λοιπές Περιπτώσεις).
+     *
+     * @param int|null $otherMeasurementUnitQuantity Πλήθος Μονάδας Μέτρησης Τεμάχια Άλλα
+     * @version 1.0.8
+     */
+    public function setOtherMeasurementUnitQuantity(?int $otherMeasurementUnitQuantity): void
+    {
+        $this->push('otherMeasurementUnitQuantity', $otherMeasurementUnitQuantity);
+    }
+
+    /**
+     * @return int|null Τίτλος Μονάδας Μέτρησης Τεμάχια Άλλα
+     * @version 1.0.8
+     */
+    public function getOtherMeasurementUnitTitle(): ?int
+    {
+        return $this->get('otherMeasurementUnitTitle');
+    }
+
+    /**
+     * Αποδεκτό μόνο στην περίπτωση που measurementUnit = 7
+     * (Τεμάχια_Λοιπές Περιπτώσεις).
+     *
+     * @param string|null $otherMeasurementUnitTitle Τίτλος Μονάδας Μέτρησης Τεμάχια Άλλα
+     * @version 1.0.8
+     */
+    public function setOtherMeasurementUnitTitle(?string $otherMeasurementUnitTitle): void
+    {
+        $this->push('otherMeasurementUnitTitle', $otherMeasurementUnitTitle);
     }
 
     public function put($key, $value): void

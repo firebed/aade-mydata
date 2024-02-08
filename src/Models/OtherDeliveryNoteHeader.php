@@ -1,73 +1,109 @@
 <?php
-//benim
+
+/**
+ * @version 1.0.8
+ */
+
 namespace Firebed\AadeMyData\Models;
 
 class OtherDeliveryNoteHeader extends Type
 {
     /**
-     * @return string|null Διεύθυνση Φόρτωσης
+     * @return Address|null Διεύθυνση Φόρτωσης
+     * @version 1.0.8
      */
-    public function getLoadingAddress(): ?string
+    public function getLoadingAddress(): ?Address
     {
         return $this->get('loadingAddress');
     }
 
     /**
-     * @param string $loadingAddress Διεύθυνση Φόρτωσης
+     * Συμπληρώνεται για παραστατικά που είναι δελτία αποστολής
+     * (π.χ 9.3) ή τιμολόγιο και δελτίο αποστολής (isDeliveryNote = true).
+     *
+     * @param Address $loadingAddress Διεύθυνση Φόρτωσης
+     * @version 1.0.8
      */
-    public function setLoadingAddress(LoadingAddress|String $loadingAddress): void
+    public function setLoadingAddress(Address $loadingAddress): void
     {
         $this->put('loadingAddress', $loadingAddress);
     }
-	
+
     /**
-     * @return string|null Διεύθυνση Παράδοσης
+     * @return Address|null Διεύθυνση Παράδοσης
+     * @version 1.0.8
      */
-    public function getDeliveryAddress(): ?string
+    public function getDeliveryAddress(): ?Address
     {
         return $this->get('deliveryAddress');
     }
 
     /**
-     * @param string $deliveryAddress Διεύθυνση Παράδοσης
+     * Συμπληρώνεται για παραστατικά που είναι δελτία αποστολής
+     * (π.χ 9.3) ή τιμολόγιο και δελτίο αποστολής (isDeliveryNote = true).
+     *
+     * @param Address $deliveryAddress Διεύθυνση Παράδοσης
+     * @version 1.0.8
      */
-    public function setDeliveryAddress(DeliveryAddress|String $deliveryAddress): void
+    public function setDeliveryAddress(Address $deliveryAddress): void
     {
         $this->put('deliveryAddress', $deliveryAddress);
     }
-	
-    /**
-     * @return string|null Εγκατάσταση έναρξης διακίνησης (Εκδότη)
 
+    /**
+     * @return int|null Εγκατάσταση έναρξης διακίνησης (Εκδότη)
+     * @version 1.0.8
      */
-    public function getStartShippingBranch(): ?string
+    public function getStartShippingBranch(): ?int
     {
         return $this->get('startShippingBranch');
     }
 
     /**
-     * @param string $startShippingBranch Εγκατάσταση έναρξης διακίνησης (Εκδότη)
+     * <ul>
+     * <li>Συμπληρώνεται για παραστατικά που είναι δελτία αποστολής
+     * (π.χ 9.3) ή τιμολόγιο και δελτίο αποστολής (isDeliveryNote = true).</li>
+     *
+     * <li>Με το πεδίο startShippingBranch ορίζεται το υποκατάστημα από το οποίο έγινε η
+     * έναρξη της διακίνησης, σε περίπτωση που η έναρξη της διακίνησης γίνεται από
+     * κάποιο υποκατάστημα (εγκατάσταση) του εκδότη του παραστατικού, το οποίο είναι
+     * διαφορετικό από το υποκατάστημα του εκδότη του δελτίου.</li>
+     * </ul>
+     *
+     * @param int|null $startShippingBranch Εγκατάσταση έναρξης διακίνησης (Εκδότη)
+     * @version 1.0.8
      */
-    public function setStartShippingBranch(string $startShippingBranch): void
+    public function setStartShippingBranch(?int $startShippingBranch): void
     {
         $this->put('startShippingBranch', $startShippingBranch);
     }
 
     /**
-     * @return string|null Εγκατάσταση ολοκλήρωσης διακίνησης (Εκδότη)
-
+     * @return int|null Εγκατάσταση ολοκλήρωσης διακίνησης (Λήπτη)
+     * @version 1.0.8
      */
-    public function getCompleteShippingBranch(): ?string
+    public function getCompleteShippingBranch(): ?int
     {
         return $this->get('completeShippingBranch');
     }
 
     /**
-     * @param string $completeShippingBranch Εγκατάσταση ολοκλήρωσης διακίνησης (Εκδότη)
+     * <ul>
+     * <li>Συμπληρώνεται για παραστατικά που είναι δελτία αποστολής
+     * (π.χ 9.3) ή τιμολόγιο και δελτίο αποστολής (isDeliveryNote = true).</li>
+     *
+     * <li>Με το πεδίο completeShippingBranch ορίζεται το υποκατάστημα στο οποίο θα
+     * ολοκληρωθεί η διακίνηση, σε περίπτωση που η διακίνηση θα ολοκληρωθεί σε
+     * κάποιο υποκατάστημα (εγκατάσταση) του λήπτη του παραστατικού, το οποίο είναι
+     * διαφορετικό από το υποκατάστημα του λήπτη του δελτίου</li>
+     * </ul>
+     *
+     * @param int|null $completeShippingBranch Εγκατάσταση ολοκλήρωσης διακίνησης (Λήπτη)
+     * @version 1.0.8
      */
-    public function setCompleteShippingBranch(string $completeShippingBranch): void
+    public function setCompleteShippingBranch(?int $completeShippingBranch): void
     {
         $this->put('completeShippingBranch', $completeShippingBranch);
-    }	
-	
+    }
+
 }
