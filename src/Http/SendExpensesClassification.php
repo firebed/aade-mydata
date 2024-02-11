@@ -2,20 +2,20 @@
 
 namespace Firebed\AadeMyData\Http;
 
+use Exception;
 use Firebed\AadeMyData\Models\InvoiceExpensesClassification;
 use Firebed\AadeMyData\Models\ResponseDoc;
-use GuzzleHttp\Exception\GuzzleException;
 
 class SendExpensesClassification extends MyDataRequest
 {
     /**
      * With this method the user can classify invoices that produce income.
      *
-     * @param InvoiceExpensesClassification[] $invoiceExpensesClassificationTypes
-     * @throws GuzzleException
+     * @param  InvoiceExpensesClassification[]  $invoiceExpensesClassificationTypes
+     * @throws Exception
      */
     public function handle(array $invoiceExpensesClassificationTypes): ResponseDoc
     {
-        return $this->post();
+        throw new Exception('Not implemented');
     }
 }
