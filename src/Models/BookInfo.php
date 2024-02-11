@@ -38,7 +38,7 @@ class BookInfo extends Type
      */
     public function setContinuationToken(ContinuationToken $continuationToken): void
     {
-        $this->continuationToken = $continuationToken;
+        $this->put('continuationToken', $continuationToken);
     }
 
     /**
