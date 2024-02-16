@@ -17,7 +17,6 @@
   "require": {
     "php": "^8.1",
     "ext-dom": "*",
-    "ext-simplexml": "*",
     "guzzlehttp/guzzle": "^7.0.1"
   },
   "require-dev": {
