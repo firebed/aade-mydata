@@ -26,6 +26,6 @@ class TransportDetailType extends Type
      */
     public function setVehicleNumber(int $vehicleNumber): void
     {
-        $this->put('vehicleNumber', $vehicleNumber);
+        $this->set('vehicleNumber', $vehicleNumber);
     }
 }

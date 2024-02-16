@@ -26,7 +26,7 @@ class OtherDeliveryNoteHeader extends Type
      */
     public function setLoadingAddress(Address $loadingAddress): void
     {
-        $this->put('loadingAddress', $loadingAddress);
+        $this->set('loadingAddress', $loadingAddress);
     }
 
     /**
@@ -47,7 +47,7 @@ class OtherDeliveryNoteHeader extends Type
      */
     public function setDeliveryAddress(Address $deliveryAddress): void
     {
-        $this->put('deliveryAddress', $deliveryAddress);
+        $this->set('deliveryAddress', $deliveryAddress);
     }
 
     /**
@@ -75,7 +75,7 @@ class OtherDeliveryNoteHeader extends Type
      */
     public function setStartShippingBranch(?int $startShippingBranch): void
     {
-        $this->put('startShippingBranch', $startShippingBranch);
+        $this->set('startShippingBranch', $startShippingBranch);
     }
 
     /**
@@ -103,7 +103,7 @@ class OtherDeliveryNoteHeader extends Type
      */
     public function setCompleteShippingBranch(?int $completeShippingBranch): void
     {
-        $this->put('completeShippingBranch', $completeShippingBranch);
+        $this->set('completeShippingBranch', $completeShippingBranch);
     }
 
 }

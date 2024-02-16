@@ -3,8 +3,12 @@
 namespace Firebed\AadeMyData\Models;
 
 
-final class Invoice extends Type
+class Invoice extends Type
 {
+    public array $groups = [
+        'paymentMethods'
+    ];
+    
     /**
      * Συμπληρώνεται από την Υπηρεσία.
      *
@@ -61,11 +65,11 @@ final class Invoice extends Type
      * <li>Στην περίπτωση αδυναμίας επικοινωνίας του ERP με το myDATA κατά την έκδοση / διαβίβαση παραστατικού</li>
      * </ol>
      *
-     * @param  int  $transmissionFailure  Κωδικός αδυναμίας επικοινωνίας παρόχου
+     * @param int $transmissionFailure Κωδικός αδυναμίας επικοινωνίας παρόχου
      */
     public function setTransmissionFailure(int $transmissionFailure): void
     {
-        $this->put('transmissionFailure', $transmissionFailure);
+        $this->set('transmissionFailure', $transmissionFailure);
     }
 
     /**
@@ -77,11 +81,11 @@ final class Invoice extends Type
     }
 
     /**
-     * @param  Issuer  $issuer  Εκδότης Παραστατικού
+     * @param Issuer $issuer Εκδότης Παραστατικού
      */
     public function setIssuer(Issuer $issuer): void
     {
-        $this->put('issuer', $issuer);
+        $this->set('issuer', $issuer);
     }
 
     /**
@@ -93,31 +97,31 @@ final class Invoice extends Type
     }
 
     /**
-     * @param  Counterpart  $counterpart  Λήπτης Παραστατικού
+     * @param Counterpart $counterpart Λήπτης Παραστατικού
      */
     public function setCounterpart(Counterpart $counterpart): void
     {
-        $this->put('counterpart', $counterpart);
+        $this->set('counterpart', $counterpart);
     }
 
     /**
-     * @return PaymentMethods|null Τρόποι Πληρωμής
+     * @return PaymentMethodDetail[] Τρόποι Πληρωμής
      */
-    public function getPaymentMethods(): ?PaymentMethods
+    public function getPaymentMethods(): array
     {
-        return $this->get('paymentMethods');
+        return $this->get('paymentMethods')['paymentMethodDetails'] ?? [];
     }
 
     /**
      * Προσθήκη τρόπου πληρωμής.
      *
-     * @param  PaymentMethodDetail  $paymentMethod  Τρόπος Πληρωμής
+     * @param PaymentMethodDetail $paymentMethodDetail Τρόπος Πληρωμής
      */
-    public function addPaymentMethod(PaymentMethodDetail $paymentMethod): void
+    public function addPaymentMethod(PaymentMethodDetail $paymentMethodDetail): void
     {
-        $paymentMethods = $this->getPaymentMethods() ?? new PaymentMethods();
-        $paymentMethods->addPaymentMethod($paymentMethod);
-        $this->put('paymentMethods', $paymentMethods);
+        $paymentMethods = $this->getPaymentMethods();
+        $paymentMethods[] = $paymentMethodDetail;
+        $this->set('paymentMethods', $paymentMethods);
     }
 
     /**
@@ -129,11 +133,11 @@ final class Invoice extends Type
     }
 
     /**
-     * @param  InvoiceHeader  $invoiceHeader  Επικεφαλίδα Παραστατικού
+     * @param InvoiceHeader $invoiceHeader Επικεφαλίδα Παραστατικού
      */
     public function setInvoiceHeader(InvoiceHeader $invoiceHeader): void
     {
-        $this->put('invoiceHeader', $invoiceHeader);
+        $this->set('invoiceHeader', $invoiceHeader);
     }
 
     /**
@@ -147,7 +151,7 @@ final class Invoice extends Type
     /**
      * Προσθήκη γραμμής παραστατικού.
      *
-     * @param  InvoiceDetails  $invoiceDetails  Γραμμή Παραστατικού
+     * @param InvoiceDetails $invoiceDetails Γραμμή Παραστατικού
      */
     public function addInvoiceDetails(InvoiceDetails $invoiceDetails): void
     {
@@ -163,11 +167,11 @@ final class Invoice extends Type
     }
 
     /**
-     * @param  InvoiceSummary  $invoiceSummary  Περίληψη Παραστατικού
+     * @param InvoiceSummary $invoiceSummary Περίληψη Παραστατικού
      */
     public function setInvoiceSummary(InvoiceSummary $invoiceSummary): void
     {
-        $this->put('invoiceSummary', $invoiceSummary);
+        $this->set('invoiceSummary', $invoiceSummary);
     }
 
     /**
@@ -190,7 +194,7 @@ final class Invoice extends Type
     {
         $taxesTotals = $this->getTaxesTotals() ?? new TaxesTotals();
         $taxesTotals->addTaxes($taxTotalsType);
-        $this->put('taxesTotals', $taxesTotals);
+        $this->set('taxesTotals', $taxesTotals);
     }
 
     /**
@@ -219,7 +223,7 @@ final class Invoice extends Type
     /**
      * Προσθήκη Λεπτομέρειες Διακίνησης (Ορισμός - Αλλαγή Μτφ Μέσων).
      *
-     * @param  TransportDetailType  $transportDetailType  Λεπτομέρειες Διακίνησης
+     * @param TransportDetailType $transportDetailType Λεπτομέρειες Διακίνησης
      *
      * @version 1.0.7
      */
@@ -228,13 +232,23 @@ final class Invoice extends Type
         $this->push('otherTransportDetails', $transportDetailType);
     }
 
-    public function put($key, $value): void
+    public function set($key, $value): void
     {
         if ($key === 'invoiceDetails' || $key === 'otherTransportDetails') {
             $this->push($key, $value);
             return;
         }
 
-        parent::put($key, $value);
+        if ($key === 'paymentMethods') {
+            parent::set('paymentMethods', ['paymentMethodDetails' => $value]);
+            return;
+        }
+        
+        if ($key === 'paymentMethodDetails') {
+            $this->addPaymentMethod($value);
+            return;
+        }
+
+        parent::set($key, $value);
     }
 }

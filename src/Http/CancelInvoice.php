@@ -2,14 +2,16 @@
 
 namespace Firebed\AadeMyData\Http;
 
+use Firebed\AadeMyData\Http\Traits\HasResponseXML;
 use Firebed\AadeMyData\Models\ResponseDoc;
+use Firebed\AadeMyData\Xml\ResponseDocReader;
 use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * <p>Αυτή η POST μέθοδος χρησιμοποιείται για την ακύρωση παραστατικού χωρίς
  * επαναϋποβολή καινούργιου. Ο χρήστης την καλεί υποβάλλοντας ως παράμετρο το mark
  * του παραστατικού το οποίο θέλει να ακυρώσει. Για την περίπτωση εκείνη και μόνο που η
- * μέθοδος κληθεί από τρίτο πρόσωπο (όπως εκπρόσωπος Ν.Π. ή λογιστής), ο ΑΦΜ της
+ * μέθοδος κληθεί από τρίτο πρόσωπο (όπως εκπρόσωπος Ν.Π., ή λογιστής), ο ΑΦΜ της
  * οντότητας που εξέδωσε το προς ακύρωση παραστατικό αποστέλλεται μέσω της
  * παραμέτρου entityVatNumber, διαφορετικά η εν λόγω παράμετρος δε χρειάζεται να
  * αποσταλεί.</p>
@@ -20,6 +22,8 @@ use GuzzleHttp\Exception\GuzzleException;
  */
 class CancelInvoice extends MyDataRequest
 {
+    use HasResponseXML;
+    
     /**
      * @param string      $mark            Μοναδικός αριθμός καταχώρησης παραστατικού προς ακύρωση
      * @param string|null $entityVatNumber ΑΦΜ οντότητας
@@ -33,6 +37,9 @@ class CancelInvoice extends MyDataRequest
             $query['entityVatNumber'] = $entityVatNumber;
         }
 
-        return $this->post($query);
+        $results = $this->post($query);
+        $this->responseXML = $results->getBody()->getContents();
+        
+        return (new ResponseDocReader())->parseXML($this->responseXML);
     }
 }

@@ -24,7 +24,7 @@ class InvoiceHeader extends Type
      */
     public function setSeries(string $series): void
     {
-        $this->put('series', $series);
+        $this->set('series', $series);
     }
 
     /**
@@ -40,7 +40,7 @@ class InvoiceHeader extends Type
      */
     public function setAa(string $aa): void
     {
-        $this->put('aa', $aa);
+        $this->set('aa', $aa);
     }
 
     /**
@@ -56,7 +56,7 @@ class InvoiceHeader extends Type
      */
     public function setIssueDate(string $issueDate): void
     {
-        $this->put('issueDate', $issueDate);
+        $this->set('issueDate', $issueDate);
     }
 
     /**
@@ -72,7 +72,7 @@ class InvoiceHeader extends Type
      */
     public function setInvoiceType(InvoiceType|string $invoiceType): void
     {
-        $this->put('invoiceType', $invoiceType);
+        $this->set('invoiceType', $invoiceType);
     }
 
     /**
@@ -80,7 +80,7 @@ class InvoiceHeader extends Type
      */
     public function isVatPaymentSuspension(): ?bool
     {
-        return $this->get('vatPaymentSuspension');
+        return filter_var($this->get('vatPaymentSuspension'), FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -88,7 +88,7 @@ class InvoiceHeader extends Type
      */
     public function setVatPaymentSuspension(bool $vatPaymentSuspension): void
     {
-        $this->put('vatPaymentSuspension', $vatPaymentSuspension);
+        $this->set('vatPaymentSuspension', $vatPaymentSuspension);
     }
 
     /**
@@ -106,7 +106,7 @@ class InvoiceHeader extends Type
      */
     public function setCurrency(string $currency): void
     {
-        $this->put('currency', $currency);
+        $this->set('currency', $currency);
     }
 
     /**
@@ -125,7 +125,7 @@ class InvoiceHeader extends Type
      */
     public function setExchangeRate(float $exchangeRate): void
     {
-        $this->put('exchangeRate', $exchangeRate);
+        $this->set('exchangeRate', $exchangeRate);
     }
 
     /**
@@ -151,7 +151,7 @@ class InvoiceHeader extends Type
      */
     public function isSelfPricing(): ?bool
     {
-        return $this->get('selfPricing');
+        return filter_var($this->get('selfPricing'), FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -159,7 +159,7 @@ class InvoiceHeader extends Type
      */
     public function setSelfPricing(bool $selfPricing): void
     {
-        $this->put('selfPricing', $selfPricing);
+        $this->set('selfPricing', $selfPricing);
     }
 
     /**
@@ -175,7 +175,7 @@ class InvoiceHeader extends Type
      */
     public function setDispatchDate(string $dispatchDate): void
     {
-        $this->put('dispatchDate', $dispatchDate);
+        $this->set('dispatchDate', $dispatchDate);
     }
 
     /**
@@ -191,7 +191,7 @@ class InvoiceHeader extends Type
      */
     public function setDispatchTime(string $dispatchTime): void
     {
-        $this->put('dispatchTime', $dispatchTime);
+        $this->set('dispatchTime', $dispatchTime);
     }
 
     /**
@@ -207,7 +207,7 @@ class InvoiceHeader extends Type
      */
     public function setVehicleNumber(string $vehicleNumber): void
     {
-        $this->put('vehicleNumber', $vehicleNumber);
+        $this->set('vehicleNumber', $vehicleNumber);
     }
 
     /**
@@ -223,7 +223,7 @@ class InvoiceHeader extends Type
      */
     public function setMovePurpose(MovePurpose|string $movePurpose): void
     {
-        $this->put('movePurpose', $movePurpose);
+        $this->set('movePurpose', $movePurpose);
     }
 
     /**
@@ -231,7 +231,7 @@ class InvoiceHeader extends Type
      */
     public function isFuelInvoice(): ?bool
     {
-        return $this->get('fuelInvoice');
+        return filter_var($this->get('fuelInvoice'), FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -242,7 +242,7 @@ class InvoiceHeader extends Type
      */
     public function setFuelInvoice(bool $fuelInvoice): void
     {
-        $this->put('fuelInvoice', $fuelInvoice);
+        $this->set('fuelInvoice', $fuelInvoice);
     }
 
     /**
@@ -262,7 +262,7 @@ class InvoiceHeader extends Type
      */
     public function setSpecialInvoiceCategory(SpecialInvoiceCategory|int $specialInvoiceCategory): void
     {
-        $this->put('specialInvoiceCategory', $specialInvoiceCategory);
+        $this->set('specialInvoiceCategory', $specialInvoiceCategory);
     }
 
     /**
@@ -283,7 +283,7 @@ class InvoiceHeader extends Type
      */
     public function setInvoiceVariationType(InvoiceVariationType|int $invoiceVariationType): void
     {
-        $this->put('invoiceVariationType', $invoiceVariationType);
+        $this->set('invoiceVariationType', $invoiceVariationType);
     }
 
 
@@ -324,7 +324,7 @@ class InvoiceHeader extends Type
      */
     public function setOtherDeliveryNoteHeader(?OtherDeliveryNoteHeader $otherDeliveryNoteHeader): void
     {
-        $this->put('otherDeliveryNoteHeader', $otherDeliveryNoteHeader);
+        $this->set('otherDeliveryNoteHeader', $otherDeliveryNoteHeader);
     }
 
     /**
@@ -333,7 +333,7 @@ class InvoiceHeader extends Type
      */
     public function getIsDeliveryNote(): bool
     {
-        return $this->get('isDeliveryNote', false);
+        return filter_var($this->get('isDeliveryNote', false), FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -347,7 +347,7 @@ class InvoiceHeader extends Type
      */
     public function setIsDeliveryNote(bool $isDeliveryNote): void
     {
-        $this->put('isDeliveryNote', $isDeliveryNote);
+        $this->set('isDeliveryNote', $isDeliveryNote);
     }
 
     /**
@@ -368,7 +368,7 @@ class InvoiceHeader extends Type
      */
     public function setOtherMovePurposeTitle(?string $otherMovePurposeTitle): void
     {
-        $this->put('otherMovePurposeTitle', $otherMovePurposeTitle);
+        $this->set('otherMovePurposeTitle', $otherMovePurposeTitle);
     }
 
     /**
@@ -377,7 +377,7 @@ class InvoiceHeader extends Type
      */
     public function getThirdPartyCollection(): bool
     {
-        return $this->get('thirdPartyCollection', false);
+        return filter_var($this->get('thirdPartyCollection'), FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -392,16 +392,16 @@ class InvoiceHeader extends Type
      */
     public function setThirdPartyCollection(bool $thirdPartyCollection): void
     {
-        $this->put('thirdPartyCollection', $thirdPartyCollection);
+        $this->set('thirdPartyCollection', $thirdPartyCollection);
     }
 
-    public function put($key, $value): void
+    public function set($key, $value): void
     {
         if ($key === 'correlatedInvoices' || $key === 'otherCorrelatedEntities') {
             $this->push($key, $value);
             return;
         }
 
-        parent::put($key, $value);
+        parent::set($key, $value);
     }
 }

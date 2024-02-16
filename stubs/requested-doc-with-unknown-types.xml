@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RequestedDoc xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" xmlns:pm="https://www.aade.gr/myDATA/paymentMethod/v1.0" xmlns="http://www.aade.gr/myDATA/invoice/v1.0">
+    <invoicesDoc>
+        <invoice>
+            <uid>6F825B9B74717280D1F9A38252D0B65604C6D162</uid>
+        </invoice>
+        <invoiceType>
+            <uknownProperty>8DD469D0647A06B1FB271658FC52302B76219852</uknownProperty>
+        </invoiceType>
+    </invoicesDoc>
+    
+    <unknownDoc>
+        <cancelledInvoice>
+            <invoiceMark>191310480400420</invoiceMark>
+            <cancellationMark>203104044911008</cancellationMark>
+            <cancellationDate>2021-12-12</cancellationDate>
+        </cancelledInvoice>
+    </unknownDoc>
+</RequestedDoc>

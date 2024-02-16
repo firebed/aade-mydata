@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ResponseDoc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <response>
+        <index>1</index>
+        <invoiceMark>40000999916509</invoiceMark>
+        <paymentMethodMark>400008888111292</paymentMethodMark>
+        <statusCode>Success</statusCode>
+    </response>
+</ResponseDoc>

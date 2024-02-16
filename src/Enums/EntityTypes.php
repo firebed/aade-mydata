@@ -19,9 +19,9 @@ enum EntityTypes: int
     /**
      *  Μεταφορέας
      */
-    case TYPE_3 = 
+    case TYPE_3 = 3;
     
-    3;
+    
     /**
      *  Λήπτης του Αποστολέα (Πωλητή)
      */

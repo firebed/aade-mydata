@@ -7,6 +7,12 @@ namespace Firebed\AadeMyData\Models;
  */
 class ProvidersSignature extends Type
 {
+    public function __construct(string $signingAuthor = null, string $signature = null)
+    {
+        $attributes = compact('signingAuthor', 'signature');
+        $this->setAttributes(array_filter($attributes, fn($attr) => !is_null($attr)));
+    }
+
     /**
      * @return string|null Αριθμός Απόφασης έγκρισης ΥΠΑΗΕΣ Παρόχου
      * 
@@ -26,7 +32,7 @@ class ProvidersSignature extends Type
      */
     public function setSigningAuthor(string $signingAuthor): void
     {
-        $this->put('SigningAuthor', $signingAuthor);
+        $this->set('SigningAuthor', $signingAuthor);
     }
 
     /**
@@ -49,6 +55,6 @@ class ProvidersSignature extends Type
      */
     public function setSignature(string $signature): void
     {
-        $this->put('Signature', $signature);
+        $this->set('Signature', $signature);
     }
 }

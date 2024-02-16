@@ -7,6 +7,12 @@ namespace Firebed\AadeMyData\Models;
  */
 class ECRToken extends Type
 {
+    public function __construct(string $signingAuthor = null, string $sessionNumber = null)
+    {
+        $attributes = compact('signingAuthor', 'sessionNumber');
+        $this->setAttributes(array_filter($attributes, fn($attr) => !is_null($attr)));
+    }
+
     /**
      * @return string|null ECR id: Αριθμός μητρώου του φορολογικού μηχανισμού.
      * 
@@ -26,7 +32,7 @@ class ECRToken extends Type
      */
     public function setSigningAuthor(string $signingAuthor): void
     {
-        $this->put('SigningAuthor', $signingAuthor);
+        $this->set('SigningAuthor', $signingAuthor);
     }
 
     /**
@@ -48,6 +54,6 @@ class ECRToken extends Type
      */
     public function setSessionNumber(string $sessionNumber): void
     {
-        $this->put('SessionNumber', $sessionNumber);
+        $this->set('SessionNumber', $sessionNumber);
     }
 }

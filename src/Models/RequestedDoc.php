@@ -28,14 +28,6 @@ class RequestedDoc extends Type
     }
 
     /**
-     * @param ContinuationToken $continuationToken Στοιχείο για την τμηματική λήψη αποτελεσμάτων
-     */
-    public function setContinuationToken(ContinuationToken $continuationToken): void
-    {
-        $this->put('continuationToken', $continuationToken);
-    }
-
-    /**
      * @return InvoicesDoc|null Λίστα Παραστατικών
      */
     public function getInvoicesDoc(): ?InvoicesDoc
@@ -44,27 +36,11 @@ class RequestedDoc extends Type
     }
 
     /**
-     * @param InvoicesDoc $invoicesDoc Λίστα Παραστατικών
-     */
-    public function setInvoicesDoc(InvoicesDoc $invoicesDoc): void
-    {
-        $this->put('invoicesDoc', $invoicesDoc);
-    }
-
-    /**
      * @return CancelledInvoice[]|null Λίστα ακυρώσεων
      */
-    public function getCancelledInvoicesDoc(): ?array
+    public function getCancelledInvoicesDoc(): ?CancelledInvoicesDoc
     {
         return $this->get('cancelledInvoicesDoc');
-    }
-
-    /**
-     * @param CancelledInvoice[] $cancelledInvoicesDoc Λίστα ακυρώσεων
-     */
-    public function setCancelledInvoicesDoc(array $cancelledInvoicesDoc): void
-    {
-        $this->put('cancelledInvoicesDoc', $cancelledInvoicesDoc);
     }
 
     /**
@@ -76,14 +52,6 @@ class RequestedDoc extends Type
     }
 
     /**
-     * @param InvoiceIncomeClassification $incomeClassificationsDoc Λίστα Χαρακτηρισμών Εσόδων
-     */
-    public function setIncomeClassificationsDoc(InvoiceIncomeClassification $incomeClassificationsDoc): void
-    {
-        $this->put('incomeClassificationsDoc', $incomeClassificationsDoc);
-    }
-
-    /**
      * @return InvoiceExpensesClassification|null Λίστα Χαρακτηρισμών Εξόδων
      */
     public function getExpensesClassificationsDoc(): ?InvoiceExpensesClassification
@@ -92,10 +60,11 @@ class RequestedDoc extends Type
     }
 
     /**
-     * @param InvoiceExpensesClassification $expensesClassificationsDoc Λίστα Χαρακτηρισμών Εξόδων
+     * @return PaymentMethodsDoc Λίστα Τρόπων Πληρωμής
+     * @version 1.0.8
      */
-    public function setExpensesClassificationsDoc(InvoiceExpensesClassification $expensesClassificationsDoc): void
+    public function getPaymentMethodsDoc(): PaymentMethodsDoc
     {
-        $this->put('expensesClassificationsDoc', $expensesClassificationsDoc);
+        return $this->get('paymentMethodsDoc');
     }
 }

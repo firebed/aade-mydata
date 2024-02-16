@@ -2,118 +2,118 @@
 
 namespace Firebed\AadeMyData\Enums;
 
-enum MovePurpose: string
+enum MovePurpose: int
 {
     /**
      *  Πώληση
      */
-    case TYPE_1 = "1";
+    case TYPE_1 = 1;
 
 
     /**
      *  Πώληση για Λογαριασμό Τρίτων
      */
-    case TYPE_2 = "2";
+    case TYPE_2 = 2;
 
 
     /**
      *  Δειγματισμός
      */
-    case TYPE_3 = "3";
+    case TYPE_3 = 3;
 
 
     /**
      *  Έκθεση
      */
-    case TYPE_4 = "4";
+    case TYPE_4 = 4;
 
 
     /**
      *  Επιστροφή
      */
-    case TYPE_5 = "5";
+    case TYPE_5 = 5;
 
 
     /**
      *  Φύλαξη
      */
-    case TYPE_6 = "6";
+    case TYPE_6 = 6;
 
 
     /**
      *  Επεξεργασία Συναρμολόγηση
      */
-    case TYPE_7 = "7";
+    case TYPE_7 = 7;
 
 
     /**
      *  Μεταξύ Εγκαταστάσεων Οντότητας
      */
-    case TYPE_8 = "8";
+    case TYPE_8 = 8;
 
 
     /**
      *  Αγορά
      */
-    case TYPE_9 = "9";
+    case TYPE_9 = 9;
     
 
     /**
      *  Εφοδιασμός πλοίων και αεροσκαφών
      */
-    case TYPE_10 = "10";
+    case TYPE_10 = 10;
     
 
     /**
      *  Δωρεάν διάθεση
      */
-    case TYPE_11 = "11";
+    case TYPE_11 = 11;
     
 
     /**
      *  Εγγύηση
      */
-    case TYPE_12 = "12";
+    case TYPE_12 = 12;
     
 
     /**
      *  Χρησιδανεισμός
      */
-    case TYPE_13 = "13";
+    case TYPE_13 = 13;
     
 
     /**
      *  Αποθήκευση σε Τρίτους
      */
-    case TYPE_14 = "14";
+    case TYPE_14 = 14;
     
 
     /**
      *  Επιστροφή από Φύλαξη
      */
-    case TYPE_15 = "15";
+    case TYPE_15 = 15;
     
 
     /**
      *  Ανακύκλωση
      */
-    case TYPE_16 = "16";
+    case TYPE_16 = 16;
     
 
     /**
      *  Καταστροφή άχρηστου υλικού
      */
-    case TYPE_17 = "17";
+    case TYPE_17 = 17;
     
 
     /**
      *  Διακίνηση Παγίων (Ενδοδιακίνηση)
      */
-    case TYPE_18 = "18";
+    case TYPE_18 = 18;
     
 
     /**
      *  Λοιπές Διακινήσεις
      */
-    case TYPE_19 = "19";
+    case TYPE_19 = 19;
 }

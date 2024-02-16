@@ -2,6 +2,7 @@
 
 namespace Firebed\AadeMyData\Models;
 
+use ArrayAccess;
 use Countable;
 use Firebed\AadeMyData\Traits\HasIterator;
 use IteratorAggregate;
@@ -13,7 +14,7 @@ use IteratorAggregate;
  * αντικείμενο περιλαμβάνει μια λίστα από στοιχεία τύπου response, ένα για κάθε οντότητα
  * που υποβλήθηκε.
  */
-class ResponseDoc extends Type implements IteratorAggregate, Countable
+class ResponseDoc extends Type implements IteratorAggregate, Countable, ArrayAccess
 {
     use HasIterator;
 }

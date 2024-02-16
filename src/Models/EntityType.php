@@ -21,10 +21,6 @@ class EntityType extends Type
 
     /**
      * Κατηγορία Οντότητας
-     * <ol>
-     *     <li>Φορολογικός Εκπρόσωπος</li>
-     *     <li>Διαμεσολαβητής</li>
-     * </ol>
      *
      * @param EntityTypes|int $type Κατηγορία Οντότητας
      *
@@ -32,7 +28,7 @@ class EntityType extends Type
      */
     public function setType(EntityTypes|int $type): void
     {
-        $this->put('type', $type);
+        $this->set('type', $type);
     }
 
     /**
@@ -52,6 +48,6 @@ class EntityType extends Type
      */
     public function setEntityData(Party $entityData): void
     {
-        $this->put('entityData', $entityData);
+        $this->set('entityData', $entityData);
     }
 }

@@ -38,7 +38,7 @@ class BookInfo extends Type
      */
     public function setContinuationToken(ContinuationToken $continuationToken): void
     {
-        $this->put('continuationToken', $continuationToken);
+        $this->set('continuationToken', $continuationToken);
     }
 
     /**
@@ -54,7 +54,7 @@ class BookInfo extends Type
      */
     public function setCounterVatNumber(string $counterVatNumber): void
     {
-        $this->put('counterVatNumber', $counterVatNumber);
+        $this->set('counterVatNumber', $counterVatNumber);
     }
 
     /**
@@ -70,7 +70,7 @@ class BookInfo extends Type
      */
     public function setIssueDate(string $issueDate): void
     {
-        $this->put('issueDate', $issueDate);
+        $this->set('issueDate', $issueDate);
     }
 
     /**
@@ -86,7 +86,7 @@ class BookInfo extends Type
      */
     public function setInvType(string $invType): void
     {
-        $this->put('invType', $invType);
+        $this->set('invType', $invType);
     }
 
     /**
@@ -102,7 +102,7 @@ class BookInfo extends Type
      */
     public function setSelfPricing(string $selfPricing): void
     {
-        $this->put('selfpricing', $selfPricing);
+        $this->set('selfpricing', $selfPricing);
     }
 
     /**
@@ -118,7 +118,7 @@ class BookInfo extends Type
      */
     public function setInvoiceDetailType(string $invoiceDetailType): void
     {
-        $this->put('invoiceDetailType', $invoiceDetailType);
+        $this->set('invoiceDetailType', $invoiceDetailType);
     }
 
     /**
@@ -134,7 +134,7 @@ class BookInfo extends Type
      */
     public function setNetValue(string $netValue): void
     {
-        $this->put('netValue', $netValue);
+        $this->set('netValue', $netValue);
     }
 
     /**
@@ -150,7 +150,7 @@ class BookInfo extends Type
      */
     public function setVatAmount(string $vatAmount): void
     {
-        $this->put('vatAmount', $vatAmount);
+        $this->set('vatAmount', $vatAmount);
     }
 
     /**
@@ -166,7 +166,7 @@ class BookInfo extends Type
      */
     public function setWithheldAmount(string $withheldAmount): void
     {
-        $this->put('withheldAmount', $withheldAmount);
+        $this->set('withheldAmount', $withheldAmount);
     }
 
     /**
@@ -182,7 +182,7 @@ class BookInfo extends Type
      */
     public function setOtherTaxesAmount(string $otherTaxesAmount): void
     {
-        $this->put('otherTaxesAmount', $otherTaxesAmount);
+        $this->set('otherTaxesAmount', $otherTaxesAmount);
     }
 
     /**
@@ -198,7 +198,7 @@ class BookInfo extends Type
      */
     public function setStampDutyAmount(string $stampDutyAmount): void
     {
-        $this->put('stampDutyAmount', $stampDutyAmount);
+        $this->set('stampDutyAmount', $stampDutyAmount);
     }
 
     /**
@@ -214,7 +214,7 @@ class BookInfo extends Type
      */
     public function setFeesAmount(string $feesAmount): void
     {
-        $this->put('feesAmount', $feesAmount);
+        $this->set('feesAmount', $feesAmount);
     }
 
     /**
@@ -230,7 +230,7 @@ class BookInfo extends Type
      */
     public function setDeductionsAmount(string $deductionsAmount): void
     {
-        $this->put('deductionsAmount', $deductionsAmount);
+        $this->set('deductionsAmount', $deductionsAmount);
     }
 
     /**
@@ -246,7 +246,7 @@ class BookInfo extends Type
      */
     public function setThirdPartyAmount(string $thirdPartyAmount): void
     {
-        $this->put('thirdPartyAmount', $thirdPartyAmount);
+        $this->set('thirdPartyAmount', $thirdPartyAmount);
     }
 
     /**
@@ -262,7 +262,7 @@ class BookInfo extends Type
      */
     public function setGrossValue(string $grossValue): void
     {
-        $this->put('grossValue', $grossValue);
+        $this->set('grossValue', $grossValue);
     }
 
     /**
@@ -278,7 +278,7 @@ class BookInfo extends Type
      */
     public function setCount(string $count): void
     {
-        $this->put('count', $count);
+        $this->set('count', $count);
     }
 
     /**
@@ -294,7 +294,7 @@ class BookInfo extends Type
      */
     public function setMinMark(string $minMark): void
     {
-        $this->put('minMark', $minMark);
+        $this->set('minMark', $minMark);
     }
 
     /**
@@ -310,6 +310,6 @@ class BookInfo extends Type
      */
     public function setMaxMark(string $maxMark): void
     {
-        $this->put('maxMark', $maxMark);
+        $this->set('maxMark', $maxMark);
     }
 }

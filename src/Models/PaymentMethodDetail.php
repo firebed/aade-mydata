@@ -19,7 +19,7 @@ class PaymentMethodDetail extends Type
      */
     public function setType(PaymentMethod|string $type): void
     {
-        $this->put('type', $type);
+        $this->set('type', $type);
     }
 
     /**
@@ -43,7 +43,7 @@ class PaymentMethodDetail extends Type
      */
     public function setAmount(float $amount): void
     {
-        $this->put('amount', $amount);
+        $this->set('amount', $amount);
     }
 
     /**
@@ -58,11 +58,11 @@ class PaymentMethodDetail extends Type
      * Το πεδίο Πληροφορίες μπορεί να περιέχει επιπλέον πληροφορίες σχετικά με
      * τον συγκεκριμένο τύπο (πχ Αρ. Λογαριασμού Τραπέζης)
      *
-     * @param string $paymentMethodInfo Πληροφορίες γραμμής
+     * @param string|null $paymentMethodInfo Πληροφορίες γραμμής
      */
-    public function setPaymentMethodInfo(string $paymentMethodInfo): void
+    public function setPaymentMethodInfo(?string $paymentMethodInfo): void
     {
-        $this->put('paymentMethodInfo', $paymentMethodInfo);
+        $this->set('paymentMethodInfo', $paymentMethodInfo);
     }
 
     /**
@@ -85,7 +85,7 @@ class PaymentMethodDetail extends Type
      */
     public function setTipAmount(?float $tipAmount): void
     {
-        $this->put('tipAmount', $tipAmount);
+        $this->set('tipAmount', $tipAmount);
     }
 
     /**
@@ -105,19 +105,24 @@ class PaymentMethodDetail extends Type
      */
     public function setTransactionId(?string $transactionId): void
     {
-        $this->put('transactionId', $transactionId);
+        $this->set('transactionId', $transactionId);
     }
 
     /**
      * Το πεδίο ProvidersSignature διαβιβάζεται στην περίπτωση
      * πληρωμών με type = 7 και όταν η διαβίβαση γίνεται από το κανάλι του παρόχου
      *
-     * @param ProvidersSignature|null $providersSignature Υπογραφή Πληρωμής Παρόχου
+     * @param ProvidersSignature|string|null $providersSignature Υπογραφή Πληρωμής Παρόχου
+     * @param string|null $signature
      * @version 1.0.8
      */
-    public function setProvidersSignature(?ProvidersSignature $providersSignature): void
+    public function setProvidersSignature(ProvidersSignature|string|null $providersSignature, string $signature = null): void
     {
-        $this->put('ProvidersSignature', $providersSignature);
+        if ($signature === null || $providersSignature instanceof ProvidersSignature) {
+            $this->set('ProvidersSignature', $providersSignature);
+        } else {
+            $this->setProvidersSignature(new ProvidersSignature($providersSignature, $signature));
+        }
     }
 
     /**
@@ -133,12 +138,17 @@ class PaymentMethodDetail extends Type
      * Το πεδίο ECRToken διαβιβάζεται στην περίπτωση πληρωμών με type = 7 και
      * όταν η διαβίβαση γίνεται από ERP.
      *
-     * @param ECRToken|null $ecrToken Υπογραφή Πληρωμής ΦΗΜ με σύστημα λογισμικού (ERP)
+     * @param ECRToken|string|null $ecrToken Υπογραφή Πληρωμής ΦΗΜ με σύστημα λογισμικού (ERP)
+     * @param string|null $sessionNumber
      * @version 1.0.8
      */
-    public function setECRToken(?ECRToken $ecrToken): void
+    public function setECRToken(ECRToken|string|null $ecrToken, string $sessionNumber = null): void
     {
-        $this->put('ECRToken', $ecrToken);
+        if ($ecrToken === null || $ecrToken instanceof ECRToken) {
+            $this->set('ECRToken', $ecrToken);
+        } else {
+            $this->setECRToken(new ECRToken($ecrToken, $sessionNumber));
+        }
     }
 
     /**

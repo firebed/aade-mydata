@@ -17,7 +17,7 @@ class InvoiceIncomeClassification extends Type
      */
     public function setInvoiceMark(string $invoiceMark): void
     {
-        $this->put('invoiceMark', $invoiceMark);
+        $this->set('invoiceMark', $invoiceMark);
     }
 
     /**
@@ -47,7 +47,7 @@ class InvoiceIncomeClassification extends Type
      */
     public function setEntityVatNumber(string $entityVatNumber): void
     {
-        $this->put('entityVatNumber', $entityVatNumber);
+        $this->set('entityVatNumber', $entityVatNumber);
     }
 
     /**
@@ -70,7 +70,7 @@ class InvoiceIncomeClassification extends Type
      */
     public function setTransactionMode(int $transactionMode): void
     {
-        $this->put('transactionMode', $transactionMode);
+        $this->set('transactionMode', $transactionMode);
     }
 
     /**
@@ -88,7 +88,7 @@ class InvoiceIncomeClassification extends Type
      */
     public function setLineNumber(int $lineNumber): void
     {
-        $this->put('lineNumber', $lineNumber);
+        $this->set('lineNumber', $lineNumber);
     }
 
     /**
@@ -107,7 +107,7 @@ class InvoiceIncomeClassification extends Type
      */
     public function setIncomeClassificationDetailData(IncomeClassification $incomeClassificationDetailData): void
     {
-        $this->put('incomeClassificationDetailData', $incomeClassificationDetailData);
+        $this->set('incomeClassificationDetailData', $incomeClassificationDetailData);
     }
 
 }

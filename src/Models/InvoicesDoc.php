@@ -12,6 +12,6 @@ class InvoicesDoc extends Type implements IteratorAggregate, Countable
 
     public function addInvoice(Invoice $invoice): void
     {
-        $this->attributes[] = $invoice;
+        $this->push('invoice', $invoice);
     }
 }

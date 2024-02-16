@@ -29,7 +29,7 @@ class IncomeClassification extends Type
      */
     public function setClassificationType(IncomeClassificationType|string $classificationType): void
     {
-        $this->put('classificationType', $classificationType);
+        $this->set('classificationType', $classificationType);
     }
 
     /**
@@ -45,7 +45,7 @@ class IncomeClassification extends Type
      */
     public function setClassificationCategory(IncomeClassificationCategory|string $classificationCategory): void
     {
-        $this->put('classificationCategory', $classificationCategory);
+        $this->set('classificationCategory', $classificationCategory);
     }
 
     /**
@@ -61,12 +61,12 @@ class IncomeClassification extends Type
      * <li>Ελάχιστη τιμή = 0</li>
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
-     * 
+     *
      * @param float $amount Ποσό
      */
     public function setAmount(float $amount): void
     {
-        $this->put('amount', $amount);
+        $this->set('amount', $amount);
     }
 
     /**
@@ -78,12 +78,12 @@ class IncomeClassification extends Type
     }
 
     /**
-     * Το πεδίο id προσφέρεται για σειριακή αρίθμηση (1,2,3… κλπ) των χαρακτηρισμών εντός μιας γραμμής.
+     * Το πεδίο id προσφέρεται για σειριακή αρίθμηση των χαρακτηρισμών εντός μιας γραμμής.
      *
      * @param int $id Αύξων αριθμός Χαρακτηρισμού
      */
     public function setId(int $id): void
     {
-        $this->put('id', $id);
+        $this->set('id', $id);
     }
 }

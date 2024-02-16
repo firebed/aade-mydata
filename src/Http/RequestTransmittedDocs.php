@@ -17,5 +17,5 @@ namespace Firebed\AadeMyData\Http;
  */
 class RequestTransmittedDocs extends MyDataGetRequest
 {
-    
+
 }

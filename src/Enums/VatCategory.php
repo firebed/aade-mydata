@@ -2,58 +2,58 @@
 
 namespace Firebed\AadeMyData\Enums;
 
-enum VatCategory: string
+enum VatCategory: int
 {
     /**
      *  ΦΠΑ συντελεστής 24%
      */
-    case VAT_1 = "1";
+    case VAT_1 = 1;
 
 
     /**
      *  ΦΠΑ συντελεστής 13%
      */
-    case VAT_2 = "2";
+    case VAT_2 = 2;
 
 
     /**
      *  ΦΠΑ συντελεστής 6%
      */
-    case VAT_3 = "3";
+    case VAT_3 = 3;
 
 
     /**
      *  ΦΠΑ συντελεστής 17%
      */
-    case VAT_4 = "4";
+    case VAT_4 = 4;
 
 
     /**
      *  ΦΠΑ συντελεστής 9%
      */
-    case VAT_5 = "5";
+    case VAT_5 = 5;
 
 
     /**
      *  ΦΠΑ συντελεστής 4%
      */
-    case VAT_6 = "6";
+    case VAT_6 = 6;
 
 
     /**
      *  Άνευ Φ.Π.Α. 0%
      */
-    case VAT_7 = "7";
+    case VAT_7 = 7;
 
 
     /**
      *  Εγγραφές χωρίς ΦΠΑ (πχ Μισθοδοσία, Αποσβέσεις)
      */
-    case VAT_8 = "8";
+    case VAT_8 = 8;
 
 
     /**
      *  ΦΠΑ συντελεστής 3%
      */
-    case VAT_9 = "9";
+    case VAT_9 = 9;
 }

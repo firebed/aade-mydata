@@ -16,7 +16,7 @@ abstract class Type
         return $this->attributes[$key] ?? $default;
     }
 
-    public function put($key, $value): void
+    public function set($key, $value): void
     {
         if ($this->isEnum($value)) {
             $value = $value->value;
