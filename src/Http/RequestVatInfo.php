@@ -2,10 +2,10 @@
 
 namespace Firebed\AadeMyData\Http;
 
+use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Http\Traits\HasResponseXML;
 use Firebed\AadeMyData\Models\RequestedVatInfo;
 use Firebed\AadeMyData\Xml\VatInfoReader;
-use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Στις περιπτώσεις που ο χρήστης καλέσει τη μέθοδο λήψης πληροφοριών για στοιχεία
@@ -32,7 +32,8 @@ class RequestVatInfo extends MyDataRequest
      * @param string|null $entityVatNumber ΑΦΜ οντότητας
      * @param string|null $nextPartitionKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
      * @param string|null $nextRowKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
-     * @throws GuzzleException
+     * @return RequestedVatInfo
+     * @throws MyDataException
      * @version 1.0.8
      */
     public function handle(string $dateFrom, string $dateTo, string $entityVatNumber = null, string $nextPartitionKey = null, string $nextRowKey = null): RequestedVatInfo

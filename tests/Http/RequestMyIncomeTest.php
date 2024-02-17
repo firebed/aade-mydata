@@ -2,25 +2,16 @@
 
 namespace Tests\Http;
 
+use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Http\MyDataRequest;
 use Firebed\AadeMyData\Http\RequestMyIncome;
-use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response;
-use PHPUnit\Framework\TestCase;
-use Tests\Traits\UsesStubs;
 
-class RequestMyIncomeTest extends TestCase
+class RequestMyIncomeTest extends MyDataHttpTestCase
 {
-    use UsesStubs;
-
-    protected function setUp(): void
-    {
-        MyDataRequest::init('test_user_id', 'test_user_secret', 'dev');
-    }
-    
     /**
-     * @throws GuzzleException
+     * @throws MyDataException
      */
     public function test_it_returns_docs()
     {

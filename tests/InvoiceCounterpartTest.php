@@ -32,7 +32,7 @@ class InvoiceCounterpartTest extends TestCase
         $invoice->setCounterpart($counterpart);
 
         $xml = $this->toXML($invoice)->InvoicesDoc->invoice->counterpart;
-
+        
         $this->assertCount(6, $xml);
         $this->assertEquals('999999999', $xml->get('vatNumber'));
         $this->assertEquals('GR', $xml->get('country'));

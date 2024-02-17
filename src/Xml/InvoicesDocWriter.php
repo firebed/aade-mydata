@@ -4,7 +4,7 @@ namespace Firebed\AadeMyData\Xml;
 
 use Firebed\AadeMyData\Models\InvoicesDoc;
 
-class InvoicesDocReader extends XMLWriter
+class InvoicesDocWriter extends XMLWriter
 {
     private const XMLNS           = 'http://www.aade.gr/myDATA/invoice/v1.0';
     private const XSI             = 'http://www.w3.org/2001/XMLSchema-instance';
@@ -17,6 +17,7 @@ class InvoicesDocReader extends XMLWriter
         'expensesClassification' => ['*' => self::ECLS],
     ];
 
+    /** @noinspection PhpUnhandledExceptionInspection */
     public function asXML(InvoicesDoc $invoicesDoc): string
     {
         $rootNode = $this->document->createElementNS(self::XMLNS, 'InvoicesDoc');
@@ -27,7 +28,7 @@ class InvoicesDocReader extends XMLWriter
         $rootNode->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:ecls', self::ECLS);
         $rootNode->setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation', self::SCHEMA_LOCATION);
         
-        $this->buildArray($rootNode, 'invoice', $invoicesDoc->get('invoice'));
+        $this->buildArray($rootNode, 'invoice', $invoicesDoc->attributes());
         
         return $this->document->saveXML();
     }

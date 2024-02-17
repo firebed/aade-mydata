@@ -2,7 +2,9 @@
 
 namespace Firebed\AadeMyData\Http;
 
-use Error;
+use Exception;
+use Firebed\AadeMyData\Exceptions\MissingCredentialsException;
+use Firebed\AadeMyData\Exceptions\MyDataException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Handler\MockHandler;
@@ -38,6 +40,11 @@ abstract class MyDataRequest
         self::$subscription_key = $subscription_key;
     }
 
+    public static function setEnvironment($env): void
+    {
+        self::$env = $env;
+    }
+
     /**
      * <ul>Describes the SSL certificate verification behavior of a request.
      *
@@ -71,57 +78,33 @@ abstract class MyDataRequest
         self::$verify_client = $verify;
     }
 
-    public static function setEnvironment($env): void
-    {
-        self::$env = $env;
-    }
-
-    public static function isDevelopment(): bool
-    {
-        return self::$env === 'dev';
-    }
-
     public static function isProduction(): bool
     {
         return self::$env === 'prod';
     }
 
     /**
-     * @throws GuzzleException
+     * @throws MyDataException
      */
     protected function get(array $query): ResponseInterface
     {
         self::validateCredentials();
-        
-        return $this->client()->get($this->url(), ['query' => $query]);
+
+        try {
+            return $this->client()->get($this->getUrl(), ['query' => $query]);
+        } catch (GuzzleException $e) {
+            $this->handleException($e);
+        }
     }
 
     /**
-     * @throws GuzzleException
+     * @throws MissingCredentialsException
      */
-    protected function post(array $query = null, string $body = null): ResponseInterface
+    private static function validateCredentials(): void
     {
-        self::validateCredentials();
-
-        $params = [];
-        if (!empty($query)) {
-            $params['query'] = $query;
+        if (empty(self::$user_id) || empty(self::$subscription_key)) {
+            throw new MissingCredentialsException();
         }
-
-        if (!empty($body)) {
-            $params['body'] = $body;
-        }
-
-        return $this->client()->post($this->url(), $params);
-    }
-
-    private function url(): string
-    {
-        $url = $this->url ?? basename(get_class($this));
-
-        return self::isDevelopment()
-            ? self::DEV_URL.$url
-            : self::PROD_URL.$url;
     }
 
     private function client(): Client
@@ -142,10 +125,52 @@ abstract class MyDataRequest
         return new Client($config);
     }
 
-    private static function validateCredentials(): void
+    private function getUrl(): string
     {
-        if (empty(self::$user_id) || empty(self::$subscription_key)) {
-            throw new Error("Missing credentials. Please use MyDataRequest::setCredentials method to set your myDATA Rest API credentials.");
+        $action = $this->getAction();
+        return self::isDevelopment()
+            ? self::DEV_URL.$action
+            : self::PROD_URL.$action;
+    }
+
+    private function getAction(): string
+    {
+        return $this->action ?? (basename(get_class($this)));
+    }
+
+    public static function isDevelopment(): bool
+    {
+        return self::$env === 'dev';
+    }
+
+    /**
+     * @throws MyDataException
+     */
+    protected function handleException(Exception $exception)
+    {
+        throw new MyDataException($exception->getMessage(), $exception->getCode());
+    }
+
+    /**
+     * @throws MyDataException
+     */
+    protected function post(array $query = null, string $body = null): ResponseInterface
+    {
+        self::validateCredentials();
+
+        $params = [];
+        if (!empty($query)) {
+            $params['query'] = $query;
+        }
+
+        if (!empty($body)) {
+            $params['body'] = $body;
+        }
+
+        try {
+            return $this->client()->post($this->getUrl(), $params);
+        } catch (GuzzleException $e) {
+            $this->handleException($e);
         }
     }
 }

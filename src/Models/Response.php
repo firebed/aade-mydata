@@ -7,7 +7,9 @@ use Firebed\AadeMyData\Traits\HasFactory;
 class Response extends Type
 {
     use HasFactory;
-    
+
+    protected array $groups = ['errors'];
+
     /**
      * @return int|null Αριθμός Σειράς Οντότητας εντός του υποβληθέντος xml
      */
@@ -145,7 +147,7 @@ class Response extends Type
 
     /**
      * Χρησιμοποιείται από τα προγράμματα για τη δημιουργία QR Code τύπου Url
-     * 
+     *
      * @param $qrUrl
      * @version 1.0.7
      */
@@ -155,9 +157,9 @@ class Response extends Type
     }
 
     /**
-     * @return Errors|null Λίστα Σφαλμάτων
+     * @return Error[]|null Λίστα Σφαλμάτων
      */
-    public function getErrors(): ?Errors
+    public function getErrors(): ?array
     {
         return $this->get('errors');
     }

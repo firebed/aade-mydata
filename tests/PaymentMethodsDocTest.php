@@ -14,7 +14,7 @@ class PaymentMethodsDocTest extends TestCase
     {
         $doc = $this->getRequestedDocFromXml();
 
-        $paymentMethods = $doc->getPaymentMethodsDoc();
+        $paymentMethods = $doc->getPaymentMethods();
 
         $this->assertCount(3, $paymentMethods);
 

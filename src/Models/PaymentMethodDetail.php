@@ -3,9 +3,12 @@
 namespace Firebed\AadeMyData\Models;
 
 use Firebed\AadeMyData\Enums\PaymentMethod;
+use Firebed\AadeMyData\Traits\HasFactory;
 
 class PaymentMethodDetail extends Type
 {
+    use HasFactory;
+    
     /**
      * @return string|null Τύπος Πληρωμής
      */

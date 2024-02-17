@@ -11,7 +11,7 @@ class SendIncomeClassification extends MyDataRequest
     /**
      * With this method the user can classify invoices that produce income.
      *
-     * @param  InvoiceIncomeClassification[]  $invoiceIncomeClassificationTypes
+     * @param InvoiceIncomeClassification[] $invoiceIncomeClassificationTypes
      * @throws Exception
      */
     public function handle(array $invoiceIncomeClassificationTypes): ResponseDoc

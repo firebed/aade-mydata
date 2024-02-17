@@ -19,6 +19,13 @@ namespace Firebed\AadeMyData\Models;
  */
 class RequestedDoc extends Type
 {
+    public array $groups = [
+        'cancelledInvoicesDoc',
+        'incomeClassificationsDoc',
+        'expensesClassificationsDoc',
+        'paymentMethodsDoc',
+    ];
+
     /**
      * @return ContinuationToken|null Στοιχείο για την τμηματική λήψη αποτελεσμάτων
      */
@@ -30,7 +37,7 @@ class RequestedDoc extends Type
     /**
      * @return InvoicesDoc|null Λίστα Παραστατικών
      */
-    public function getInvoicesDoc(): ?InvoicesDoc
+    public function getInvoices(): ?InvoicesDoc
     {
         return $this->get('invoicesDoc');
     }
@@ -38,32 +45,32 @@ class RequestedDoc extends Type
     /**
      * @return CancelledInvoice[]|null Λίστα ακυρώσεων
      */
-    public function getCancelledInvoicesDoc(): ?CancelledInvoicesDoc
+    public function getCancelledInvoices(): ?array
     {
         return $this->get('cancelledInvoicesDoc');
     }
 
     /**
-     * @return InvoiceIncomeClassification|null Λίστα Χαρακτηρισμών Εσόδων
+     * @return InvoiceIncomeClassification[]|null Λίστα Χαρακτηρισμών Εσόδων
      */
-    public function getIncomeClassificationsDoc(): ?InvoiceIncomeClassification
+    public function getIncomeClassifications(): ?array
     {
         return $this->get('incomeClassificationsDoc');
     }
 
     /**
-     * @return InvoiceExpensesClassification|null Λίστα Χαρακτηρισμών Εξόδων
+     * @return InvoiceExpensesClassification[]|null Λίστα Χαρακτηρισμών Εξόδων
      */
-    public function getExpensesClassificationsDoc(): ?InvoiceExpensesClassification
+    public function getExpensesClassifications(): ?array
     {
         return $this->get('expensesClassificationsDoc');
     }
 
     /**
-     * @return PaymentMethodsDoc Λίστα Τρόπων Πληρωμής
+     * @return PaymentMethod[]|null Λίστα Τρόπων Πληρωμής
      * @version 1.0.8
      */
-    public function getPaymentMethodsDoc(): PaymentMethodsDoc
+    public function getPaymentMethods(): ?array
     {
         return $this->get('paymentMethodsDoc');
     }

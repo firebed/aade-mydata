@@ -17,7 +17,7 @@ use Firebed\AadeMyData\Models\InvoicesDoc;
 use Firebed\AadeMyData\Models\Party;
 use Firebed\AadeMyData\Models\PaymentMethodDetail;
 use Firebed\AadeMyData\Models\RequestedDoc;
-use Firebed\AadeMyData\Xml\InvoicesDocReader;
+use Firebed\AadeMyData\Xml\InvoicesDocWriter;
 use Firebed\AadeMyData\Xml\RequestedDocReader;
 use Tests\Xml\Document;
 use Tests\Xml\Node;
@@ -32,8 +32,8 @@ trait HandlesInvoiceXml
 
         $parser = new RequestedDocReader();
         $requestedDoc = $parser->parseXML($xmlString);
-
-        return $requestedDoc->getInvoicesDoc()->get(0);
+        
+        return $requestedDoc->getInvoices()->get(0);
     }
 
     public function getRequestedDocFromXml(string $filename = 'request-doc-response'): RequestedDoc
@@ -129,7 +129,7 @@ trait HandlesInvoiceXml
         $invoicesDoc = new InvoicesDoc();
         $invoicesDoc->addInvoice($invoice);
 
-        $xmlString = (new InvoicesDocReader())->asXML($invoicesDoc);
+        $xmlString = (new InvoicesDocWriter())->asXML($invoicesDoc);
 
         return new Document($xmlString);
     }

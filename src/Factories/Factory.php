@@ -2,11 +2,23 @@
 
 namespace Firebed\AadeMyData\Factories;
 
+use Faker\Generator;
+use Firebed\AadeMyData\Models\Type;
+
+/**
+ * @template TModel of Type
+ */
 abstract class Factory
 {
-    private string $modelName;
-    private array  $state = [];
-    private array  $except = [];
+    protected string $modelName;
+    protected array  $state = [];
+    protected array  $except = [];
+    protected Generator $faker;
+
+    public function __construct()
+    {
+        $this->faker = \Faker\Factory::create();
+    }
 
     public static function factoryForModel($modelName): Factory
     {
@@ -20,9 +32,12 @@ abstract class Factory
 
     public static function newFactory($factoryName): Factory
     {
-        return new $factoryName;
+        return new $factoryName();
     }
 
+    /**
+     * @return TModel
+     */
     public function make(array $attributes = [])
     {
         $attributes = array_merge($this->definition(), $attributes, $this->state);
@@ -31,7 +46,7 @@ abstract class Factory
             $attributes = array_diff_key($attributes, array_flip($this->except));
         }
 
-        $instance = new $this->modelName;
+        $instance = new $this->modelName();
         $instance->setAttributes($attributes);
         return $instance;
     }
@@ -50,5 +65,5 @@ abstract class Factory
         return $this;
     }
 
-    public abstract function definition(): array;
+    abstract public function definition(): array;
 }

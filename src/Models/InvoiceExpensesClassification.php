@@ -74,39 +74,45 @@ class InvoiceExpensesClassification extends Type
     }
 
     /**
-     * @return int|null Αριθμός Γραμμής
+     * @return InvoicesExpensesClassificationDetail[]|null Λίστα Χαρακτηρισμών Εξόδων
      */
-    public function getLineNumber(): ?int
+    public function getInvoicesExpensesClassificationDetails(): ?array
     {
-        return $this->get('lineNumber');
-    }
-
-    /**
-     * Αναφέρεται στον αντίστοιχο αριθμό γραμμής του αρχικού παραστατικού με Μοναδικός Αριθμός Καταχώρησης αυτό του πεδίου mark.
-     *
-     * @param int $lineNumber Αριθμός Γραμμής
-     */
-    public function setLineNumber(int $lineNumber): void
-    {
-        $this->set('lineNumber', $lineNumber);
-    }
-
-    /**
-     * @return ExpensesClassification|null
-     */
-    public function getExpensesClassificationDetailData(): ?ExpensesClassification
-    {
-        return $this->get('expensesClassificationDetailData');
+        return $this->get('invoicesExpensesClassificationDetails');
     }
 
     /**
      * Κάθε στοιχείο invoicesExpensesClassificationDetails περιέχει ένα lineNumber και
      * μια λίστα στοιχείων expensesClassificationDetailData.
      * 
-     * @param ExpensesClassification $expensesClassificationDetailData
+     * @param InvoicesExpensesClassificationDetail[] $invoicesExpensesClassificationDetails Λίστα Χαρακτηρισμών Εξόδων
      */
-    public function setExpensesClassificationDetailData(ExpensesClassification $expensesClassificationDetailData): void
+    public function setInvoicesExpensesClassificationDetails(array $invoicesExpensesClassificationDetails): void
     {
-        $this->set('expensesClassificationDetailData', $expensesClassificationDetailData);
+        $this->set('invoicesExpensesClassificationDetails', $invoicesExpensesClassificationDetails);
+    }
+
+    /**
+     * Όταν η παράμετρος postPerInvoice καλείται με τιμή true, τότε αυτό σημαίνει ότι οι
+     * χαρακτηρισμοί εξόδων υποβάλλονται σε επίπεδο παραστατικού και όχι ανά
+     * γραμμή. Περισσότερες πληροφορίες στον σύνδεσμο:
+     *
+     * @return int|null Μέθοδος Υποβολής Χαρακτηρισμού
+     */
+    public function getClassificationPostMode(): ?int
+    {
+        return $this->get('classificationPostMode');
+    }
+
+    /**
+     * Όταν η παράμετρος postPerInvoice καλείται με τιμή true, τότε αυτό σημαίνει ότι οι
+     * χαρακτηρισμοί εξόδων υποβάλλονται σε επίπεδο παραστατικού και όχι ανά
+     * γραμμή. Περισσότερες πληροφορίες στον σύνδεσμο:
+     * 
+     * @param int $classificationPostMode Μέθοδος Υποβολής Χαρακτηρισμού
+     */
+    public function setClassificationPostMode(int $classificationPostMode): void
+    {
+        $this->set('classificationPostMode', $classificationPostMode);
     }
 }

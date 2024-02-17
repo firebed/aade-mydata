@@ -2,15 +2,15 @@
 
 namespace Firebed\AadeMyData\Http;
 
+use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Http\Traits\HasResponseXML;
 use Firebed\AadeMyData\Models\RequestedBookInfo;
 use Firebed\AadeMyData\Xml\BookInfoReader;
-use GuzzleHttp\Exception\GuzzleException;
 
 abstract class RequestBookInfo extends MyDataRequest
 {
     use HasResponseXML;
-    
+
     /**
      * <p>Η κλήση επιστρέφει γραμμές με πληροφορίες για τα έσοδα/έξοδα του χρήστη, για συγκεκριμένο
      * ημερολογιακό κλειστό διάστημα που ορίζεται από τις τιμές των παραμέτρων dateFrom και
@@ -41,7 +41,7 @@ abstract class RequestBookInfo extends MyDataRequest
      * @param string|null $nextPartitionKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
      * @param string|null $nextRowKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
      * @return RequestedBookInfo
-     * @throws GuzzleException
+     * @throws MyDataException
      */
     public function handle(string $dateFrom, string $dateTo, string $counterVatNumber = null, string $entityVatNumber = null, string $invType = null, string $nextPartitionKey = null, string $nextRowKey = null): RequestedBookInfo
     {
@@ -50,7 +50,7 @@ abstract class RequestBookInfo extends MyDataRequest
 
         $response = $this->get($query);
         $this->responseXML = $response->getBody()->getContents();
-        
+
         return (new BookInfoReader())->parseXML($this->responseXML);
     }
 }

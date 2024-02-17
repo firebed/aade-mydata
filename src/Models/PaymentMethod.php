@@ -2,11 +2,15 @@
 
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Traits\HasFactory;
+
 /**
  * @version 1.0.8
  */
 class PaymentMethod extends Type
 {
+    use HasFactory;
+    
     /**
      * @return int|null Μοναδικός Αριθμός Καταχώρησης Παραστατικού
      *

@@ -124,6 +124,75 @@
             <cancellationDate>2024-03-07</cancellationDate>
         </cancelledInvoice>
     </cancelledInvoicesDoc>
+    <incomeClassificationsDoc>
+        <icls:incomeInvoiceClassification>
+            <icls:invoiceMark>800000165789</icls:invoiceMark>
+            <icls:classificationMark>900000147852</icls:classificationMark>
+            <icls:entityVatNumber>888888888</icls:entityVatNumber>
+            <icls:invoicesIncomeClassificationDetails>
+                <icls:lineNumber>1</icls:lineNumber>
+                <icls:incomeClassificationDetailData>
+                    <icls:classificationType>E3_561_001</icls:classificationType>
+                    <icls:classificationCategory>category1_1</icls:classificationCategory>
+                    <icls:amount>100</icls:amount>
+                </icls:incomeClassificationDetailData>
+                <icls:incomeClassificationDetailData>
+                    <icls:classificationType>E3_561_001</icls:classificationType>
+                    <icls:classificationCategory>category1_2</icls:classificationCategory>
+                    <icls:amount>200</icls:amount>
+                </icls:incomeClassificationDetailData>
+            </icls:invoicesIncomeClassificationDetails>
+            <icls:invoicesIncomeClassificationDetails>
+                <icls:lineNumber>1</icls:lineNumber>
+                <icls:incomeClassificationDetailData>
+                    <icls:classificationType>E3_561_002</icls:classificationType>
+                    <icls:classificationCategory>category1_2</icls:classificationCategory>
+                    <icls:amount>300</icls:amount>
+                </icls:incomeClassificationDetailData>
+            </icls:invoicesIncomeClassificationDetails>
+        </icls:incomeInvoiceClassification>
+        <icls:incomeInvoiceClassification>
+            <icls:invoiceMark>800000165789</icls:invoiceMark>
+            <icls:classificationMark>900000147852</icls:classificationMark>
+            <icls:entityVatNumber>888888888</icls:entityVatNumber>
+            <icls:invoicesIncomeClassificationDetails>
+                <icls:lineNumber>1</icls:lineNumber>
+                <icls:incomeClassificationDetailData>
+                    <icls:classificationType>E3_561_001</icls:classificationType>
+                    <icls:classificationCategory>category1_1</icls:classificationCategory>
+                    <icls:amount>100</icls:amount>
+                </icls:incomeClassificationDetailData>
+                <icls:incomeClassificationDetailData>
+                    <icls:classificationType>E3_561_001</icls:classificationType>
+                    <icls:classificationCategory>category1_2</icls:classificationCategory>
+                    <icls:amount>200</icls:amount>
+                </icls:incomeClassificationDetailData>
+            </icls:invoicesIncomeClassificationDetails>
+            <icls:invoicesIncomeClassificationDetails>
+                <icls:lineNumber>1</icls:lineNumber>
+                <icls:incomeClassificationDetailData>
+                    <icls:classificationType>E3_561_002</icls:classificationType>
+                    <icls:classificationCategory>category1_2</icls:classificationCategory>
+                    <icls:amount>300</icls:amount>
+                </icls:incomeClassificationDetailData>
+            </icls:invoicesIncomeClassificationDetails>
+        </icls:incomeInvoiceClassification>
+    </incomeClassificationsDoc>
+    <expensesClassificationsDoc>
+        <ecls:expensesInvoiceClassification>
+            <ecls:invoiceMark>800000165789</ecls:invoiceMark>
+            <ecls:classificationMark>900000147852</ecls:classificationMark>
+            <ecls:entityVatNumber>888888888</ecls:entityVatNumber>
+            <ecls:invoicesExpensesClassificationDetails>
+                <ecls:lineNumber>1</ecls:lineNumber>
+                <ecls:expensesClassificationDetailData>
+                    <ecls:classificationType>E3_104</ecls:classificationType>
+                    <ecls:classificationCategory>category2_11</ecls:classificationCategory>
+                    <ecls:amount>25</ecls:amount>
+                </ecls:expensesClassificationDetailData>
+            </ecls:invoicesExpensesClassificationDetails>
+        </ecls:expensesInvoiceClassification>
+    </expensesClassificationsDoc>
     <paymentMethodsDoc>
         <pm:paymentMethods>
             <pm:paymentMethodDetails>

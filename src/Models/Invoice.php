@@ -240,7 +240,7 @@ class Invoice extends Type
         }
 
         if ($key === 'paymentMethods') {
-            parent::set('paymentMethods', ['paymentMethodDetails' => $value]);
+            parent::set($key, ['paymentMethodDetails' => $value]);
             return;
         }
         

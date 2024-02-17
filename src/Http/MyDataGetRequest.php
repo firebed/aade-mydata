@@ -2,15 +2,15 @@
 
 namespace Firebed\AadeMyData\Http;
 
+use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Http\Traits\HasResponseXML;
 use Firebed\AadeMyData\Models\RequestedDoc;
 use Firebed\AadeMyData\Xml\RequestedDocReader;
-use GuzzleHttp\Exception\GuzzleException;
 
 abstract class MyDataGetRequest extends MyDataRequest
 {
     use HasResponseXML;
-    
+
     /**
      * <ol>
      * <li>Στην περίπτωση που τα αποτελέσματα αναζήτησης ξεπερνούν σε μέγεθος το
@@ -47,7 +47,8 @@ abstract class MyDataGetRequest extends MyDataRequest
      * @param string|null $maxMark Μέγιστος Αριθμός ΜΑΡΚ
      * @param string|null $nextPartitionKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
      * @param string|null $nextRowKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
-     * @throws GuzzleException
+     * @return RequestedDoc
+     * @throws MyDataException
      */
     public function handle(string $mark = '', string $dateFrom = null, string $dateTo = null, string $receiverVatNumber = null, string $entityVatNumber = null, string $invType = null, string $maxMark = null, string $nextPartitionKey = null, string $nextRowKey = null): RequestedDoc
     {
@@ -55,7 +56,7 @@ abstract class MyDataGetRequest extends MyDataRequest
 
         $params = compact('dateFrom', 'dateTo', 'receiverVatNumber', 'entityVatNumber', 'invType', 'maxMark', 'nextPartitionKey', 'nextRowKey');
         $query += array_filter($params);
-        
+
         $response = $this->get($query);
         $this->responseXML = $response->getBody()->getContents();
 

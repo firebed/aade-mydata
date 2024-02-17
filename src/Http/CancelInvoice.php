@@ -2,10 +2,10 @@
 
 namespace Firebed\AadeMyData\Http;
 
+use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Http\Traits\HasResponseXML;
 use Firebed\AadeMyData\Models\ResponseDoc;
 use Firebed\AadeMyData\Xml\ResponseDocReader;
-use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * <p>Αυτή η POST μέθοδος χρησιμοποιείται για την ακύρωση παραστατικού χωρίς
@@ -23,23 +23,24 @@ use GuzzleHttp\Exception\GuzzleException;
 class CancelInvoice extends MyDataRequest
 {
     use HasResponseXML;
-    
+
     /**
-     * @param string      $mark            Μοναδικός αριθμός καταχώρησης παραστατικού προς ακύρωση
+     * @param string $mark Μοναδικός αριθμός καταχώρησης παραστατικού προς ακύρωση
      * @param string|null $entityVatNumber ΑΦΜ οντότητας
-     * @throws GuzzleException
+     * @return ResponseDoc
+     * @throws MyDataException
      */
     public function handle(string $mark, string $entityVatNumber = null): ResponseDoc
     {
         $query = ['mark' => $mark];
-        
+
         if (!empty($entityVatNumber)) {
             $query['entityVatNumber'] = $entityVatNumber;
         }
 
         $results = $this->post($query);
         $this->responseXML = $results->getBody()->getContents();
-        
+
         return (new ResponseDocReader())->parseXML($this->responseXML);
     }
 }
