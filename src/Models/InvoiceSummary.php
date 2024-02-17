@@ -2,6 +2,11 @@
 
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
+use Firebed\AadeMyData\Enums\ExpenseClassificationType;
+use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
+use Firebed\AadeMyData\Enums\IncomeClassificationType;
+
 class InvoiceSummary extends Type
 {
     /**
@@ -26,7 +31,7 @@ class InvoiceSummary extends Type
      */
     public function setTotalNetValue(float $totalNetValue): void
     {
-        $this->put('totalNetValue', $totalNetValue);
+        $this->set('totalNetValue', $totalNetValue);
     }
 
     /**
@@ -47,7 +52,7 @@ class InvoiceSummary extends Type
      */
     public function setTotalVatAmount(float $totalVatAmount): void
     {
-        $this->put('totalVatAmount', $totalVatAmount);
+        $this->set('totalVatAmount', $totalVatAmount);
     }
 
     /**
@@ -72,7 +77,7 @@ class InvoiceSummary extends Type
      */
     public function setTotalWithheldAmount(float $totalWithheldAmount): void
     {
-        $this->put('totalWithheldAmount', $totalWithheldAmount);
+        $this->set('totalWithheldAmount', $totalWithheldAmount);
     }
 
     /**
@@ -97,7 +102,7 @@ class InvoiceSummary extends Type
      */
     public function setTotalFeesAmount(float $totalFeesAmount): void
     {
-        $this->put('totalFeesAmount', $totalFeesAmount);
+        $this->set('totalFeesAmount', $totalFeesAmount);
     }
 
     /**
@@ -122,7 +127,7 @@ class InvoiceSummary extends Type
      */
     public function setTotalStampDutyAmount(float $totalStampDutyAmount): void
     {
-        $this->put('totalStampDutyAmount', $totalStampDutyAmount);
+        $this->set('totalStampDutyAmount', $totalStampDutyAmount);
     }
 
     /**
@@ -147,7 +152,7 @@ class InvoiceSummary extends Type
      */
     public function setTotalOtherTaxesAmount(float $totalOtherTaxesAmount): void
     {
-        $this->put('totalOtherTaxesAmount', $totalOtherTaxesAmount);
+        $this->set('totalOtherTaxesAmount', $totalOtherTaxesAmount);
     }
 
     /**
@@ -172,7 +177,7 @@ class InvoiceSummary extends Type
      */
     public function setTotalDeductionsAmount(float $totalDeductionsAmount): void
     {
-        $this->put('totalDeductionsAmount', $totalDeductionsAmount);
+        $this->set('totalDeductionsAmount', $totalDeductionsAmount);
     }
 
     /**
@@ -197,7 +202,7 @@ class InvoiceSummary extends Type
      */
     public function setTotalGrossValue(float $totalGrossValue): void
     {
-        $this->put('totalGrossValue', $totalGrossValue);
+        $this->set('totalGrossValue', $totalGrossValue);
     }
     
     /**
@@ -207,18 +212,28 @@ class InvoiceSummary extends Type
     {
         return $this->get('incomeClassification');
     }
-    
+
     /**
      * <h2>Χαρακτηρισμοί Εσόδων</h2>
      *
      * <p>Το incomeClassification περιέχει το άθροισμα για κάθε συνδυασμό όλων των πεδίων
      * incomeClassificationCategory που εντοπίζονται στις γραμμές του παραστατικού.</p>
      *
-     * @param IncomeClassification $incomeClassification Χαρακτηρισμοί Εσόδων
+     * @param IncomeClassification|IncomeClassificationType $incomeClassification Χαρακτηρισμοί Εσόδων
+     * @param IncomeClassificationCategory|null $classificationCategory
+     * @param float|null $classificationAmount
      */
-    public function addIncomeClassification(IncomeClassification $incomeClassification): void
+    public function addIncomeClassification(IncomeClassification|IncomeClassificationType $incomeClassification, IncomeClassificationCategory $classificationCategory = null, float $classificationAmount = null): void
     {
-        $this->push('incomeClassification', $incomeClassification);
+        if ($incomeClassification instanceof IncomeClassification) {
+            $this->push('incomeClassification', $incomeClassification);
+        } else {
+            $classification = new IncomeClassification();
+            $classification->setClassificationType($incomeClassification);
+            $classification->setClassificationCategory($classificationCategory);
+            $classification->setAmount($classificationAmount);
+            $this->addIncomeClassification($classification);
+        }
     }
     
     /**
@@ -228,27 +243,37 @@ class InvoiceSummary extends Type
     {
         return $this->get('expensesClassification');
     }
-    
+
     /**
      * <h2>Χαρακτηρισμοί Εξόδων</h2>
      *
      * <p>Το expensesClassification περιέχει το άθροισμα για κάθε συνδυασμό όλων των πεδίων
      * expensesClassificationCategory που εντοπίζονται στις γραμμές του παραστατικού.</p>
      *
-     * @param ExpensesClassification $expensesClassification Χαρακτηρισμοί Εξόδων
+     * @param ExpensesClassification|ExpenseClassificationType $expenseClassification
+     * @param ExpenseClassificationCategory|null $expenseClassificationCategory
+     * @param float|null $classificationAmount
      */
-    public function addExpensesClassification(ExpensesClassification $expensesClassification): void
+    public function addExpensesClassification(ExpensesClassification|ExpenseClassificationType $expenseClassification, ExpenseClassificationCategory $expenseClassificationCategory = null, float $classificationAmount = null): void
     {
-        $this->push('expensesClassification', $expensesClassification);
+        if ($expenseClassification instanceof ExpensesClassification) {
+            $this->push('expensesClassification', $expenseClassification);
+        } else {
+            $classification = new ExpensesClassification();
+            $classification->setClassificationType($expenseClassification);
+            $classification->setClassificationCategory($expenseClassificationCategory);
+            $classification->setAmount($classificationAmount);
+            $this->addExpensesClassification($classification);
+        }
     }
     
-    public function put($key, $value): void
+    public function set($key, $value): void
     {
         if ($key === 'expensesClassification' || $key === 'incomeClassification') {
             $this->push($key, $value);
             return;
         }
     
-        parent::put($key, $value);
+        parent::set($key, $value);
     }
 }

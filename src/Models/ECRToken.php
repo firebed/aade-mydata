@@ -1,0 +1,59 @@
+<?php
+
+namespace Firebed\AadeMyData\Models;
+
+/**
+ * @version 1.0.8
+ */
+class ECRToken extends Type
+{
+    public function __construct(string $signingAuthor = null, string $sessionNumber = null)
+    {
+        $attributes = compact('signingAuthor', 'sessionNumber');
+        $this->setAttributes(array_filter($attributes, fn($attr) => !is_null($attr)));
+    }
+
+    /**
+     * @return string|null ECR id: Αριθμός μητρώου του φορολογικού μηχανισμού.
+     * 
+     * @version 1.0.8
+     */
+    public function getSigningAuthor(): ?string
+    {
+        return $this->get('SigningAuthor');
+    }
+
+    /**
+     * Μέγιστο επιτρεπτό μήκος 20
+     * 
+     * @param string $signingAuthor ECR id: Αριθμός μητρώου του φορολογικού μηχανισμού.
+     * 
+     * @version 1.0.8
+     */
+    public function setSigningAuthor(string $signingAuthor): void
+    {
+        $this->set('SigningAuthor', $signingAuthor);
+    }
+
+    /**
+     * @return string|null Μοναδικός 6-ψήφιος κωδικός που χαρακτηρίζει την κάθε συναλλαγή.
+     * 
+     * @version 1.0.8
+     */
+    public function getSessionNumber(): ?string
+    {
+        return $this->get('SessionNumber');
+    }
+
+    /**
+     * Μοναδικός 6-ψήφιος κωδικός που χαρακτηρίζει την κάθε συναλλαγή.
+     * 
+     * @param string $sessionNumber Υπογραφή
+     * 
+     * @version 1.0.8
+     */
+    public function setSessionNumber(string $sessionNumber): void
+    {
+        $this->set('SessionNumber', $sessionNumber);
+    }
+}

@@ -22,7 +22,7 @@ class TaxTotals extends Type
      */
     public function setTaxType(TaxType|string $taxType): void
     {
-        $this->put('taxType', $taxType);
+        $this->set('taxType', $taxType);
     }
 
     /**
@@ -42,7 +42,7 @@ class TaxTotals extends Type
      */
     public function setTaxCategory(int $taxCategory): void
     {
-        $this->put('taxCategory', $taxCategory);
+        $this->set('taxCategory', $taxCategory);
     }
 
     /**
@@ -63,7 +63,7 @@ class TaxTotals extends Type
      */
     public function setUnderlyingValue(float $underlyingValue): void
     {
-        $this->put('underlyingValue', $underlyingValue);
+        $this->set('underlyingValue', $underlyingValue);
     }
 
     /**
@@ -84,7 +84,7 @@ class TaxTotals extends Type
      */
     public function setTaxAmount(float $taxAmount): void
     {
-        $this->put('taxAmount', $taxAmount);
+        $this->set('taxAmount', $taxAmount);
     }
 
     /**
@@ -100,7 +100,7 @@ class TaxTotals extends Type
      */
     public function setId(int $id): void
     {
-        $this->put('id', $id);
+        $this->set('id', $id);
     }
 
 }

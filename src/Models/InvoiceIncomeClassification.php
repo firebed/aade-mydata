@@ -17,7 +17,7 @@ class InvoiceIncomeClassification extends Type
      */
     public function setInvoiceMark(string $invoiceMark): void
     {
-        $this->put('invoiceMark', $invoiceMark);
+        $this->set('invoiceMark', $invoiceMark);
     }
 
     /**
@@ -47,7 +47,7 @@ class InvoiceIncomeClassification extends Type
      */
     public function setEntityVatNumber(string $entityVatNumber): void
     {
-        $this->put('entityVatNumber', $entityVatNumber);
+        $this->set('entityVatNumber', $entityVatNumber);
     }
 
     /**
@@ -70,44 +70,22 @@ class InvoiceIncomeClassification extends Type
      */
     public function setTransactionMode(int $transactionMode): void
     {
-        $this->put('transactionMode', $transactionMode);
+        $this->set('transactionMode', $transactionMode);
     }
 
     /**
-     * @return int|null Αριθμός Γραμμής
+     * @return InvoicesIncomeClassificationDetail[]|null Στοιχεία Χαρακτηρισμού Εσόδων
      */
-    public function getLineNumber(): ?int
+    public function getInvoiceIncomeClassificationDetails(): ?array
     {
-        return $this->get('lineNumber');
+        return $this->get('invoicesIncomeClassificationDetails');
     }
 
     /**
-     * Αναφέρεται στον αντίστοιχο αριθμό γραμμής του αρχικού παραστατικού με Μοναδικός Αριθμός Καταχώρησης αυτό του πεδίου mark.
-     * 
-     * @param int $lineNumber Αριθμός Γραμμής
+     * @param InvoicesIncomeClassificationDetail[] $invoicesIncomeClassificationDetails Στοιχεία Χαρακτηρισμού Εσόδων
      */
-    public function setLineNumber(int $lineNumber): void
+    public function setInvoicesIncomeClassificationDetails(array $invoicesIncomeClassificationDetails): void
     {
-        $this->put('lineNumber', $lineNumber);
+        $this->set('invoicesIncomeClassificationDetails', $invoicesIncomeClassificationDetails);
     }
-
-    /**
-     * @return IncomeClassification|null
-     */
-    public function getIncomeClassificationDetailData(): ?IncomeClassification
-    {
-        return $this->get('incomeClassificationDetailData');
-    }
-
-    /**
-     * Κάθε στοιχείο invoicesIncomeClassificationDetails περιέχει ένα lineNumber και
-     * μια λίστα στοιχείων invoiceIncomeClassificationDetailData.
-     * 
-     * @param IncomeClassification $incomeClassificationDetailData
-     */
-    public function setIncomeClassificationDetailData(IncomeClassification $incomeClassificationDetailData): void
-    {
-        $this->put('incomeClassificationDetailData', $incomeClassificationDetailData);
-    }
-
 }

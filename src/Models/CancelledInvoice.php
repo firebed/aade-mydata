@@ -17,7 +17,7 @@ class CancelledInvoice extends Type
      */
     public function setInvoiceMark(string $invoiceMark): void
     {
-        $this->put('invoiceMark', $invoiceMark);
+        $this->set('invoiceMark', $invoiceMark);
     }
 
     /**
@@ -33,7 +33,7 @@ class CancelledInvoice extends Type
      */
     public function setCancellationMark(string $cancellationMark): void
     {
-        $this->put('cancellationMark', $cancellationMark);
+        $this->set('cancellationMark', $cancellationMark);
     }
 
     /**
@@ -49,7 +49,7 @@ class CancelledInvoice extends Type
      */
     public function setCancellationDate(string $cancellationDate): void
     {
-        $this->put('cancellationDate', $cancellationDate);
+        $this->set('cancellationDate', $cancellationDate);
     }
 
 }

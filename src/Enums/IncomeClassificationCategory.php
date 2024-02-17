@@ -68,4 +68,10 @@ enum IncomeClassificationCategory: string
      * Λοιπά Πληροφοριακά Στοιχεία Εσόδων
      */
     case CATEGORY_1_95 = "category1_95";
+
+
+    /**
+     * Διακίνηση
+     */
+    case CATEGORY_3 = 'category3';
 }

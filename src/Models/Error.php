@@ -17,7 +17,7 @@ class Error extends Type
      */
     public function setMessage(string $message): void
     {
-        $this->put('message', $message);
+        $this->set('message', $message);
     }
 
     /**
@@ -33,7 +33,7 @@ class Error extends Type
      */
     public function setCode(string $code): void
     {
-        $this->put('code', $code);
+        $this->set('code', $code);
     }
     
 }

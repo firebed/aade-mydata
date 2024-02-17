@@ -7,7 +7,9 @@ use Firebed\AadeMyData\Traits\HasFactory;
 class Response extends Type
 {
     use HasFactory;
-    
+
+    protected array $groups = ['errors'];
+
     /**
      * @return int|null Αριθμός Σειράς Οντότητας εντός του υποβληθέντος xml
      */
@@ -18,7 +20,7 @@ class Response extends Type
 
     public function setIndex(int $index): void
     {
-        $this->put('index', $index);
+        $this->set('index', $index);
     }
 
     /**
@@ -48,7 +50,7 @@ class Response extends Type
 
     public function setStatusCode(string $statusCode): void
     {
-        $this->put('statusCode', $statusCode);
+        $this->set('statusCode', $statusCode);
     }
 
     /**
@@ -63,7 +65,7 @@ class Response extends Type
 
     public function setInvoiceUid(string $invoiceUid): void
     {
-        $this->put('invoiceUid', $invoiceUid);
+        $this->set('invoiceUid', $invoiceUid);
     }
 
     /**
@@ -81,7 +83,7 @@ class Response extends Type
 
     public function setInvoiceMark(string $invoiceMark): void
     {
-        $this->put('invoiceMark', $invoiceMark);
+        $this->set('invoiceMark', $invoiceMark);
     }
 
     /**
@@ -96,7 +98,7 @@ class Response extends Type
 
     public function setClassificationMark(string $classificationMark): void
     {
-        $this->put('classificationMark', $classificationMark);
+        $this->set('classificationMark', $classificationMark);
     }
 
     /**
@@ -111,7 +113,7 @@ class Response extends Type
 
     public function setAuthenticationCode(string $authenticationCode): void
     {
-        $this->put('authenticationCode', $authenticationCode);
+        $this->set('authenticationCode', $authenticationCode);
     }
 
     /**
@@ -126,7 +128,7 @@ class Response extends Type
 
     public function setCancellationMark(string $cancellationMark): void
     {
-        $this->put('cancellationMark', $cancellationMark);
+        $this->set('cancellationMark', $cancellationMark);
     }
 
     public function hasErrors(): bool
@@ -145,19 +147,19 @@ class Response extends Type
 
     /**
      * Χρησιμοποιείται από τα προγράμματα για τη δημιουργία QR Code τύπου Url
-     * 
+     *
      * @param $qrUrl
      * @version 1.0.7
      */
     public function setQrUrl($qrUrl): void
     {
-        $this->put('qrUrl', $qrUrl);
+        $this->set('qrUrl', $qrUrl);
     }
 
     /**
-     * @return Errors|null Λίστα Σφαλμάτων
+     * @return Error[]|null Λίστα Σφαλμάτων
      */
-    public function getErrors(): ?Errors
+    public function getErrors(): ?array
     {
         return $this->get('errors');
     }

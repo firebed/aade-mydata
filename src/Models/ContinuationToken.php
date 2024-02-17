@@ -17,7 +17,7 @@ class ContinuationToken extends Type
      */
     public function setNextPartitionKey(string $nextPartitionKey): void
     {
-        $this->put('nextPartitionKey', $nextPartitionKey);
+        $this->set('nextPartitionKey', $nextPartitionKey);
     }
 
     /**
@@ -33,7 +33,7 @@ class ContinuationToken extends Type
      */
     public function setNextRowKey(string $nextRowKey): void
     {
-        $this->put('nextRowKey', $nextRowKey);
+        $this->set('nextRowKey', $nextRowKey);
     }    
 
 }

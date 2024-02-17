@@ -517,6 +517,4 @@ enum ExpenseClassificationType: string
      * Αγορές αγαθών που υπάγονται σε ΕΦΚ
      */
     case E3_598_002 = "E3_598_002";
-
-
 }

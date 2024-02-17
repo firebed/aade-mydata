@@ -2,36 +2,30 @@
 
 namespace Firebed\AadeMyData\Http;
 
-use Error;
-use Firebed\AadeMyData\Loader;
-use Firebed\AadeMyData\Models\ResponseDoc;
-use Firebed\AadeMyData\Parser\RequestedDocParser;
-use Firebed\AadeMyData\Parser\ResponseDocParser;
+use Exception;
+use Firebed\AadeMyData\Exceptions\MissingCredentialsException;
+use Firebed\AadeMyData\Exceptions\MyDataException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use Psr\Http\Message\ResponseInterface;
 
 abstract class MyDataRequest
 {
+    private const DEV_URL  = 'https://mydataapidev.aade.gr/';
+    private const PROD_URL = 'https://mydatapi.aade.gr/myDATA/';
+
     private static ?string     $user_id          = null;
     private static ?string     $subscription_key = null;
     private static ?string     $env              = null;
     private static bool|string $verify_client    = true;
 
-    private static mixed $mockResponse;
+    private static HandlerStack $handler;
 
-    public static function mockResponse($mockResponse): void
+    public static function setHandler(MockHandler $handler): void
     {
-        if (is_callable($mockResponse)) {
-            self::$mockResponse = $mockResponse;
-            return;
-        }
-
-        self::$mockResponse = fn() => $mockResponse;
-    }
-
-    public static function isMocking(): bool
-    {
-        return isset(self::$mockResponse);
+        self::$handler = HandlerStack::create($handler);
     }
 
     public static function init(string $user_id, string $subscription_key, string $env): void
@@ -46,11 +40,16 @@ abstract class MyDataRequest
         self::$subscription_key = $subscription_key;
     }
 
+    public static function setEnvironment($env): void
+    {
+        self::$env = $env;
+    }
+
     /**
      * <ul>Describes the SSL certificate verification behavior of a request.
      *
-     * <li>Set to true to enable SSL certificate verification and use the default CA bundle provided by operating system.</li>
-     * <li>Set to false to disable certificate verification (this is insecure!).</li>
+     * <li>Set to <code>true</code> to enable SSL certificate verification and use the default CA bundle provided by operating system.</li>
+     * <li>Set to <code>false</code> to disable certificate verification (this is insecure!).</li>
      * <li>Set to a string to provide the path to a CA bundle to enable verification using a custom certificate.</li>
      * </ul>
      *
@@ -64,7 +63,7 @@ abstract class MyDataRequest
      * // Disable validation entirely (don't do this!).
      * MyDataRequest::verifyClient(false);
      * </pre>
-     * 
+     *
      * <br>
      * <p>If you do not need a specific certificate bundle, then Mozilla provides a commonly used CA bundle which can be downloaded <a href="https://curl.haxx.se/ca/cacert.pem">here</a>
      * (provided by the maintainer of cURL). Once you have a CA bundle available on disk, you can set the "openssl.cafile" PHP ini
@@ -79,9 +78,64 @@ abstract class MyDataRequest
         self::$verify_client = $verify;
     }
 
-    public static function setEnvironment($env): void
+    public static function isProduction(): bool
     {
-        self::$env = $env;
+        return self::$env === 'prod';
+    }
+
+    /**
+     * @throws MyDataException
+     */
+    protected function get(array $query): ResponseInterface
+    {
+        self::validateCredentials();
+
+        try {
+            return $this->client()->get($this->getUrl(), ['query' => $query]);
+        } catch (GuzzleException $e) {
+            $this->handleException($e);
+        }
+    }
+
+    /**
+     * @throws MissingCredentialsException
+     */
+    private static function validateCredentials(): void
+    {
+        if (empty(self::$user_id) || empty(self::$subscription_key)) {
+            throw new MissingCredentialsException();
+        }
+    }
+
+    private function client(): Client
+    {
+        $config = [
+            'headers' => [
+                'aade-user-id'              => self::$user_id,
+                'Ocp-Apim-Subscription-Key' => self::$subscription_key,
+                'Content-Type'              => "text/xml"
+            ],
+            'verify'  => self::$verify_client
+        ];
+
+        if (isset(self::$handler)) {
+            $config['handler'] = self::$handler;
+        }
+
+        return new Client($config);
+    }
+
+    private function getUrl(): string
+    {
+        $action = $this->getAction();
+        return self::isDevelopment()
+            ? self::DEV_URL.$action
+            : self::PROD_URL.$action;
+    }
+
+    private function getAction(): string
+    {
+        return $this->action ?? (basename(get_class($this)));
     }
 
     public static function isDevelopment(): bool
@@ -89,41 +143,20 @@ abstract class MyDataRequest
         return self::$env === 'dev';
     }
 
-    public static function isProduction(): bool
+    /**
+     * @throws MyDataException
+     */
+    protected function handleException(Exception $exception)
     {
-        return self::$env === 'prod';
+        throw new MyDataException($exception->getMessage(), $exception->getCode());
     }
 
     /**
-     * @throws GuzzleException
+     * @throws MyDataException
      */
-    protected function get(array $query): mixed
+    protected function post(array $query = null, string $body = null): ResponseInterface
     {
         self::validateCredentials();
-
-        $url = Loader::getUrl(get_class($this), self::$env);
-
-        if (self::isMocking()) {
-            return self::mock();
-        }
-
-        $response = $this->client()->get($url, ['query' => $query]);
-
-        return RequestedDocParser::parseXML(simplexml_load_string($response->getBody()->getContents()));
-    }
-
-    /**
-     * @throws GuzzleException
-     */
-    protected function post(array $query = null, string $body = null): ResponseDoc
-    {
-        self::validateCredentials();
-
-        $url = Loader::getUrl(get_class($this), self::$env);
-
-        if (self::isMocking()) {
-            return self::mock();
-        }
 
         $params = [];
         if (!empty($query)) {
@@ -134,34 +167,10 @@ abstract class MyDataRequest
             $params['body'] = $body;
         }
 
-        $response = $this->client()->post($url, $params);
-        $xml = simplexml_load_string($response->getBody()->getContents());
-
-        return ResponseDocParser::parseXML($xml);
-    }
-
-    private function mock()
-    {
-        $callback = self::$mockResponse;
-        return $callback();
-    }
-
-    private function client(): Client
-    {
-        return new Client([
-            'headers' => [
-                'aade-user-id'              => self::$user_id,
-                'Ocp-Apim-Subscription-Key' => self::$subscription_key,
-                'Content-Type'              => "text/xml"
-            ],
-            'verify'  => self::$verify_client
-        ]);
-    }
-
-    private static function validateCredentials(): void
-    {
-        if (empty(self::$user_id) || empty(self::$subscription_key)) {
-            throw new Error("Missing credentials. Please use MyDataRequest::setCredentials method to set your myDATA Rest API credentials.");
+        try {
+            return $this->client()->post($this->getUrl(), $params);
+        } catch (GuzzleException $e) {
+            $this->handleException($e);
         }
     }
 }

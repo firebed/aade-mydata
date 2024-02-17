@@ -25,11 +25,14 @@ class ExpensesClassification extends Type
     }
 
     /**
+     * Το πεδίο classificationCategory χρησιμοποιείται μόνο για τους χαρακτηρισμούς
+     * εξόδων Ε3, αλλιώς αγνοείται.
+     *
      * @param ExpenseClassificationType|string $classificationType Κωδικός Χαρακτηρισμού
      */
     public function setClassificationType(ExpenseClassificationType|string $classificationType): void
     {
-        $this->put('classificationType', $classificationType);
+        $this->set('classificationType', $classificationType);
     }
 
     /**
@@ -45,7 +48,7 @@ class ExpensesClassification extends Type
      */
     public function setClassificationCategory(ExpenseClassificationCategory|string $classificationCategory): void
     {
-        $this->put('classificationCategory', $classificationCategory);
+        $this->set('classificationCategory', $classificationCategory);
     }
 
     /**
@@ -66,7 +69,67 @@ class ExpensesClassification extends Type
      */
     public function setAmount(float $amount): void
     {
-        $this->put('amount', $amount);
+        $this->set('amount', $amount);
+    }
+
+    /**
+     * @return float|null Ποσό ΦΠΑ
+     * @version 1.0.7
+     */
+    public function getVatAmount(): ?float
+    {
+        return $this->get('vatAmount');
+    }
+
+    /**
+     * Χρησιμοποιείτε μόνο για τους χαρακτηρισμούς εξόδων ΦΠΑ, διαφορετικά αγνοείται.
+     *
+     * @param float|null $vatAmount Ποσό ΦΠΑ (Ελάχιστη τιμή 0, δεκαδικά 2)
+     * @version 1.0.7
+     */
+    public function setVatAmount(?float $vatAmount): void
+    {
+        $this->push('vatAmount', $vatAmount);
+    }
+
+    /**
+     * @return int|null Κατηγορία ΦΠΑ
+     * @version 1.0.7
+     */
+    public function getVatCategory(): ?int
+    {
+        return $this->get('vatCategory');
+    }
+
+    /**
+     * Χρησιμοποιείτε μόνο για τους χαρακτηρισμούς εξόδων ΦΠΑ, διαφορετικά αγνοείται.
+     *
+     * @param int|null $vatCategory Κατηγορία ΦΠΑ
+     * @version 1.0.7
+     */
+    public function setVatCategory(?int $vatCategory): void
+    {
+        $this->set('vatCategory', $vatCategory);
+    }
+
+    /**
+     * @return int|null Κατηγορία Εξαίρεσης ΦΠΑ
+     * @version 1.0.7
+     */
+    public function getVatExemptionCategory(): ?int
+    {
+        return $this->get('vatExemptionCategory');
+    }
+
+    /**
+     * Χρησιμοποιείτε μόνο για τους χαρακτηρισμούς εξόδων ΦΠΑ, διαφορετικά αγνοείται.
+     *
+     * @param int|null $vatExemptionCategory Κατηγορία Εξαίρεσης ΦΠΑ
+     * @version 1.0.7
+     */
+    public function setVatExemptionCategory(?int $vatExemptionCategory): void
+    {
+        $this->set('vatExemptionCategory', $vatExemptionCategory);
     }
 
     /**
@@ -84,6 +147,6 @@ class ExpensesClassification extends Type
      */
     public function setId(int $id): void
     {
-        $this->put('id', $id);
+        $this->set('id', $id);
     }
 }

@@ -19,6 +19,13 @@ namespace Firebed\AadeMyData\Models;
  */
 class RequestedDoc extends Type
 {
+    public array $groups = [
+        'cancelledInvoicesDoc',
+        'incomeClassificationsDoc',
+        'expensesClassificationsDoc',
+        'paymentMethodsDoc',
+    ];
+
     /**
      * @return ContinuationToken|null Στοιχείο για την τμηματική λήψη αποτελεσμάτων
      */
@@ -28,74 +35,43 @@ class RequestedDoc extends Type
     }
 
     /**
-     * @param ContinuationToken $continuationToken Στοιχείο για την τμηματική λήψη αποτελεσμάτων
-     */
-    public function setContinuationToken(ContinuationToken $continuationToken): void
-    {
-        $this->put('continuationToken', $continuationToken);
-    }
-
-    /**
      * @return InvoicesDoc|null Λίστα Παραστατικών
      */
-    public function getInvoicesDoc(): ?InvoicesDoc
+    public function getInvoices(): ?InvoicesDoc
     {
         return $this->get('invoicesDoc');
     }
 
     /**
-     * @param InvoicesDoc $invoicesDoc Λίστα Παραστατικών
-     */
-    public function setInvoicesDoc(InvoicesDoc $invoicesDoc): void
-    {
-        $this->put('invoicesDoc', $invoicesDoc);
-    }
-
-    /**
      * @return CancelledInvoice[]|null Λίστα ακυρώσεων
      */
-    public function getCancelledInvoicesDoc(): ?array
+    public function getCancelledInvoices(): ?array
     {
         return $this->get('cancelledInvoicesDoc');
     }
 
     /**
-     * @param CancelledInvoice[] $cancelledInvoicesDoc Λίστα ακυρώσεων
+     * @return InvoiceIncomeClassification[]|null Λίστα Χαρακτηρισμών Εσόδων
      */
-    public function setCancelledInvoicesDoc(array $cancelledInvoicesDoc): void
-    {
-        $this->put('cancelledInvoicesDoc', $cancelledInvoicesDoc);
-    }
-
-    /**
-     * @return InvoiceIncomeClassification|null Λίστα Χαρακτηρισμών Εσόδων
-     */
-    public function getIncomeClassificationsDoc(): ?InvoiceIncomeClassification
+    public function getIncomeClassifications(): ?array
     {
         return $this->get('incomeClassificationsDoc');
     }
 
     /**
-     * @param InvoiceIncomeClassification $incomeClassificationsDoc Λίστα Χαρακτηρισμών Εσόδων
+     * @return InvoiceExpensesClassification[]|null Λίστα Χαρακτηρισμών Εξόδων
      */
-    public function setIncomeClassificationsDoc(InvoiceIncomeClassification $incomeClassificationsDoc): void
-    {
-        $this->put('incomeClassificationsDoc', $incomeClassificationsDoc);
-    }
-
-    /**
-     * @return InvoiceExpensesClassification|null Λίστα Χαρακτηρισμών Εξόδων
-     */
-    public function getExpensesClassificationsDoc(): ?InvoiceExpensesClassification
+    public function getExpensesClassifications(): ?array
     {
         return $this->get('expensesClassificationsDoc');
     }
 
     /**
-     * @param InvoiceExpensesClassification $expensesClassificationsDoc Λίστα Χαρακτηρισμών Εξόδων
+     * @return PaymentMethod[]|null Λίστα Τρόπων Πληρωμής
+     * @version 1.0.8
      */
-    public function setExpensesClassificationsDoc(InvoiceExpensesClassification $expensesClassificationsDoc): void
+    public function getPaymentMethods(): ?array
     {
-        $this->put('expensesClassificationsDoc', $expensesClassificationsDoc);
+        return $this->get('paymentMethodsDoc');
     }
 }

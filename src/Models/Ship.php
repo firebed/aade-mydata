@@ -17,7 +17,7 @@ class Ship extends Type
      */
     public function setApplicationId(string $applicationId): void
     {
-        $this->put('applicationId', $applicationId);
+        $this->set('applicationId', $applicationId);
     }
 
     /**
@@ -33,7 +33,7 @@ class Ship extends Type
      */
     public function setApplicationDate(string $applicationDate): void
     {
-        $this->put('applicationDate', $applicationDate);
+        $this->set('applicationDate', $applicationDate);
     }
 
     /**
@@ -49,7 +49,7 @@ class Ship extends Type
      */
     public function setDoy(string $doy): void
     {
-        $this->put('doy', $doy);
+        $this->set('doy', $doy);
     }
 
     /**
@@ -65,6 +65,6 @@ class Ship extends Type
      */
     public function setShipID(string $shipID): void
     {
-        $this->put('shipID', $shipID);
+        $this->set('shipID', $shipID);
     }
 }

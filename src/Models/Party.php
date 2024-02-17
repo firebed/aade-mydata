@@ -17,7 +17,7 @@ class Party extends Type
      */
     public function setVatNumber(string $vatNumber): void
     {
-        $this->put('vatNumber', $vatNumber);
+        $this->set('vatNumber', $vatNumber);
     }
 
     /**
@@ -36,7 +36,7 @@ class Party extends Type
      */
     public function setCountry(string $country): void
     {
-        $this->put('country', $country);
+        $this->set('country', $country);
     }
 
     /**
@@ -56,7 +56,7 @@ class Party extends Type
      */
     public function setBranch(int $branch): void
     {
-        $this->put('branch', $branch);
+        $this->set('branch', $branch);
     }
 
     /**
@@ -75,11 +75,11 @@ class Party extends Type
      * το παραστατικό αφορά οντότητα εντός Ελλάδας (GR)</li>
      * </ul>
      *
-     * @param string $name Επωνυμία
+     * @param string|null $name Επωνυμία
      */
-    public function setName(string $name): void
+    public function setName(?string $name): void
     {
-        $this->put('name', $name);
+        $this->set('name', $name);
     }
 
     /**
@@ -98,11 +98,11 @@ class Party extends Type
      * το παραστατικό αφορά οντότητα εντός Ελλάδας (GR)</li>
      * </ul>
      *
-     * @param Address $address Διεύθυνση
+     * @param Address|null $address Διεύθυνση
      */
-    public function setAddress(Address $address): void
+    public function setAddress(?Address $address): void
     {
-        $this->put('address', $address);
+        $this->set('address', $address);
     }
 
     /**
@@ -125,12 +125,12 @@ class Party extends Type
      * (specialInvoiceCategory = 4)</li>
      * </ul>
      *
-     * @param string $documentIdNo
+     * @param string|null $documentIdNo
      * @return void
      */
-    public function setDocumentIdNo(string $documentIdNo): void
+    public function setDocumentIdNo(?string $documentIdNo): void
     {
-        $this->put('documentIdNo', $documentIdNo);
+        $this->set('documentIdNo', $documentIdNo);
     }
 
     /**
@@ -152,12 +152,12 @@ class Party extends Type
      * καυσίμων.</li>
      * </ul>
      *
-     * @param string $supplyAccountNo
+     * @param string|null $supplyAccountNo
      * @return void
      */
-    public function setSupplyAccountNo(string $supplyAccountNo): void
+    public function setSupplyAccountNo(?string $supplyAccountNo): void
     {
-        $this->put('supplyAccountNo', $supplyAccountNo);
+        $this->set('supplyAccountNo', $supplyAccountNo);
     }
 
     /**
@@ -166,7 +166,7 @@ class Party extends Type
      */
     public function getCountryDocumentId(): ?string
     {
-        return $this->get('countryDocumentId');        
+        return $this->get('countryDocumentId');
     }
 
     /**
@@ -176,11 +176,12 @@ class Party extends Type
      * παραστατικού specialInvoiceCategory έχει την τιμή 4) και εφόσον έχει συμπληρωθεί
      * το πεδίο αριθμός επίσημου εγγράφου (documentIdNo) και αφορά τον λήπτη του
      * παραστατικού.
-     * 
+     *
+     * @param string|null $countryDocumentId Κωδ. Χώρας Έκδοσης Επίσημου Εγγράφου
      * @version 1.0.7
      */
-    public function setCountryDocumentId(string $countryDocumentId): void
+    public function setCountryDocumentId(?string $countryDocumentId): void
     {
-        $this->put('countryDocumentId', $countryDocumentId);        
+        $this->set('countryDocumentId', $countryDocumentId);
     }
 }

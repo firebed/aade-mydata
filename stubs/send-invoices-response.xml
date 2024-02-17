@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ResponseDoc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <response>
+        <index>1</index>
+        <invoiceUid>6F825B9B74717280D1F9A38252D0B65604C6D162</invoiceUid>
+        <invoiceMark>480301204040191</invoiceMark>
+        <qrUrl>https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=sSsxThUx5i3O8ankrp8XUDiL0q12vbzuWZP0nEfMgAyQ2nbm7s6vSz3CYYcmod6i0uCrPCvSLrQ5N1qxEHF8JsfMNz6NmibNhBNXJiR8ecC%3d</qrUrl>
+        <statusCode>Success</statusCode>
+    </response>
+</ResponseDoc>

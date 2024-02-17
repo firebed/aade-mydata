@@ -1,6 +1,9 @@
 .idea
 /vendor/
 /node_modules/
+/src/TestInvoice.php
 composer.lock
 kernel.php
-/src/TestInvoice.php
+.phpunit.result.cache
+requested-doc.xml
+/.phpunit.cache/test-results

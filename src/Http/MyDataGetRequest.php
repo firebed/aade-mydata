@@ -2,11 +2,15 @@
 
 namespace Firebed\AadeMyData\Http;
 
+use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Http\Traits\HasResponseXML;
 use Firebed\AadeMyData\Models\RequestedDoc;
-use GuzzleHttp\Exception\GuzzleException;
+use Firebed\AadeMyData\Xml\RequestedDocReader;
 
-class MyDataGetRequest extends MyDataRequest
+abstract class MyDataGetRequest extends MyDataRequest
 {
+    use HasResponseXML;
+
     /**
      * <ol>
      * <li>Στην περίπτωση που τα αποτελέσματα αναζήτησης ξεπερνούν σε μέγεθος το
@@ -34,16 +38,17 @@ class MyDataGetRequest extends MyDataRequest
      * συγκεκριμένο τύπο σύμφωνα με τον πίνακα 8.1 του Παραρτήματος.</li>
      * </ol>
      *
-     * @param string      $mark              Μοναδικός αριθμός καταχώρησης
-     * @param string|null $dateFrom          Η αρχή χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης dd/MM/yyyy
-     * @param string|null $dateTo            Το τέλος χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης dd/MM/yyyy
+     * @param string $mark Μοναδικός αριθμός καταχώρησης
+     * @param string|null $dateFrom Η αρχή χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης dd/MM/yyyy
+     * @param string|null $dateTo Το τέλος χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης dd/MM/yyyy
      * @param string|null $receiverVatNumber ΑΦΜ αντισυμβαλλόμενου
-     * @param string|null $entityVatNumber   ΑΦΜ οντότητας
-     * @param string|null $invType           Τύπος παραστατικού
-     * @param string|null $maxMark           Μέγιστος Αριθμός ΜΑΡΚ
-     * @param string|null $nextPartitionKey  Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
-     * @param string|null $nextRowKey        Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
-     * @throws GuzzleException
+     * @param string|null $entityVatNumber ΑΦΜ οντότητας
+     * @param string|null $invType Τύπος παραστατικού
+     * @param string|null $maxMark Μέγιστος Αριθμός ΜΑΡΚ
+     * @param string|null $nextPartitionKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
+     * @param string|null $nextRowKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
+     * @return RequestedDoc
+     * @throws MyDataException
      */
     public function handle(string $mark = '', string $dateFrom = null, string $dateTo = null, string $receiverVatNumber = null, string $entityVatNumber = null, string $invType = null, string $maxMark = null, string $nextPartitionKey = null, string $nextRowKey = null): RequestedDoc
     {
@@ -52,6 +57,9 @@ class MyDataGetRequest extends MyDataRequest
         $params = compact('dateFrom', 'dateTo', 'receiverVatNumber', 'entityVatNumber', 'invType', 'maxMark', 'nextPartitionKey', 'nextRowKey');
         $query += array_filter($params);
 
-        return $this->get($query);
+        $response = $this->get($query);
+        $this->responseXML = $response->getBody()->getContents();
+
+        return (new RequestedDocReader())->parseXML($this->responseXML);
     }
 }

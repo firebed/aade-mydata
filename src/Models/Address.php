@@ -17,7 +17,7 @@ class Address extends Type
      */
     public function setStreet(string $street): void
     {
-        $this->put('street', $street);
+        $this->set('street', $street);
     }
 
     /**
@@ -33,7 +33,7 @@ class Address extends Type
      */
     public function setNumber(string $number): void
     {
-        $this->put('number', $number);
+        $this->set('number', $number);
     }
 
     /**
@@ -49,7 +49,7 @@ class Address extends Type
      */
     public function setPostalCode(string $postalCode): void
     {
-        $this->put('postalCode', $postalCode);
+        $this->set('postalCode', $postalCode);
     }
 
     /**
@@ -65,7 +65,7 @@ class Address extends Type
      */
     public function setCity(string $city): void
     {
-        $this->put('city', $city);
+        $this->set('city', $city);
     }
     
 }
