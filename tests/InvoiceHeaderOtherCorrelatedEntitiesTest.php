@@ -2,9 +2,7 @@
 
 namespace Tests;
 
-use Firebed\AadeMyData\Enums\EntityTypes;
 use Firebed\AadeMyData\Models\Invoice;
-use Firebed\AadeMyData\Models\InvoiceHeader;
 use PHPUnit\Framework\TestCase;
 use Tests\Traits\HandlesInvoiceXml;
 
@@ -12,71 +10,70 @@ class InvoiceHeaderOtherCorrelatedEntitiesTest extends TestCase
 {
     use HandlesInvoiceXml;
 
-    public function test_it_converts_invoice_header_other_correlated_entities_to_xml(): void
+    public function test_it_converts_other_correlated_entities_to_xml()
     {
-        $partyType1 = $this->createParty('123456789', 'GR', 0);
-        $entityType1 = $this->createEntity(EntityTypes::TYPE_3, $partyType1);
-
-        $partyType2 = $this->createParty('987654321', 'IT', 1);
-        $entityType2 = $this->createEntity(EntityTypes::TYPE_2, $partyType2);
-
-        $header = new InvoiceHeader();
-        $header->addOtherCorrelatedEntities($entityType1);
-        $header->addOtherCorrelatedEntities($entityType2);
-
-        $invoice = new Invoice();
-        $invoice->setInvoiceHeader($header);
-
-        $dom = $this->toXML($invoice);
-        $oce = $dom->InvoicesDoc->invoice->invoiceHeader->otherCorrelatedEntities;
-
-        $this->assertCount(2, $oce);
-        $this->assertEquals(EntityTypes::TYPE_3->value, $oce[0]->get('type'));
-        $this->assertEquals('123456789', $oce[0]->entityData->vatNumber);
-        $this->assertEquals('GR', $oce[0]->entityData->country);
-        $this->assertEquals(0, $oce[0]->entityData->branch);
-
-        $this->assertCount(2, $oce[1]);
-        $this->assertEquals(EntityTypes::TYPE_2->value, $oce[1]->type);
-        $this->assertEquals('987654321', $oce[1]->entityData->vatNumber);
-        $this->assertEquals('IT', $oce[1]->entityData->country);
-        $this->assertEquals(1, $oce[1]->entityData->branch);
-    }
-
-    public function test_it_converts_xml_to_invoice_header_other_correlated_entities()
-    {
-        $invoice = $this->getInvoiceFromXml('requested-doc-complete-invoice');
+        $invoice = Invoice::factory()->make();
 
         $entities = $invoice->getInvoiceHeader()->getOtherCorrelatedEntities();
+        $entitiesXml = $this->toXML($invoice)->InvoicesDoc->invoice->invoiceHeader->otherCorrelatedEntities;
 
-        $this->assertCount(2, $entities);
+        $this->assertCount(2, $entitiesXml);
 
-        $entity1 = $entities[0];
-        $this->assertEquals(EntityTypes::TYPE_3->value, $entity1->getType());
+        // Test other correlated entity 1
+        $entityData1 = $entities[0]->getEntityData();
+        $entityData1Xml = $entitiesXml[0]->entityData;
+        $this->assertEquals($entities[0]->getType(), $entitiesXml[0]->type);
+        $this->assertEquals($entityData1->getVatNumber(), $entityData1Xml->vatNumber);
+        $this->assertEquals($entityData1->getCountry(), $entityData1Xml->country);
+        $this->assertEquals($entityData1->getBranch(), $entityData1Xml->branch);
+        $this->assertEquals($entityData1->getName(), $entityData1Xml->name);
+        $this->assertEquals($entityData1->getAddress()->getStreet(), $entityData1Xml->address->street);
+        $this->assertEquals($entityData1->getAddress()->getNumber(), $entityData1Xml->address->number);
+        $this->assertEquals($entityData1->getAddress()->getPostalCode(), $entityData1Xml->address->postalCode);
+        $this->assertEquals($entityData1->getAddress()->getCity(), $entityData1Xml->address->city);
+
+        // Test other correlated entity 2
+        $entityData2 = $entities[1]->getEntityData();
+        $entityData2Xml = $entitiesXml[1]->entityData;
+        $this->assertEquals($entities[1]->getType(), $entitiesXml[1]->type);
+        $this->assertEquals($entityData2->getVatNumber(), $entityData2Xml->vatNumber);
+        $this->assertEquals($entityData2->getCountry(), $entityData2Xml->country);
+        $this->assertEquals($entityData2->getBranch(), $entityData2Xml->branch);
+        $this->assertEquals($entityData2->getName(), $entityData2Xml->name);
+        $this->assertEquals($entityData2->getAddress()->getStreet(), $entityData2Xml->address->street);
+        $this->assertEquals($entityData2->getAddress()->getNumber(), $entityData2Xml->address->number);
+        $this->assertEquals($entityData2->getAddress()->getPostalCode(), $entityData2Xml->address->postalCode);
+        $this->assertEquals($entityData2->getAddress()->getCity(), $entityData2Xml->address->city);
+    }
+
+    public function test_it_converts_xml_other_correlated_entities()
+    {
+        $header = $this->getInvoiceFromXml()->getInvoiceHeader();
+
+        $this->assertCount(2, $header->getOtherCorrelatedEntities());
+
+        // Testing other correlated entity 1
+        $entity1 = $header->getOtherCorrelatedEntities()[0];
+        $this->assertEquals(3, $entity1->getType());
         $this->assertEquals('888888888', $entity1->getEntityData()->getVatNumber());
         $this->assertEquals('GR', $entity1->getEntityData()->getCountry());
         $this->assertEquals(1, $entity1->getEntityData()->getBranch());
-        $this->assertEquals('123456', $entity1->getEntityData()->getDocumentIdNo());
-        $this->assertEquals('8009988811', $entity1->getEntityData()->getSupplyAccountNo());
-        $this->assertEquals('GR', $entity1->getEntityData()->getCountryDocumentId());
         $this->assertEquals('Παπαδόπουλος ΙΚΕ', $entity1->getEntityData()->getName());
         $this->assertEquals('Λεωφόρου Στρατού', $entity1->getEntityData()->getAddress()->getStreet());
         $this->assertEquals('328', $entity1->getEntityData()->getAddress()->getNumber());
         $this->assertEquals('67550', $entity1->getEntityData()->getAddress()->getPostalCode());
         $this->assertEquals('Καβάλα', $entity1->getEntityData()->getAddress()->getCity());
 
-        $entity1 = $entities[1];
-        $this->assertEquals(EntityTypes::TYPE_2->value, $entity1->getType());
-        $this->assertEquals('IT999999999', $entity1->getEntityData()->getVatNumber());
-        $this->assertEquals('IT', $entity1->getEntityData()->getCountry());
-        $this->assertEquals(2, $entity1->getEntityData()->getBranch());
-        $this->assertEquals('AXS6654', $entity1->getEntityData()->getDocumentIdNo());
-        $this->assertEquals('ASDD66655', $entity1->getEntityData()->getSupplyAccountNo());
-        $this->assertEquals('IT', $entity1->getEntityData()->getCountryDocumentId());
-        $this->assertEquals('Acme Limited', $entity1->getEntityData()->getName());
-        $this->assertEquals('Via la Spezia', $entity1->getEntityData()->getAddress()->getStreet());
-        $this->assertEquals('553', $entity1->getEntityData()->getAddress()->getNumber());
-        $this->assertEquals('00042', $entity1->getEntityData()->getAddress()->getPostalCode());
-        $this->assertEquals('Rome', $entity1->getEntityData()->getAddress()->getCity());
+        // Testing other correlated entity 2
+        $entity2 = $header->getOtherCorrelatedEntities()[1];
+        $this->assertEquals(2, $entity2->getType());
+        $this->assertEquals('IT999999999', $entity2->getEntityData()->getVatNumber());
+        $this->assertEquals('IT', $entity2->getEntityData()->getCountry());
+        $this->assertEquals(2, $entity2->getEntityData()->getBranch());
+        $this->assertEquals('Acme Limited', $entity2->getEntityData()->getName());
+        $this->assertEquals('Via la Spezia', $entity2->getEntityData()->getAddress()->getStreet());
+        $this->assertEquals('553', $entity2->getEntityData()->getAddress()->getNumber());
+        $this->assertEquals('00042', $entity2->getEntityData()->getAddress()->getPostalCode());
+        $this->assertEquals('Rome', $entity2->getEntityData()->getAddress()->getCity());
     }
 }

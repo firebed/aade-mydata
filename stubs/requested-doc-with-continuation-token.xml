@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RequestedDoc xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" xmlns:pm="https://www.aade.gr/myDATA/paymentMethod/v1.0" xmlns="http://www.aade.gr/myDATA/invoice/v1.0">
+    <continuationToken>
+        <nextPartitionKey>78A4SD5FG5GH55W5DFV5HJN5</nextPartitionKey>
+        <nextRowKey>AS25AS45F45GD55</nextRowKey>
+    </continuationToken>
+</RequestedDoc>

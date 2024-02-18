@@ -3,12 +3,20 @@
 namespace Firebed\AadeMyData\Models;
 
 use Firebed\AadeMyData\Enums\EntityTypes;
+use Firebed\AadeMyData\Traits\HasFactory;
 
 /**
  * @version 1.0.7
  */
 class EntityType extends Type
 {
+    use HasFactory;
+    
+    protected array $expectedOrder = [
+        'type',
+        'entityData',
+    ];
+    
     /**
      * @return EntityTypes|int Κατηγορία Οντότητας
      *

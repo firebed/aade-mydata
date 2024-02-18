@@ -2,8 +2,19 @@
 
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Traits\HasFactory;
+
 class Address extends Type
 {
+    use HasFactory;
+    
+    protected array $expectedOrder = [
+        'street',
+        'number',
+        'postalCode',
+        'city'
+    ];
+    
     /**
      * @return string|null Οδός
      */

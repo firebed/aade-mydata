@@ -43,7 +43,7 @@ class XMLWriter
         $namespaceURI = $this->getNamespace($nodeName);
         $child = $this->createElement($nodeName, namespaceURI: $namespaceURI);
         $parent->appendChild($child);
-        foreach ($nodeValue->attributes() as $key => $value) {
+        foreach ($nodeValue->sortedAttributes() as $key => $value) {
             $this->build($child, $key, $value, $nodeName.'.'.$key);
         }
 

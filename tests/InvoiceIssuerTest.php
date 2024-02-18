@@ -2,9 +2,7 @@
 
 namespace Tests;
 
-use Firebed\AadeMyData\Models\Address;
 use Firebed\AadeMyData\Models\Invoice;
-use Firebed\AadeMyData\Models\Issuer;
 use PHPUnit\Framework\TestCase;
 use Tests\Traits\HandlesInvoiceXml;
 
@@ -12,54 +10,48 @@ class InvoiceIssuerTest extends TestCase
 {
     use HandlesInvoiceXml;
 
-    public function test_invoice_issuer_xml_is_built()
+    public function test_it_converts_invoice_issuer_to_xml()
     {
-        $address = new Address();
-        $address->setStreet('Τσιμισκή');
-        $address->setNumber('52A');
-        $address->setPostalCode('33333');
-        $address->setCity('Χανιά');
+        $invoice = Invoice::factory()->make();
 
-        $issuer = new Issuer();
-        $issuer->setVatNumber('999999999');
-        $issuer->setCountry('GR');
-        $issuer->setBranch(0);
-        $issuer->setDocumentIdNo('MMM123N');
-        $issuer->setSupplyAccountNo('809778544');
-        $issuer->setAddress($address);
+        $issuer = $invoice->getIssuer();
+        $issuerXml = $this->toXML($invoice)->InvoicesDoc->invoice->issuer;
 
-        $invoice = new Invoice();
-        $invoice->setIssuer($issuer);
-
-        $xml = $this->toXML($invoice)->InvoicesDoc->invoice;
-
-        $issuer = $xml->issuer;
-        $this->assertEquals('999999999', $issuer->vatNumber);
-        $this->assertEquals('GR', $issuer->country);
-        $this->assertEquals('0', $issuer->branch);
-        $this->assertEquals('MMM123N', $issuer->documentIdNo);
-        $this->assertEquals('809778544', $issuer->supplyAccountNo);
+        $this->assertCount(8, $issuerXml);
+        $this->assertEquals($issuer->getVatNumber(), $issuerXml->vatNumber);
+        $this->assertEquals($issuer->getCountry(), $issuerXml->country);
+        $this->assertEquals($issuer->getBranch(), $issuerXml->branch);
+        $this->assertEquals($issuer->getName(), $issuerXml->name);
+        $this->assertEquals($issuer->getDocumentIdNo(), $issuerXml->documentIdNo);
+        $this->assertEquals($issuer->getSupplyAccountNo(), $issuerXml->supplyAccountNo);
+        $this->assertEquals($issuer->getCountryDocumentId(), $issuerXml->countryDocumentId);
 
         // Address
-        $address = $issuer->address;
-        $this->assertEquals('33333', $address->postalCode);
-        $this->assertEquals('Χανιά', $address->city);
-        $this->assertEquals('Τσιμισκή', $address->street);
-        $this->assertEquals('52A', $address->number);
+        $address = $issuer->getAddress();
+        $addressXml = $issuerXml->address;
+        $this->assertCount(4, $addressXml);
+        $this->assertEquals($address->getStreet(), $addressXml->street);
+        $this->assertEquals($address->getNumber(), $addressXml->number);
+        $this->assertEquals($address->getPostalCode(), $addressXml->postalCode);
+        $this->assertEquals($address->getCity(), $addressXml->city);
     }
 
-    public function test_invoice_issuer_xml_is_parsed()
+    public function test_it_converts_xml_to_issuer()
     {
         $invoice = $this->getInvoiceFromXml();
 
         $issuer = $invoice->getIssuer();
+        $this->assertCount(8, $issuer->attributes());
         $this->assertEquals('888888888', $issuer->getVatNumber());
         $this->assertEquals('GR', $issuer->getCountry());
-        $this->assertEquals('1', $issuer->getBranch());
+        $this->assertEquals(1, $issuer->getBranch());
+        $this->assertEquals('Ακμή ΑΕ', $issuer->getName());
         $this->assertEquals('AAA5454', $issuer->getDocumentIdNo());
         $this->assertEquals('7845547781', $issuer->getSupplyAccountNo());
+        $this->assertEquals('GR', $issuer->getCountryDocumentId());
 
         $address = $issuer->getAddress();
+        $this->assertCount(4, $address->attributes());
         $this->assertEquals('28ης Οκτωβρίου', $address->getStreet());
         $this->assertEquals('54A', $address->getNumber());
         $this->assertEquals('44458', $address->getPostalCode());

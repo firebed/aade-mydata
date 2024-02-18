@@ -33,7 +33,7 @@ use Firebed\AadeMyData\Models\ResponseDoc;
 use Firebed\AadeMyData\Models\Ship;
 use Firebed\AadeMyData\Models\TaxesTotals;
 use Firebed\AadeMyData\Models\TaxTotals;
-use Firebed\AadeMyData\Models\TransportDetailType;
+use Firebed\AadeMyData\Models\TransportDetail;
 
 return [
     'InvoicesDoc'                           => InvoicesDoc::class,
@@ -64,8 +64,7 @@ return [
     'paymentMethodDetails'                  => PaymentMethodDetail::class,
     'response'                              => Response::class,
     'taxes'                                 => TaxTotals::class,
-    'taxesTotals'                           => TaxesTotals::class,
-    'otherTransportDetails'                 => TransportDetailType::class, // v1.0.7
+    'otherTransportDetails'                 => TransportDetail::class, // v1.0.7
     'otherCorrelatedEntities'               => EntityType::class, // v1.0.7
     'entityData'                            => Party::class, // v1.0.7
     'otherDeliveryNoteHeader'               => OtherDeliveryNoteHeader::class, // v1.0.8

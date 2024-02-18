@@ -13,27 +13,11 @@ class CancelledInvoice extends Type
     }
 
     /**
-     * @param string $invoiceMark Μοναδικός Αριθμός Καταχώρησης
-     */
-    public function setInvoiceMark(string $invoiceMark): void
-    {
-        $this->set('invoiceMark', $invoiceMark);
-    }
-
-    /**
      * @return string|null Αριθμός Ακύρωσης
      */
     public function getCancellationMark(): ?string
     {
         return $this->get('cancellationMark');
-    }
-
-    /**
-     * @param string $cancellationMark Αριθμός Ακύρωσης
-     */
-    public function setCancellationMark(string $cancellationMark): void
-    {
-        $this->set('cancellationMark', $cancellationMark);
     }
 
     /**
@@ -43,13 +27,4 @@ class CancelledInvoice extends Type
     {
         return $this->get('cancellationDate');
     }
-
-    /**
-     * @param string $cancellationDate Ημερομηνία Ακύρωσης
-     */
-    public function setCancellationDate(string $cancellationDate): void
-    {
-        $this->set('cancellationDate', $cancellationDate);
-    }
-
 }

@@ -9,7 +9,8 @@ abstract class Type
 {
     use ValidatesEnums;
 
-    protected array $attributes = [];
+    protected array $attributes    = [];
+    protected array $expectedOrder = [];
 
     public function get($key, $default = null)
     {
@@ -49,8 +50,29 @@ abstract class Type
         return $this->attributes;
     }
 
+    public function sortedAttributes(): array
+    {
+        if (empty($this->expectedOrder)) {
+            return $this->attributes;
+        }
+        
+        $attributes = [];
+        foreach ($this->expectedOrder as $key) {
+            if (array_key_exists($key, $this->attributes)) {
+                $attributes[$key] = $this->attributes[$key];
+            }
+        }
+        
+        return $attributes;
+    }
+
     public function setAttributes(array $attributes): void
     {
         $this->attributes = $attributes;
+    }
+
+    public function getExpectedOrder(): array
+    {
+        return $this->expectedOrder;
     }
 }

@@ -5,6 +5,9 @@ namespace Firebed\AadeMyData\Traits;
 use ArrayIterator;
 use Traversable;
 
+/**
+ * @template Model
+ */
 trait HasIterator
 {
     public function getIterator(): Traversable
@@ -22,6 +25,9 @@ trait HasIterator
         return array_key_exists($offset, $this->attributes);
     }
 
+    /**
+     * @return Model
+     */
     public function offsetGet(mixed $offset): mixed
     {
         return $this->get($offset);

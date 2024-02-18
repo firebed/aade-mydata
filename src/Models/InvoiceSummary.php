@@ -6,9 +6,25 @@ use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
 use Firebed\AadeMyData\Enums\ExpenseClassificationType;
 use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
 use Firebed\AadeMyData\Enums\IncomeClassificationType;
+use Firebed\AadeMyData\Traits\HasFactory;
 
 class InvoiceSummary extends Type
 {
+    use HasFactory;
+
+    protected array $expectedOrder = [
+        'totalNetValue',
+        'totalVatAmount',
+        'totalWithheldAmount',
+        'totalFeesAmount',
+        'totalStampDutyAmount',
+        'totalOtherTaxesAmount',
+        'totalDeductionsAmount',
+        'totalGrossValue',
+        'incomeClassification',
+        'expensesClassification'
+    ];
+
     /**
      * @return float|null Σύνολο Καθαρής Αξίας
      */
@@ -67,7 +83,7 @@ class InvoiceSummary extends Type
      * Το σύνολο παρακρατήσεων φόρων ($totalWithheldAmount) είναι είτε το
      * άθροισμα των αντίστοιχων φόρων των γραμμών του παραστατικού, είτε
      * των αντίστοιχων φόρων που περιέχονται στο στοιχείο taxesTotals.
-     * 
+     *
      * <ul>
      * <li>Ελάχιστη τιμή = 0</li>
      * <li>Δεκαδικά ψηφία = 2</li>
@@ -92,12 +108,12 @@ class InvoiceSummary extends Type
      * Το σύνολο τελών ($totalFeesAmount) είναι είτε το άθροισμα των
      * αντίστοιχων φόρων των γραμμών του παραστατικού, είτε των
      * αντίστοιχων φόρων που περιέχονται στο στοιχείο taxesTotals.
-     * 
+     *
      * <ul>
      * <li>Ελάχιστη τιμή = 0</li>
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
-     * 
+     *
      * @param float $totalFeesAmount Σύνολο Τελών
      */
     public function setTotalFeesAmount(float $totalFeesAmount): void
@@ -117,12 +133,12 @@ class InvoiceSummary extends Type
      * Το σύνολο χαρτοσήμου ($totalStampDutyAmount) είναι είτε το
      * άθροισμα των αντίστοιχων φόρων των γραμμών του παραστατικού,
      * είτε των αντίστοιχων φόρων που περιέχονται στο στοιχείο taxesTotals.
-     * 
+     *
      * <ul>
      * <li>Ελάχιστη τιμή = 0</li>
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
-     * 
+     *
      * @param float $totalStampDutyAmount Σύνολο Χαρτοσήμου
      */
     public function setTotalStampDutyAmount(float $totalStampDutyAmount): void
@@ -142,12 +158,12 @@ class InvoiceSummary extends Type
      * Το σύνολο λοιπών φόρων ($totalOtherTaxesAmount) είναι είτε το
      * άθροισμα των αντίστοιχων φόρων των γραμμών του παραστατικού,
      * είτε των αντίστοιχων φόρων που περιέχονται στο στοιχείο taxesTotals.
-     * 
+     *
      * <ul>
      * <li>Ελάχιστη τιμή = 0</li>
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
-     * 
+     *
      * @param float $totalOtherTaxesAmount Σύνολο Λοιπών Φόρων
      */
     public function setTotalOtherTaxesAmount(float $totalOtherTaxesAmount): void
@@ -167,12 +183,12 @@ class InvoiceSummary extends Type
      * Το σύνολο κρατήσεων ($totalDeductionsAmount) είναι είτε το άθροισμα
      * των αντίστοιχων φόρων των γραμμών του παραστατικού, είτε
      * των αντίστοιχων φόρων που περιέχονται στο στοιχείο taxesTotals.
-     * 
+     *
      * <ul>
      * <li>Ελάχιστη τιμή = 0</li>
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
-     * 
+     *
      * @param float $totalDeductionsAmount Σύνολο Κρατήσεων
      */
     public function setTotalDeductionsAmount(float $totalDeductionsAmount): void
@@ -192,19 +208,19 @@ class InvoiceSummary extends Type
      * Η συνολική αξία ($totalGrossValue) είναι είτε το άθροισμα των
      * αντίστοιχων φόρων των γραμμών του παραστατικού, είτε των
      * αντίστοιχων φόρων που περιέχονται στο στοιχείο taxesTotals.
-     * 
+     *
      * <ul>
      * <li>Ελάχιστη τιμή = 0</li>
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
-     * 
+     *
      * @param float $totalGrossValue Συνολική Αξία
      */
     public function setTotalGrossValue(float $totalGrossValue): void
     {
         $this->set('totalGrossValue', $totalGrossValue);
     }
-    
+
     /**
      * @return IncomeClassification[]|null Χαρακτηρισμοί Εσόδων
      */
@@ -235,7 +251,7 @@ class InvoiceSummary extends Type
             $this->addIncomeClassification($classification);
         }
     }
-    
+
     /**
      * @return ExpensesClassification[]|null Χαρακτηρισμοί Εξόδων
      */
@@ -266,14 +282,18 @@ class InvoiceSummary extends Type
             $this->addExpensesClassification($classification);
         }
     }
-    
+
     public function set($key, $value): void
     {
         if ($key === 'expensesClassification' || $key === 'incomeClassification') {
-            $this->push($key, $value);
+            if (is_array($value)) {
+                parent::set($key, $value);
+            } else {
+                $this->push($key, $value);
+            }
             return;
         }
-    
+
         parent::set($key, $value);
     }
 }

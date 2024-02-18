@@ -8,7 +8,7 @@ class Response extends Type
 {
     use HasFactory;
 
-    protected array $groups = ['errors'];
+    public array $groups = ['errors'];
 
     /**
      * @return int|null Αριθμός Σειράς Οντότητας εντός του υποβληθέντος xml

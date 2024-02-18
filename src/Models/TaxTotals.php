@@ -2,13 +2,28 @@
 
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Enums\FeesPercentCategory;
+use Firebed\AadeMyData\Enums\OtherTaxesPercentCategory;
+use Firebed\AadeMyData\Enums\StampCategory;
 use Firebed\AadeMyData\Enums\TaxType;
+use Firebed\AadeMyData\Enums\WithheldPercentCategory;
+use Firebed\AadeMyData\Traits\HasFactory;
 
 /**
  * Περιγράφει τη δομή των φόρων που αφορούν το σύνολο του παραστατικού.
  */
 class TaxTotals extends Type
 {
+    use HasFactory;
+    
+    protected array $expectedOrder = [
+        'taxType',
+        'taxCategory',
+        'underlyingValue',
+        'taxAmount',
+        'id',
+    ];
+    
     /**
      * @return string|null Είδος Φόρου
      */
@@ -38,9 +53,9 @@ class TaxTotals extends Type
      * από τον αντίστοιχο πίνακα του Παραρτήματος του φόρου που
      * αναφέρεται στο πεδίο taxType.
      *
-     * @param int $taxCategory Κατηγορία Φόρου
+     * @param WithheldPercentCategory|FeesPercentCategory|OtherTaxesPercentCategory|StampCategory|int $taxCategory Κατηγορία Φόρου
      */
-    public function setTaxCategory(int $taxCategory): void
+    public function setTaxCategory(WithheldPercentCategory|FeesPercentCategory|OtherTaxesPercentCategory|StampCategory|int $taxCategory): void
     {
         $this->set('taxCategory', $taxCategory);
     }

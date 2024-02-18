@@ -48,7 +48,7 @@ class XMLReader
                 // similar child types. For instance, an invoice may have a
                 // 'paymentMethods' property, acting as a wrapper array to store
                 // instances of PaymentMethodDetail type.
-                $this->parseWrapperElement($child, $relatedType);
+                $this->parseGroupElement($child, $relatedType);
             } else {
                 // Some nodes may represent objects that extend the Type class,
                 // while others may simply be values such as strings, integers,
@@ -60,7 +60,7 @@ class XMLReader
         return $relatedType;
     }
 
-    protected function parseWrapperElement(DOMElement $element, Type $parent): void
+    protected function parseGroupElement(DOMElement $element, Type $parent): void
     {
         // Wrapper nodes should function like arrays, so we just need to
         // iterate though it and parse its children.

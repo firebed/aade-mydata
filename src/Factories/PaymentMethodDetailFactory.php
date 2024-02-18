@@ -13,9 +13,9 @@ class PaymentMethodDetailFactory extends Factory
     {
         return [
             'type'              => rand(800_000_000_000_000, 800_000_999_999_999),
-            'amount'            => $this->faker->randomFloat(2, 20, 100),
-            'paymentMethodInfo' => $this->faker->text(100),
-            'tipAmount'         => $this->faker->randomFloat(2, 0, 10),
+            'amount'            => fake()->randomFloat(2, 20, 100),
+            'paymentMethodInfo' => fake()->text(100),
+            'tipAmount'         => fake()->randomFloat(2, 0, 10),
             'transactionId'     => 'Success'
         ];
     }
@@ -24,8 +24,8 @@ class PaymentMethodDetailFactory extends Factory
     {
         return $this->state([
             'ECRToken' => [
-                'SigningAuthor' => $this->faker->sha1(),
-                'SessionNumber' => $this->faker->numerify('######'),
+                'SigningAuthor' => fake()->sha1(),
+                'SessionNumber' => fake()->numerify('######'),
             ]
         ]);
     }
@@ -34,8 +34,8 @@ class PaymentMethodDetailFactory extends Factory
     {
         return $this->state([
             'ProvidersSignature' => [
-                'SigningAuthor' => $this->faker->sha1(),
-                'SessionNumber' => $this->faker->bothify("??##??"),
+                'SigningAuthor' => fake()->sha1(),
+                'SessionNumber' => fake()->bothify("??##??"),
             ]
         ]);
     }

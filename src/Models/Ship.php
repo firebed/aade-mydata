@@ -2,8 +2,19 @@
 
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Traits\HasFactory;
+
 class Ship extends Type
 {
+    use HasFactory;
+    
+    protected array $expectedOrder = [
+        'applicationId',
+        'applicationDate',
+        'doy',
+        'shipID'
+    ];
+    
     /**
      * @return string|null Αριθμός Δήλωσης Διενέργειας Δραστηριότητας
      */

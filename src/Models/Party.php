@@ -2,8 +2,23 @@
 
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Traits\HasFactory;
+
 class Party extends Type
 {
+    use HasFactory;
+    
+    protected array $expectedOrder = [
+        'vatNumber',
+        'country',
+        'branch',
+        'name',
+        'address',
+        'documentIdNo',
+        'supplyAccountNo',
+        'countryDocumentId'
+    ];
+    
     /**
      * @return string|null Οποιοσδήποτε έγκυρος ΑΦΜ
      */

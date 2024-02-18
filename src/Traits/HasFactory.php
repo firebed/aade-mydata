@@ -9,9 +9,8 @@ trait HasFactory
     /**
      * @return Factory<static>
      */
-    public static function factory(): Factory
+    public static function factory(int $count = 1): Factory
     {
-        return Factory::factoryForModel(get_called_class());
+        return Factory::factoryForModel(get_called_class(), $count);
     }
-
 }

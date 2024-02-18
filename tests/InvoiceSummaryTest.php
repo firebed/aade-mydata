@@ -2,10 +2,8 @@
 
 namespace Tests;
 
-use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
-use Firebed\AadeMyData\Enums\ExpenseClassificationType;
-use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
-use Firebed\AadeMyData\Enums\IncomeClassificationType;
+use Firebed\AadeMyData\Models\ExpensesClassification;
+use Firebed\AadeMyData\Models\IncomeClassification;
 use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\InvoiceSummary;
 use PHPUnit\Framework\TestCase;
@@ -15,39 +13,96 @@ class InvoiceSummaryTest extends TestCase
 {
     use HandlesInvoiceXml;
 
-    public function test_it_converts_invoice_summary_to_xml(): void
+    public function test_it_converts_invoice_summary_with_single_classifications_to_xml(): void
     {
-        $summary = new InvoiceSummary();
-        $summary->setTotalNetValue(500);
-        $summary->setTotalVatAmount(100);
-        $summary->setTotalWithheldAmount(5);
-        $summary->setTotalFeesAmount(10);
-        $summary->setTotalStampDutyAmount(15);
-        $summary->setTotalOtherTaxesAmount(20);
-        $summary->setTotalDeductionsAmount(25);
-        $summary->setTotalGrossValue(525);
-        $summary->addIncomeClassification(IncomeClassificationType::E3_561_001, IncomeClassificationCategory::CATEGORY_1_2, 400);
-        $summary->addIncomeClassification(IncomeClassificationType::E3_561_002, IncomeClassificationCategory::CATEGORY_1_3, 75);
-        $summary->addExpensesClassification(ExpenseClassificationType::E3_102_001, ExpenseClassificationCategory::CATEGORY_2_2, 100);
-        $summary->addExpensesClassification(ExpenseClassificationType::E3_102_003, ExpenseClassificationCategory::CATEGORY_2_4, 50);
+        $invoice = Invoice::factory()->make();
 
-        $invoice = new Invoice();
-        $invoice->setInvoiceSummary($summary);
+        $summary = $invoice->getInvoiceSummary();
+        $summaryXml = $this->toXML($invoice)->InvoicesDoc->invoice->invoiceSummary;
 
-        $xml = $this->toXML($invoice)->InvoicesDoc->invoice->invoiceSummary;
+        $this->assertCount(10, $summaryXml);
+        $this->assertEquals($summary->getTotalNetValue(), $summaryXml->totalNetValue);
+        $this->assertEquals($summary->getTotalVatAmount(), $summaryXml->totalVatAmount);
+        $this->assertEquals($summary->getTotalWithheldAmount(), $summaryXml->totalWithheldAmount);
+        $this->assertEquals($summary->getTotalFeesAmount(), $summaryXml->totalFeesAmount);
+        $this->assertEquals($summary->getTotalStampDutyAmount(), $summaryXml->totalStampDutyAmount);
+        $this->assertEquals($summary->getTotalOtherTaxesAmount(), $summaryXml->totalOtherTaxesAmount);
+        $this->assertEquals($summary->getTotalDeductionsAmount(), $summaryXml->totalDeductionsAmount);
+        $this->assertEquals($summary->getTotalGrossValue(), $summaryXml->totalGrossValue);
 
-        $this->assertCount(10, $xml);
-        $this->assertEquals(500, $xml->totalNetValue);
-        $this->assertEquals(100, $xml->totalVatAmount);
-        $this->assertEquals(5, $xml->totalWithheldAmount);
-        $this->assertEquals(10, $xml->totalFeesAmount);
-        $this->assertEquals(15, $xml->totalStampDutyAmount);
-        $this->assertEquals(20, $xml->totalOtherTaxesAmount);
-        $this->assertEquals(25, $xml->totalDeductionsAmount);
-        $this->assertEquals(525, $xml->totalGrossValue);
-        $this->assertIncomeClassification(IncomeClassificationType::E3_561_001, IncomeClassificationCategory::CATEGORY_1_2, 400, $xml->incomeClassification[0]);
-        $this->assertIncomeClassification(IncomeClassificationType::E3_561_002, IncomeClassificationCategory::CATEGORY_1_3, 75, $xml->incomeClassification[1]);
-        $this->assertExpensesClassification(ExpenseClassificationType::E3_102_001, ExpenseClassificationCategory::CATEGORY_2_2, 100, $xml->expensesClassification[0]);
-        $this->assertExpensesClassification(ExpenseClassificationType::E3_102_003, ExpenseClassificationCategory::CATEGORY_2_4, 50, $xml->expensesClassification[1]);
+        $icls = $invoice->getInvoiceSummary()->getIncomeClassifications()[0];
+
+        $this->assertEquals($icls->getClassificationType(), $summaryXml->incomeClassification->get('icls:classificationType'));
+        $this->assertEquals($icls->getClassificationCategory(), $summaryXml->incomeClassification->get('icls:classificationCategory'));
+        $this->assertEquals($icls->getAmount(), $summaryXml->incomeClassification->get('icls:amount'));
+        $this->assertEquals($icls->getId(), $summaryXml->incomeClassification->get('icls:id'));
+
+        $ecls = $invoice->getInvoiceSummary()->getExpensesClassifications()[0];
+        $this->assertEquals($ecls->getClassificationType(), $summaryXml->expensesClassification->get('ecls:classificationType'));
+        $this->assertEquals($ecls->getClassificationCategory(), $summaryXml->expensesClassification->get('ecls:classificationCategory'));
+        $this->assertEquals($ecls->getAmount(), $summaryXml->expensesClassification->get('ecls:amount'));
+        $this->assertEquals($ecls->getVatCategory(), $summaryXml->expensesClassification->get('ecls:vatCategory'));
+        $this->assertEquals($ecls->getVatExemptionCategory(), $summaryXml->expensesClassification->get('ecls:vatExemptionCategory'));
+        $this->assertEquals($ecls->getId(), $summaryXml->expensesClassification->get('ecls:id'));
+    }
+
+    public function test_it_converts_invoice_summary_with_multiple_classifications_to_xml(): void
+    {
+        $invoice = Invoice::factory()
+            ->state([
+                'invoiceSummary' => InvoiceSummary::factory()->state([
+                    'incomeClassification'   => IncomeClassification::factory(4),
+                    'expensesClassification' => ExpensesClassification::factory(6)
+                ])
+            ])->make();
+
+        $summary = $invoice->getInvoiceSummary();
+        $summaryXml = $this->toXML($invoice)->InvoicesDoc->invoice->invoiceSummary;
+
+        $this->assertCount(10, $summaryXml);
+        $this->assertCount(4, $summary->getIncomeClassifications());
+        $this->assertCount(4, $summaryXml->incomeClassification);
+
+        $this->assertCount(6, $summary->getExpensesClassifications());
+        $this->assertCount(6, $summaryXml->expensesClassification);
+    }
+
+    public function test_it_converts_xml_to_invoice_summary()
+    {
+        $invoice = $this->getInvoiceFromXml();
+
+        $summary = $invoice->getInvoiceSummary();
+
+        $this->assertEquals(5000, $summary->getTotalNetValue());
+        $this->assertEquals(1200, $summary->getTotalVatAmount());
+        $this->assertEquals(100, $summary->getTotalWithheldAmount());
+        $this->assertEquals(50, $summary->getTotalFeesAmount());
+        $this->assertEquals(10, $summary->getTotalStampDutyAmount());
+        $this->assertEquals(0, $summary->getTotalOtherTaxesAmount());
+        $this->assertEquals(40, $summary->getTotalDeductionsAmount());
+        $this->assertEquals(6000, $summary->getTotalGrossValue());
+        
+        $this->assertCount(1, $summary->getIncomeClassifications());
+
+        $icls = $summary->getIncomeClassifications()[0];
+        $this->assertEquals('E3_102_001', $icls->getClassificationType());
+        $this->assertEquals('category2_1', $icls->getClassificationCategory());
+        $this->assertEquals(5000, $icls->getAmount());
+        $this->assertEquals(1, $icls->getId());
+
+        $this->assertCount(2, $summary->getExpensesClassifications());
+        $ecls1 = $summary->getExpensesClassifications()[0];
+        $this->assertEquals('E3_102_001', $ecls1->getClassificationType());
+        $this->assertEquals('category2_1', $ecls1->getClassificationCategory());
+        $this->assertEquals(5000, $ecls1->getAmount());
+        $this->assertEquals(4, $ecls1->getVatCategory());
+        $this->assertEquals(12, $ecls1->getVatExemptionCategory());
+        $this->assertEquals(2, $ecls1->getId());
+
+        $ecls2 = $summary->getExpensesClassifications()[1];
+        $this->assertEquals('VAT_361', $ecls2->getClassificationType());
+        $this->assertEquals('category2_2', $ecls2->getClassificationCategory());
+        $this->assertEquals(2000, $ecls2->getAmount());
+        $this->assertEquals(3, $ecls2->getId());
     }
 }

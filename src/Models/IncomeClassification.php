@@ -4,6 +4,7 @@ namespace Firebed\AadeMyData\Models;
 
 use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
 use Firebed\AadeMyData\Enums\IncomeClassificationType;
+use Firebed\AadeMyData\Traits\HasFactory;
 
 /**
  * <p>Ο τύπος IncomeClassification αποτελεί τη βασική δομή του Χαρακτηρισμού Εσόδων και εμπεριέχεται είτε</p>
@@ -16,6 +17,15 @@ use Firebed\AadeMyData\Enums\IncomeClassificationType;
  */
 class IncomeClassification extends Type
 {
+    use HasFactory;
+
+    protected array $expectedOrder = [
+        'classificationType',
+        'classificationCategory',
+        'amount',
+        'id'
+    ];
+
     /**
      * @return string|null Κωδικός Χαρακτηρισμού
      */

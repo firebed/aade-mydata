@@ -4,6 +4,7 @@ namespace Tests;
 
 use Firebed\AadeMyData\Enums\PaymentMethod;
 use Firebed\AadeMyData\Models\Invoice;
+use Firebed\AadeMyData\Models\PaymentMethodDetail;
 use PHPUnit\Framework\TestCase;
 use Tests\Traits\HandlesInvoiceXml;
 
@@ -11,40 +12,54 @@ class InvoicePaymentMethodsTest extends TestCase
 {
     use HandlesInvoiceXml;
 
-    public function test_it_converts_invoice_payment_methods_to_xml(): void
+    public function test_it_converts_single_invoice_payment_method_to_xml(): void
     {
-        $paymentMethod1 = $this->createPaymentMethodDetail(PaymentMethod::METHOD_1, 10, 'GR123456789', 4, '1166A');
-        $paymentMethod1->setECRToken('AA55', '123456');
+        $invoice = Invoice::factory()->make();
 
-        $paymentMethod2 = $this->createPaymentMethodDetail(PaymentMethod::METHOD_3, 15, 'Τοις Μετρητοίς');
-        $paymentMethod2->setProvidersSignature("PROV", "AACCBB55");
+        $paymentMethods = $invoice->getPaymentMethods();
+        $paymentMethodsXml = $this->toXML($invoice)->InvoicesDoc->invoice->paymentMethods->paymentMethodDetails;
 
-        $invoice = new Invoice();
-        $invoice->addPaymentMethod($paymentMethod1);
-        $invoice->addPaymentMethod($paymentMethod2);
+        $this->assertIsArray($paymentMethods); // Refers to payment method detail attributes
+        $this->assertCount(5, $paymentMethodsXml); // Refers to payment method detail attributes
 
-        $xml = $this->toXML($invoice)->InvoicesDoc->invoice;
+        // Test payment method 1
+        $payment = $paymentMethods[0];
+        $paymentXml = $paymentMethodsXml;
+        $this->assertEquals($payment->getType(), $paymentXml->type);
+        $this->assertEquals($payment->getAmount(), $paymentXml->amount);
+        $this->assertEquals($payment->getPaymentMethodInfo(), $paymentXml->paymentMethodInfo);
+        $this->assertEquals($payment->getTipAmount(), $paymentXml->tipAmount);
+        $this->assertEquals($payment->getTransactionId(), $paymentXml->transactionId);
+    }
 
-        $paymentMethods = $xml->paymentMethods->paymentMethodDetails;
+    public function test_it_converts_multiple_invoice_payment_methods_to_xml(): void
+    {
+        $invoice = Invoice::factory()
+            ->state(['paymentMethods' => PaymentMethodDetail::factory(2)])
+            ->make();
 
-        // Payment method assertions
-        $this->assertCount(2, $paymentMethods);
+        $paymentMethods = $invoice->getPaymentMethods();
+        $paymentMethodsXml = $this->toXML($invoice)->InvoicesDoc->invoice->paymentMethods->paymentMethodDetails;
 
-        // First payment method
-        $firstPaymentMethod = $paymentMethods[0];
-        $this->assertEquals(PaymentMethod::METHOD_1->value, $firstPaymentMethod->type);
-        $this->assertEquals(10, $firstPaymentMethod->amount);
-        $this->assertEquals('GR123456789', $firstPaymentMethod->paymentMethodInfo);
-        $this->assertEquals(4, $firstPaymentMethod->tipAmount);
-        $this->assertEquals('1166A', $firstPaymentMethod->transactionId);
+        $this->assertCount(2, $paymentMethodsXml);
 
-        // Second payment method
-        $secondPaymentMethod = $paymentMethods[1];
-        $this->assertEquals(PaymentMethod::METHOD_3->value, $secondPaymentMethod->type);
-        $this->assertEquals(15, $secondPaymentMethod->amount);
-        $this->assertEquals('Τοις Μετρητοίς', $secondPaymentMethod->paymentMethodInfo);
-        $this->assertEmpty($secondPaymentMethod->tipAmount);
-        $this->assertEmpty($secondPaymentMethod->transactionId);
+        // Test payment method 1
+        $payment1 = $paymentMethods[0];
+        $payment1Xml = $paymentMethodsXml[0];
+        $this->assertEquals($payment1->getType(), $payment1Xml->type);
+        $this->assertEquals($payment1->getAmount(), $payment1Xml->amount);
+        $this->assertEquals($payment1->getPaymentMethodInfo(), $payment1Xml->paymentMethodInfo);
+        $this->assertEquals($payment1->getTipAmount(), $payment1Xml->tipAmount);
+        $this->assertEquals($payment1->getTransactionId(), $payment1Xml->transactionId);
+
+        // Test payment method 2
+        $payment2 = $paymentMethods[1];
+        $payment2Xml = $paymentMethodsXml[1];
+        $this->assertEquals($payment2->getType(), $payment2Xml->type);
+        $this->assertEquals($payment2->getAmount(), $payment2Xml->amount);
+        $this->assertEquals($payment2->getPaymentMethodInfo(), $payment2Xml->paymentMethodInfo);
+        $this->assertEquals($payment2->getTipAmount(), $payment2Xml->tipAmount);
+        $this->assertEquals($payment2->getTransactionId(), $payment2Xml->transactionId);
     }
 
     public function test_invoice_payment_methods_are_parsed(): void

@@ -7,6 +7,11 @@ namespace Firebed\AadeMyData\Models;
  */
 class ECRToken extends Type
 {
+    protected array $expectedOrder = [
+        'SigningAuthor',
+        'SessionNumber',
+    ];
+    
     public function __construct(string $signingAuthor = null, string $sessionNumber = null)
     {
         $attributes = compact('signingAuthor', 'sessionNumber');

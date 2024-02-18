@@ -8,6 +8,7 @@
                 <vatNumber>888888888</vatNumber>
                 <country>GR</country>
                 <branch>1</branch>
+                <name>Ακμή ΑΕ</name>
                 <address>
                     <street>28ης Οκτωβρίου</street>
                     <number>54A</number>
@@ -16,11 +17,13 @@
                 </address>
                 <documentIdNo>AAA5454</documentIdNo>
                 <supplyAccountNo>7845547781</supplyAccountNo>
+                <countryDocumentId>GR</countryDocumentId>
             </issuer>
             <counterpart>
                 <vatNumber>999999999</vatNumber>
                 <country>GR</country>
                 <branch>0</branch>
+                <name>Παπαδόπουλος ΑΕ</name>
                 <address>
                     <street>Τσιμισκή</street>
                     <number>52A</number>
@@ -29,6 +32,7 @@
                 </address>
                 <documentIdNo>MMM123N</documentIdNo>
                 <supplyAccountNo>809778544</supplyAccountNo>
+                <countryDocumentId>GR</countryDocumentId>
             </counterpart>
             <invoiceHeader>
                 <series>A</series>
@@ -37,10 +41,72 @@
                 <invoiceType>1.1</invoiceType>
                 <vatPaymentSuspension>false</vatPaymentSuspension>
                 <currency>EUR</currency>
-                <correlatedInvoices>1234</correlatedInvoices>
-                <correlatedInvoices>4568</correlatedInvoices>
-                <correlatedInvoices>9101</correlatedInvoices>
+                <correlatedInvoices>8000000165487234</correlatedInvoices>
+                <correlatedInvoices>8000000165487568</correlatedInvoices>
+                <correlatedInvoices>8000000165487101</correlatedInvoices>
                 <selfPricing>true</selfPricing>
+                <dispatchDate>2024-02-13</dispatchDate>
+                <dispatchTime>00:00</dispatchTime>
+                <vehicleNumber>KHB4201</vehicleNumber>
+                <movePurpose>19</movePurpose>
+                <fuelInvoice>true</fuelInvoice>
+                <specialInvoiceCategory>5</specialInvoiceCategory>
+                <invoiceVariationType>3</invoiceVariationType>
+                <otherCorrelatedEntities>
+                    <type>3</type>
+                    <entityData>
+                        <vatNumber>888888888</vatNumber>
+                        <country>GR</country>
+                        <branch>1</branch>
+                        <name>Παπαδόπουλος ΙΚΕ</name>
+                        <address>
+                            <street>Λεωφόρου Στρατού</street>
+                            <number>328</number>
+                            <postalCode>67550</postalCode>
+                            <city>Καβάλα</city>
+                        </address>
+                        <documentIdNo>123456</documentIdNo>
+                        <supplyAccountNo>8009988811</supplyAccountNo>
+                        <countryDocumentId>GR</countryDocumentId>
+                    </entityData>
+                </otherCorrelatedEntities>
+                <otherCorrelatedEntities>
+                    <type>2</type>
+                    <entityData>
+                        <vatNumber>IT999999999</vatNumber>
+                        <country>IT</country>
+                        <branch>2</branch>
+                        <name>Acme Limited</name>
+                        <address>
+                            <street>Via la Spezia</street>
+                            <number>553</number>
+                            <postalCode>00042</postalCode>
+                            <city>Rome</city>
+                        </address>
+                        <documentIdNo>AXS6654</documentIdNo>
+                        <supplyAccountNo>ASDD66655</supplyAccountNo>
+                        <countryDocumentId>IT</countryDocumentId>
+                    </entityData>
+                </otherCorrelatedEntities>
+                <otherDeliveryNoteHeader>
+                    <loadingAddress>
+                        <street>Τσιμισκή</street>
+                        <number>25</number>
+                        <postalCode>13152</postalCode>
+                        <city>Θεσσαλονίκη</city>
+                    </loadingAddress>
+                    <deliveryAddress>
+                        <street>Παπανδρέου</street>
+                        <number>52</number>
+                        <postalCode>11255</postalCode>
+                        <city>Αθήνα</city>
+                    </deliveryAddress>
+                    <startShippingBranch>1</startShippingBranch>
+                    <completeShippingBranch>2</completeShippingBranch>
+                </otherDeliveryNoteHeader>
+                <isDeliveryNote>true</isDeliveryNote>
+                <otherMovePurposeTitle>Έκθεση</otherMovePurposeTitle>
+                <thirdPartyCollection>true</thirdPartyCollection>
             </invoiceHeader>
             <paymentMethods>
                 <paymentMethodDetails>
@@ -65,36 +131,77 @@
                 <netValue>5000</netValue>
                 <vatCategory>1</vatCategory>
                 <vatAmount>1200.00</vatAmount>
+                <incomeClassification>
+                    <icls:classificationType>E3_102_001</icls:classificationType>
+                    <icls:classificationCategory>category1_1</icls:classificationCategory>
+                    <icls:amount>4000.00</icls:amount>
+                    <icls:id>1</icls:id>
+                </incomeClassification>
                 <expensesClassification>
                     <ecls:classificationType>E3_102_001</ecls:classificationType>
                     <ecls:classificationCategory>category2_1</ecls:classificationCategory>
-                    <ecls:amount>4000.00</ecls:amount>
+                    <ecls:amount>3000.00</ecls:amount>
+                    <ecls:vatCategory>4</ecls:vatCategory>
+                    <ecls:vatExemptionCategory>12</ecls:vatExemptionCategory>
+                    <ecls:id>2</ecls:id>
                 </expensesClassification>
                 <expensesClassification>
                     <ecls:classificationType>VAT_361</ecls:classificationType>
                     <ecls:classificationCategory>category2_1</ecls:classificationCategory>
                     <ecls:amount>1000.00</ecls:amount>
+                    <icls:id>3</icls:id>
                 </expensesClassification>
             </invoiceDetails>
+            <taxesTotals>
+                <taxes>
+                    <taxType>1</taxType>
+                    <taxCategory>4</taxCategory>
+                    <taxAmount>5.0</taxAmount>
+                </taxes>
+                <taxes>
+                    <taxType>1</taxType>
+                    <taxCategory>3</taxCategory>
+                    <underlyingValue>4.0</underlyingValue>
+                    <taxAmount>0.8</taxAmount>
+                    <id>21</id>
+                </taxes>
+            </taxesTotals>
             <invoiceSummary>
                 <totalNetValue>5000</totalNetValue>
                 <totalVatAmount>1200.00</totalVatAmount>
-                <totalWithheldAmount>0</totalWithheldAmount>
-                <totalFeesAmount>0</totalFeesAmount>
-                <totalStampDutyAmount>0</totalStampDutyAmount>
+                <totalWithheldAmount>100</totalWithheldAmount>
+                <totalFeesAmount>50</totalFeesAmount>
+                <totalStampDutyAmount>10</totalStampDutyAmount>
                 <totalOtherTaxesAmount>0</totalOtherTaxesAmount>
-                <totalDeductionsAmount>0</totalDeductionsAmount>
-                <totalGrossValue>6200.00</totalGrossValue>
+                <totalDeductionsAmount>40</totalDeductionsAmount>
+                <totalGrossValue>6000.00</totalGrossValue>
+                <incomeClassification>
+                    <icls:classificationType>E3_102_001</icls:classificationType>
+                    <icls:classificationCategory>category2_1</icls:classificationCategory>
+                    <icls:amount>5000.00</icls:amount>
+                    <icls:id>1</icls:id>
+                </incomeClassification>
                 <expensesClassification>
                     <ecls:classificationType>E3_102_001</ecls:classificationType>
                     <ecls:classificationCategory>category2_1</ecls:classificationCategory>
                     <ecls:amount>5000.00</ecls:amount>
+                    <ecls:vatCategory>4</ecls:vatCategory>
+                    <ecls:vatExemptionCategory>12</ecls:vatExemptionCategory>
+                    <ecls:id>2</ecls:id>
                 </expensesClassification>
                 <expensesClassification>
                     <ecls:classificationType>VAT_361</ecls:classificationType>
-                    <ecls:amount>5000.00</ecls:amount>
+                    <ecls:classificationCategory>category2_2</ecls:classificationCategory>
+                    <ecls:amount>2000.00</ecls:amount>
+                    <ecls:id>3</ecls:id>
                 </expensesClassification>
             </invoiceSummary>
+            <otherTransportDetails>
+                <vehicleNumber>KHB6611</vehicleNumber>
+            </otherTransportDetails>
+            <otherTransportDetails>
+                <vehicleNumber>AHB9090</vehicleNumber>
+            </otherTransportDetails>
         </invoice>
     </invoicesDoc>
     <cancelledInvoicesDoc>

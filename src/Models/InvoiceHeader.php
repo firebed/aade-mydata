@@ -6,9 +6,36 @@ use Firebed\AadeMyData\Enums\InvoiceType;
 use Firebed\AadeMyData\Enums\InvoiceVariationType;
 use Firebed\AadeMyData\Enums\MovePurpose;
 use Firebed\AadeMyData\Enums\SpecialInvoiceCategory;
+use Firebed\AadeMyData\Traits\HasFactory;
 
 class InvoiceHeader extends Type
 {
+    use HasFactory;
+    
+    protected array $expectedOrder = [
+        'series',
+        'aa',
+        'issueDate',
+        'invoiceType',
+        'vatPaymentSuspension',
+        'currency',
+        'exchangeRate',
+        'correlatedInvoices',
+        'selfPricing',
+        'dispatchDate',
+        'dispatchTime',
+        'vehicleNumber',
+        'movePurpose',
+        'fuelInvoice',
+        'specialInvoiceCategory',
+        'invoiceVariationType',
+        'otherCorrelatedEntities',
+        'otherDeliveryNoteHeader',
+        'isDeliveryNote',
+        'otherMovePurposeTitle',
+        'thirdPartyCollection',
+    ];
+    
     /**
      * @return string|null Σειρά παραστατικού
      */
@@ -44,7 +71,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @return string|null Ημερομηνία Έκδοσης Παραστατικού
+     * @return string|null Ημερομηνία Έκδοσης Παραστατικού (Y-m-d)
      */
     public function getIssueDate(): ?string
     {
@@ -52,7 +79,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param string $issueDate Ημερομηνία Έκδοσης Παραστατικού
+     * @param string $issueDate Ημερομηνία Έκδοσης Παραστατικού (Y-m-d)
      */
     public function setIssueDate(string $issueDate): void
     {
@@ -398,7 +425,11 @@ class InvoiceHeader extends Type
     public function set($key, $value): void
     {
         if ($key === 'correlatedInvoices' || $key === 'otherCorrelatedEntities') {
-            $this->push($key, $value);
+            if (is_array($value)) {
+                parent::set($key, $value);
+            } else {
+                $this->push($key, $value);
+            }
             return;
         }
 

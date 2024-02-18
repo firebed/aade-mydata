@@ -2,8 +2,6 @@
 
 namespace Tests;
 
-use Firebed\AadeMyData\Models\Address;
-use Firebed\AadeMyData\Models\Counterpart;
 use Firebed\AadeMyData\Models\Invoice;
 use PHPUnit\Framework\TestCase;
 use Tests\Traits\HandlesInvoiceXml;
@@ -14,39 +12,28 @@ class InvoiceCounterpartTest extends TestCase
 
     public function test_invoice_counterpart_xml_is_built()
     {
-        $address = new Address();
-        $address->setStreet('Τσιμισκή');
-        $address->setNumber('52A');
-        $address->setPostalCode('33333');
-        $address->setCity('Χανιά');
+        $invoice = Invoice::factory()->make();
 
-        $counterpart = new Counterpart();
-        $counterpart->setVatNumber('999999999');
-        $counterpart->setCountry('GR');
-        $counterpart->setBranch(0);
-        $counterpart->setDocumentIdNo('MMM123N');
-        $counterpart->setSupplyAccountNo('809778544');
-        $counterpart->setAddress($address);
+        $counterpart = $invoice->getCounterpart();
+        $counterpartXml = $this->toXML($invoice)->InvoicesDoc->invoice->counterpart;
 
-        $invoice = new Invoice();
-        $invoice->setCounterpart($counterpart);
-
-        $xml = $this->toXML($invoice)->InvoicesDoc->invoice->counterpart;
-        
-        $this->assertCount(6, $xml);
-        $this->assertEquals('999999999', $xml->get('vatNumber'));
-        $this->assertEquals('GR', $xml->get('country'));
-        $this->assertEquals('0', $xml->get('branch'));
-        $this->assertEquals('MMM123N', $xml->get('documentIdNo'));
-        $this->assertEquals('809778544', $xml->get('supplyAccountNo'));
+        $this->assertCount(8, $counterpartXml);
+        $this->assertEquals($counterpart->getVatNumber(), $counterpartXml->vatNumber);
+        $this->assertEquals($counterpart->getCountry(), $counterpartXml->country);
+        $this->assertEquals($counterpart->getBranch(), $counterpartXml->branch);
+        $this->assertEquals($counterpart->getName(), $counterpartXml->name);
+        $this->assertEquals($counterpart->getDocumentIdNo(), $counterpartXml->documentIdNo);
+        $this->assertEquals($counterpart->getSupplyAccountNo(), $counterpartXml->supplyAccountNo);
+        $this->assertEquals($counterpart->getCountryDocumentId(), $counterpartXml->countryDocumentId);
 
         // Address
-        $address = $xml->address;
-        $this->assertCount(4, $address);
-        $this->assertEquals('33333', $address->get('postalCode'));
-        $this->assertEquals('Χανιά', $address->get('city'));
-        $this->assertEquals('Τσιμισκή', $address->get('street'));
-        $this->assertEquals('52A', $address->get('number'));
+        $address = $counterpart->getAddress();
+        $addressXml = $counterpartXml->address;
+        $this->assertCount(4, $addressXml);
+        $this->assertEquals($address->getStreet(), $addressXml->street);
+        $this->assertEquals($address->getNumber(), $addressXml->number);
+        $this->assertEquals($address->getPostalCode(), $addressXml->postalCode);
+        $this->assertEquals($address->getCity(), $addressXml->city);
     }
 
     public function test_invoice_counterpart_xml_is_parsed()
@@ -54,13 +41,17 @@ class InvoiceCounterpartTest extends TestCase
         $invoice = $this->getInvoiceFromXml();
 
         $counterpart = $invoice->getCounterpart();
+        $this->assertCount(8, $counterpart->attributes());
         $this->assertEquals('999999999', $counterpart->getVatNumber());
         $this->assertEquals('GR', $counterpart->getCountry());
-        $this->assertEquals('0', $counterpart->getBranch());
+        $this->assertEquals(0, $counterpart->getBranch());
+        $this->assertEquals('Παπαδόπουλος ΑΕ', $counterpart->getName());
         $this->assertEquals('MMM123N', $counterpart->getDocumentIdNo());
         $this->assertEquals('809778544', $counterpart->getSupplyAccountNo());
+        $this->assertEquals('GR', $counterpart->getCountryDocumentId());
 
         $address = $counterpart->getAddress();
+        $this->assertCount(4, $address->attributes());
         $this->assertEquals('Τσιμισκή', $address->getStreet());
         $this->assertEquals('52A', $address->getNumber());
         $this->assertEquals('33333', $address->getPostalCode());

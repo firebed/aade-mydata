@@ -16,6 +16,7 @@ use Firebed\AadeMyData\Enums\UnitMeasurement;
 use Firebed\AadeMyData\Enums\VatCategory;
 use Firebed\AadeMyData\Enums\VatExemption;
 use Firebed\AadeMyData\Enums\WithheldPercentCategory;
+use Firebed\AadeMyData\Traits\HasFactory;
 
 /**
  * <ul>
@@ -35,6 +36,41 @@ use Firebed\AadeMyData\Enums\WithheldPercentCategory;
  */
 class InvoiceDetails extends Type
 {
+    use HasFactory;
+
+    protected array $expectedOrder = [
+        'lineNumber',
+        'recType',
+        'TaricNo',
+        'itemCode',
+        'itemDescr',
+        'fuelCode',
+        'quantity',
+        'measurementUnit',
+        'invoiceDetailType',
+        'netValue',
+        'vatCategory',
+        'vatAmount',
+        'vatExemptionCategory',
+        'dienergia',
+        'discountOption',
+        'withheldAmount',
+        'withheldPercentCategory',
+        'stampDutyAmount',
+        'stampDutyPercentCategory',
+        'feesAmount',
+        'feesPercentCategory',
+        'otherTaxesPercentCategory',
+        'otherTaxesAmount',
+        'deductionsAmount',
+        'lineComments',
+        'incomeClassification',
+        'expensesClassification',
+        'quantity15',
+        'otherMeasurementUnitQuantity',
+        'otherMeasurementUnitTitle'
+    ];
+
     /**
      * @return int|null ΑΑ γραμμής
      */
@@ -664,10 +700,10 @@ class InvoiceDetails extends Type
     }
 
     /**
-     * @return int|null Τίτλος Μονάδας Μέτρησης Τεμάχια Άλλα
+     * @return string|null Τίτλος Μονάδας Μέτρησης Τεμάχια Άλλα
      * @version 1.0.8
      */
-    public function getOtherMeasurementUnitTitle(): ?int
+    public function getOtherMeasurementUnitTitle(): ?string
     {
         return $this->get('otherMeasurementUnitTitle');
     }
@@ -687,7 +723,11 @@ class InvoiceDetails extends Type
     public function set($key, $value): void
     {
         if ($key === 'expensesClassification' || $key === 'incomeClassification') {
-            $this->push($key, $value);
+            if (is_array($value)) {
+                parent::set($key, $value);
+            } else {
+                $this->push($key, $value);
+            }
             return;
         }
 

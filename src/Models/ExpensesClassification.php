@@ -4,6 +4,9 @@ namespace Firebed\AadeMyData\Models;
 
 use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
 use Firebed\AadeMyData\Enums\ExpenseClassificationType;
+use Firebed\AadeMyData\Enums\VatCategory;
+use Firebed\AadeMyData\Enums\VatExemption;
+use Firebed\AadeMyData\Traits\HasFactory;
 
 /**
  * <p>Ο τύπος ExpensesClassification αποτελεί τη βασική δομή του Χαρακτηρισμού Εξόδων και εμπεριέχεται είτε</p>
@@ -16,6 +19,18 @@ use Firebed\AadeMyData\Enums\ExpenseClassificationType;
  */
 class ExpensesClassification extends Type
 {
+    use HasFactory;
+    
+    protected array $expectedOrder = [
+        'classificationType',
+        'classificationCategory',
+        'amount',
+        'vatAmount',
+        'vatCategory',
+        'vatExemptionCategory',
+        'id'
+    ];
+    
     /**
      * @return string|null Κωδικός Χαρακτηρισμού
      */
@@ -104,10 +119,10 @@ class ExpensesClassification extends Type
     /**
      * Χρησιμοποιείτε μόνο για τους χαρακτηρισμούς εξόδων ΦΠΑ, διαφορετικά αγνοείται.
      *
-     * @param int|null $vatCategory Κατηγορία ΦΠΑ
+     * @param VatCategory|int|null $vatCategory Κατηγορία ΦΠΑ
      * @version 1.0.7
      */
-    public function setVatCategory(?int $vatCategory): void
+    public function setVatCategory(VatCategory|int|null $vatCategory): void
     {
         $this->set('vatCategory', $vatCategory);
     }
@@ -124,10 +139,10 @@ class ExpensesClassification extends Type
     /**
      * Χρησιμοποιείτε μόνο για τους χαρακτηρισμούς εξόδων ΦΠΑ, διαφορετικά αγνοείται.
      *
-     * @param int|null $vatExemptionCategory Κατηγορία Εξαίρεσης ΦΠΑ
+     * @param VatExemption|int|null $vatExemptionCategory Κατηγορία Εξαίρεσης ΦΠΑ
      * @version 1.0.7
      */
-    public function setVatExemptionCategory(?int $vatExemptionCategory): void
+    public function setVatExemptionCategory(VatExemption|int|null $vatExemptionCategory): void
     {
         $this->set('vatExemptionCategory', $vatExemptionCategory);
     }

@@ -13,17 +13,16 @@ class PaymentMethodFactory extends Factory
     public function definition(): array
     {
         return [
-            'invoiceMark' => $this->faker->numerify("800000######"),
-            'entityVatNumber' => $this->faker->numerify("#########"),
+            'invoiceMark'     => fake()->numerify("800000######"),
+            'entityVatNumber' => fake()->numerify("#########"),
         ];
     }
 
     public function withPaymentMethodDetails(Factory $factory = null): self
     {
         $factory ??= PaymentMethodDetail::factory();
-        $paymentMethodDetails = $this->state['paymentMethodDetails'] ?? [];
-        $paymentMethodDetails[] = $factory->make()->attributes();
-        
-        return $this->state(compact('paymentMethodDetails'));
+        $paymentMethods = $this->state['paymentMethods'] ?? [];
+
+        return $this->state(compact('paymentMethods'));
     }
 }

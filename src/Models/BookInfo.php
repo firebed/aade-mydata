@@ -34,27 +34,11 @@ class BookInfo extends Type
     }
 
     /**
-     * @param ContinuationToken $continuationToken Στοιχείο για την τμηματική λήψη αποτελεσμάτων
-     */
-    public function setContinuationToken(ContinuationToken $continuationToken): void
-    {
-        $this->set('continuationToken', $continuationToken);
-    }
-
-    /**
      * @return string ΑΦΜ λήπτη
      */
     public function getCounterVatNumber(): string
     {
         return $this->get('counterVatNumber');
-    }
-
-    /**
-     * @param string $counterVatNumber ΑΦΜ λήπτη
-     */
-    public function setCounterVatNumber(string $counterVatNumber): void
-    {
-        $this->set('counterVatNumber', $counterVatNumber);
     }
 
     /**
@@ -66,27 +50,11 @@ class BookInfo extends Type
     }
 
     /**
-     * @param string $issueDate Ημερομηνία έκδοσης Παραστατικού
-     */
-    public function setIssueDate(string $issueDate): void
-    {
-        $this->set('issueDate', $issueDate);
-    }
-
-    /**
      * @return string Τύπος Παραστατικού
      */
     public function getInvType(): string
     {
         return $this->get('invType');
-    }
-
-    /**
-     * @param string $invType Τύπος Παραστατικού
-     */
-    public function setInvType(string $invType): void
-    {
-        $this->set('invType', $invType);
     }
 
     /**
@@ -98,27 +66,11 @@ class BookInfo extends Type
     }
 
     /**
-     * @param string $selfPricing Αυτοτιμολόγηση
-     */
-    public function setSelfPricing(string $selfPricing): void
-    {
-        $this->set('selfpricing', $selfPricing);
-    }
-
-    /**
      * @return string Επισήμανση
      */
     public function getInvoiceDetailType(): string
     {
         return $this->get('invoiceDetailType');
-    }
-
-    /**
-     * @param string $invoiceDetailType Επισήμανση
-     */
-    public function setInvoiceDetailType(string $invoiceDetailType): void
-    {
-        $this->set('invoiceDetailType', $invoiceDetailType);
     }
 
     /**
@@ -130,27 +82,11 @@ class BookInfo extends Type
     }
 
     /**
-     * @param string $netValue Καθαρή αξία
-     */
-    public function setNetValue(string $netValue): void
-    {
-        $this->set('netValue', $netValue);
-    }
-
-    /**
      * @return string Ποσό ΦΠΑ
      */
     public function getVatAmount(): string
     {
         return $this->get('vatAmount');
-    }
-
-    /**
-     * @param string $vatAmount Ποσό ΦΠΑ
-     */
-    public function setVatAmount(string $vatAmount): void
-    {
-        $this->set('vatAmount', $vatAmount);
     }
 
     /**
@@ -162,27 +98,11 @@ class BookInfo extends Type
     }
 
     /**
-     * @param string $withheldAmount Ποσό Παρακράτησης Φόρου
-     */
-    public function setWithheldAmount(string $withheldAmount): void
-    {
-        $this->set('withheldAmount', $withheldAmount);
-    }
-
-    /**
      * @return string Ποσό Λοιπών Φόρων
      */
     public function getOtherTaxesAmount(): string
     {
         return $this->get('otherTaxesAmount');
-    }
-
-    /**
-     * @param string $otherTaxesAmount Ποσό Λοιπών Φόρων
-     */
-    public function setOtherTaxesAmount(string $otherTaxesAmount): void
-    {
-        $this->set('otherTaxesAmount', $otherTaxesAmount);
     }
 
     /**
@@ -194,27 +114,11 @@ class BookInfo extends Type
     }
 
     /**
-     * @param string $stampDutyAmount Ποσό Χαρτοσήμου
-     */
-    public function setStampDutyAmount(string $stampDutyAmount): void
-    {
-        $this->set('stampDutyAmount', $stampDutyAmount);
-    }
-
-    /**
      * @return string Ποσό Τελών
      */
     public function getFeesAmount(): string
     {
         return $this->get('feesAmount');
-    }
-
-    /**
-     * @param string $feesAmount Ποσό Τελών
-     */
-    public function setFeesAmount(string $feesAmount): void
-    {
-        $this->set('feesAmount', $feesAmount);
     }
 
     /**
@@ -226,27 +130,11 @@ class BookInfo extends Type
     }
 
     /**
-     * @param string $deductionsAmount Ποσό Κρατήσεων
-     */
-    public function setDeductionsAmount(string $deductionsAmount): void
-    {
-        $this->set('deductionsAmount', $deductionsAmount);
-    }
-
-    /**
      * @return string Ποσό Περί Τρίτων
      */
     public function getThirdPartyAmount(): string
     {
         return $this->get('thirdPartyAmount');
-    }
-
-    /**
-     * @param string $thirdPartyAmount Ποσό Περί Τρίτων
-     */
-    public function setThirdPartyAmount(string $thirdPartyAmount): void
-    {
-        $this->set('thirdPartyAmount', $thirdPartyAmount);
     }
 
     /**
@@ -258,27 +146,11 @@ class BookInfo extends Type
     }
 
     /**
-     * @param string $grossValue Συνολική Αξία
-     */
-    public function setGrossValue(string $grossValue): void
-    {
-        $this->set('grossValue', $grossValue);
-    }
-
-    /**
      * @return string Πλήθος
      */
     public function getCount(): string
     {
         return $this->get('count');
-    }
-
-    /**
-     * @param string $count Πλήθος
-     */
-    public function setCount(string $count): void
-    {
-        $this->set('count', $count);
     }
 
     /**
@@ -290,26 +162,10 @@ class BookInfo extends Type
     }
 
     /**
-     * @param string $minMark Ελάχιστο ΜΑΡΚ πλήθους
-     */
-    public function setMinMark(string $minMark): void
-    {
-        $this->set('minMark', $minMark);
-    }
-
-    /**
      * @return string Μέγιστο ΜΑΡΚ πλήθους
      */
     public function getMaxMark(): string
     {
         return $this->get('maxMark');
-    }
-
-    /**
-     * @param string $maxMark Μέγιστο ΜΑΡΚ πλήθους
-     */
-    public function setMaxMark(string $maxMark): void
-    {
-        $this->set('maxMark', $maxMark);
     }
 }

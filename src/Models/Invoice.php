@@ -3,12 +3,28 @@
 namespace Firebed\AadeMyData\Models;
 
 
+use Firebed\AadeMyData\Traits\HasFactory;
+
 class Invoice extends Type
 {
-    public array $groups = [
-        'paymentMethods'
+    use HasFactory;
+    
+    protected array $expectedOrder = [
+        'issuer',
+        'counterpart',
+        'invoiceHeader',
+        'paymentMethods',
+        'invoiceDetails',
+        'taxesTotals',
+        'invoiceSummary',
+        'otherTransportDetails',
     ];
     
+    public array $groups = [
+        'paymentMethods',
+        'taxesTotals',
+    ];
+
     /**
      * Συμπληρώνεται από την Υπηρεσία.
      *
@@ -180,20 +196,20 @@ class Invoice extends Type
      * χρήστης κάνει χρήση αυτού του στοιχείου, δε θα μπορεί να εισάγει φόρους εκτός
      * του ΦΠΑ σε κάθε γραμμή του παραστατικού ξεχωριστά.
      *
-     * @return TaxesTotals|null
+     * @return TaxTotals[]|null
      */
-    public function getTaxesTotals(): ?TaxesTotals
+    public function getTaxesTotals(): ?array
     {
-        return $this->get('taxesTotals');
+        return $this->get('taxesTotals')['taxes'] ?? [];
     }
 
     /**
      * Προσθήκη συνόλου φόρων.
      */
-    public function addTaxesTotals(TaxTotals $taxTotalsType): void
-    {
-        $taxesTotals = $this->getTaxesTotals() ?? new TaxesTotals();
-        $taxesTotals->addTaxes($taxTotalsType);
+    public function addTaxesTotals(TaxTotals $taxTotals): void
+    {        
+        $taxesTotals = $this->getTaxesTotals();
+        $taxesTotals[] = $taxTotals;
         $this->set('taxesTotals', $taxesTotals);
     }
 
@@ -211,7 +227,7 @@ class Invoice extends Type
     }
 
     /**
-     * @return TransportDetailType[]|null Λοιπές Λεπτομέρειες Διακίνησης (Ορισμός - Αλλαγή Μτφ Μέσων)
+     * @return TransportDetail[]|null Λοιπές Λεπτομέρειες Διακίνησης (Ορισμός - Αλλαγή Μτφ Μέσων)
      *
      * @version 1.0.7
      */
@@ -223,11 +239,11 @@ class Invoice extends Type
     /**
      * Προσθήκη Λεπτομέρειες Διακίνησης (Ορισμός - Αλλαγή Μτφ Μέσων).
      *
-     * @param TransportDetailType $transportDetailType Λεπτομέρειες Διακίνησης
+     * @param TransportDetail $transportDetailType Λεπτομέρειες Διακίνησης
      *
      * @version 1.0.7
      */
-    public function addOtherTransportDetail(TransportDetailType $transportDetailType): void
+    public function addOtherTransportDetail(TransportDetail $transportDetailType): void
     {
         $this->push('otherTransportDetails', $transportDetailType);
     }
@@ -235,12 +251,23 @@ class Invoice extends Type
     public function set($key, $value): void
     {
         if ($key === 'invoiceDetails' || $key === 'otherTransportDetails') {
-            $this->push($key, $value);
+            if (is_array($value)) {
+                parent::set($key, $value);
+            } else {
+                $this->push($key, $value);
+            }
             return;
         }
 
         if ($key === 'paymentMethods') {
+            $value = is_array($value) ? $value : [$value];
             parent::set($key, ['paymentMethodDetails' => $value]);
+            return;
+        }
+
+        if ($key === 'taxesTotals') {
+            $value = is_array($value) ? $value : [$value];
+            parent::set($key, ['taxes' => $value]);
             return;
         }
         

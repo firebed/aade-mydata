@@ -55,4 +55,9 @@ class Document
     {
         return $this->xml->$name;
     }
+
+    public function saveXML(): string
+    {
+        return $this->dom->saveXML();
+    }
 }

@@ -7,6 +7,7 @@
         <invoiceType>
             <uknownProperty>8DD469D0647A06B1FB271658FC52302B76219852</uknownProperty>
         </invoiceType>
+        <unknown>New</unknown>
     </invoicesDoc>
     
     <unknownDoc>
@@ -14,6 +15,7 @@
             <invoiceMark>191310480400420</invoiceMark>
             <cancellationMark>203104044911008</cancellationMark>
             <cancellationDate>2021-12-12</cancellationDate>
+            <cancellationStatus>Unknown</cancellationStatus>
         </cancelledInvoice>
     </unknownDoc>
 </RequestedDoc>

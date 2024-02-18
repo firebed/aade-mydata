@@ -1,13 +1,23 @@
 <?php
 
+namespace Firebed\AadeMyData\Models;
+
+use Firebed\AadeMyData\Traits\HasFactory;
+
 /**
  * @version 1.0.8
  */
-
-namespace Firebed\AadeMyData\Models;
-
 class OtherDeliveryNoteHeader extends Type
 {
+    use HasFactory;
+    
+    protected array $expectedOrder = [
+        'loadingAddress',
+        'deliveryAddress',
+        'startShippingBranch',
+        'completeShippingBranch'
+    ];
+    
     /**
      * @return Address|null Διεύθυνση Φόρτωσης
      * @version 1.0.8

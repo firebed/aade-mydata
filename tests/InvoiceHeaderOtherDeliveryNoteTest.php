@@ -3,8 +3,6 @@
 namespace Tests;
 
 use Firebed\AadeMyData\Models\Invoice;
-use Firebed\AadeMyData\Models\InvoiceHeader;
-use Firebed\AadeMyData\Models\OtherDeliveryNoteHeader;
 use PHPUnit\Framework\TestCase;
 use Tests\Traits\HandlesInvoiceXml;
 
@@ -14,46 +12,39 @@ class InvoiceHeaderOtherDeliveryNoteTest extends TestCase
 
     public function test_it_converts_invoice_header_other_delivery_note_to_xml(): void
     {
-        $otherDeliveryNoteHeader = new OtherDeliveryNoteHeader();
-        $otherDeliveryNoteHeader->setLoadingAddress($this->createAddress('Λεωφόρου Στρατού', 28, '12345', 'Ηράκλειο'));
-        $otherDeliveryNoteHeader->setDeliveryAddress($this->createAddress('28ης Οκτωβρίου', '325Α', '44552', 'Χανιά'));
-        $otherDeliveryNoteHeader->setStartShippingBranch(1);
-        $otherDeliveryNoteHeader->setCompleteShippingBranch(2);
+        $invoice = Invoice::factory()->make();
 
-        $header = new InvoiceHeader();
-        $header->setOtherDeliveryNoteHeader($otherDeliveryNoteHeader);
+        $note = $invoice->getInvoiceHeader()->getOtherDeliveryNoteHeader();
+        $noteXml = $this->toXML($invoice)->InvoicesDoc->invoice->invoiceHeader->otherDeliveryNoteHeader;
 
-        $invoice = new Invoice();
-        $invoice->setInvoiceHeader($header);
+        // Loading Address
+        $this->assertEquals($note->getLoadingAddress()->getStreet(), $noteXml->loadingAddress->street);
+        $this->assertEquals($note->getLoadingAddress()->getNumber(), $noteXml->loadingAddress->number);
+        $this->assertEquals($note->getLoadingAddress()->getPostalCode(), $noteXml->loadingAddress->postalCode);
+        $this->assertEquals($note->getLoadingAddress()->getCity(), $noteXml->loadingAddress->city);
 
-        $xml = $this->toXML($invoice)->InvoicesDoc->invoice->invoiceHeader->otherDeliveryNoteHeader;
+        // Delivery Address
+        $this->assertEquals($note->getDeliveryAddress()->getStreet(), $noteXml->deliveryAddress->street);
+        $this->assertEquals($note->getDeliveryAddress()->getNumber(), $noteXml->deliveryAddress->number);
+        $this->assertEquals($note->getDeliveryAddress()->getPostalCode(), $noteXml->deliveryAddress->postalCode);
+        $this->assertEquals($note->getDeliveryAddress()->getCity(), $noteXml->deliveryAddress->city);
 
-        $this->assertEquals('12345', $xml->loadingAddress->postalCode);
-        $this->assertEquals('Ηράκλειο', $xml->loadingAddress->city);
-        $this->assertEquals('Λεωφόρου Στρατού', $xml->loadingAddress->street);
-        $this->assertEquals('28', $xml->loadingAddress->number);
-
-        $this->assertEquals('44552', $xml->deliveryAddress->postalCode);
-        $this->assertEquals('Χανιά', $xml->deliveryAddress->city);
-        $this->assertEquals('28ης Οκτωβρίου', $xml->deliveryAddress->street);
-        $this->assertEquals('325Α', $xml->deliveryAddress->number);
-
-        $this->assertEquals(1, $xml->startShippingBranch);
-        $this->assertEquals(2, $xml->completeShippingBranch);
+        $this->assertEquals($note->getStartShippingBranch(), $noteXml->startShippingBranch);
+        $this->assertEquals($note->getCompleteShippingBranch(), $noteXml->completeShippingBranch);
     }
 
     public function test_it_converts_xml_to_invoice_header_other_delivery_note(): void
     {
-        $invoice = $this->getInvoiceFromXml('requested-doc-complete-invoice');
+        $deliveryNote = $this->getInvoiceFromXml()->getInvoiceHeader()->getOtherDeliveryNoteHeader();
 
-        $deliveryNote = $invoice->getInvoiceHeader()->getOtherDeliveryNoteHeader();
-
+        // Loading Address
         $loadingAddress = $deliveryNote->getLoadingAddress();
         $this->assertEquals('Τσιμισκή', $loadingAddress->getStreet());
         $this->assertEquals('25', $loadingAddress->getNumber());
         $this->assertEquals('13152', $loadingAddress->getPostalCode());
         $this->assertEquals('Θεσσαλονίκη', $loadingAddress->getCity());
 
+        // Delivery Address
         $deliveryAddress = $deliveryNote->getDeliveryAddress();
         $this->assertEquals('Παπανδρέου', $deliveryAddress->getStreet());
         $this->assertEquals('52', $deliveryAddress->getNumber());
