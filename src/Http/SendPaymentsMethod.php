@@ -35,7 +35,7 @@ class SendPaymentsMethod extends MyDataRequest
     {
         $writer = new PaymentMethodsDocWriter();
         $this->requestXML = $writer->asXML(is_array($paymentMethods) ? $paymentMethods : [$paymentMethods]);
-
+        
         $response = $this->post(body: $this->requestXML);
         $this->responseXML = $response->getBody()->getContents();
         

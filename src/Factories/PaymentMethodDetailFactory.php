@@ -2,6 +2,7 @@
 
 namespace Firebed\AadeMyData\Factories;
 
+use Firebed\AadeMyData\Enums\PaymentMethod;
 use Firebed\AadeMyData\Models\PaymentMethodDetail;
 
 /**
@@ -12,7 +13,7 @@ class PaymentMethodDetailFactory extends Factory
     public function definition(): array
     {
         return [
-            'type'              => rand(800_000_000_000_000, 800_000_999_999_999),
+            'type'              => fake()->randomElement(PaymentMethod::cases())->value,
             'amount'            => fake()->randomFloat(2, 20, 100),
             'paymentMethodInfo' => fake()->text(100),
             'tipAmount'         => fake()->randomFloat(2, 0, 10),
@@ -25,7 +26,7 @@ class PaymentMethodDetailFactory extends Factory
         return $this->state([
             'ECRToken' => [
                 'SigningAuthor' => fake()->sha1(),
-                'SessionNumber' => fake()->numerify('######'),
+                'SessionNumber' => fake()->numerify("??##??"),
             ]
         ]);
     }

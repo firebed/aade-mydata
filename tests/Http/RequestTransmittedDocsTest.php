@@ -22,7 +22,7 @@ class RequestTransmittedDocsTest extends MyDataHttpTestCase
         $request = new RequestTransmittedDocs();
         $requestedDoc = $request->handle();
 
-        $this->assertCount(1, $requestedDoc->getInvoices());
+        $this->assertCount(2, $requestedDoc->getInvoices());
         $this->assertCount(5, $requestedDoc->getCancelledInvoices());
         $this->assertCount(3, $requestedDoc->getPaymentMethods());
     }

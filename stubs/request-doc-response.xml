@@ -203,6 +203,14 @@
                 <vehicleNumber>AHB9090</vehicleNumber>
             </otherTransportDetails>
         </invoice>
+        <invoice>
+            <uid>5AD65A46SFD5498SDV416WS5F1VS65VDFS65VDF</uid>
+            <mark>800000165789544</mark>
+            <cancelledByMark>800000165989544</cancelledByMark>
+            <authenticationCode>54AS56DS65VF4S65DF</authenticationCode>
+            <transmissionFailure>3</transmissionFailure>
+            <qrCodeUrl>https://www.akjjasd.com/asdkasdkasdkas?asasd=asdasd</qrCodeUrl>
+        </invoice>
     </invoicesDoc>
     <cancelledInvoicesDoc>
         <cancelledInvoice>

@@ -9,6 +9,16 @@ class PaymentMethodDetail extends Type
 {
     use HasFactory;
     
+    protected array $expectedOrder = [
+        'type',
+        'amount',
+        'paymentMethodInfo',
+        'tipAmount',
+        'transactionId',
+        'ProvidersSignature',
+        'ECRToken'
+    ];
+    
     /**
      * @return string|null Τύπος Πληρωμής
      */

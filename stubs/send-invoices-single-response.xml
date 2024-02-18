@@ -7,11 +7,4 @@
         <qrUrl>https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=sSsxThUx5i3O8ankrp8XUDiL0q12vbzuWZP0nEfMgAyQ2nbm7s6vSz3CYYcmod6i0uCrPCvSLrQ5N1qxEHF8JsfMNz6NmibNhBNXJiR8ecC%3d</qrUrl>
         <statusCode>Success</statusCode>
     </response>
-    <response>
-        <index>2</index>
-        <invoiceUid>5A545AD54SD54FS5DF4SD5F4S5D4AQ4F98F4E8FF</invoiceUid>
-        <invoiceMark>800005459844848</invoiceMark>
-        <qrUrl>https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=5as4d654s65f65f465sfsd5f4ds4as45d%2fa7z8C%5a1sd5asd1as5d%2b%5d54rh41r2rf2s1456a41d45aq41541g5ed4gh1t54h564ef%A554asd5%3d</qrUrl>
-        <statusCode>Success</statusCode>
-    </response>
 </ResponseDoc>

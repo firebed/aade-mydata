@@ -19,7 +19,7 @@ class PaymentMethodsDocWriter extends XMLWriter
     /** @noinspection PhpUnhandledExceptionInspection */
     public function asXML(array $paymentMethods): string
     {
-        $rootNode = $this->document->createElementNS(self::XMLNS, 'PaymentMethodsDocs');
+        $rootNode = $this->document->createElementNS(self::XMLNS, 'PaymentMethodsDoc');
         $this->document->appendChild($rootNode);
 
         $rootNode->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xsi', self::XSI);

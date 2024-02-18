@@ -11,6 +11,13 @@ class PaymentMethod extends Type
 {
     use HasFactory;
     
+    protected array $expectedOrder = [
+        'invoiceMark',
+        'paymentMethodMark',
+        'entityVatNumber',
+        'paymentMethodDetails'
+    ];
+    
     /**
      * @return int|null Μοναδικός Αριθμός Καταχώρησης Παραστατικού
      *
@@ -107,7 +114,11 @@ class PaymentMethod extends Type
     public function set($key, $value): void
     {
         if ($key === 'paymentMethodDetails') {
-            $this->addPaymentMethodDetails($value);
+            if (is_array($value)) {
+                parent::set($key, $value);
+            } else {
+                $this->addPaymentMethodDetails($value);
+            }
             return;
         }
         

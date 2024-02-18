@@ -7,6 +7,11 @@ namespace Firebed\AadeMyData\Models;
  */
 class ProvidersSignature extends Type
 {
+    protected array $expectedOrder = [
+        'SigningAuthor',
+        'Signature'
+    ];
+    
     public function __construct(string $signingAuthor = null, string $signature = null)
     {
         $attributes = compact('signingAuthor', 'signature');

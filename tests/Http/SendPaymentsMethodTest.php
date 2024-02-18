@@ -18,13 +18,8 @@ class SendPaymentsMethodTest extends MyDataHttpTestCase
      */
     public function test_it_sends_payments_using_array()
     {
-        $paymentMethod1 = PaymentMethod::factory()
-            ->withPaymentMethodDetails()
-            ->make();
-
-        $paymentMethod2 = PaymentMethod::factory()
-            ->withPaymentMethodDetails()
-            ->make();
+        $paymentMethod1 = PaymentMethod::factory()->make();
+        $paymentMethod2 = PaymentMethod::factory()->make();
 
         $response = new ResponseDocXmlFactory();
         $response->addResponse($response1 = Response::factory()->make());
@@ -47,9 +42,7 @@ class SendPaymentsMethodTest extends MyDataHttpTestCase
      */
     public function test_it_sends_single_payment()
     {
-        $paymentMethod = PaymentMethod::factory()
-            ->withPaymentMethodDetails()
-            ->make();
+        $paymentMethod = PaymentMethod::factory()->make();
 
         $response = new ResponseDocXmlFactory();
         $response->addResponse($response1 = Response::factory()->make());
