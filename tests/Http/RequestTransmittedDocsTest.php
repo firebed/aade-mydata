@@ -13,7 +13,7 @@ class RequestTransmittedDocsTest extends MyDataHttpTestCase
     /**
      * @throws MyDataException
      */
-    public function test_it_returns_transmitted_docs()
+    public function test_transmitted_docs_are_received()
     {
         MyDataRequest::setHandler(new MockHandler([
             new Response(200, body: $this->getStub('request-doc-response')),

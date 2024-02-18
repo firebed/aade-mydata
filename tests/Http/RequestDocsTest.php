@@ -13,7 +13,7 @@ class RequestDocsTest extends MyDataHttpTestCase
     /**
      * @throws MyDataException
      */
-    public function test_it_returns_docs()
+    public function test_docs_are_received()
     {
         MyDataRequest::setHandler(new MockHandler([
             new Response(200, body: $this->getStub('request-doc-response')),
@@ -26,6 +26,7 @@ class RequestDocsTest extends MyDataHttpTestCase
         $this->assertCount(5, $requestedDoc->getCancelledInvoices());
         $this->assertCount(2, $requestedDoc->getIncomeClassifications());
         $this->assertCount(1, $requestedDoc->getExpensesClassifications());
+        $this->assertCount(3, $requestedDoc->getPaymentMethods());
         $this->assertCount(3, $requestedDoc->getPaymentMethods());
     }
 }

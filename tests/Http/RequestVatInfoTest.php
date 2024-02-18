@@ -13,7 +13,7 @@ class RequestVatInfoTest extends MyDataHttpTestCase
     /**
      * @throws MyDataException
      */
-    public function test_it_returns_transmitted_docs()
+    public function test_vat_info_is_received()
     {
         MyDataRequest::setHandler(new MockHandler([
             new Response(200, body: $this->getStub('request-vat-info-response')),

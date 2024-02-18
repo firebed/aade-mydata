@@ -13,7 +13,7 @@ class RequestMyIncomeTest extends MyDataHttpTestCase
     /**
      * @throws MyDataException
      */
-    public function test_it_returns_docs()
+    public function test_my_income_is_received()
     {
         MyDataRequest::setHandler(new MockHandler([
             new Response(200, body: $this->getStub('request-my-income-response')),

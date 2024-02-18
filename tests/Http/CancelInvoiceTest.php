@@ -13,7 +13,7 @@ class CancelInvoiceTest extends MyDataHttpTestCase
     /**
      * @throws MyDataException
      */
-    public function test_it_cancels_invoice()
+    public function test_invoice_is_cancelled()
     {
         MyDataRequest::setHandler(new MockHandler([
             new Response(200, body: $this->getStub('cancel-invoice-response')),
