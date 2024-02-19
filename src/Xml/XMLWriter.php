@@ -4,7 +4,6 @@ namespace Firebed\AadeMyData\Xml;
 
 use DOMDocument;
 use DOMElement;
-use DOMException;
 use DOMNode;
 use Firebed\AadeMyData\Models\Type;
 
@@ -68,24 +67,23 @@ class XMLWriter
         }
     }
 
+
+    /** @noinspection PhpUnhandledExceptionInspection */
     protected function createElement(string $nodeName, mixed $nodeValue = null, string $namespaceURI = null): DOMElement
     {
-        try {
-            if (is_null($nodeValue)) {
-                if ($namespaceURI) {
-                    return $this->document->createElementNS($namespaceURI, $nodeName);
-                }
-
-                return $this->document->createElement($nodeName);
-            }
-
+        if (is_null($nodeValue)) {
             if ($namespaceURI) {
-                return $this->document->createElementNS($namespaceURI, $nodeName, $nodeValue);
+                return $this->document->createElementNS($namespaceURI, $nodeName);
             }
 
-            return $this->document->createElement($nodeName, $nodeValue);
-        } catch (DOMException) {
+            return $this->document->createElement($nodeName);
         }
+
+        if ($namespaceURI) {
+            return $this->document->createElementNS($namespaceURI, $nodeName, $nodeValue);
+        }
+
+        return $this->document->createElement($nodeName, $nodeValue);
     }
 
     protected function toValue($value): ?string
