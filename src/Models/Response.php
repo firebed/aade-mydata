@@ -8,7 +8,9 @@ class Response extends Type
 {
     use HasFactory;
 
-    public array $groups = ['errors'];
+    public array $casts = [
+        'errors' => Errors::class,
+    ];
 
     /**
      * @return int|null Αριθμός Σειράς Οντότητας εντός του υποβληθέντος xml
@@ -157,9 +159,9 @@ class Response extends Type
     }
 
     /**
-     * @return Error[]|null Λίστα Σφαλμάτων
+     * @return Errors|null Λίστα Σφαλμάτων
      */
-    public function getErrors(): ?array
+    public function getErrors(): ?Errors
     {
         return $this->get('errors');
     }

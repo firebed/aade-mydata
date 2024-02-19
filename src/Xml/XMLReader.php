@@ -42,20 +42,19 @@ class XMLReader
     protected function parseSimpleElement(DOMElement $element, Type $parent): void
     {
         $name = $element->localName;
+        $type = $this->createType($parent, $name);
 
-        $res = $this->createType($parent, $name);
-
-        if (is_array($res)) {
+        if (is_array($type)) {
             $this->parseDOMElement($element->childNodes, $parent);
             return;
         }
 
         if ($element->childElementCount) {
-            $this->parseDOMElement($element->childNodes, $res);
+            $this->parseDOMElement($element->childNodes, $type);
             if ($parent instanceof IteratorAggregate) {
-                $parent->push($name, $res);
+                $parent->push($name, $type);
             } else {
-                $parent->set($name, $res);
+                $parent->set($name, $type);
             }
         } else {
             $parent->set($name, $element->nodeValue);
@@ -66,9 +65,6 @@ class XMLReader
     {
         if (isset($parent->casts[$name])) {
             $type = $parent->casts[$name];
-            if (str_contains($type, ':')) {
-                return explode(':', $type);
-            }
             return new $type();
         }
 

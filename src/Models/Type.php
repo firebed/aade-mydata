@@ -2,13 +2,11 @@
 
 namespace Firebed\AadeMyData\Models;
 
-use Firebed\AadeMyData\Traits\ValidatesEnums;
+use BackedEnum;
 use IteratorAggregate;
 
 abstract class Type
 {
-    use ValidatesEnums;
-
     protected array $attributes    = [];
     protected array $expectedOrder = [];
 
@@ -19,7 +17,7 @@ abstract class Type
 
     public function set($key, $value): void
     {
-        if ($this->isEnum($value)) {
+        if ($value instanceof BackedEnum) {
             $value = $value->value;
         }
 

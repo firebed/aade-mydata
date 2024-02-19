@@ -5,8 +5,10 @@ namespace Tests\Traits;
 use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\InvoicesDoc;
 use Firebed\AadeMyData\Models\RequestedDoc;
+use Firebed\AadeMyData\Models\ResponseDoc;
 use Firebed\AadeMyData\Xml\InvoicesDocWriter;
 use Firebed\AadeMyData\Xml\RequestedDocReader;
+use Firebed\AadeMyData\Xml\ResponseDocReader;
 use Tests\Xml\Document;
 
 trait HandlesInvoiceXml
@@ -27,6 +29,14 @@ trait HandlesInvoiceXml
     {
         $xmlString = $this->getStub($filename);
         $parser = new RequestedDocReader();
+
+        return $parser->parseXML($xmlString);
+    }
+
+    public function getResponseDocFromXml(string $filename): ResponseDoc
+    {
+        $xmlString = $this->getStub($filename);
+        $parser = new ResponseDocReader();
 
         return $parser->parseXML($xmlString);
     }

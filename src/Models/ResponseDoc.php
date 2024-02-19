@@ -18,7 +18,7 @@ use Traversable;
  * @implements IteratorAggregate<int, Response>
  * @implements ArrayAccess<int, Response>
  */
-class ResponseDoc extends Type implements IteratorAggregate, Countable, ArrayAccess
+class ResponseDoc extends Type implements IteratorAggregate, ArrayAccess, Countable
 {
     public array $casts = [
         'response' => Response::class,

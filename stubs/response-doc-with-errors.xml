@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ResponseDoc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <response>
+        <index>1</index>
+        <statusCode>ValidationError</statusCode>
+        <errors>
+            <error>
+                <message>At least one payment method detail must be of POS type</message>
+                <code>402</code>
+            </error>
+            <error>
+                <message>Payment Methods total amount must be equal to or less than initial invoice's total value</message>
+                <code>407</code>
+            </error>
+        </errors>
+    </response>
+    <response>
+        <index>2</index>
+        <statusCode>ValidationError</statusCode>
+        <errors>
+            <error>
+                <message>At least one payment method detail must be of POS type</message>
+                <code>402</code>
+            </error>
+            <error>
+                <message>Payment Methods total amount must be equal to or less than initial invoice's total value</message>
+                <code>407</code>
+            </error>
+        </errors>
+    </response>
+</ResponseDoc>
