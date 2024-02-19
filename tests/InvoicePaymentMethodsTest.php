@@ -5,6 +5,7 @@ namespace Tests;
 use Firebed\AadeMyData\Enums\PaymentMethod;
 use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\PaymentMethodDetail;
+use Firebed\AadeMyData\Models\PaymentMethods;
 use PHPUnit\Framework\TestCase;
 use Tests\Traits\HandlesInvoiceXml;
 
@@ -17,10 +18,10 @@ class InvoicePaymentMethodsTest extends TestCase
         $invoice = Invoice::factory()->make();
 
         $paymentMethods = $invoice->getPaymentMethods();
+
         $paymentMethodsXml = $this->toXML($invoice)->InvoicesDoc->invoice->paymentMethods->paymentMethodDetails;
 
-        $this->assertIsArray($paymentMethods); // Refers to payment method detail attributes
-        $this->assertCount(5, $paymentMethodsXml); // Refers to payment method detail attributes
+        $this->assertCount(1, $paymentMethods); // Refers to payment method detail attributes
 
         // Test payment method 1
         $payment = $paymentMethods[0];
@@ -35,7 +36,11 @@ class InvoicePaymentMethodsTest extends TestCase
     public function test_it_converts_multiple_invoice_payment_methods_to_xml(): void
     {
         $invoice = Invoice::factory()
-            ->state(['paymentMethods' => PaymentMethodDetail::factory(2)])
+            ->state([
+                'paymentMethods' => PaymentMethods::factory()->state([
+                    'paymentMethodDetails' => PaymentMethodDetail::factory(2)
+                ])
+            ])
             ->make();
 
         $paymentMethods = $invoice->getPaymentMethods();

@@ -13,8 +13,8 @@ class InvoiceTest extends TestCase
         
         $this->assertCount(2, $doc->getInvoices());
         
-        $invoice = $doc->getInvoices()->offsetGet(1);
-
+        $invoice = $doc->getInvoices()[1];
+        
         $this->assertEquals('5AD65A46SFD5498SDV416WS5F1VS65VDFS65VDF', $invoice->getUid());
         $this->assertEquals('800000165789544', $invoice->getMark());
         $this->assertEquals('800000165989544', $invoice->getCancelledByMark());

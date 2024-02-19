@@ -11,12 +11,16 @@ use Firebed\AadeMyData\Traits\HasFactory;
 class EntityType extends Type
 {
     use HasFactory;
-    
+
     protected array $expectedOrder = [
         'type',
         'entityData',
     ];
-    
+
+    public array $casts = [
+        'entityData' => Party::class,
+    ];
+
     /**
      * @return EntityTypes|int Κατηγορία Οντότητας
      *
@@ -50,7 +54,7 @@ class EntityType extends Type
     }
 
     /**
-     * @param  Party  $entityData
+     * @param Party $entityData
      *
      * @version 1.0.7
      */

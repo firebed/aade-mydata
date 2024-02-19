@@ -8,7 +8,7 @@ use Firebed\AadeMyData\Traits\HasFactory;
 class PaymentMethodDetail extends Type
 {
     use HasFactory;
-    
+
     protected array $expectedOrder = [
         'type',
         'amount',
@@ -18,7 +18,12 @@ class PaymentMethodDetail extends Type
         'ProvidersSignature',
         'ECRToken'
     ];
-    
+
+    public array $casts = [
+        'ProvidersSignature' => ProvidersSignature::class,
+        'ECRToken'           => ECRToken::class
+    ];
+
     /**
      * @return string|null Τύπος Πληρωμής
      */

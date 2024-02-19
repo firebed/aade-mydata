@@ -3,9 +3,10 @@
 namespace Firebed\AadeMyData\Models;
 
 use ArrayAccess;
+use ArrayIterator;
 use Countable;
-use Firebed\AadeMyData\Traits\HasIterator;
 use IteratorAggregate;
+use Traversable;
 
 /**
  * Στις περιπτώσεις που ο χρήστης χρησιμοποιήσει κάποια μέθοδο υποβολής στοιχείων ή
@@ -13,26 +14,51 @@ use IteratorAggregate;
  * CancelInvoice) θα λαμβάνει ως απάντηση ένα αντικείμενο ResponseDoc σε xml μορφή. Το
  * αντικείμενο περιλαμβάνει μια λίστα από στοιχεία τύπου response, ένα για κάθε οντότητα
  * που υποβλήθηκε.
- * 
- * @template TModel of Response
+ *
+ * @implements IteratorAggregate<int, Response>
+ * @implements ArrayAccess<int, Response>
  */
 class ResponseDoc extends Type implements IteratorAggregate, Countable, ArrayAccess
 {
-    use HasIterator;
+    public array $casts = [
+        'response' => Response::class,
+    ];
+
+    public function __construct(array $responses = [])
+    {
+        $this->attributes['response'] = $responses;
+    }
 
     /**
-     * @return TModel
+     * @return Traversable<int, Response>
      */
-    public function offsetGet(mixed $offset): mixed
+    public function getIterator(): Traversable
     {
-        return $this->get($offset);
+        return new ArrayIterator($this->attributes['response']);
     }
     
-    /**
-     * @return TModel[]
-     */
-    public function all(): array
+    public function offsetExists(mixed $offset): bool
     {
-        return $this->attributes;
+        return isset($this->attributes['response'][$offset]);
+    }
+    
+    public function offsetGet(mixed $offset): Response
+    {
+        return $this->attributes['response'][$offset];
+    }
+    
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        $this->attributes['response'][$offset] = $value;
+    }
+    
+    public function offsetUnset(mixed $offset): void
+    {
+        unset($this->attributes['response'][$offset]);
+    }
+    
+    public function count(): int
+    {
+        return count($this->attributes['response']);
     }
 }

@@ -5,91 +5,73 @@ namespace Firebed\AadeMyData\Xml;
 use DOMDocument;
 use DOMElement;
 use Firebed\AadeMyData\Models\Type;
+use IteratorAggregate;
 
 class XMLReader
 {
-    private array $class_map;
-
-    public function __construct(array $class_map)
-    {
-        $this->class_map = $class_map;
-    }
-
-    protected function loadXML(string $xmlString): mixed
+    protected function loadXML(string $xmlString, Type $parent): void
     {
         $doc = new DOMDocument();
         $doc->preserveWhiteSpace = false;
         $doc->loadXML($xmlString);
-        
-        return $this->parseDOMElement($doc->documentElement);
+
+        $this->parseDOMElement($doc->documentElement->childNodes, $parent);
     }
 
     /**
      * Parse the XML node and return the corresponding Type object.
      */
-    protected function parseDOMElement(DOMElement $element): mixed
+    protected function parseDOMElement(IteratorAggregate $elements, Type $parent = null): void
     {
-        $relatedType = $this->createType($element->localName);
-
         // Since we have no control over the XML returned by myDATA,
         // it is possible to encounter node names within the XML that
         // are not handled by this project. In the event of an unhandled
         // unknown node type, rather than throwing an exception, it is 
         // preferred to ignore the unhandled node entirely and allow the
         // application to proceed with the remaining elements.
-        if ($relatedType === null) {
-            return null;
+        if ($parent === null) {
+            return;
         }
 
         // Parse the child nodes
-        foreach ($element->childNodes as $child) {
-            if ($this->isGroupElement($child, $relatedType)) {
-                // Certain nodes function as arrays, serving as containers for
-                // similar child types. For instance, an invoice may have a
-                // 'paymentMethods' property, acting as a wrapper array to store
-                // instances of PaymentMethodDetail type.
-                $this->parseGroupElement($child, $relatedType);
-            } else {
-                // Some nodes may represent objects that extend the Type class,
-                // while others may simply be values such as strings, integers,
-                // booleans, etc.
-                $this->parseSimpleElement($child, $relatedType);
-            }
+        foreach ($elements as $child) {
+            $this->parseSimpleElement($child, $parent);
         }
-
-        return $relatedType;
-    }
-
-    protected function parseGroupElement(DOMElement $element, Type $parent): void
-    {
-        // Wrapper nodes should function like arrays, so we just need to
-        // iterate though it and parse its children.
-        $values = [];
-        foreach ($element->childNodes as $child) {
-            $values[] = $this->parseDOMElement($child);
-        }
-
-        $parent->set($element->localName, $values);
     }
 
     protected function parseSimpleElement(DOMElement $element, Type $parent): void
     {
         $name = $element->localName;
-        $value = $element->childElementCount ? $this->parseDOMElement($element) : $element->nodeValue;
-        $parent->set($name, $value);
-    }
 
-    protected function createType(string $name): mixed
-    {
-        if (!array_key_exists($name, $this->class_map)) {
-            return null;
+        $res = $this->createType($parent, $name);
+
+        if (is_array($res)) {
+            $this->parseDOMElement($element->childNodes, $parent);
+            return;
         }
 
-        return new $this->class_map[$name]();
+        if ($element->childElementCount) {
+            $this->parseDOMElement($element->childNodes, $res);
+            if ($parent instanceof IteratorAggregate) {
+                $parent->push($name, $res);
+            } else {
+                $parent->set($name, $res);
+            }
+        } else {
+            $parent->set($name, $element->nodeValue);
+        }
     }
 
-    protected function isGroupElement(DOMElement $element, Type $type): bool
+    protected function createType(Type $parent, string $name): mixed
     {
-        return isset($type->groups) && in_array($element->localName, $type->groups);
+        if (isset($parent->casts[$name])) {
+            $type = $parent->casts[$name];
+            if (str_contains($type, ':')) {
+                return explode(':', $type);
+            }
+            return new $type();
+        }
+
+        return null;
     }
 }

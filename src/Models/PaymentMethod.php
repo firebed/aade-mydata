@@ -10,14 +10,18 @@ use Firebed\AadeMyData\Traits\HasFactory;
 class PaymentMethod extends Type
 {
     use HasFactory;
-    
+
     protected array $expectedOrder = [
         'invoiceMark',
         'paymentMethodMark',
         'entityVatNumber',
         'paymentMethodDetails'
     ];
-    
+
+    public array $casts = [
+        'paymentMethodDetails' => PaymentMethodDetail::class,
+    ];
+
     /**
      * @return int|null Μοναδικός Αριθμός Καταχώρησης Παραστατικού
      *
@@ -121,7 +125,7 @@ class PaymentMethod extends Type
             }
             return;
         }
-        
+
         parent::set($key, $value);
     }
 }

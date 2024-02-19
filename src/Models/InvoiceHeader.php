@@ -36,6 +36,11 @@ class InvoiceHeader extends Type
         'thirdPartyCollection',
     ];
     
+    public array $casts = [
+        'otherCorrelatedEntities' => EntityType::class,
+        'otherDeliveryNoteHeader' => OtherDeliveryNoteHeader::class,
+    ];
+    
     /**
      * @return string|null Σειρά παραστατικού
      */

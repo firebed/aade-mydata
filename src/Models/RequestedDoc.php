@@ -19,11 +19,13 @@ namespace Firebed\AadeMyData\Models;
  */
 class RequestedDoc extends Type
 {
-    public array $groups = [
-        'cancelledInvoicesDoc',
-        'incomeClassificationsDoc',
-        'expensesClassificationsDoc',
-        'paymentMethodsDoc',
+    public array $casts = [
+        'continuationToken'          => ContinuationToken::class,
+        'invoicesDoc'                => InvoicesDoc::class,
+        'cancelledInvoicesDoc'       => CancelledInvoicesDoc::class,
+        'incomeClassificationsDoc'   => IncomeClassificationsDoc::class,
+        'expensesClassificationsDoc' => ExpensesClassificationsDoc::class,
+        'paymentMethodsDoc'          => PaymentMethodsDoc::class,
     ];
 
     /**
@@ -43,34 +45,34 @@ class RequestedDoc extends Type
     }
 
     /**
-     * @return CancelledInvoice[]|null Λίστα ακυρώσεων
+     * @return CancelledInvoicesDoc|null Λίστα ακυρώσεων
      */
-    public function getCancelledInvoices(): ?array
+    public function getCancelledInvoices(): ?CancelledInvoicesDoc
     {
         return $this->get('cancelledInvoicesDoc');
     }
 
     /**
-     * @return InvoiceIncomeClassification[]|null Λίστα Χαρακτηρισμών Εσόδων
+     * @return IncomeClassificationsDoc|null Λίστα Χαρακτηρισμών Εσόδων
      */
-    public function getIncomeClassifications(): ?array
+    public function getIncomeClassifications(): ?IncomeClassificationsDoc
     {
         return $this->get('incomeClassificationsDoc');
     }
 
     /**
-     * @return InvoiceExpensesClassification[]|null Λίστα Χαρακτηρισμών Εξόδων
+     * @return ExpensesClassificationsDoc|null Λίστα Χαρακτηρισμών Εξόδων
      */
-    public function getExpensesClassifications(): ?array
+    public function getExpensesClassifications(): ?ExpensesClassificationsDoc
     {
         return $this->get('expensesClassificationsDoc');
     }
 
     /**
-     * @return PaymentMethod[]|null Λίστα Τρόπων Πληρωμής
+     * @return PaymentMethodsDoc|null Λίστα Τρόπων Πληρωμής
      * @version 1.0.8
      */
-    public function getPaymentMethods(): ?array
+    public function getPaymentMethods(): ?PaymentMethodsDoc
     {
         return $this->get('paymentMethodsDoc');
     }

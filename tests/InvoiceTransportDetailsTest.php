@@ -12,8 +12,8 @@ class InvoiceTransportDetailsTest extends TestCase
     public function test_it_converts_single_invoice_transport_details_to_xml(): void
     {
         $invoice = Invoice::factory()->make();
-
         $transportDetails = $invoice->getOtherTransportDetails();
+        
         $transportDetailsXml = $this->toXML($invoice)->InvoicesDoc->invoice->otherTransportDetails;
         
         $this->assertCount(1, $transportDetails);

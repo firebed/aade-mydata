@@ -8,8 +8,8 @@ use Firebed\AadeMyData\Models\InvoiceDetails;
 use Firebed\AadeMyData\Models\InvoiceHeader;
 use Firebed\AadeMyData\Models\InvoiceSummary;
 use Firebed\AadeMyData\Models\Issuer;
-use Firebed\AadeMyData\Models\PaymentMethodDetail;
-use Firebed\AadeMyData\Models\TaxTotals;
+use Firebed\AadeMyData\Models\PaymentMethods;
+use Firebed\AadeMyData\Models\TaxesTotals;
 use Firebed\AadeMyData\Models\TransportDetail;
 
 /**
@@ -23,9 +23,9 @@ class InvoiceFactory extends Factory
             'issuer'                => Issuer::factory(),
             'counterpart'           => Counterpart::factory(),
             'invoiceHeader'         => InvoiceHeader::factory(),
-            'paymentMethodDetails'  => PaymentMethodDetail::factory(),
+            'paymentMethods'        => PaymentMethods::factory(),
             'invoiceDetails'        => InvoiceDetails::factory(),
-            'taxesTotals'           => TaxTotals::factory(),
+            'taxesTotals'           => TaxesTotals::factory(),
             'invoiceSummary'        => InvoiceSummary::factory(),
             'qrCodeUrl'             => fake()->url(),
             'otherTransportDetails' => TransportDetail::factory(),

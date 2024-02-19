@@ -25,6 +25,11 @@ class InvoiceSummary extends Type
         'expensesClassification'
     ];
 
+    public array $casts = [
+        'incomeClassification'   => IncomeClassification::class,
+        'expensesClassification' => ExpensesClassification::class,
+    ];
+
     /**
      * @return float|null Σύνολο Καθαρής Αξίας
      */

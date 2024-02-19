@@ -9,8 +9,10 @@ use Firebed\AadeMyData\Models\Type;
 
 class XMLWriter
 {
+    // Array to store namespaces
     protected array $namespaces = [];
 
+    // DOMDocument object for XML manipulation
     protected DOMDocument $document;
 
     public function __construct()
@@ -39,32 +41,34 @@ class XMLWriter
 
     protected function buildType(DOMNode $parent, string $nodeName, Type $nodeValue): DOMNode
     {
-        $namespaceURI = $this->getNamespace($nodeName);
-        $child = $this->createElement($nodeName, namespaceURI: $namespaceURI);
-        $parent->appendChild($child);
-        foreach ($nodeValue->sortedAttributes() as $key => $value) {
-            $this->build($child, $key, $value, $nodeName.'.'.$key);
-        }
-
-        return $child;
+        return $this->processAssocArray($parent, $nodeName, $nodeValue->sortedAttributes());
     }
 
     protected function buildArray(DOMNode $parent, string $nodeName, array $nodeValue): void
     {
-        if (is_int(array_key_first($nodeValue))) {
-            foreach ($nodeValue as $value) {
-                $this->build($parent, $nodeName, $value);
-            }
-
+        // If the array is associative
+        if (is_string(array_key_first($nodeValue))) {
+            $this->processAssocArray($parent, $nodeName, $nodeValue);
             return;
         }
 
+        foreach ($nodeValue as $value) {
+            $this->build($parent, $nodeName, $value);
+        }
+    }
+
+    protected function processAssocArray(DOMNode $parent, string $nodeName, array $nodeValue): DOMNode
+    {
         $namespaceURI = $this->getNamespace($nodeName);
+
         $child = $this->createElement($nodeName, namespaceURI: $namespaceURI);
         $parent->appendChild($child);
+
         foreach ($nodeValue as $key => $value) {
             $this->build($child, $key, $value, $nodeName.'.'.$key);
         }
+
+        return $child;
     }
 
 
@@ -97,9 +101,11 @@ class XMLWriter
             return null;
         }
 
+        // If key contains '.', split it into parent and child
         if (str_contains($key, '.')) {
             [$parent, $child] = explode('.', $key);
 
+            // If child exists, return corresponding namespace URI
             if ($child) {
                 return $this->namespaces[$parent][$child] ?? $this->namespaces[$parent]['*'] ?? null;
             }

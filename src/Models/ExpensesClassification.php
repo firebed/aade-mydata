@@ -104,7 +104,7 @@ class ExpensesClassification extends Type
      */
     public function setVatAmount(?float $vatAmount): void
     {
-        $this->push('vatAmount', $vatAmount);
+        $this->set('vatAmount', $vatAmount);
     }
 
     /**

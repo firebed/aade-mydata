@@ -19,6 +19,10 @@ class Party extends Type
         'countryDocumentId'
     ];
     
+    public array $casts = [
+        'address' => Address::class,
+    ];
+    
     /**
      * @return string|null Οποιοσδήποτε έγκυρος ΑΦΜ
      */

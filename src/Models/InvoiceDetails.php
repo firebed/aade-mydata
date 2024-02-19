@@ -71,6 +71,12 @@ class InvoiceDetails extends Type
         'otherMeasurementUnitTitle'
     ];
 
+    public array $casts = [
+        'dienergia'              => Ship::class,
+        'incomeClassification'   => IncomeClassification::class,
+        'expensesClassification' => ExpensesClassification::class,
+    ];
+
     /**
      * @return int|null ΑΑ γραμμής
      */

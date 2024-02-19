@@ -8,7 +8,7 @@ use Firebed\AadeMyData\Traits\HasFactory;
 class Invoice extends Type
 {
     use HasFactory;
-    
+
     protected array $expectedOrder = [
         'issuer',
         'counterpart',
@@ -19,10 +19,16 @@ class Invoice extends Type
         'invoiceSummary',
         'otherTransportDetails',
     ];
-    
-    public array $groups = [
-        'paymentMethods',
-        'taxesTotals',
+
+    public array $casts = [
+        'issuer'                => Issuer::class,
+        'counterpart'           => Counterpart::class,
+        'invoiceHeader'         => InvoiceHeader::class,
+        'paymentMethods'        => PaymentMethods::class,
+        'invoiceDetails'        => InvoiceDetails::class,
+        'taxesTotals'           => TaxesTotals::class,
+        'invoiceSummary'        => InvoiceSummary::class,
+        'otherTransportDetails' => TransportDetail::class,
     ];
 
     /**
@@ -121,11 +127,11 @@ class Invoice extends Type
     }
 
     /**
-     * @return PaymentMethodDetail[] Τρόποι Πληρωμής
+     * @return PaymentMethods|null Τρόποι Πληρωμής
      */
-    public function getPaymentMethods(): array
+    public function getPaymentMethods(): ?PaymentMethods
     {
-        return $this->get('paymentMethods')['paymentMethodDetails'] ?? [];
+        return $this->get('paymentMethods') ?? new PaymentMethods();
     }
 
     /**
@@ -136,7 +142,7 @@ class Invoice extends Type
     public function addPaymentMethod(PaymentMethodDetail $paymentMethodDetail): void
     {
         $paymentMethods = $this->getPaymentMethods();
-        $paymentMethods[] = $paymentMethodDetail;
+        $paymentMethods->push($paymentMethodDetail);
         $this->set('paymentMethods', $paymentMethods);
     }
 
@@ -196,20 +202,20 @@ class Invoice extends Type
      * χρήστης κάνει χρήση αυτού του στοιχείου, δε θα μπορεί να εισάγει φόρους εκτός
      * του ΦΠΑ σε κάθε γραμμή του παραστατικού ξεχωριστά.
      *
-     * @return TaxTotals[]|null
+     * @return TaxesTotals|null
      */
-    public function getTaxesTotals(): ?array
+    public function getTaxesTotals(): ?TaxesTotals
     {
-        return $this->get('taxesTotals')['taxes'] ?? [];
+        return $this->get('taxesTotals') ?? new TaxesTotals();
     }
 
     /**
      * Προσθήκη συνόλου φόρων.
      */
     public function addTaxesTotals(TaxTotals $taxTotals): void
-    {        
+    {
         $taxesTotals = $this->getTaxesTotals();
-        $taxesTotals[] = $taxTotals;
+        $taxesTotals->addTaxes($taxTotals);
         $this->set('taxesTotals', $taxesTotals);
     }
 
@@ -256,23 +262,6 @@ class Invoice extends Type
             } else {
                 $this->push($key, $value);
             }
-            return;
-        }
-
-        if ($key === 'paymentMethods') {
-            $value = is_array($value) ? $value : [$value];
-            parent::set($key, ['paymentMethodDetails' => $value]);
-            return;
-        }
-
-        if ($key === 'taxesTotals') {
-            $value = is_array($value) ? $value : [$value];
-            parent::set($key, ['taxes' => $value]);
-            return;
-        }
-        
-        if ($key === 'paymentMethodDetails') {
-            $this->addPaymentMethod($value);
             return;
         }
 

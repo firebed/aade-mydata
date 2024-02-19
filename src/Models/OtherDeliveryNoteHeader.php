@@ -10,14 +10,19 @@ use Firebed\AadeMyData\Traits\HasFactory;
 class OtherDeliveryNoteHeader extends Type
 {
     use HasFactory;
-    
+
     protected array $expectedOrder = [
         'loadingAddress',
         'deliveryAddress',
         'startShippingBranch',
         'completeShippingBranch'
     ];
-    
+
+    public array $casts = [
+        'loadingAddress'  => Address::class,
+        'deliveryAddress' => Address::class
+    ];
+
     /**
      * @return Address|null Διεύθυνση Φόρτωσης
      * @version 1.0.8

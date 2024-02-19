@@ -2,37 +2,67 @@
 
 namespace Firebed\AadeMyData\Models;
 
+use ArrayAccess;
+use ArrayIterator;
 use Countable;
-use Firebed\AadeMyData\Traits\HasIterator;
 use IteratorAggregate;
+use Traversable;
 
-class InvoicesDoc extends Type implements IteratorAggregate, Countable
-{
-    use HasIterator;
+/**
+ * @implements IteratorAggregate<int, Invoice>
+ * @implements ArrayAccess<int, Invoice>
+ */
+class InvoicesDoc extends Type implements IteratorAggregate, ArrayAccess, Countable
+{    
+    public array $casts = [
+        'invoice' => Invoice::class,
+    ];
     
     public function __construct(array $invoices = [])
     {
-        $this->attributes = $invoices;
+        $this->attributes['invoice'] = $invoices;
     }
     
     public function addInvoice(Invoice $invoice): void
     {
-        $this->attributes[] = $invoice;
+        $this->attributes['invoice'][] = $invoice;
+    }
+
+    public function push($key, $value = null): void
+    {
+        $this->addInvoice($value);
     }
 
     /**
-     * @return Invoice
+     * @return Traversable<int, Invoice>
      */
-    public function offsetGet(mixed $offset): mixed
+    public function getIterator(): Traversable
     {
-        return $this->get($offset);
+        return new ArrayIterator($this->attributes['invoice']);
     }
-    
-    /**
-     * @return Invoice[]
-     */
-    public function all(): array
+
+    public function offsetExists(mixed $offset): bool
     {
-        return $this->attributes();
+        return isset($this->attributes['invoice'][$offset]);
+    }
+
+    public function offsetGet(mixed $offset): Invoice
+    {
+        return $this->attributes['invoice'][$offset];
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        $this->attributes['invoice'][$offset] = $value;
+    }
+
+    public function offsetUnset(mixed $offset): void
+    {
+        unset($this->attributes['invoice'][$offset]);
+    }
+
+    public function count(): int
+    {
+        return count($this->attributes['invoice']);
     }
 }
