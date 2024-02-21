@@ -15,7 +15,7 @@ use Firebed\AadeMyData\Traits\HasFactory;
 class TaxTotals extends Type
 {
     use HasFactory;
-    
+
     protected array $expectedOrder = [
         'taxType',
         'taxCategory',
@@ -23,11 +23,15 @@ class TaxTotals extends Type
         'taxAmount',
         'id',
     ];
-    
+
+    protected array $casts = [
+        'taxType' => TaxType::class,
+    ];
+
     /**
-     * @return string|null Είδος Φόρου
+     * @return TaxType|null Είδος Φόρου
      */
-    public function getTaxType(): ?string
+    public function getTaxType(): ?TaxType
     {
         return $this->get('taxType');
     }

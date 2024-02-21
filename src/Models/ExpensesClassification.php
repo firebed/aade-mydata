@@ -20,7 +20,7 @@ use Firebed\AadeMyData\Traits\HasFactory;
 class ExpensesClassification extends Type
 {
     use HasFactory;
-    
+
     protected array $expectedOrder = [
         'classificationType',
         'classificationCategory',
@@ -30,11 +30,18 @@ class ExpensesClassification extends Type
         'vatExemptionCategory',
         'id'
     ];
-    
+
+    protected array $casts = [
+        'classificationType'     => ExpenseClassificationType::class,
+        'classificationCategory' => ExpenseClassificationCategory::class,
+        'vatCategory'            => VatCategory::class,
+        'vatExemptionCategory'   => VatExemption::class,
+    ];
+
     /**
-     * @return string|null Κωδικός Χαρακτηρισμού
+     * @return ExpenseClassificationType|null Κωδικός Χαρακτηρισμού
      */
-    public function getClassificationType(): ?string
+    public function getClassificationType(): ?ExpenseClassificationType
     {
         return $this->get('classificationType');
     }
@@ -51,9 +58,9 @@ class ExpensesClassification extends Type
     }
 
     /**
-     * @return string|null Κατηγορία Χαρακτηρισμού
+     * @return ExpenseClassificationCategory|null Κατηγορία Χαρακτηρισμού
      */
-    public function getClassificationCategory(): ?string
+    public function getClassificationCategory(): ?ExpenseClassificationCategory
     {
         return $this->get('classificationCategory');
     }
@@ -108,10 +115,10 @@ class ExpensesClassification extends Type
     }
 
     /**
-     * @return int|null Κατηγορία ΦΠΑ
+     * @return VatCategory|null Κατηγορία ΦΠΑ
      * @version 1.0.7
      */
-    public function getVatCategory(): ?int
+    public function getVatCategory(): ?VatCategory
     {
         return $this->get('vatCategory');
     }
@@ -128,10 +135,10 @@ class ExpensesClassification extends Type
     }
 
     /**
-     * @return int|null Κατηγορία Εξαίρεσης ΦΠΑ
+     * @return VatExemption|null Κατηγορία Εξαίρεσης ΦΠΑ
      * @version 1.0.7
      */
-    public function getVatExemptionCategory(): ?int
+    public function getVatExemptionCategory(): ?VatExemption
     {
         return $this->get('vatExemptionCategory');
     }

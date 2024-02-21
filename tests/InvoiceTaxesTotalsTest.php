@@ -1,5 +1,6 @@
 <?php
 
+use Firebed\AadeMyData\Enums\TaxType;
 use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\TaxesTotals;
 use Firebed\AadeMyData\Models\TaxTotals;
@@ -17,7 +18,7 @@ class InvoiceTaxesTotalsTest extends TestCase
         $taxesTotals = $invoice->getTaxesTotals();
 
         $taxesTotalsXml = $this->toXML($invoice)->InvoicesDoc->invoice->taxesTotals->taxes;
-        $this->assertEquals($taxesTotals[0]->getTaxType(), $taxesTotalsXml->taxType);
+        $this->assertEquals($taxesTotals[0]->getTaxType()->value, $taxesTotalsXml->taxType);
         $this->assertEquals($taxesTotals[0]->getTaxCategory(), $taxesTotalsXml->taxCategory);
         $this->assertEquals($taxesTotals[0]->getUnderlyingValue(), $taxesTotalsXml->underlyingValue);
         $this->assertEquals($taxesTotals[0]->getTaxAmount(), $taxesTotalsXml->taxAmount);
@@ -40,14 +41,13 @@ class InvoiceTaxesTotalsTest extends TestCase
         $this->assertCount(2, $taxesTotals);
         $this->assertCount(2, $taxesTotalsXml);
 
-        $this->assertEquals($taxesTotals[0]->getTaxType(), $taxesTotalsXml[0]->taxType);
+        $this->assertEquals($taxesTotals[0]->getTaxType()->value, $taxesTotalsXml[0]->taxType);
         $this->assertEquals($taxesTotals[0]->getTaxCategory(), $taxesTotalsXml[0]->taxCategory);
         $this->assertEquals($taxesTotals[0]->getUnderlyingValue(), $taxesTotalsXml[0]->underlyingValue);
         $this->assertEquals($taxesTotals[0]->getTaxAmount(), $taxesTotalsXml[0]->taxAmount);
         $this->assertEquals($taxesTotals[0]->getId(), $taxesTotalsXml[0]->id);
-
-
-        $this->assertEquals($taxesTotals[1]->getTaxType(), $taxesTotalsXml[1]->taxType);
+        
+        $this->assertEquals($taxesTotals[1]->getTaxType()->value, $taxesTotalsXml[1]->taxType);
         $this->assertEquals($taxesTotals[1]->getTaxCategory(), $taxesTotalsXml[1]->taxCategory);
         $this->assertEquals($taxesTotals[1]->getUnderlyingValue(), $taxesTotalsXml[1]->underlyingValue);
         $this->assertEquals($taxesTotals[1]->getTaxAmount(), $taxesTotalsXml[1]->taxAmount);
@@ -62,11 +62,11 @@ class InvoiceTaxesTotalsTest extends TestCase
 
         $this->assertCount(2, $taxesTotals);
 
-        $this->assertEquals(1, $taxesTotals[0]->getTaxType());
+        $this->assertEquals(TaxType::TYPE_1, $taxesTotals[0]->getTaxType());
         $this->assertEquals(4, $taxesTotals[0]->getTaxCategory());
         $this->assertEquals(5, $taxesTotals[0]->getTaxAmount());
 
-        $this->assertEquals(1, $taxesTotals[1]->getTaxType());
+        $this->assertEquals(TaxType::TYPE_1, $taxesTotals[1]->getTaxType());
         $this->assertEquals(3, $taxesTotals[1]->getTaxCategory());
         $this->assertEquals(4, $taxesTotals[1]->getUnderlyingValue());
         $this->assertEquals(0.8, $taxesTotals[1]->getTaxAmount());

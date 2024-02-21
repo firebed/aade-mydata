@@ -14,8 +14,8 @@ class IncomeClassificationFactory extends Factory
     public function definition(): array
     {
         return [
-            'classificationType'     => fake()->randomElement(IncomeClassificationType::cases())->value,
-            'classificationCategory' => fake()->randomElement(IncomeClassificationCategory::cases())->value,
+            'classificationType'     => fake()->randomElement(IncomeClassificationType::cases()),
+            'classificationCategory' => fake()->randomElement(IncomeClassificationCategory::cases()),
             'amount'                 => fake()->randomFloat(2, 0, 1000),
             'id'                     => fake()->numberBetween(1, 100)
         ];

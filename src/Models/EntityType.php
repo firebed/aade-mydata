@@ -18,15 +18,16 @@ class EntityType extends Type
     ];
 
     public array $casts = [
+        'type'       => EntityTypes::class,
         'entityData' => Party::class,
     ];
 
     /**
-     * @return EntityTypes|int Κατηγορία Οντότητας
+     * @return EntityTypes|null Κατηγορία Οντότητας
      *
      * @version 1.0.7
      */
-    public function getType(): EntityTypes|int
+    public function getType(): ?EntityTypes
     {
         return $this->get('type');
     }

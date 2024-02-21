@@ -20,14 +20,15 @@ class PaymentMethodDetail extends Type
     ];
 
     public array $casts = [
+        'type'               => PaymentMethod::class,
         'ProvidersSignature' => ProvidersSignature::class,
         'ECRToken'           => ECRToken::class
     ];
 
     /**
-     * @return string|null Τύπος Πληρωμής
+     * @return PaymentMethod|null Τύπος Πληρωμής
      */
-    public function getType(): ?string
+    public function getType(): ?PaymentMethod
     {
         return $this->get('type');
     }

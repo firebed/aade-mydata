@@ -21,9 +21,14 @@ class PaymentMethods extends Type implements IteratorAggregate, ArrayAccess, Cou
         'paymentMethodDetails' => PaymentMethodDetail::class,
     ];
 
-    public function __construct(array $paymentMethods = [])
+    /**
+     * @param PaymentMethodDetail|PaymentMethodDetail[] $paymentMethods
+     */
+    public function __construct(PaymentMethodDetail|array $paymentMethods = null)
     {
-        $this->attributes['paymentMethodDetails'] = $paymentMethods;
+        if ($paymentMethods !== null) {
+            $this->attributes['paymentMethodDetails'] = is_array($paymentMethods) ? $paymentMethods : [$paymentMethods];
+        }
     }
 
     public function push($key, $value = null): void

@@ -41,6 +41,7 @@
                 <invoiceType>1.1</invoiceType>
                 <vatPaymentSuspension>false</vatPaymentSuspension>
                 <currency>EUR</currency>
+                <exchangeRate>12.345678</exchangeRate>
                 <correlatedInvoices>8000000165487234</correlatedInvoices>
                 <correlatedInvoices>8000000165487568</correlatedInvoices>
                 <correlatedInvoices>8000000165487101</correlatedInvoices>
@@ -132,7 +133,7 @@
                 <vatCategory>1</vatCategory>
                 <vatAmount>1200.00</vatAmount>
                 <incomeClassification>
-                    <icls:classificationType>E3_102_001</icls:classificationType>
+                    <icls:classificationType>E3_561_001</icls:classificationType>
                     <icls:classificationCategory>category1_1</icls:classificationCategory>
                     <icls:amount>4000.00</icls:amount>
                     <icls:id>1</icls:id>
@@ -176,8 +177,8 @@
                 <totalDeductionsAmount>40</totalDeductionsAmount>
                 <totalGrossValue>6000.00</totalGrossValue>
                 <incomeClassification>
-                    <icls:classificationType>E3_102_001</icls:classificationType>
-                    <icls:classificationCategory>category2_1</icls:classificationCategory>
+                    <icls:classificationType>E3_561_001</icls:classificationType>
+                    <icls:classificationCategory>category1_2</icls:classificationCategory>
                     <icls:amount>5000.00</icls:amount>
                     <icls:id>1</icls:id>
                 </incomeClassification>

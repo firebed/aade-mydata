@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Firebed\AadeMyData\Enums\EntityTypes;
 use Firebed\AadeMyData\Models\Invoice;
 use PHPUnit\Framework\TestCase;
 use Tests\Traits\HandlesInvoiceXml;
@@ -22,7 +23,7 @@ class InvoiceHeaderOtherCorrelatedEntitiesTest extends TestCase
         // Test other correlated entity 1
         $entityData1 = $entities[0]->getEntityData();
         $entityData1Xml = $entitiesXml[0]->entityData;
-        $this->assertEquals($entities[0]->getType(), $entitiesXml[0]->type);
+        $this->assertEquals($entities[0]->getType()->value, $entitiesXml[0]->type);
         $this->assertEquals($entityData1->getVatNumber(), $entityData1Xml->vatNumber);
         $this->assertEquals($entityData1->getCountry(), $entityData1Xml->country);
         $this->assertEquals($entityData1->getBranch(), $entityData1Xml->branch);
@@ -35,7 +36,7 @@ class InvoiceHeaderOtherCorrelatedEntitiesTest extends TestCase
         // Test other correlated entity 2
         $entityData2 = $entities[1]->getEntityData();
         $entityData2Xml = $entitiesXml[1]->entityData;
-        $this->assertEquals($entities[1]->getType(), $entitiesXml[1]->type);
+        $this->assertEquals($entities[1]->getType()->value, $entitiesXml[1]->type);
         $this->assertEquals($entityData2->getVatNumber(), $entityData2Xml->vatNumber);
         $this->assertEquals($entityData2->getCountry(), $entityData2Xml->country);
         $this->assertEquals($entityData2->getBranch(), $entityData2Xml->branch);
@@ -54,7 +55,7 @@ class InvoiceHeaderOtherCorrelatedEntitiesTest extends TestCase
 
         // Testing other correlated entity 1
         $entity1 = $header->getOtherCorrelatedEntities()[0];
-        $this->assertEquals(3, $entity1->getType());
+        $this->assertEquals(EntityTypes::TYPE_3, $entity1->getType());
         $this->assertEquals('888888888', $entity1->getEntityData()->getVatNumber());
         $this->assertEquals('GR', $entity1->getEntityData()->getCountry());
         $this->assertEquals(1, $entity1->getEntityData()->getBranch());
@@ -66,7 +67,7 @@ class InvoiceHeaderOtherCorrelatedEntitiesTest extends TestCase
 
         // Testing other correlated entity 2
         $entity2 = $header->getOtherCorrelatedEntities()[1];
-        $this->assertEquals(2, $entity2->getType());
+        $this->assertEquals(EntityTypes::TYPE_2, $entity2->getType());
         $this->assertEquals('IT999999999', $entity2->getEntityData()->getVatNumber());
         $this->assertEquals('IT', $entity2->getEntityData()->getCountry());
         $this->assertEquals(2, $entity2->getEntityData()->getBranch());

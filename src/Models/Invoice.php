@@ -131,7 +131,20 @@ class Invoice extends Type
      */
     public function getPaymentMethods(): ?PaymentMethods
     {
-        return $this->get('paymentMethods') ?? new PaymentMethods();
+        return $this->get('paymentMethods');
+    }
+
+    /**
+     * @param PaymentMethods|PaymentMethodDetail[] $paymentMethods
+     * @return void
+     */
+    public function setPaymentMethods(PaymentMethods|array $paymentMethods): void
+    {
+        if ($paymentMethods instanceof PaymentMethods) {
+            $this->set('paymentMethods', $paymentMethods);
+        } else {
+            $this->set('paymentMethods', new PaymentMethods($paymentMethods));
+        }
     }
 
     /**
@@ -142,8 +155,11 @@ class Invoice extends Type
     public function addPaymentMethod(PaymentMethodDetail $paymentMethodDetail): void
     {
         $paymentMethods = $this->getPaymentMethods();
-        $paymentMethods->push($paymentMethodDetail);
-        $this->set('paymentMethods', $paymentMethods);
+        if ($paymentMethods) {
+            $paymentMethods->push($paymentMethodDetail);
+        } else {
+            $this->set('paymentMethods', new PaymentMethods($paymentMethodDetail));
+        }
     }
 
     /**

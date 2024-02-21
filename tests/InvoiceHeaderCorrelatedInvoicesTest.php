@@ -2,6 +2,9 @@
 
 
 use Firebed\AadeMyData\Enums\InvoiceType;
+use Firebed\AadeMyData\Enums\InvoiceVariationType;
+use Firebed\AadeMyData\Enums\MovePurpose;
+use Firebed\AadeMyData\Enums\SpecialInvoiceCategory;
 use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\InvoiceHeader;
 use PHPUnit\Framework\TestCase;
@@ -42,12 +45,12 @@ class InvoiceHeaderCorrelatedInvoicesTest extends TestCase
     {
         $header = $this->getInvoiceFromXml()->getInvoiceHeader();
 
-        $this->assertCount(20, $header->attributes());
+        $this->assertCount(21, $header->attributes());
 
         $this->assertEquals('A', $header->getSeries());
         $this->assertEquals(101, $header->getAa());
         $this->assertEquals('2020-04-08', $header->getIssueDate());
-        $this->assertEquals(InvoiceType::TYPE_1_1->value, $header->getInvoiceType());
+        $this->assertEquals(InvoiceType::TYPE_1_1, $header->getInvoiceType());
         $this->assertFalse($header->isVatPaymentSuspension());
         $this->assertEquals('EUR', $header->getCurrency());
 
@@ -60,9 +63,9 @@ class InvoiceHeaderCorrelatedInvoicesTest extends TestCase
         $this->assertEquals('2024-02-13', $header->getDispatchDate());
         $this->assertEquals('00:00', $header->getDispatchTime());
         $this->assertEquals('KHB4201', $header->getVehicleNumber());
-        $this->assertEquals('19', $header->getMovePurpose());
+        $this->assertEquals(MovePurpose::TYPE_19, $header->getMovePurpose());
         $this->assertTrue($header->isFuelInvoice());
-        $this->assertEquals(5, $header->getSpecialInvoiceCategory());
-        $this->assertEquals(3, $header->getInvoiceVariationType());
+        $this->assertEquals(SpecialInvoiceCategory::TYPE_5, $header->getSpecialInvoiceCategory());
+        $this->assertEquals(InvoiceVariationType::TYPE_3, $header->getInvoiceVariationType());
     }
 }

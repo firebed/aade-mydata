@@ -16,12 +16,12 @@ class ExpensesClassificationFactory extends Factory
     public function definition(): array
     {
         return [
-            'classificationType'     => fake()->randomElement(ExpenseClassificationType::cases())->value,
-            'classificationCategory' => fake()->randomElement(ExpenseClassificationCategory::cases())->value,
+            'classificationType'     => fake()->randomElement(ExpenseClassificationType::cases()),
+            'classificationCategory' => fake()->randomElement(ExpenseClassificationCategory::cases()),
             'amount'                 => fake()->randomFloat(2, 0, 1000),
             'vatAmount'              => fake()->randomFloat(2, 0, 100),
-            'vatCategory'            => fake()->randomElement(VatCategory::cases())->value,
-            'vatExemptionCategory'   => fake()->randomElement(VatExemption::cases())->value,
+            'vatCategory'            => fake()->randomElement(VatCategory::cases()),
+            'vatExemptionCategory'   => fake()->randomElement(VatExemption::cases()),
             'id'                     => fake()->unique()->numberBetween(1, 100),
         ];
     }

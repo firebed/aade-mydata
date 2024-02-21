@@ -26,10 +26,15 @@ class IncomeClassification extends Type
         'id'
     ];
 
+    protected array $casts = [
+        'classificationType'     => IncomeClassificationType::class,
+        'classificationCategory' => IncomeClassificationCategory::class,
+    ];
+
     /**
-     * @return string|null Κωδικός Χαρακτηρισμού
+     * @return IncomeClassificationType|null Κωδικός Χαρακτηρισμού
      */
-    public function getClassificationType(): ?string
+    public function getClassificationType(): ?IncomeClassificationType
     {
         return $this->get('classificationType');
     }
@@ -43,9 +48,9 @@ class IncomeClassification extends Type
     }
 
     /**
-     * @return string|null Κατηγορία Χαρακτηρισμού
+     * @return IncomeClassificationCategory|null Κατηγορία Χαρακτηρισμού
      */
-    public function getClassificationCategory(): ?string
+    public function getClassificationCategory(): ?IncomeClassificationCategory
     {
         return $this->get('classificationCategory');
     }

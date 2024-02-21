@@ -2,6 +2,7 @@
 
 namespace Firebed\AadeMyData\Xml;
 
+use BackedEnum;
 use DOMDocument;
 use DOMElement;
 use DOMNode;
@@ -92,7 +93,15 @@ class XMLWriter
 
     protected function toValue($value): ?string
     {
-        return is_bool($value) ? ($value ? 'true' : 'false') : (string)$value;
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        } 
+        
+        if ($value instanceof BackedEnum) {
+            return $value->value;
+        }
+        
+        return (string)$value;
     }
 
     protected function getNamespace(?string $key): ?string

@@ -42,32 +42,24 @@ class XMLReader
     protected function parseSimpleElement(DOMElement $element, Type $parent): void
     {
         $name = $element->localName;
-        $type = $this->createType($parent, $name);
 
-        if (is_array($type)) {
-            $this->parseDOMElement($element->childNodes, $parent);
+        if (!$element->childElementCount) {
+            $parent->set($name, $element->nodeValue);
             return;
         }
 
-        if ($element->childElementCount) {
-            $this->parseDOMElement($element->childNodes, $type);
-            if ($parent instanceof IteratorAggregate) {
-                $parent->push($name, $type);
-            } else {
-                $parent->set($name, $type);
-            }
+        $type = $this->createType($parent, $name);
+        $this->parseDOMElement($element->childNodes, $type);
+        if ($parent instanceof IteratorAggregate) {
+            $parent->push($name, $type);
         } else {
-            $parent->set($name, $element->nodeValue);
+            $parent->set($name, $type);
         }
     }
 
     protected function createType(Type $parent, string $name): mixed
     {
-        if (isset($parent->casts[$name])) {
-            $type = $parent->casts[$name];
-            return new $type();
-        }
-
-        return null;
+        $cast = $parent->getCast($name);
+        return $cast ? new $cast() : null;
     }
 }

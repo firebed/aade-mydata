@@ -11,7 +11,7 @@ use Firebed\AadeMyData\Traits\HasFactory;
 class InvoiceHeader extends Type
 {
     use HasFactory;
-    
+
     protected array $expectedOrder = [
         'series',
         'aa',
@@ -35,12 +35,16 @@ class InvoiceHeader extends Type
         'otherMovePurposeTitle',
         'thirdPartyCollection',
     ];
-    
+
     public array $casts = [
+        'invoiceType'             => InvoiceType::class,
+        'movePurpose'             => MovePurpose::class,
+        'specialInvoiceCategory'  => SpecialInvoiceCategory::class,
+        'invoiceVariationType'    => InvoiceVariationType::class,
         'otherCorrelatedEntities' => EntityType::class,
         'otherDeliveryNoteHeader' => OtherDeliveryNoteHeader::class,
     ];
-    
+
     /**
      * @return string|null Σειρά παραστατικού
      */
@@ -92,9 +96,9 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @return string|null Είδος Παραστατικού
+     * @return InvoiceType|null Είδος Παραστατικού
      */
-    public function getInvoiceType(): ?string
+    public function getInvoiceType(): ?InvoiceType
     {
         return $this->get('invoiceType');
     }
@@ -150,9 +154,10 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * To πεδίο exchangeRate είναι η ισοτιμία του νομίσματος σε σχέση με το ευρώ.
-     * Πρέπει να συμπληρώνεται μόνο όταν το νόμισμα δεν έχει τιμή EUR
-     *
+     * <p>To πεδίο exchangeRate είναι η ισοτιμία του νομίσματος σε σχέση με το ευρώ.
+     * Πρέπει να συμπληρώνεται μόνο όταν το νόμισμα δεν έχει τιμή EUR.</p>
+     * <p>Ελάχιστη τιμή = 0</p>
+     * <p>Δεκαδικά ψηφία = 5</p>
      * @param float $exchangeRate Ισοτιμία
      */
     public function setExchangeRate(float $exchangeRate): void
@@ -243,9 +248,9 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @return string|null Σκοπός Διακίνησης
+     * @return MovePurpose|null Σκοπός Διακίνησης
      */
-    public function getMovePurpose(): ?string
+    public function getMovePurpose(): ?MovePurpose
     {
         return $this->get('movePurpose');
     }
@@ -278,9 +283,9 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @return int|null Ειδική Κατηγορία Παραστατικού
+     * @return SpecialInvoiceCategory|null Ειδική Κατηγορία Παραστατικού
      */
-    public function getSpecialInvoiceCategory(): ?int
+    public function getSpecialInvoiceCategory(): ?SpecialInvoiceCategory
     {
         return $this->get('specialInvoiceCategory');
     }
@@ -298,9 +303,9 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @return int|null Τύπος Απόκλισης (Διαφοροποίησης) Παραστατικού
+     * @return InvoiceVariationType|null Τύπος Απόκλισης (Διαφοροποίησης) Παραστατικού
      */
-    public function getInvoiceVariationType(): ?int
+    public function getInvoiceVariationType(): ?InvoiceVariationType
     {
         return $this->get('invoiceVariationType');
     }

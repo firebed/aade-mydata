@@ -72,9 +72,19 @@ class InvoiceDetails extends Type
     ];
 
     public array $casts = [
-        'dienergia'              => Ship::class,
-        'incomeClassification'   => IncomeClassification::class,
-        'expensesClassification' => ExpensesClassification::class,
+        'recType'                   => RecType::class,
+        'fuelCode'                  => FuelCode::class,
+        'vatCategory'               => VatCategory::class,
+        'measurementUnit'           => UnitMeasurement::class,
+        'invoiceDetailType'         => InvoiceDetailType::class,
+        'vatExemptionCategory'      => VatExemption::class,
+        'withheldPercentCategory'   => WithheldPercentCategory::class,
+        'stampDutyPercentCategory'  => StampCategory::class,
+        'feesPercentCategory'       => FeesPercentCategory::class,
+        'otherTaxesPercentCategory' => OtherTaxesPercentCategory::class,
+        'dienergia'                 => Ship::class,
+        'incomeClassification'      => IncomeClassification::class,
+        'expensesClassification'    => ExpensesClassification::class,
     ];
 
     /**
@@ -96,9 +106,9 @@ class InvoiceDetails extends Type
     }
 
     /**
-     * @return int|null Είδος Γραμμής
+     * @return RecType|null Είδος Γραμμής
      */
-    public function getRecType(): ?int
+    public function getRecType(): ?RecType
     {
         return $this->get('recType');
     }
@@ -137,9 +147,9 @@ class InvoiceDetails extends Type
     }
 
     /**
-     * @return string|null Κωδικός Καυσίμου
+     * @return FuelCode|null Κωδικός Καυσίμου
      */
-    public function getFuelCode(): ?string
+    public function getFuelCode(): ?FuelCode
     {
         return $this->get('fuelCode');
     }
@@ -179,9 +189,9 @@ class InvoiceDetails extends Type
     }
 
     /**
-     * @return string|null Είδος Ποσότητας
+     * @return UnitMeasurement|null Είδος Ποσότητας
      */
-    public function getMeasurementUnit(): ?string
+    public function getMeasurementUnit(): ?UnitMeasurement
     {
         return $this->get('measurementUnit');
     }
@@ -195,9 +205,9 @@ class InvoiceDetails extends Type
     }
 
     /**
-     * @return string|null Επισήμανση
+     * @return InvoiceDetailType|null Επισήμανση
      */
-    public function getInvoiceDetailType(): ?string
+    public function getInvoiceDetailType(): ?InvoiceDetailType
     {
         return $this->get('invoiceDetailType');
     }
@@ -232,9 +242,9 @@ class InvoiceDetails extends Type
     }
 
     /**
-     * @return string|null Κατηγορία ΦΠΑ
+     * @return VatCategory|null Κατηγορία ΦΠΑ
      */
-    public function getVatCategory(): ?string
+    public function getVatCategory(): ?VatCategory
     {
         return $this->get('vatCategory');
     }
@@ -272,9 +282,9 @@ class InvoiceDetails extends Type
     }
 
     /**
-     * @return string|null Κατηγορία Αιτίας Εξαίρεσης ΦΠΑ
+     * @return VatExemption|null Κατηγορία Αιτίας Εξαίρεσης ΦΠΑ
      */
-    public function getVatExemptionCategory(): ?string
+    public function getVatExemptionCategory(): ?VatExemption
     {
         return $this->get('vatExemptionCategory');
     }
@@ -323,7 +333,7 @@ class InvoiceDetails extends Type
      */
     public function isDiscountOption(): ?bool
     {
-        return filter_var($this->get('discountOption'), FILTER_VALIDATE_BOOLEAN);
+        return $this->get('discountOption');
     }
 
     /**
@@ -356,9 +366,9 @@ class InvoiceDetails extends Type
     }
 
     /**
-     * @return string|null Κατηγορία Συντελεστή Παρακράτησης Φόρου
+     * @return WithheldPercentCategory|null Κατηγορία Συντελεστή Παρακράτησης Φόρου
      */
-    public function getWithheldPercentCategory(): ?string
+    public function getWithheldPercentCategory(): ?WithheldPercentCategory
     {
         return $this->get('withheldPercentCategory');
     }
@@ -393,9 +403,9 @@ class InvoiceDetails extends Type
     }
 
     /**
-     * @return string|null Κατηγορία Συντελεστή Χαρτοσήμου
+     * @return StampCategory|null Κατηγορία Συντελεστή Χαρτοσήμου
      */
-    public function getStampDutyPercentCategory(): ?string
+    public function getStampDutyPercentCategory(): ?StampCategory
     {
         return $this->get('stampDutyPercentCategory');
     }
@@ -430,9 +440,9 @@ class InvoiceDetails extends Type
     }
 
     /**
-     * @return int|null Κατηγορία Συντελεστή Τελών
+     * @return FeesPercentCategory|null Κατηγορία Συντελεστή Τελών
      */
-    public function getFeesPercentCategory(): ?int
+    public function getFeesPercentCategory(): ?FeesPercentCategory
     {
         return $this->get('feesPercentCategory');
     }
@@ -446,9 +456,9 @@ class InvoiceDetails extends Type
     }
 
     /**
-     * @return string|null Κατηγορία Συντελεστή Λοιπών Φόρων
+     * @return OtherTaxesPercentCategory|null Κατηγορία Συντελεστή Λοιπών Φόρων
      */
-    public function getOtherTaxesPercentCategory(): ?string
+    public function getOtherTaxesPercentCategory(): ?OtherTaxesPercentCategory
     {
         return $this->get('otherTaxesPercentCategory');
     }
