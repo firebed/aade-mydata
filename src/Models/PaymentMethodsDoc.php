@@ -2,57 +2,25 @@
 
 namespace Firebed\AadeMyData\Models;
 
-use ArrayAccess;
-use ArrayIterator;
-use Countable;
-use IteratorAggregate;
-use Traversable;
-
 /**
- * @implements IteratorAggregate<int, PaymentMethod>
- * @implements ArrayAccess<int, PaymentMethod>
+ * This class is used to store payment methods and is part of
+ * <code>RequestedDoc</code> class.
+ * 
+ * @extends TypeArray<PaymentMethod>
  */
-class PaymentMethodsDoc extends Type implements IteratorAggregate, ArrayAccess, Countable
+class PaymentMethodsDoc extends TypeArray
 {
-    public array $casts = [
+    protected array $casts = [
         'paymentMethods' => PaymentMethod::class,
     ];
 
-    public function push($key, $value = null): void
+    public function __construct()
     {
-        $this->attributes['paymentMethods'][] = $value;
-    }
-
-    /**
-     * @return Traversable<int, PaymentMethod>
-     */
-    public function getIterator(): Traversable
-    {
-        return new ArrayIterator($this->attributes['paymentMethods']);
-    }
-
-    public function offsetExists($offset): bool
-    {
-        return isset($this->attributes['paymentMethods'][$offset]);
+        parent::__construct('paymentMethods');
     }
 
     public function offsetGet($offset): PaymentMethod
     {
         return $this->attributes['paymentMethods'][$offset];
-    }
-
-    public function offsetSet($offset, $value): void
-    {
-        $this->attributes['paymentMethods'][$offset] = $value;
-    }
-
-    public function offsetUnset($offset): void
-    {
-        unset($this->attributes['paymentMethods'][$offset]);
-    }
-
-    public function count(): int
-    {
-        return count($this->attributes['paymentMethods']);
     }
 }

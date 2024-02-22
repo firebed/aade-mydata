@@ -8,7 +8,7 @@ class Response extends Type
 {
     use HasFactory;
 
-    public array $casts = [
+    protected array $casts = [
         'errors' => Errors::class,
     ];
 

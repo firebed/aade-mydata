@@ -19,7 +19,7 @@ class Party extends Type
         'countryDocumentId'
     ];
     
-    public array $casts = [
+    protected array $casts = [
         'address' => Address::class,
     ];
     

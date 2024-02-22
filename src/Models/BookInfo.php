@@ -2,6 +2,9 @@
 
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Enums\InvoiceDetailType;
+use Firebed\AadeMyData\Enums\InvoiceType;
+
 /**
  * <ol>
  * <li>Σε περίπτωση που θα επιστρέφεται το στοιχείο continuationToken τα πεδία
@@ -25,13 +28,10 @@ namespace Firebed\AadeMyData\Models;
  */
 class BookInfo extends Type
 {
-    /**
-     * @return ContinuationToken|null Στοιχείο για την τμηματική λήψη αποτελεσμάτων
-     */
-    public function getContinuationToken(): ?ContinuationToken
-    {
-        return $this->get('continuationToken');
-    }
+    protected array $casts = [
+        'invType'           => InvoiceType::class,
+        'invoiceDetailType' => InvoiceDetailType::class,
+    ];
 
     /**
      * @return string ΑΦΜ λήπτη
@@ -50,25 +50,25 @@ class BookInfo extends Type
     }
 
     /**
-     * @return string Τύπος Παραστατικού
+     * @return InvoiceType|null Τύπος Παραστατικού
      */
-    public function getInvType(): string
+    public function getInvType(): ?InvoiceType
     {
         return $this->get('invType');
     }
 
     /**
-     * @return string Αυτοτιμολόγηση
+     * @return bool|null Αυτοτιμολόγηση
      */
-    public function getSelfPricing(): string
+    public function getSelfPricing(): ?bool
     {
         return $this->get('selfpricing');
     }
 
     /**
-     * @return string Επισήμανση
+     * @return InvoiceDetailType|null Επισήμανση
      */
-    public function getInvoiceDetailType(): string
+    public function getInvoiceDetailType(): ?InvoiceDetailType
     {
         return $this->get('invoiceDetailType');
     }

@@ -20,7 +20,7 @@ class Invoice extends Type
         'otherTransportDetails',
     ];
 
-    public array $casts = [
+    protected array $casts = [
         'issuer'                => Issuer::class,
         'counterpart'           => Counterpart::class,
         'invoiceHeader'         => InvoiceHeader::class,

@@ -18,7 +18,7 @@ class PaymentMethod extends Type
         'paymentMethodDetails'
     ];
 
-    public array $casts = [
+    protected array $casts = [
         'paymentMethodDetails' => PaymentMethodDetail::class,
     ];
 

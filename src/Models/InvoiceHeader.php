@@ -36,7 +36,7 @@ class InvoiceHeader extends Type
         'thirdPartyCollection',
     ];
 
-    public array $casts = [
+    protected array $casts = [
         'invoiceType'             => InvoiceType::class,
         'movePurpose'             => MovePurpose::class,
         'specialInvoiceCategory'  => SpecialInvoiceCategory::class,
@@ -370,7 +370,7 @@ class InvoiceHeader extends Type
      */
     public function getIsDeliveryNote(): bool
     {
-        return filter_var($this->get('isDeliveryNote', false), FILTER_VALIDATE_BOOLEAN);
+        return filter_var($this->get('isDeliveryNote'), FILTER_VALIDATE_BOOLEAN);
     }
 
     /**

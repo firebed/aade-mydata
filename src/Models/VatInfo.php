@@ -2,26 +2,36 @@
 
 namespace Firebed\AadeMyData\Models;
 
-class InvoiceVatDetail extends Type
+/**
+ * @version 1.0.8
+ */
+class VatInfo extends Type
 {
-    public function getMark(): string
+    /**
+     * @return string|null Το ΜΑΡΚ του παραστατικού
+     * @version 1.0.8
+     */
+    public function getMark(): ?string
     {
         return $this->get('Mark');
     }
 
+    /**
+     * @return bool Αν το παραστατικό είναι ακυρωμένο
+     * @version 1.0.8
+     */
     public function isCancelled(): bool
     {
         return filter_var($this->get('IsCancelled'), FILTER_VALIDATE_BOOLEAN);
     }
 
+    /**
+     * @return string Ημερομηνία έκδοσης παραστατικού
+     * @version 1.0.8
+     */
     public function getIssueDate(): string
     {
         return $this->get('IssueDate');
-    }
-
-    public function getVats(): array
-    {
-        return $this->get('Vats');
     }
 
     /**

@@ -24,6 +24,7 @@ class InvoiceDetailsTest extends TestCase
         $invoice = Invoice::factory()->make();
 
         $rows = $invoice->getInvoiceDetails();
+        
         $rowXml = $this->toXML($invoice)->InvoicesDoc->invoice->invoiceDetails;
 
         $this->assertCount(1, $rows);

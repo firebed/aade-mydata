@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="https://www.aade.gr/myDATA/paymentMethod/v1.0" xmlns:inv="http://www.aade.gr/myDATA/invoice/v1.0" targetNamespace="https://www.aade.gr/myDATA/paymentMethod/v1.0" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0.8">
+	<xs:import namespace="http://www.aade.gr/myDATA/invoice/v1.0" schemaLocation="InvoicesDoc-v1.0.8.xsd"/>
+	<xs:element name="PaymentMethodsDoc">
+		<xs:annotation>
+			<xs:documentation>Μέθοδοι Πληρωμής</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence maxOccurs="unbounded">
+				<xs:element name="paymentMethods" type="PaymentMethodType"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="PaymentMethodType">
+		<xs:sequence>
+			<xs:element name="invoiceMark" type="xs:long">
+				<xs:annotation>
+					<xs:documentation>Μοναδικός Αριθμός Καταχώρησης Παραστατικού</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="paymentMethodMark" type="xs:long" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Αποδεικτικό Λήψης Τρόπων Πληρωμής. Συμπληρώνεται από την Υπηρεσία</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="entityVatNumber" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ΑΦΜ Οντότητας Αναφοράς</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="paymentMethodDetails" type="inv:PaymentMethodDetailType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="AmountType">
+		<xs:restriction base="xs:decimal">
+			<xs:fractionDigits value="2"/>
+			<xs:minInclusive value="0"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

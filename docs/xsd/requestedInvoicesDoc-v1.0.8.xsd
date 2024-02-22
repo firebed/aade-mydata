@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:inv="http://www.aade.gr/myDATA/invoice/v1.0" xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" xmlns:pm="https://www.aade.gr/myDATA/paymentMethod/v1.0" targetNamespace="http://www.aade.gr/myDATA/invoice/v1.0" elementFormDefault="qualified" version="1.0.8">
+  <xs:import namespace="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" schemaLocation="incomeClassification-v1.0.8.xsd"/>
+  <xs:import namespace="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" schemaLocation="expensesClassification-v1.0.8.xsd"/>
+  <xs:import namespace="https://www.aade.gr/myDATA/paymentMethod/v1.0" schemaLocation="paymentMethods-v1.0.8.xsd"/>
+  <xs:include schemaLocation="InvoicesDoc-v1.0.8.xsd"/>
+  <xs:element name="RequestedDoc">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="continuationToken" type="inv:continuationTokenType" minOccurs="0"/>
+        <xs:element name="invoicesDoc" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="invoice" type="inv:AadeBookInvoiceType"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="cancelledInvoicesDoc" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="cancelledInvoice" type="inv:CancelledInvoiceType"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="incomeClassificationsDoc" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="incomeInvoiceClassification" type="icls:InvoiceIncomeClassificationType"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="expensesClassificationsDoc" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="expensesInvoiceClassification" type="ecls:InvoiceExpensesClassificationType"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="paymentMethodsDoc" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="paymentMethods" type="pm:PaymentMethodType"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="continuationTokenType">
+    <xs:sequence>
+      <xs:element name="nextPartitionKey" type="xs:string"/>
+      <xs:element name="nextRowKey" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CancelledInvoiceType">
+    <xs:sequence>
+      <xs:element name="invoiceMark" type="xs:long">
+        <xs:annotation>
+          <xs:documentation>Μοναδικός Αριθμός Καταχώρησης του ακυρωμένου Παραστατικού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="cancellationMark" type="xs:long">
+        <xs:annotation>
+          <xs:documentation>Μοναδικός Αριθμός Καταχώρησης της Ακύρωσης</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="cancellationDate" type="xs:date">
+        <xs:annotation>
+          <xs:documentation>Ημερομηνία Ακύρωσης Παραστατικού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

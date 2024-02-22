@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RequestedBookInfo xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" xmlns:pm="https://www.aade.gr/myDATA/paymentMethod/v1.0" xmlns="http://www.aade.gr/myDATA/invoice/v1.0">
+    <continuationToken>
+        <nextPartitionKey>78A4SD5FG5GH55W5DFV5HJN5</nextPartitionKey>
+        <nextRowKey>AS25AS45F45GD55</nextRowKey>
+    </continuationToken>
     <bookInfo>
         <counterVatNumber>429630274</counterVatNumber>
         <issueDate>2022-01-09</issueDate>
         <invType>2.1</invType>
+        <selfpricing>true</selfpricing>
+        <invoiceDetailType>1</invoiceDetailType>
         <netValue>4302.83</netValue>
         <vatAmount>0</vatAmount>
         <withheldAmount>860.57</withheldAmount>

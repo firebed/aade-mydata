@@ -150,7 +150,7 @@
                     <ecls:classificationType>VAT_361</ecls:classificationType>
                     <ecls:classificationCategory>category2_1</ecls:classificationCategory>
                     <ecls:amount>1000.00</ecls:amount>
-                    <icls:id>3</icls:id>
+                    <ecls:id>3</ecls:id>
                 </expensesClassification>
             </invoiceDetails>
             <taxesTotals>

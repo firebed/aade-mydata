@@ -25,7 +25,7 @@ class InvoiceSummary extends Type
         'expensesClassification'
     ];
 
-    public array $casts = [
+    protected array $casts = [
         'incomeClassification'   => IncomeClassification::class,
         'expensesClassification' => ExpensesClassification::class,
     ];

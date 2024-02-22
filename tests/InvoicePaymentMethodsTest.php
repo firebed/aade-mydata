@@ -21,7 +21,7 @@ class InvoicePaymentMethodsTest extends TestCase
 
         $paymentMethodsXml = $this->toXML($invoice)->InvoicesDoc->invoice->paymentMethods->paymentMethodDetails;
 
-        $this->assertCount(1, $paymentMethods); // Refers to payment method detail attributes
+        $this->assertCount(1, $paymentMethods);
 
         // Test payment method 1
         $payment = $paymentMethods[0];

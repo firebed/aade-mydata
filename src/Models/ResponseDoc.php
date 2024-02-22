@@ -2,12 +2,6 @@
 
 namespace Firebed\AadeMyData\Models;
 
-use ArrayAccess;
-use ArrayIterator;
-use Countable;
-use IteratorAggregate;
-use Traversable;
-
 /**
  * Στις περιπτώσεις που ο χρήστης χρησιμοποιήσει κάποια μέθοδο υποβολής στοιχείων ή
  * ακύρωση (SendInvoices, SendIncomeClassification, SendExpensesClassification,
@@ -15,50 +9,21 @@ use Traversable;
  * αντικείμενο περιλαμβάνει μια λίστα από στοιχεία τύπου response, ένα για κάθε οντότητα
  * που υποβλήθηκε.
  *
- * @implements IteratorAggregate<int, Response>
- * @implements ArrayAccess<int, Response>
+ * @extends TypeArray<Response>
  */
-class ResponseDoc extends Type implements IteratorAggregate, ArrayAccess, Countable
+class ResponseDoc extends TypeArray
 {
-    public array $casts = [
+    protected array $casts = [
         'response' => Response::class,
     ];
 
-    public function __construct(array $responses = [])
+    public function __construct()
     {
-        $this->attributes['response'] = $responses;
+        parent::__construct('response');
     }
 
-    /**
-     * @return Traversable<int, Response>
-     */
-    public function getIterator(): Traversable
-    {
-        return new ArrayIterator($this->attributes['response']);
-    }
-    
-    public function offsetExists(mixed $offset): bool
-    {
-        return isset($this->attributes['response'][$offset]);
-    }
-    
     public function offsetGet(mixed $offset): Response
     {
         return $this->attributes['response'][$offset];
-    }
-    
-    public function offsetSet(mixed $offset, mixed $value): void
-    {
-        $this->attributes['response'][$offset] = $value;
-    }
-    
-    public function offsetUnset(mixed $offset): void
-    {
-        unset($this->attributes['response'][$offset]);
-    }
-    
-    public function count(): int
-    {
-        return count($this->attributes['response']);
     }
 }

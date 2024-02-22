@@ -4,6 +4,11 @@ namespace Firebed\AadeMyData\Models;
 
 class RequestedVatInfo extends Type
 {
+    protected array $casts = [
+        'continuationToken' => ContinuationToken::class,
+        'VatInfo'           => VatInfo::class,
+    ];
+
     /**
      * @return ContinuationToken|null Στοιχείο για την τμηματική λήψη αποτελεσμάτων
      */
@@ -13,7 +18,7 @@ class RequestedVatInfo extends Type
     }
 
     /**
-     * @return InvoiceVatDetail|null Λίστα στοιχείων εισροών και εκροών ανά παραστατικό
+     * @return VatInfo[]|null Λίστα στοιχείων εισροών και εκροών ανά παραστατικό
      */
     public function getVatInfo(): ?array
     {

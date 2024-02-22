@@ -43,13 +43,10 @@ trait HandlesInvoiceXml
 
     protected function toXML(Invoice $invoice): object
     {
-        $invoicesDoc = new InvoicesDoc();
-        $invoicesDoc->addInvoice($invoice);
-
         $writer = new InvoicesDocWriter();
 
         // First convert the Invoice to XML
-        $xmlString = $writer->asXML($invoicesDoc);
+        $xmlString = $writer->asXML(new InvoicesDoc($invoice));
 
         // Return the XML as a Document object
         return new Document($xmlString);

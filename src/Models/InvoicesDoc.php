@@ -2,67 +2,25 @@
 
 namespace Firebed\AadeMyData\Models;
 
-use ArrayAccess;
-use ArrayIterator;
-use Countable;
-use IteratorAggregate;
-use Traversable;
-
 /**
- * @implements IteratorAggregate<int, Invoice>
- * @implements ArrayAccess<int, Invoice>
+ * @extends TypeArray<Invoice>
  */
-class InvoicesDoc extends Type implements IteratorAggregate, ArrayAccess, Countable
-{    
-    public array $casts = [
+class InvoicesDoc extends TypeArray
+{
+    protected array $casts = [
         'invoice' => Invoice::class,
     ];
-    
-    public function __construct(array $invoices = [])
-    {
-        $this->attributes['invoice'] = $invoices;
-    }
-    
-    public function addInvoice(Invoice $invoice): void
-    {
-        $this->attributes['invoice'][] = $invoice;
-    }
-
-    public function push($key, $value = null): void
-    {
-        $this->addInvoice($value);
-    }
 
     /**
-     * @return Traversable<int, Invoice>
+     * @param Invoice|Invoice[] $invoices
      */
-    public function getIterator(): Traversable
+    public function __construct(Invoice|array $invoices = [])
     {
-        return new ArrayIterator($this->attributes['invoice']);
+        parent::__construct('invoice', $invoices);
     }
-
-    public function offsetExists(mixed $offset): bool
-    {
-        return isset($this->attributes['invoice'][$offset]);
-    }
-
+    
     public function offsetGet(mixed $offset): Invoice
     {
-        return $this->attributes['invoice'][$offset];
-    }
-
-    public function offsetSet(mixed $offset, mixed $value): void
-    {
-        $this->attributes['invoice'][$offset] = $value;
-    }
-
-    public function offsetUnset(mixed $offset): void
-    {
-        unset($this->attributes['invoice'][$offset]);
-    }
-
-    public function count(): int
-    {
-        return count($this->attributes['invoice']);
+        return $this->attributes[$this->childKey][$offset];
     }
 }

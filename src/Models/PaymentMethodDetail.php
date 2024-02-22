@@ -19,7 +19,7 @@ class PaymentMethodDetail extends Type
         'ECRToken'
     ];
 
-    public array $casts = [
+    protected array $casts = [
         'type'               => PaymentMethod::class,
         'ProvidersSignature' => ProvidersSignature::class,
         'ECRToken'           => ECRToken::class

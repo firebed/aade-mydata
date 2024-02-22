@@ -17,7 +17,7 @@ class EntityType extends Type
         'entityData',
     ];
 
-    public array $casts = [
+    protected array $casts = [
         'type'       => EntityTypes::class,
         'entityData' => Party::class,
     ];

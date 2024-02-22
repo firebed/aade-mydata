@@ -4,6 +4,10 @@ namespace Firebed\AadeMyData\Models;
 
 class InvoicesIncomeClassificationDetail extends Type
 {
+    protected array $casts = [
+        'incomeClassificationDetailData' => IncomeClassification::class,
+    ];
+    
     /**
      * @return int|null Αριθμός Γραμμής
      */

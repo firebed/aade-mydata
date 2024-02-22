@@ -2,9 +2,7 @@
 
 namespace Firebed\AadeMyData\Models;
 
-use Countable;
 use Firebed\AadeMyData\Traits\HasIterator;
-use IteratorAggregate;
 
 /**
  * Στις περιπτώσεις που ο χρήστης καλέσει μια εκ των δυο μεθόδων λήψης στοιχείων εσόδων/εξόδων
@@ -14,9 +12,14 @@ use IteratorAggregate;
  * καθώς και το στοιχείο continuationToken, σε περίπτωση που ο όγκος των δεδομένων
  * υπερβαίνει το επιτρεπτό όριο και η λήψη τους γίνει τμηματικά.
  */
-class RequestedBookInfo extends Type implements IteratorAggregate, Countable
+class RequestedBookInfo extends Type
 {
     use HasIterator;
+
+    protected array $casts = [
+        'continuationToken' => ContinuationToken::class,
+        'bookInfo'          => BookInfo::class,
+    ];
 
     /**
      * @return ContinuationToken|null Στοιχείο για την τμηματική λήψη αποτελεσμάτων

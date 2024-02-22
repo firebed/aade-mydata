@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" targetNamespace="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0.8">
+  <xs:element name="IncomeClassificationsDoc">
+    <xs:annotation>
+      <xs:documentation>Χαρατηρισμοί Εσόδων Πρότυπων Παραστατικών ΑΑΔΕ</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence maxOccurs="unbounded">
+        <xs:element name="incomeInvoiceClassification" type="icls:InvoiceIncomeClassificationType"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="InvoiceIncomeClassificationType">
+    <xs:sequence>
+      <xs:element name="invoiceMark" type="xs:long">
+        <xs:annotation>
+          <xs:documentation>Μοναδικός Αριθμός Καταχώρησης Παραστατικού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="classificationMark" type="xs:long" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Αποδεικτικό Λήψης Χαρακτηρισμού Εσόδων. Συμπληρώνεται από την Υπηρεσία</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="entityVatNumber" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>ΑΦΜ Οντότητας Αναφοράς</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice>
+        <xs:element name="transactionMode">
+          <xs:annotation>
+            <xs:documentation>Αιτιολογία Συναλλαγής</xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:int">
+              <xs:minInclusive value="1"/>
+              <xs:maxInclusive value="2"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="invoicesIncomeClassificationDetails" type="icls:InvoicesIncomeClassificationDetailType" maxOccurs="unbounded"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="InvoicesIncomeClassificationDetailType">
+    <xs:sequence>
+      <xs:element name="lineNumber" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>Γραμμή Παραστατικού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="incomeClassificationDetailData" type="icls:IncomeClassificationType" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Λίστα Χαρακτηρισμών Εσόδων</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="IncomeClassificationType">
+    <xs:sequence>
+      <xs:element name="classificationType" type="icls:IncomeClassificationValueType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Κωδικός Χαρακτηρισμού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="classificationCategory" type="icls:IncomeClassificationCategoryType">
+        <xs:annotation>
+          <xs:documentation>Κατηγορία Χαρακτηρισμού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="amount" type="icls:AmountType">
+        <xs:annotation>
+          <xs:documentation>Ποσό Χαρακτηρισμού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="id" type="xs:byte" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Μοναδικός Αριθμός Χαρακτηρισμού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="IncomeClassificationValueType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="E3_106"/>
+      <xs:enumeration value="E3_205"/>
+      <xs:enumeration value="E3_210"/>
+      <xs:enumeration value="E3_305"/>
+      <xs:enumeration value="E3_310"/>
+      <xs:enumeration value="E3_318"/>
+      <xs:enumeration value="E3_561_001"/>
+      <xs:enumeration value="E3_561_002"/>
+      <xs:enumeration value="E3_561_003"/>
+      <xs:enumeration value="E3_561_004"/>
+      <xs:enumeration value="E3_561_005"/>
+      <xs:enumeration value="E3_561_006"/>
+      <xs:enumeration value="E3_561_007"/>
+      <xs:enumeration value="E3_562"/>
+      <xs:enumeration value="E3_563"/>
+      <xs:enumeration value="E3_564"/>
+      <xs:enumeration value="E3_565"/>
+      <xs:enumeration value="E3_566"/>
+      <xs:enumeration value="E3_567"/>
+      <xs:enumeration value="E3_568"/>
+      <xs:enumeration value="E3_570"/>
+      <xs:enumeration value="E3_595"/>
+      <xs:enumeration value="E3_596"/>
+      <xs:enumeration value="E3_597"/>
+      <xs:enumeration value="E3_880_001"/>
+      <xs:enumeration value="E3_880_002"/>
+      <xs:enumeration value="E3_880_003"/>
+      <xs:enumeration value="E3_880_004"/>
+      <xs:enumeration value="E3_881_001"/>
+      <xs:enumeration value="E3_881_002"/>
+      <xs:enumeration value="E3_881_003"/>
+      <xs:enumeration value="E3_881_004"/>
+      <xs:enumeration value="E3_598_001"/>
+      <xs:enumeration value="E3_598_003"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="IncomeClassificationCategoryType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="category1_1"/>
+      <xs:enumeration value="category1_2"/>
+      <xs:enumeration value="category1_3"/>
+      <xs:enumeration value="category1_4"/>
+      <xs:enumeration value="category1_5"/>
+      <xs:enumeration value="category1_6"/>
+      <xs:enumeration value="category1_7"/>
+      <xs:enumeration value="category1_8"/>
+      <xs:enumeration value="category1_9"/>
+      <xs:enumeration value="category1_10"/>
+      <xs:enumeration value="category1_95"/>
+	  <xs:enumeration value="category3"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="AmountType">
+    <xs:restriction base="xs:decimal">
+      <xs:fractionDigits value="2"/>
+      <xs:minInclusive value="0"/>
+      <xs:totalDigits value="15"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" xmlns:inv="http://www.aade.gr/myDATA/invoice/v1.0" targetNamespace="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0.8">
+  <xs:element name="ExpensesClassificationsDoc">
+    <xs:annotation>
+      <xs:documentation>Χαρατηρισμοί Εξόδων Πρότυπων Παραστατικών ΑΑΔΕ</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence maxOccurs="unbounded">
+        <xs:element name="expensesInvoiceClassification" type="ecls:InvoiceExpensesClassificationType"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="InvoiceExpensesClassificationType">
+    <xs:sequence>
+      <xs:element name="invoiceMark" type="xs:long">
+        <xs:annotation>
+          <xs:documentation>Μοναδικός Αριθμός Καταχώρησης Παραστατικού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="classificationMark" type="xs:long" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Αποδεικτικό Λήψης Χαρακτηρισμού Εξόδων. Συμπληρώνεται από την Υπηρεσία</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="entityVatNumber" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>ΑΦΜ Οντότητας Αναφοράς</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice>
+        <xs:element name="transactionMode">
+          <xs:annotation>
+            <xs:documentation>Αιτιολογία Συναλλαγής</xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:int">
+              <xs:minInclusive value="1"/>
+              <xs:maxInclusive value="2"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="invoicesExpensesClassificationDetails" type="ecls:InvoicesExpensesClassificationDetailType" maxOccurs="unbounded"/>
+      </xs:choice>
+      <xs:element name="classificationPostMode" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Μέθοδος Υποβολής Χαρακτηρισμού</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:byte">
+						<xs:minInclusive value="0"/>
+						<xs:maxInclusive value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="InvoicesExpensesClassificationDetailType">
+    <xs:sequence>
+      <xs:element name="lineNumber" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>Γραμμή Παραστατικού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="expensesClassificationDetailData" type="ecls:ExpensesClassificationType" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Λίστα Χαρακτηρισμών Εσόδων</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ExpensesClassificationType">
+    <xs:sequence>
+      <xs:element name="classificationType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Κωδικός Χαρακτηρισμού</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="ecls:ExpensesClassificationValueType"/>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="classificationCategory" type="ecls:ExpensesClassificationCategoryType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Κατηγορία Χαρακτηρισμού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="amount" type="ecls:AmountType">
+        <xs:annotation>
+          <xs:documentation>Ποσό Χαρακτηρισμού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="vatAmount" type="ecls:AmountType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Πόσο Φόρου</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="vatCategory" type="ecls:VatType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Κατηγορία ΦΠΑ</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="vatExemptionCategory" type="ecls:VatExemptionType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Κατηγορία Εξαίρεσης ΦΠΑ</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="id" type="xs:byte" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Μοναδικός Αριθμός Χαρακτηρισμού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="ExpensesClassificationValueType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="E3_101"/>
+      <xs:enumeration value="E3_102_001"/>
+      <xs:enumeration value="E3_102_002"/>
+      <xs:enumeration value="E3_102_003"/>
+      <xs:enumeration value="E3_102_004"/>
+      <xs:enumeration value="E3_102_005"/>
+      <xs:enumeration value="E3_102_006"/>
+      <xs:enumeration value="E3_104"/>
+      <xs:enumeration value="E3_201"/>
+      <xs:enumeration value="E3_202_001"/>
+      <xs:enumeration value="E3_202_002"/>
+      <xs:enumeration value="E3_202_003"/>
+      <xs:enumeration value="E3_202_004"/>
+      <xs:enumeration value="E3_202_005"/>
+      <xs:enumeration value="E3_204"/>
+      <xs:enumeration value="E3_207"/>
+      <xs:enumeration value="E3_209"/>
+      <xs:enumeration value="E3_301"/>
+      <xs:enumeration value="E3_302_001"/>
+      <xs:enumeration value="E3_302_002"/>
+      <xs:enumeration value="E3_302_003"/>
+      <xs:enumeration value="E3_302_004"/>
+      <xs:enumeration value="E3_302_005"/>
+      <xs:enumeration value="E3_304"/>
+      <xs:enumeration value="E3_307"/>
+      <xs:enumeration value="E3_309"/>
+      <xs:enumeration value="E3_312"/>
+      <xs:enumeration value="E3_313_001"/>
+      <xs:enumeration value="E3_313_002"/>
+      <xs:enumeration value="E3_313_003"/>
+      <xs:enumeration value="E3_313_004"/>
+      <xs:enumeration value="E3_313_005"/>
+      <xs:enumeration value="E3_315"/>
+      <xs:enumeration value="E3_581_001"/>
+      <xs:enumeration value="E3_581_002"/>
+      <xs:enumeration value="E3_581_003"/>
+      <xs:enumeration value="E3_582"/>
+      <xs:enumeration value="E3_583"/>
+      <xs:enumeration value="E3_584"/>
+      <xs:enumeration value="E3_585_001"/>
+      <xs:enumeration value="E3_585_002"/>
+      <xs:enumeration value="E3_585_003"/>
+      <xs:enumeration value="E3_585_004"/>
+      <xs:enumeration value="E3_585_005"/>
+      <xs:enumeration value="E3_585_006"/>
+      <xs:enumeration value="E3_585_007"/>
+      <xs:enumeration value="E3_585_008"/>
+      <xs:enumeration value="E3_585_009"/>
+      <xs:enumeration value="E3_585_010"/>
+      <xs:enumeration value="E3_585_011"/>
+      <xs:enumeration value="E3_585_012"/>
+      <xs:enumeration value="E3_585_013"/>
+      <xs:enumeration value="E3_585_014"/>
+      <xs:enumeration value="E3_585_015"/>
+      <xs:enumeration value="E3_585_016"/>
+      <xs:enumeration value="E3_586"/>
+      <xs:enumeration value="E3_587"/>
+      <xs:enumeration value="E3_588"/>
+      <xs:enumeration value="E3_589"/>
+      <xs:enumeration value="E3_881_001"/>
+      <xs:enumeration value="E3_881_002"/>
+      <xs:enumeration value="E3_881_003"/>
+      <xs:enumeration value="E3_881_004"/>
+      <xs:enumeration value="E3_882_001"/>
+      <xs:enumeration value="E3_882_002"/>
+      <xs:enumeration value="E3_882_003"/>
+      <xs:enumeration value="E3_882_004"/>
+      <xs:enumeration value="E3_883_001"/>
+      <xs:enumeration value="E3_883_002"/>
+      <xs:enumeration value="E3_883_003"/>
+      <xs:enumeration value="E3_883_004"/>
+      <xs:enumeration value="VAT_361"/>
+      <xs:enumeration value="VAT_362"/>
+      <xs:enumeration value="VAT_363"/>
+      <xs:enumeration value="VAT_364"/>
+      <xs:enumeration value="VAT_365"/>
+      <xs:enumeration value="VAT_366"/>
+      <xs:enumeration value="E3_103"/>
+      <xs:enumeration value="E3_203"/>
+      <xs:enumeration value="E3_303"/>
+      <xs:enumeration value="E3_208"/>
+      <xs:enumeration value="E3_308"/>
+      <xs:enumeration value="E3_314"/>
+      <xs:enumeration value="E3_106"/>
+      <xs:enumeration value="E3_205"/>
+      <xs:enumeration value="E3_305"/>
+      <xs:enumeration value="E3_210"/>
+      <xs:enumeration value="E3_310"/>
+      <xs:enumeration value="E3_318"/>
+      <xs:enumeration value="E3_598_002"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ExpensesClassificationCategoryType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="category2_1"/>
+      <xs:enumeration value="category2_2"/>
+      <xs:enumeration value="category2_3"/>
+      <xs:enumeration value="category2_4"/>
+      <xs:enumeration value="category2_5"/>
+      <xs:enumeration value="category2_6"/>
+      <xs:enumeration value="category2_7"/>
+      <xs:enumeration value="category2_8"/>
+      <xs:enumeration value="category2_9"/>
+      <xs:enumeration value="category2_10"/>
+      <xs:enumeration value="category2_11"/>
+      <xs:enumeration value="category2_12"/>
+      <xs:enumeration value="category2_13"/>
+      <xs:enumeration value="category2_14"/>
+      <xs:enumeration value="category2_95"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="AmountType">
+    <xs:restriction base="xs:decimal">
+      <xs:fractionDigits value="2"/>
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="VatType">
+    <xs:restriction base="xs:int">
+      <xs:minInclusive value="1"/>
+      <xs:maxInclusive value="8"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="VatExemptionType">
+    <xs:restriction base="xs:int">
+      <xs:minInclusive value="1"/>
+      <xs:maxInclusive value="31"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0.8">
+	<xs:element name="RequestedProviderDoc">
+		<xs:annotation>
+			<xs:documentation>Παραστατικά από Πάροχο</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="continuationToken" type="continuationTokenType" minOccurs="0"/>
+				<xs:element name="InvoiceProviderType" type="InvoiceProviderType"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="continuationTokenType">
+		<xs:sequence>
+			<xs:element name="nextPartitionKey" type="xs:string"/>
+			<xs:element name="nextRowKey" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoiceProviderType">
+		<xs:sequence>
+			<xs:element name="issuerVAT" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>ΑΦΜ Εκδότη</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="invoiceProviderMark" type="xs:long">
+				<xs:annotation>
+					<xs:documentation>Μοναδικός Αριθμός Καταχώρησης παραστατικού Παρόχου</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="invoiceUid" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Αναγνωριστικό οντότητας</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="authenticationCode" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Συμβολοσειρά Αυθεντικοποίησης Παραστατικού Παρόχου</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -71,7 +71,7 @@ class InvoiceDetails extends Type
         'otherMeasurementUnitTitle'
     ];
 
-    public array $casts = [
+    protected array $casts = [
         'recType'                   => RecType::class,
         'fuelCode'                  => FuelCode::class,
         'vatCategory'               => VatCategory::class,

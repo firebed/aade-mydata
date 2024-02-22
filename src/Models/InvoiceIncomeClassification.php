@@ -2,20 +2,27 @@
 
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Enums\TransactionMode;
+
 class InvoiceIncomeClassification extends Type
 {
+    protected array $casts = [
+        'transactionMode'                     => TransactionMode::class,
+        'invoicesIncomeClassificationDetails' => InvoicesIncomeClassificationDetail::class,
+    ];
+    
     /**
-     * @return string|null Μοναδικός Αριθμός Καταχώρησης Παραστατικού
+     * @return int|null Μοναδικός Αριθμός Καταχώρησης Παραστατικού
      */
-    public function getInvoiceMark(): ?string
+    public function getInvoiceMark(): ?int
     {
         return $this->get('invoiceMark');
     }
 
     /**
-     * @param string $invoiceMark Μοναδικός Αριθμός Καταχώρησης Παραστατικού
+     * @param int $invoiceMark Μοναδικός Αριθμός Καταχώρησης Παραστατικού
      */
-    public function setInvoiceMark(string $invoiceMark): void
+    public function setInvoiceMark(int $invoiceMark): void
     {
         $this->set('invoiceMark', $invoiceMark);
     }
@@ -23,9 +30,9 @@ class InvoiceIncomeClassification extends Type
     /**
      * Συμπληρώνεται από την υπηρεσία.
      *
-     * @return string|null Μοναδικός Αριθμός Καταχώρησης Χαρακτηρισμού
+     * @return int|null Μοναδικός Αριθμός Καταχώρησης Χαρακτηρισμού
      */
-    public function getClassificationMark(): ?string
+    public function getClassificationMark(): ?int
     {
         return $this->get('classificationMark');
     }
@@ -42,7 +49,7 @@ class InvoiceIncomeClassification extends Type
      * Για την περίπτωση εκείνη και μόνο που η μέθοδος κληθεί από τρίτο πρόσωπο(όπως εκπρόσωπος Ν.Π. ή λογιστής),
      * ο ΑΦΜ της οντότητας που αναφέρεται ο χαρακτηρισμός του παραστατικού αποστέλλεται μέσω του πεδίου entityVatNumber,
      * διαφορετικά το εν λόγω πεδίο παραμένει κενό.
-     * 
+     *
      * @param string $entityVatNumber ΑΦΜ Οντότητας Αναφοράς
      */
     public function setEntityVatNumber(string $entityVatNumber): void
@@ -51,9 +58,9 @@ class InvoiceIncomeClassification extends Type
     }
 
     /**
-     * @return int|null Είδος Συναλλαγής
+     * @return TransactionMode|null Είδος Συναλλαγής
      */
-    public function getTransactionMode(): ?int
+    public function getTransactionMode(): ?TransactionMode
     {
         return $this->get('transactionMode');
     }
@@ -63,12 +70,12 @@ class InvoiceIncomeClassification extends Type
      * <li>Reject (απόρριψη του παραστατικού λόγω διαφωνίας)</li>
      * <li>Deviation (απόκλιση στα ποσά)</li>
      * </ol>
-     * 
+     *
      * Ο χρήστης μπορεί να συμπεριλάβει είτε το στοιχείο transactionMode ή λίστα στοιχείων invoicesIncomeClassificationDetails.
-     * 
-     * @param int $transactionMode Είδος Συναλλαγής
+     *
+     * @param TransactionMode|int $transactionMode Είδος Συναλλαγής
      */
-    public function setTransactionMode(int $transactionMode): void
+    public function setTransactionMode(TransactionMode|int $transactionMode): void
     {
         $this->set('transactionMode', $transactionMode);
     }

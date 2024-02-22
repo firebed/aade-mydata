@@ -49,11 +49,11 @@ class SendInvoicesTest extends MyDataHttpTestCase
         ]));
 
         $invoicesDoc = new InvoicesDoc();
-        $invoicesDoc->addInvoice(new Invoice());
-        $invoicesDoc->addInvoice(new Invoice());
-        $invoicesDoc->addInvoice(new Invoice());
-        $invoicesDoc->addInvoice(new Invoice());
-        $invoicesDoc->addInvoice(new Invoice());
+        $invoicesDoc->add(new Invoice());
+        $invoicesDoc->add(new Invoice());
+        $invoicesDoc->add(new Invoice());
+        $invoicesDoc->add(new Invoice());
+        $invoicesDoc->add(new Invoice());
 
         $sendInvoices = new SendInvoices();
         $responseDoc = $sendInvoices->handle($invoicesDoc);

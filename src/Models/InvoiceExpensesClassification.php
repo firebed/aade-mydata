@@ -2,20 +2,27 @@
 
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Enums\TransactionMode;
+
 class InvoiceExpensesClassification extends Type
 {
+    protected array $casts = [
+        'transactionMode'                       => TransactionMode::class,
+        'invoicesExpensesClassificationDetails' => InvoicesExpensesClassificationDetail::class,
+    ];
+    
     /**
-     * @return string|null Μοναδικός Αριθμός Καταχώρησης Παραστατικού
+     * @return int|null Μοναδικός Αριθμός Καταχώρησης Παραστατικού
      */
-    public function getInvoiceMark(): ?string
+    public function getInvoiceMark(): ?int
     {
         return $this->get('invoiceMark');
     }
 
     /**
-     * @param string $invoiceMark Μοναδικός Αριθμός Καταχώρησης Παραστατικού
+     * @param int $invoiceMark Μοναδικός Αριθμός Καταχώρησης Παραστατικού
      */
-    public function setInvoiceMark(string $invoiceMark): void
+    public function setInvoiceMark(int $invoiceMark): void
     {
         $this->set('invoiceMark', $invoiceMark);
     }
@@ -23,9 +30,9 @@ class InvoiceExpensesClassification extends Type
     /**
      * Συμπληρώνεται από την υπηρεσία.
      *
-     * @return string|null Μοναδικός Αριθμός Καταχώρησης Χαρακτηρισμού
+     * @return int|null Μοναδικός Αριθμός Καταχώρησης Χαρακτηρισμού
      */
-    public function getClassificationMark(): ?string
+    public function getClassificationMark(): ?int
     {
         return $this->get('classificationMark');
     }
@@ -51,9 +58,9 @@ class InvoiceExpensesClassification extends Type
     }
 
     /**
-     * @return int|null Είδος Συναλλαγής
+     * @return TransactionMode|null Είδος Συναλλαγής
      */
-    public function getTransactionMode(): ?int
+    public function getTransactionMode(): ?TransactionMode
     {
         return $this->get('transactionMode');
     }
@@ -66,9 +73,9 @@ class InvoiceExpensesClassification extends Type
      *
      * Ο χρήστης μπορεί να συμπεριλάβει είτε το στοιχείο transactionMode ή λίστα στοιχείων invoicesExpensesClassificationDetails<
      *
-     * @param int $transactionMode Είδος Συναλλαγής
+     * @param TransactionMode|int $transactionMode Είδος Συναλλαγής
      */
-    public function setTransactionMode(int $transactionMode): void
+    public function setTransactionMode(TransactionMode|int $transactionMode): void
     {
         $this->set('transactionMode', $transactionMode);
     }
@@ -84,7 +91,7 @@ class InvoiceExpensesClassification extends Type
     /**
      * Κάθε στοιχείο invoicesExpensesClassificationDetails περιέχει ένα lineNumber και
      * μια λίστα στοιχείων expensesClassificationDetailData.
-     * 
+     *
      * @param InvoicesExpensesClassificationDetail[] $invoicesExpensesClassificationDetails Λίστα Χαρακτηρισμών Εξόδων
      */
     public function setInvoicesExpensesClassificationDetails(array $invoicesExpensesClassificationDetails): void
@@ -108,7 +115,7 @@ class InvoiceExpensesClassification extends Type
      * Όταν η παράμετρος postPerInvoice καλείται με τιμή true, τότε αυτό σημαίνει ότι οι
      * χαρακτηρισμοί εξόδων υποβάλλονται σε επίπεδο παραστατικού και όχι ανά
      * γραμμή. Περισσότερες πληροφορίες στον σύνδεσμο:
-     * 
+     *
      * @param int $classificationPostMode Μέθοδος Υποβολής Χαρακτηρισμού
      */
     public function setClassificationPostMode(int $classificationPostMode): void

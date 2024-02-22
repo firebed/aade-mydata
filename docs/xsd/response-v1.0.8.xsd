@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0.8">
+  <xs:element name="ResponseDoc">
+    <xs:annotation>
+      <xs:documentation>Comment describing your root element</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence maxOccurs="unbounded">
+        <xs:element name="response" type="ResponseType"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ResponseType">
+    <xs:sequence>
+      <xs:element name="index" type="xs:int" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>ΑΑ γραμμής οντότητας</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice>
+        <xs:sequence>
+          <xs:element name="invoiceUid" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>Αναγνωριστικό οντότητας</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="invoiceMark" type="xs:long" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>Μοναδικός Αριθμός Καταχώρησης παραστατικού</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+			<xs:element name="qrUrl" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>QR Code Url</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+          <xs:element name="classificationMark" type="xs:long" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>Μοναδικός Αριθμός Παραλαβής Χαρακτηρισμού</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="cancellationMark" type="xs:long" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>Μοναδικός Αριθμός Ακύρωσης</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+			<xs:element name="paymentMethodMark" type="xs:long" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Μοναδικός Αριθμός Παραλαβής Τρόπου Πληρωμής</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+          <xs:element name="authenticationCode" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>Συμβολοσειρά Αυθεντικοποίησης Παρόχου</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="receptionProviders" type="receptionProvidersType" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>Πάροχοι Λήπτη</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="receptionEmails" type="receptionEmailsType" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>Email Παραλαβής</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+        <xs:element name="errors">
+          <xs:annotation>
+            <xs:documentation>Λίστα Σφαλμάτων</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="error" type="ErrorType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+      <xs:element name="statusCode" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Κωδικός αποτελέσματος</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ErrorType">
+    <xs:sequence>
+      <xs:element name="message" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Μήνυμα Σφάλματος</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="code" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Κωδικός Σφάλαματος</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="receptionProvidersType">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="ProviderInfo" type="ProviderInfoType">
+        <xs:annotation>
+          <xs:documentation>Πληροφορίες Παρόχου</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ProviderInfoType">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="VATNumber" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>ΑΦΜ</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="receptionEmailsType">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="email" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Email</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

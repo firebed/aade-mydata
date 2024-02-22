@@ -18,7 +18,7 @@ class OtherDeliveryNoteHeader extends Type
         'completeShippingBranch'
     ];
 
-    public array $casts = [
+    protected array $casts = [
         'loadingAddress'  => Address::class,
         'deliveryAddress' => Address::class
     ];
