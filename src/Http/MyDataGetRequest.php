@@ -3,13 +3,13 @@
 namespace Firebed\AadeMyData\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
-use Firebed\AadeMyData\Http\Traits\HasResponseXML;
+use Firebed\AadeMyData\Http\Traits\HasResponseDom;
 use Firebed\AadeMyData\Models\RequestedDoc;
 use Firebed\AadeMyData\Xml\RequestedDocReader;
 
 abstract class MyDataGetRequest extends MyDataRequest
 {
-    use HasResponseXML;
+    use HasResponseDom;
 
     /**
      * <ol>
@@ -57,9 +57,16 @@ abstract class MyDataGetRequest extends MyDataRequest
         $params = compact('dateFrom', 'dateTo', 'receiverVatNumber', 'entityVatNumber', 'invType', 'maxMark', 'nextPartitionKey', 'nextRowKey');
         $query += array_filter($params);
 
+        // Get the response XML
         $response = $this->get($query);
-        $this->responseXML = $response->getBody()->getContents();
+        $responseXML = $response->getBody()->getContents();
 
-        return (new RequestedDocReader())->parseXML($this->responseXML);
+        // Parse the response XML
+        $reader = new RequestedDocReader();
+        $responseDoc = $reader->parseXML($responseXML);
+        
+        $this->responseDom = $reader->getDomDocument();
+        
+        return $responseDoc;
     }
 }

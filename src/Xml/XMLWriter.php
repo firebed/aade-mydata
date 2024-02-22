@@ -122,4 +122,9 @@ class XMLWriter
 
         return $this->namespaces[$key][''] ?? null;
     }
+
+    public function getDomDocument(): DOMDocument
+    {
+        return $this->document;
+    }
 }

@@ -3,7 +3,7 @@
 namespace Firebed\AadeMyData\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
-use Firebed\AadeMyData\Http\Traits\HasResponseXML;
+use Firebed\AadeMyData\Http\Traits\HasResponseDom;
 use Firebed\AadeMyData\Models\RequestedVatInfo;
 use Firebed\AadeMyData\Xml\VatInfoReader;
 
@@ -19,7 +19,7 @@ use Firebed\AadeMyData\Xml\VatInfoReader;
  */
 class RequestVatInfo extends MyDataRequest
 {
-    use HasResponseXML;
+    use HasResponseDom;
 
     /**
      * Αυτή η μέθοδος επιτρέπει στον χρήστη να λαμβάνει λεπτομερείς πληροφορίες για τα
@@ -41,9 +41,16 @@ class RequestVatInfo extends MyDataRequest
         $query = compact('dateFrom', 'dateTo', 'entityVatNumber', 'nextPartitionKey', 'nextRowKey');
         $query = array_filter($query);
 
+        // Get the response XML
         $response = $this->get($query);
-        $this->responseXML = $response->getBody()->getContents();
+        $responseXML = $response->getBody()->getContents();
 
-        return (new VatInfoReader())->parseXML($this->responseXML);
+        // Parse the response XML
+        $reader = new VatInfoReader();
+        $vatInfo = $reader->parseXML($responseXML);
+
+        $this->responseDom = $reader->getDomDocument();
+
+        return $vatInfo;
     }
 }

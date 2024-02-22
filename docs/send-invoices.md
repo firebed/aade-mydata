@@ -13,9 +13,9 @@ next: send-income-classification|SendIncomeClassification
 
 Για την αποστολή παραστατικών στο σύστημα του ΑΑΔΕ myDATA, χρησιμοποιήστε η κλάση `Firebed\AadeMyData\Http\SendInvoices`.
 Η κλάση αυτή δέχεται ως παράμετρο:
-- ένα αντικείμενο `Firebed\AadeMyData\Models\InvoicesDoc`
-- ένα αντικείμενο `Firebed\AadeMyData\Models\Invoice` ή 
-- έναν πίνακα από αντικείμενα `Firebed\AadeMyData\Models\Invoice`.
+- είτε ένα αντικείμενο `Firebed\AadeMyData\Models\InvoicesDoc`
+- είτε ένα αντικείμενο `Firebed\AadeMyData\Models\Invoice` 
+- είτε έναν πίνακα από αντικείμενα `Firebed\AadeMyData\Models\Invoice`.
 
 > ### Σημείωση
 > Στα παρακάτω παραδείγματα δημιουργούμε κενά αντικείμενα `Firebed\AadeMyData\Models\Invoice` για χάριν συντομίας. Κανονικά θα πρέπει να 
@@ -52,12 +52,13 @@ $response = $request->handle([$invoice1, $invoice2, $invoice3]);
 ### Αποστολή πολλών παραστατικών με τη χρήση ενός αντικειμένου `InvoicesDoc`
 
 Μπορούμε επίσης να δημιουργήσουμε ένα αντικείμενο `Firebed\AadeMyData\Models\InvoicesDoc` και να προσθέσουμε πολλά παραστατικά σε αυτό.
-Στο παρακάτω παράδειγμα, δημιουργούμε ένα αντικείμενο `Firebed\AadeMyData\Models\InvoicesDoc` και προσθέτουμε τρία αντικείμενα `Firebed\AadeMyData\Models\Invoice` σε αυτό.
+Στο παρακάτω παράδειγμα, δημιουργούμε ένα αντικείμενο `Firebed\AadeMyData\Models\InvoicesDoc` με 3 παραστατικά στον κατασκευαστή (constructor)
+και έπειτα προσθέτουμε άλλα 2 αντικείμενα `Firebed\AadeMyData\Models\Invoice` σε αυτό. Σύνολο 5 παραστατικά.
 
 ```php
-$doc = new InvoicesDoc()
-$doc->addInvoice(new Invoice())
-$doc->addInvoice(new Invoice())
+$doc = new InvoicesDoc([new Invoice(), new Invoice(), new Invoice()]);
+$doc->add(new Invoice())
+$doc->add(new Invoice())
 
 $request = new SendInvoices();
 $response = $request->handle($doc);

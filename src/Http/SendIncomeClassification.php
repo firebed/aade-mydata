@@ -5,15 +5,15 @@ namespace Firebed\AadeMyData\Http;
 use Exception;
 use Firebed\AadeMyData\Enums\TransactionMode;
 use Firebed\AadeMyData\Exceptions\MyDataException;
-use Firebed\AadeMyData\Http\Traits\HasRequestXML;
-use Firebed\AadeMyData\Http\Traits\HasResponseXML;
+use Firebed\AadeMyData\Http\Traits\HasRequestDom;
+use Firebed\AadeMyData\Http\Traits\HasResponseDom;
 use Firebed\AadeMyData\Models\InvoicesIncomeClassificationDetail;
 use Firebed\AadeMyData\Models\ResponseDoc;
 
 class SendIncomeClassification extends MyDataRequest
 {
-    use HasResponseXML;
-    use HasRequestXML;
+    use HasResponseDom;
+    use HasRequestDom;
 
     /**
      * <ul>

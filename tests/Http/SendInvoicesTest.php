@@ -48,9 +48,7 @@ class SendInvoicesTest extends MyDataHttpTestCase
             new HttpResponse(200, body: $fakeResponse->asXML()),
         ]));
 
-        $invoicesDoc = new InvoicesDoc();
-        $invoicesDoc->add(new Invoice());
-        $invoicesDoc->add(new Invoice());
+        $invoicesDoc = new InvoicesDoc([new Invoice(), new Invoice()]);
         $invoicesDoc->add(new Invoice());
         $invoicesDoc->add(new Invoice());
         $invoicesDoc->add(new Invoice());

@@ -3,13 +3,13 @@
 namespace Firebed\AadeMyData\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
-use Firebed\AadeMyData\Http\Traits\HasResponseXML;
+use Firebed\AadeMyData\Http\Traits\HasResponseDom;
 use Firebed\AadeMyData\Models\RequestedBookInfo;
 use Firebed\AadeMyData\Xml\BookInfoReader;
 
 abstract class RequestBookInfo extends MyDataRequest
 {
-    use HasResponseXML;
+    use HasResponseDom;
 
     /**
      * <p>Η κλήση επιστρέφει γραμμές με πληροφορίες για τα έσοδα/έξοδα του χρήστη, για συγκεκριμένο
@@ -48,9 +48,16 @@ abstract class RequestBookInfo extends MyDataRequest
         $query = compact('dateFrom', 'dateTo', 'counterVatNumber', 'entityVatNumber', 'invType', 'nextPartitionKey', 'nextRowKey');
         $query = array_filter($query);
 
+        // Get the response XML
         $response = $this->get($query);
-        $this->responseXML = $response->getBody()->getContents();
+        $responseXML = $response->getBody()->getContents();
 
-        return (new BookInfoReader())->parseXML($this->responseXML);
+        // Parse the response XML
+        $reader = new BookInfoReader();
+        $bookInfo = $reader->parseXML($responseXML);
+        
+        $this->responseDom = $reader->getDomDocument();
+        
+        return $bookInfo;
     }
 }

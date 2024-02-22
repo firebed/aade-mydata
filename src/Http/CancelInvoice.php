@@ -3,7 +3,7 @@
 namespace Firebed\AadeMyData\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
-use Firebed\AadeMyData\Http\Traits\HasResponseXML;
+use Firebed\AadeMyData\Http\Traits\HasResponseDom;
 use Firebed\AadeMyData\Models\ResponseDoc;
 use Firebed\AadeMyData\Xml\ResponseDocReader;
 
@@ -22,7 +22,7 @@ use Firebed\AadeMyData\Xml\ResponseDocReader;
  */
 class CancelInvoice extends MyDataRequest
 {
-    use HasResponseXML;
+    use HasResponseDom;
 
     /**
      * @param string $mark Μοναδικός αριθμός καταχώρησης παραστατικού προς ακύρωση
@@ -38,9 +38,16 @@ class CancelInvoice extends MyDataRequest
             $query['entityVatNumber'] = $entityVatNumber;
         }
 
+        // Get the response XML
         $results = $this->post($query);
-        $this->responseXML = $results->getBody()->getContents();
+        $responseXML = $results->getBody()->getContents();
 
-        return (new ResponseDocReader())->parseXML($this->responseXML);
+        // Parse the response XML
+        $reader = new ResponseDocReader();
+        $responseDoc = $reader->parseXML($responseXML);
+        
+        $this->responseDom = $reader->getDomDocument();
+        
+        return $responseDoc;
     }
 }

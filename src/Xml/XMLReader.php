@@ -9,13 +9,15 @@ use IteratorAggregate;
 
 class XMLReader
 {
+    private DOMDocument $document;
+    
     protected function loadXML(string $xmlString, Type $parent): void
     {
-        $doc = new DOMDocument();
-        $doc->preserveWhiteSpace = false;
-        $doc->loadXML($xmlString);
+        $this->document = new DOMDocument();
+        $this->document->preserveWhiteSpace = false;
+        $this->document->loadXML($xmlString);
 
-        $this->parseDOMElement($doc->documentElement->childNodes, $parent);
+        $this->parseDOMElement($this->document->documentElement->childNodes, $parent);
     }
 
     /**
@@ -61,5 +63,10 @@ class XMLReader
     {
         $cast = $parent->getCast($name);
         return $cast ? new $cast() : null;
+    }
+    
+    public function getDomDocument(): DOMDocument
+    {
+        return $this->document;
     }
 }
