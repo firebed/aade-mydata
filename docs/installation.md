@@ -1,10 +1,3 @@
----
-title: ΑΑΔΕ myDATA REST API
-meta: Διεπαφή για το ΑΑΔΕ myDATA για αποστολή και λήψη παραστατικών, ακύρωση παραστατικών, χαρακτηρισμός και λήψη εσόδων και εξόδων και λήψη αναφορών ΦΠΑ.
-prev: getting-started|ΑΑΔΕ myDATA REST API
-next: send-invoices|Send Invoices
----
-
 # Εγκατάσταση
 
 ## Εγκατάσταση μέσω του Composer
@@ -65,13 +58,13 @@ MyDataRequest::verifyClient(false);
 ```
 
 ## Διαθέσιμες λειτουργίες
-- Διαβίβαση παραστατικών ([SendInvoices](/send-invoices))
-- Διαβίβαση χαρακτηρισμών εσόδων ([SendIncomeClassification](/send-income-classification))
-- Διαβίβαση χαρακτηρισμών εξόδων ([SendExpensesClassification](/send-expenses-classification))
-- Διαβίβαση πληρωμών ([SendPaymentsMethod](/send-payments-method))
-- Ακύρωση παραστατικού ([CancelInvoice](/cancel-invoice))
-- Λήψη παραστατικών ([RequestDocs](/request-docs))
-- Λήψη εκδοθέντων παραστατικών ([RequestTransmittedDocs](/request-transmitted-docs))
-- Λήψη εσόδων ([RequestMyIncome](/request-my-income))
-- Λήψη εξόδων ([RequestMyExpenses](/request-my-expenses))
-- Λήψη αναφορών ΦΠΑ ([RequestVatInfo](/request-vat-info))
+- Διαβίβαση παραστατικών ([SendInvoices](./http/send-invoices))
+- Διαβίβαση χαρακτηρισμών εσόδων ([SendIncomeClassification](./http/send-income-classification))
+- Διαβίβαση χαρακτηρισμών εξόδων ([SendExpensesClassification](./http/send-expenses-classification))
+- Διαβίβαση πληρωμών ([SendPaymentsMethod](./http/send-payments-method))
+- Ακύρωση παραστατικού ([CancelInvoice](./http/cancel-invoice))
+- Λήψη παραστατικών ([RequestDocs](./http/request-docs))
+- Λήψη εκδοθέντων παραστατικών ([RequestTransmittedDocs](./http/request-transmitted-docs))
+- Λήψη εσόδων ([RequestMyIncome](./http/request-my-income))
+- Λήψη εξόδων ([RequestMyExpenses](./http/request-my-expenses))
+- Λήψη αναφορών ΦΠΑ ([RequestVatInfo](./http/request-vat-info))

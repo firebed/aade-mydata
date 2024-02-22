@@ -1,20 +1,27 @@
----
-title: Ακύρωση παραστατικού - ΑΑΔΕ myDATA REST API
-meta: Διεπαφή για το ΑΑΔΕ myDATA για αποστολή και λήψη παραστατικών, ακύρωση παραστατικών, χαρακτηρισμός και λήψη εσόδων και εξόδων και λήψη αναφορών ΦΠΑ.
-prev: send-payments-method|SendPaymentsMethod
-next: request-docs|RequestDocs
----
+# Ακύρωση παραστατικού - CancelInvoice
 
-# Ακύρωση παραστατικού
+```shell
+# production
+https://mydatapi.aade.gr/myDATA/CancelInvoice
+
+# development
+https://mydataapidev.aade.gr/CancelInvoice
+```
 
 Για την ακύρωση ενός παραστατικού στο σύστημα του ΑΑΔΕ myDATA, χρησιμοποιήστε την κλάση `Firebed\AadeMyData\Http\CancelInvoice`.
 Η ακύρωση παραστατικού γίνεται παρέχοντας το mark του παραστατικού που θέλουμε να ακυρώσουμε.
 
 ```php
 use Firebed\AadeMyData\Http\CancelInvoice;
+use Firebed\AadeMyData\Exceptions\MyDataException;
 
 $cancel = new CancelInvoice();
-$cancel->handle("1234567890");
+
+try{
+    $responses = $cancel->handle("1234567890");
+} catch (MyDataException $e) {
+    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
+}
 ```
 
 Για την περίπτωση εκείνη και μόνο που η μέθοδος κληθεί από τρίτο πρόσωπο (όπως εκπρόσωπος Ν.Π. ή λογιστής), 
@@ -23,10 +30,19 @@ $cancel->handle("1234567890");
 
 ```php
 use Firebed\AadeMyData\Http\CancelInvoice;
+use Firebed\AadeMyData\Exceptions\MyDataException;
 
 $cancel = new CancelInvoice();
-$cancel->handle(mark: "1234567890", entityVatNumber: "888888888");
+try{
+    $responses = $cancel->handle(mark: "1234567890", entityVatNumber: "888888888");
+} catch (MyDataException $e) {
+    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
+}
 ```
+
+> [!TIP]
+> Το αποτέλεσμα της κλήσης επιστρέφει έναν πίνακα από αντικείμενα τύπου
+> [**\Firebed\AadeMyData\Models\Response**](../types/response-type).
 
 > [!NOTE]
 > Δεν υπάρχει δυνατότητα ακύρωσης πολλαπλών παραστατικών ταυτόχρονα.
@@ -63,7 +79,7 @@ try {
 μέσω:
 - `$responses->first()` όπως στο παραπάνω παράδειγμα
 - `$responses[0]`
-- `$responses->getOffset(0)`
+- `$responses->offsetGet(0)`
 - foreach loop
 
 > [!TIP]

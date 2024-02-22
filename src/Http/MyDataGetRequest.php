@@ -2,6 +2,7 @@
 
 namespace Firebed\AadeMyData\Http;
 
+use Firebed\AadeMyData\Enums\InvoiceType;
 use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Http\Traits\HasResponseDom;
 use Firebed\AadeMyData\Models\RequestedDoc;
@@ -43,17 +44,19 @@ abstract class MyDataGetRequest extends MyDataRequest
      * @param string|null $dateTo Το τέλος χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης dd/MM/yyyy
      * @param string|null $receiverVatNumber ΑΦΜ αντισυμβαλλόμενου
      * @param string|null $entityVatNumber ΑΦΜ οντότητας
-     * @param string|null $invType Τύπος παραστατικού
+     * @param InvoiceType|string|null $invType Τύπος παραστατικού
      * @param string|null $maxMark Μέγιστος Αριθμός ΜΑΡΚ
      * @param string|null $nextPartitionKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
      * @param string|null $nextRowKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
      * @return RequestedDoc
      * @throws MyDataException
      */
-    public function handle(string $mark = '', string $dateFrom = null, string $dateTo = null, string $receiverVatNumber = null, string $entityVatNumber = null, string $invType = null, string $maxMark = null, string $nextPartitionKey = null, string $nextRowKey = null): RequestedDoc
+    public function handle(string $mark = '', string $dateFrom = null, string $dateTo = null, string $receiverVatNumber = null, string $entityVatNumber = null, InvoiceType|string $invType = null, string $maxMark = null, string $nextPartitionKey = null, string $nextRowKey = null): RequestedDoc
     {
         $query = compact('mark');
 
+        $invType = $invType instanceof InvoiceType ? $invType->value : $invType;
+        
         $params = compact('dateFrom', 'dateTo', 'receiverVatNumber', 'entityVatNumber', 'invType', 'maxMark', 'nextPartitionKey', 'nextRowKey');
         $query += array_filter($params);
 
