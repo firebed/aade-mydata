@@ -50,6 +50,14 @@ class TypeArray extends Type implements IteratorAggregate, ArrayAccess, Countabl
     {
         $this->push($this->childKey, $value);
     }
+
+    /**
+     * @return ?TType
+     */
+    public function first()
+    {
+        return $this->offsetGet(0);
+    }
     
     /**
      * @param int $key

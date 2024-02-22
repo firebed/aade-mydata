@@ -24,5 +24,7 @@ class CancelInvoiceTest extends MyDataHttpTestCase
         
         $this->assertCount(1, $responseDoc);
         $this->assertEquals('Success', $responseDoc[0]->getStatusCode());
+        $this->assertEquals('Success', $responseDoc->offsetGet(0)->getStatusCode());
+        $this->assertEquals('Success', $responseDoc->first()->getStatusCode());
     }
 }

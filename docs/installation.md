@@ -7,7 +7,7 @@ next: send-invoices|Send Invoices
 
 # Εγκατάσταση
 
-## <a href="#composer">Εγκατάσταση μέσω του Composer</a>
+## Εγκατάσταση μέσω του Composer
 Για εγκατάσταση μέσω του Composer, εκτελέστε την ακόλουθη εντολή:
 ```shell
 composer require firebed/aade-mydata
@@ -50,12 +50,16 @@ $subscription_key = "your-subscription-key";
 
 MyDataRequest::setEnvironment($env);
 MyDataRequest::setCredentials($user_id, $subscription_key);
+```
 
-// Alternative
-//MyDataRequest::init($user_id, $subscription_key, $env);
+Ή εναλλακτικά, μπορείτε να ορίσετε το περιβάλλον και τα διαπιστευτήρια μέσω της μεθόδου `init`:
+
+```php
+MyDataRequest::init($user_id, $subscription_key, $env);
 ```
 
 Για το στάδιο της ανάπτυξη, μπορεί να χρειαστεί να απενεργοποιήσετε την επαλήθευση πελάτη εάν δεν χρησιμοποιείτε ***https***:
+
 ```php
 MyDataRequest::verifyClient(false);
 ```

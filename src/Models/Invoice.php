@@ -156,7 +156,7 @@ class Invoice extends Type
     {
         $paymentMethods = $this->getPaymentMethods();
         if ($paymentMethods) {
-            $paymentMethods->push($paymentMethodDetail);
+            $paymentMethods->add($paymentMethodDetail);
         } else {
             $this->set('paymentMethods', new PaymentMethods($paymentMethodDetail));
         }
@@ -231,7 +231,7 @@ class Invoice extends Type
     public function addTaxesTotals(TaxTotals $taxTotals): void
     {
         $taxesTotals = $this->getTaxesTotals();
-        $taxesTotals->addTaxes($taxTotals);
+        $taxesTotals->add($taxTotals);
         $this->set('taxesTotals', $taxesTotals);
     }
 
