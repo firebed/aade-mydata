@@ -13,12 +13,13 @@
 | Περιγραφή λειτουργιών | RequestMyExpenses          | http/request-my-expenses               |
 | Περιγραφή λειτουργιών | RequestVatInfo             | http/request-vat-info                  |
 | Τύπο δεδομένων        | Invoice                    | types/invoice-type                     |
+| Τύπο δεδομένων        | Party                      | types/party-type                       |
 | Τύπο δεδομένων        | Address                    | types/address-type                     |
 | Τύπο δεδομένων        | PaymentMethodDetail        | types/payment-method-detail-type       |
-| Τύπο δεδομένων        | ProviderSignature          | types/provider-signature-type          |
+| Τύπο δεδομένων        | ProvidersSignature         | types/providers-signature-type         |
 | Τύπο δεδομένων        | ECRToken                   | types/ecr-token-type                   |
 | Τύπο δεδομένων        | InvoiceHeader              | types/invoice-header-type              |
-| Τύπο δεδομένων        | Entity                     | types/entity-type                      |
+| Τύπο δεδομένων        | EntityType                 | types/entity-type                      |
 | Τύπο δεδομένων        | OtherDeliveryNoteHeader    | types/other-delivery-note-header-type  |
 | Τύπο δεδομένων        | Ship                       | types/ship-type                        |
 | Τύπο δεδομένων        | InvoiceSummary             | types/invoice-summary-type             |
@@ -35,3 +36,5 @@
 | Παράρτημα             | ΦΠΑ και άλλοι φόροι        | appendix/vat-types                     |
 | Παράρτημα             | Χαρακτηρισμοί εσόδων       | appendix/income-classification-types   |
 | Παράρτημα             | Χαρακτηρισμοί εξόδων       | appendix/expenses-classification-types |
+| Παράρτημα             | Τρόποι πληρωμής            | appendix/payment-method-types          |
+| Παράρτημα             | Κατηγορία οντότητας        | appendix/entity-types                  |

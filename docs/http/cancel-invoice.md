@@ -25,7 +25,7 @@ try{
 ```
 
 Για την περίπτωση εκείνη και μόνο που η μέθοδος κληθεί από τρίτο πρόσωπο (όπως εκπρόσωπος Ν.Π. ή λογιστής), 
-ο ΑΦΜ της οντότητας που εξέδωσε το προς ακύρωση παραστατικό αποστέλλεται μέσω της παραμέτρου entityVatNumber,
+ο ΑΦΜ της οντότητας που εξέδωσε το προς ακύρωση παραστατικό αποστέλλεται μέσω της παραμέτρου `entityVatNumber`,
 διαφορετικά η εν λόγω παράμετρος δε χρειάζεται να αποσταλεί.
 
 ```php
@@ -40,10 +40,6 @@ try{
 }
 ```
 
-> [!TIP]
-> Το αποτέλεσμα της κλήσης επιστρέφει έναν πίνακα από αντικείμενα τύπου
-> [**\Firebed\AadeMyData\Models\Response**](../types/response-type).
-
 > [!NOTE]
 > Δεν υπάρχει δυνατότητα ακύρωσης πολλαπλών παραστατικών ταυτόχρονα.
 
@@ -51,6 +47,10 @@ try{
 Σε περίπτωση επιτυχίας η ακύρωση ως πράξη λαμβάνει το δικό της mark το οποίο
 επιστρέφεται στον χρήστη και το παραστατικό θεωρείται ακυρωμένο. Σε περίπτωση
 αποτυχίας επιστρέφεται το αντίστοιχο μήνυμα λάθους.
+
+> [!TIP]
+> Το αποτέλεσμα της κλήσης επιστρέφει έναν πίνακα από αντικείμενα τύπου
+> [**\Firebed\AadeMyData\Models\Response**](../types/response-type).
 
 ```php
 use Firebed\AadeMyData\Http\CancelInvoice;
@@ -82,6 +82,28 @@ try {
 - `$responses->offsetGet(0)`
 - foreach loop
 
-> [!TIP]
-> Παράλληλα, μετά από επιτυχή ακύρωση, στα αποτελέσματα του [RequestTransmittedDocs](request-transmitted-docs)
-> καλώντας τη μέθοδος `getCancelledInvoices()` θα μας επιστρέφεται και το ακυρωμένο που μόλις ακυρώσαμε.
+Μετά από επιτυχή ακύρωση, στα αποτελέσματα του [RequestTransmittedDocs](request-transmitted-docs),
+το παραστατικό που μόλις ακυρώσαμε θα εμπεριέχεται στον πίνακα που επιστρέφει η μέθοδος `RequestedDoc::getCancelledInvoices()`.
+
+Επίσης, το αντίστοιχο παραστατικό που επιστρέφεται από τη μέθοδο `RequestedDoc::getInvoices` θα
+επισημαίνεται με τη χρήση του πεδίου `cancelledByMark`. Η τιμή του πεδίου αυτού είναι ίδια με το
+mark ακύρωσης που λάβαμε κατά την ακύρωση του παραστατικού `$response->getCancellationMark()`.
+
+```xml
+<RequestedDoc>
+    <invoicesDoc>
+        <invoice>
+            <uid>5AD65A46SFD5498SDV416WS5F1VS65VDFS65VDF</uid>
+            <mark>800000165789544</mark>
+            <cancelledByMark>800000165989544</cancelledByMark>
+        </invoice>
+    </invoicesDoc>
+    <cancelledInvoicesDoc>
+        <cancelledInvoice>
+            <invoiceMark>800000165789544</invoiceMark>
+            <cancellationMark>800000165989544</cancellationMark>
+            <cancellationDate>2021-12-12</cancellationDate>
+        </cancelledInvoice>
+    </cancelledInvoicesDoc>
+</RequestedDoc>
+```
