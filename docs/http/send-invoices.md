@@ -7,10 +7,10 @@ https://mydatapi.aade.gr/myDATA/SendInvoices
 # development
 https://mydataapidev.aade.gr/SendInvoices
 ```
-Υπάρχουν διάφοροι τρόποι για τη διαβίβαση παραστατικών στο σύστημα του ΑΑΔΕ myDATA.
 
 ## Αποστολή παραστατικών
 
+Υπάρχουν διάφοροι τρόποι για τη διαβίβαση παραστατικών στο σύστημα του ΑΑΔΕ myDATA.
 Για την αποστολή παραστατικών στο σύστημα του ΑΑΔΕ myDATA, χρησιμοποιήστε η κλάση `Firebed\AadeMyData\Http\SendInvoices`.
 Η κλάση αυτή δέχεται ως παράμετρο:
 
