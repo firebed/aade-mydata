@@ -45,19 +45,25 @@
 ## Παραδείγματα
 
 ```php
-// Εκδότης παραστατικού
 use Firebed\AadeMyData\Models\Issuer;
+use Firebed\AadeMyData\Models\Counterpart;
+use Firebed\AadeMyData\Models\Party;
 
+// Εκδότης παραστατικού
 $issuer = new Issuer();
 $issuer->setVatNumber('123456789');
 $issuer->setCountry('GR');
 $issuer->setBranch(0);
 
 // Λήπτης παραστατικού
-use Firebed\AadeMyData\Models\Counterpart;
-
 $counterpart = new Counterpart();
 $counterpart->setVatNumber('123456789');
 $counterpart->setCountry('GR');
 $counterpart->setBranch(0);
+
+// Για χρήση σε άλλες περιπτώσεις όπως `EntityType`
+$party = new Party();
+$party->setVatNumber('123456789');
+$party->setCountry('GR');
+$party->setBranch(0);
 ```
