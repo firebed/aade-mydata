@@ -2,8 +2,8 @@
 
 namespace Firebed\AadeMyData\Http;
 
-use Exception;
-use Firebed\AadeMyData\Exceptions\MissingCredentialsException;
+use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
+use Firebed\AadeMyData\Exceptions\MyDataConnectionException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -83,8 +83,13 @@ abstract class MyDataRequest
         return self::$env === 'prod';
     }
 
+    public static function isDevelopment(): bool
+    {
+        return self::$env === 'dev';
+    }
+
     /**
-     * @throws MyDataException
+     * @throws MyDataAuthenticationException|MyDataException
      */
     protected function get(array $query): ResponseInterface
     {
@@ -98,12 +103,52 @@ abstract class MyDataRequest
     }
 
     /**
-     * @throws MissingCredentialsException
+     * @throws MyDataAuthenticationException|MyDataException
+     */
+    protected function post(array $query = null, string $body = null): ResponseInterface
+    {
+        self::validateCredentials();
+
+        $params = [];
+        if (!empty($query)) {
+            $params['query'] = $query;
+        }
+
+        if (!empty($body)) {
+            $params['body'] = $body;
+        }
+
+        try {
+            return $this->client()->post($this->getUrl(), $params);
+        } catch (GuzzleException $e) {
+            $this->handleException($e);
+        }
+    }
+
+    /**
+     * @throws MyDataAuthenticationException|MyDataException
+     */
+    protected function handleException(GuzzleException $exception)
+    {
+        if ($exception->getCode() === 401) {
+            throw new MyDataAuthenticationException();
+        }
+
+        // In case the endpoint url is wrong
+        if ($exception->getCode() === 0) {
+            throw new MyDataConnectionException();
+        }
+
+        throw new MyDataException($exception->getMessage(), $exception->getCode());
+    }
+
+    /**
+     * @throws MyDataAuthenticationException
      */
     private static function validateCredentials(): void
     {
         if (empty(self::$user_id) || empty(self::$subscription_key)) {
-            throw new MissingCredentialsException();
+            throw new MyDataAuthenticationException();
         }
     }
 
@@ -136,41 +181,5 @@ abstract class MyDataRequest
     private function getAction(): string
     {
         return $this->action ?? (basename(get_class($this)));
-    }
-
-    public static function isDevelopment(): bool
-    {
-        return self::$env === 'dev';
-    }
-
-    /**
-     * @throws MyDataException
-     */
-    protected function handleException(Exception $exception)
-    {
-        throw new MyDataException($exception->getMessage(), $exception->getCode());
-    }
-
-    /**
-     * @throws MyDataException
-     */
-    protected function post(array $query = null, string $body = null): ResponseInterface
-    {
-        self::validateCredentials();
-
-        $params = [];
-        if (!empty($query)) {
-            $params['query'] = $query;
-        }
-
-        if (!empty($body)) {
-            $params['body'] = $body;
-        }
-
-        try {
-            return $this->client()->post($this->getUrl(), $params);
-        } catch (GuzzleException $e) {
-            $this->handleException($e);
-        }
     }
 }
