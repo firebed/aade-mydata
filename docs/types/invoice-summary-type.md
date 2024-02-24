@@ -38,12 +38,12 @@ use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
 $summary = new InvoiceSummary();
 $summary->setTotalNetValue(50);
 $summary->setTotalVatAmount(12);
-$summary->setTotalWithheldAmount(0);
+$summary->setTotalWithheldAmount(6);
 $summary->setTotalFeesAmount(0);
 $summary->setTotalStampDutyAmount(0);
 $summary->setTotalOtherTaxesAmount(0);
 $summary->setTotalDeductionsAmount(0);
-$summary->setTotalGrossValue(62);
+$summary->setTotalGrossValue(56); // 50 + 12 - 6 = 56
 
 $icls = new IncomeClassification();
 $icls->setClassificationType(IncomeClassificationType::TYPE_1);
@@ -52,7 +52,7 @@ $icls->setAmount(50);
 $summary->addIncomeClassification($icls);
 ```
 
-Μπορείτε επίσης να ορίσετε τους χαρακτηρισμούς εσόδων και εξόδων με 1 γραμμή κώδικα:
+Μπορείτε επίσης να ορίσετε τους χαρακτηρισμούς εσόδων και εξόδων απευθείας χωρίς τη χρήση του αντικειμένου `IncomeClassification` ή `ExpensesClassification` ως εξής:
 
 ```php
 $summary->addIncomeClassification(

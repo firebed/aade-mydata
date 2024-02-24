@@ -16,13 +16,13 @@ https://mydataapidev.aade.gr/SendInvoices
 
 - είτε ένα αντικείμενο `Firebed\AadeMyData\Models\InvoicesDoc`
 - είτε ένα αντικείμενο `Firebed\AadeMyData\Models\Invoice`
-- είτε έναν πίνακα από αντικείμενα `Firebed\AadeMyData\Models\Invoice`.
+- είτε έναν πίνακα από αντικείμενα `Firebed\AadeMyData\Models\Invoice`
 
 > [!NOTE]
 > Στα παρακάτω παραδείγματα δημιουργούμε κενά αντικείμενα `Firebed\AadeMyData\Models\Invoice` για χάριν συντομίας. Κανονικά θα πρέπει να
 > συμπληρώσουμε όλα τα απαραίτητα πεδία του παραστατικού πριν την αποστολή του.
 >
-> [**Δείτε περισσότερα**](../types/invoice-type)
+> [**Δείτε περισσότερα**](../invoices/examples)
 
 ### Αποστολή ενός μόνο παραστατικού
 
