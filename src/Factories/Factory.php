@@ -25,7 +25,9 @@ abstract class Factory
     public static function factoryForModel(string $modelName, int $count = 1): Factory
     {
         $namespace = dirname(__NAMESPACE__);
+        echo PHP_EOL;
         echo __NAMESPACE__ . PHP_EOL;
+        echo $modelName . PHP_EOL;
         echo $namespace . PHP_EOL;
         echo basename($modelName) . PHP_EOL;
         
