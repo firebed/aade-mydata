@@ -1,7 +1,10 @@
 # ΑΑΔΕ - AADE myDATA
-[![Latest Stable Version](https://poser.pugx.org/firebed/aade-mydata/v)](//packagist.org/packages/firebed/aade-mydata)
+    
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/firebed/aade-mydata.svg?style=flat-square)](https://packagist.org/packages/firebed/aade-mydata)
 [![Total Downloads](https://poser.pugx.org/firebed/aade-mydata/downloads)](//packagist.org/packages/firebed/aade-mydata)
-[![License](https://poser.pugx.org/firebed/aade-mydata/license)](//packagist.org/packages/firebed/aade-mydata)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/firebed/aade-mydata/php.yml)
+[![PHP Version Require](https://poser.pugx.org/firebed/aade-mydata/require/php)](//packagist.org/packages/firebed/aade-mydata)
+[![License](https://poser.pugx.org/firebed/aade-mydata/license)](LICENSE.md)
 
 ## Introduction
 
