@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.aade.gr/myDATA/invoice/v1.0" targetNamespace="http://www.aade.gr/myDATA/invoice/v1.0" elementFormDefault="qualified">
+	<xs:complexType name="ContinuationTokenType">
+		<xs:sequence>
+			<xs:element name="nextPartitionKey" type="xs:string" minOccurs="0"/>
+			<xs:element name="nextRowKey" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoiceVatDetailType">
+		<xs:sequence>
+			<xs:element name="Mark" type="xs:string" minOccurs="0"/>
+			<xs:element name="IsCancelled" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="IssueDate" type="xs:dateTime"/>
+			<xs:element name="Vat301" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat302" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat303" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat304" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat305" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat306" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat331" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat332" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat333" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat334" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat335" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat336" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat361" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat362" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat363" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat364" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat365" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat366" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat381" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat382" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat383" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat384" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat385" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat386" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat342" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat345" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat348" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat349" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat310" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat402" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat407" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat411" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat423" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Vat422" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="VatUnclassified361" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="VatUnclassified381" type="xs:decimal" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RequestedVatInfoType">
+		<xs:sequence>
+			<xs:element name="continuationToken" type="ContinuationTokenType" minOccurs="0"/>
+			<xs:element name="VatInfo" type="InvoiceVatDetailType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="RequestedVatInfo" type="RequestedVatInfoType"/>
+</xs:schema>
