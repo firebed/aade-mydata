@@ -23,9 +23,8 @@ abstract class Factory
      * @return Factory
      */
     public static function factoryForModel(string $modelName, int $count = 1): Factory
-    {
-        $namespace = dirname(__NAMESPACE__);
-        $factoryName = $namespace.'\\Factories\\'.basename($modelName).'Factory';
+    {        
+        $factoryName = 'Firebed\\AadeMyData\\Factories\\'.basename($modelName).'Factory';
 
         $factory = self::newFactory($factoryName);
         $factory->modelName = $modelName;
