@@ -9,7 +9,7 @@ This package provides an expressive, fluent interface to ΑΑΔΕ myDATA invoici
 
 ## Official Documentation
 
-All documentation is available 👉 [on our documentation site](https://docs.invoicemaker.gr/introduction)
+All documentation is available 👉 [on our documentation site](https://docs.invoicemaker.gr/getting-started)
 
 ## Requirements
 
