@@ -11,8 +11,8 @@
 |--------------------------------------------------------------------|-------------|-----------------------------|
 | [**classificationType**](../appendix/expenses-classifications)     | Όχι         | Κωδικός Χαρακτηρισμού       |
 | [**classificationCategory**](../appendix/expenses-classifications) | Όχι         | Κατηγορία Χαρακτηρισμού     |
-| amount                                                             | **Ναι**     | Ποσό ΦΠΑ                    |
-| vatAmount                                                          | Όχι         | Ποσό                        |
+| amount                                                             | **Ναι**     | Ποσό                        |
+| vatAmount                                                          | Όχι         | Ποσό ΦΠΑ                    |
 | [**vatCategory**](../appendix/vat-categories)                      | Όχι         | Κατηγορία ΦΠΑ               |
 | [**vatExemptionCategory**](../appendix/vat-exemption-categories)   | Όχι         | Κατηγορία Εξαίρεσης ΦΠΑ     |
 | id                                                                 | Όχι         | Αύξων αριθμός Χαρακτηρισμού |
@@ -32,7 +32,13 @@ use Firebed\AadeMyData\Enums\ExpenseClassificationType;
 use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
 
 $ecls = new ExpensesClassification();
-$ecls->ExpensesClassification(ExpenseClassificationType::E3_101); // Εμπορεύματα έναρξης
-$ecls->setClassificationCategory(ExpenseClassificationCategory::CATEGORY_2_1); // Αγορές Εμπορευμάτων
+
+// Εμπορεύματα έναρξης
+$ecls->ExpensesClassification(ExpenseClassificationType::E3_101);
+
+// Αγορές Εμπορευμάτων
+$ecls->setClassificationCategory(ExpenseClassificationCategory::CATEGORY_2_1);
+
+// Ποσό 
 $ecls->setAmount(45);
 ```

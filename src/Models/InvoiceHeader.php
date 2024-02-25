@@ -224,7 +224,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param string $dispatchTime Ώρα Έναρξης Αποστολής
+     * @param string $dispatchTime Ώρα Έναρξης Αποστολής hh:mm:ss
      */
     public function setDispatchTime(string $dispatchTime): void
     {

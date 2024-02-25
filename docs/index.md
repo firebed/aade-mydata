@@ -17,12 +17,12 @@
 | Παραδείγματα παραστατικών | Τιμολόγιο Πώλησης           | invoices/sale-invoice                   |
 | Παραδείγματα παραστατικών | Τιμολόγιο Παροχής           | invoices/service-invoice                |
 | Παραδείγματα παραστατικών | Φόροι ανά γραμμή            | invoices/taxes-per-row                  |
-| Παραδείγματα παραστατικών | Φόροι παραστατικού          | invoices/taxes-per-invoice              |
 | Παραδείγματα παραστατικών | Τιμολόγιο - Δελτίο Αποσ/λής | invoices/delivery-note-invoice          |
 | Παραδείγματα παραστατικών | Δελτίο Αποστολής            | invoices/delivery-invoice               |
-| Παραδείγματα παραστατικών | Πιστωτικό Τιμολόγιο         | invoices/credit-note                    |
+| Παραδείγματα παραστατικών | Πιστωτικό Τιμολόγιο         | invoices/credit-invoice                 |
 | Παραδείγματα παραστατικών | Απόδειξη Λιανικής           | invoices/retail-invoice                 |
-| Παραδείγματα παραστατικών | Τιμολόγιο - Ενδοκοινοτικές  | invoices/foreign-invoice                |
+| Παραδείγματα παραστατικών | Ενδοκοινοτικό Τιμολόγιο     | invoices/foreign-invoice                |
+| Παραδείγματα παραστατικών | Ολοκληρωμένο Παράδειγμα     | invoices/complete-example               |
 | Τύποι δεδομένων           | Invoice                     | types/invoice-type                      |
 | Τύποι δεδομένων           | Party                       | types/party-type                        |
 | Τύποι δεδομένων           | Address                     | types/address-type                      |
