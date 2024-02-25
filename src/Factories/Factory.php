@@ -28,6 +28,10 @@ abstract class Factory
         echo __NAMESPACE__ . PHP_EOL;
         echo $namespace . PHP_EOL;
         echo basename($modelName) . PHP_EOL;
+        
+        echo PHP_EOL;
+        echo PHP_EOL;
+        
         $factoryName = $namespace.'\\Factories\\'.basename($modelName).'Factory';
 
         $factory = self::newFactory($factoryName);
