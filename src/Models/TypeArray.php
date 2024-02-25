@@ -25,7 +25,7 @@ class TypeArray extends Type implements IteratorAggregate, ArrayAccess, Countabl
     public function __construct(string $childKey, mixed $items = null)
     {
         $this->childKey = $childKey;
-        
+
         if ($items !== null) {
             $this->set($childKey, $items);
         }
@@ -58,7 +58,7 @@ class TypeArray extends Type implements IteratorAggregate, ArrayAccess, Countabl
     {
         return $this->offsetGet(0);
     }
-    
+
     /**
      * @param int $key
      * @param TType|TType[] $value
@@ -69,7 +69,7 @@ class TypeArray extends Type implements IteratorAggregate, ArrayAccess, Countabl
         if (is_array($value)) {
             $this->attributes[$this->childKey] = array_merge($this->attributes[$this->childKey], $value);
         } else {
-        $this->attributes[$this->childKey][] = $value;
+            $this->attributes[$this->childKey][] = $value;
         }
     }
 
@@ -121,5 +121,13 @@ class TypeArray extends Type implements IteratorAggregate, ArrayAccess, Countabl
     public function count(): int
     {
         return count($this->attributes[$this->childKey]);
+    }
+
+    /**
+     * @return TType[]
+     */
+    public function all(): array
+    {
+        return $this->attributes[$this->childKey] ?? [];
     }
 }

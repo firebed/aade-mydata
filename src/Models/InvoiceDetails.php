@@ -554,11 +554,11 @@ class InvoiceDetails extends Type
     /**
      * Προσθήκη χαρακτηρισμού εσόδων.
      *
-     * @param IncomeClassification|IncomeClassificationType $incomeClassification Χαρακτηρισμός Εσόδων
+     * @param IncomeClassification|IncomeClassificationType|null $incomeClassification Χαρακτηρισμός Εσόδων
      * @param IncomeClassificationCategory|null $classificationCategory
      * @param float|null $classificationAmount
      */
-    public function addIncomeClassification(IncomeClassification|IncomeClassificationType $incomeClassification, IncomeClassificationCategory $classificationCategory = null, float $classificationAmount = null): void
+    public function addIncomeClassification(IncomeClassification|IncomeClassificationType|null $incomeClassification, IncomeClassificationCategory $classificationCategory = null, float $classificationAmount = null): void
     {
         if ($incomeClassification instanceof IncomeClassification) {
             $this->push('incomeClassification', $incomeClassification);
@@ -594,11 +594,11 @@ class InvoiceDetails extends Type
     /**
      * Προσθήκη χαρακτηρισμού εξόδων.
      *
-     * @param ExpensesClassification|ExpenseClassificationType $expenseClassification Χαρακτηρισμός εξόδων
+     * @param ExpensesClassification|ExpenseClassificationType|null $expenseClassification Χαρακτηρισμός εξόδων
      * @param ExpenseClassificationCategory|null $expenseClassificationCategory
      * @param float|null $classificationAmount
      */
-    public function addExpensesClassification(ExpensesClassification|ExpenseClassificationType $expenseClassification, ExpenseClassificationCategory $expenseClassificationCategory = null, float $classificationAmount = null): void
+    public function addExpensesClassification(ExpensesClassification|ExpenseClassificationType|null $expenseClassification, ExpenseClassificationCategory $expenseClassificationCategory = null, float $classificationAmount = null): void
     {
         if ($expenseClassification instanceof ExpensesClassification) {
             $this->push('expensesClassification', $expenseClassification);

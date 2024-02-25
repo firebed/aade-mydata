@@ -3,6 +3,7 @@
 namespace Firebed\AadeMyData\Models;
 
 
+use Firebed\AadeMyData\Actions\SummarizeInvoice;
 use Firebed\AadeMyData\Traits\HasFactory;
 
 class Invoice extends Type
@@ -210,6 +211,14 @@ class Invoice extends Type
     public function setInvoiceSummary(InvoiceSummary $invoiceSummary): void
     {
         $this->set('invoiceSummary', $invoiceSummary);
+    }
+
+    public function summarizeInvoice(): InvoiceSummary
+    {
+        $summary = (new SummarizeInvoice)->handle($this);
+        $this->setInvoiceSummary($summary);
+        
+        return $summary;
     }
 
     /**

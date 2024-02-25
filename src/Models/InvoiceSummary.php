@@ -234,6 +234,11 @@ class InvoiceSummary extends Type
         return $this->get('incomeClassification');
     }
 
+    public function setIncomeClassifications(?array $incomeClassifications): void
+    {
+        $this->set('incomeClassification', $incomeClassifications);
+    }
+
     /**
      * <h2>Χαρακτηρισμοί Εσόδων</h2>
      *
@@ -265,6 +270,11 @@ class InvoiceSummary extends Type
         return $this->get('expensesClassification');
     }
 
+    public function setExpensesClassifications(?array $expensesClassifications): void
+    {
+        $this->set('expensesClassification', $expensesClassifications);
+    }
+    
     /**
      * <h2>Χαρακτηρισμοί Εξόδων</h2>
      *

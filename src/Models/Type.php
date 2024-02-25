@@ -24,6 +24,10 @@ abstract class Type
 
     protected function castValue(string $key, $value)
     {
+        if ($value === null) {
+            return null;
+        }
+        
         // Auto cast 'true' or 'false' values to boolean
         if ($value === 'true' || $value === 'false') {
             return filter_var($value, FILTER_VALIDATE_BOOLEAN);
@@ -105,5 +109,28 @@ abstract class Type
         }
 
         return false;
+    }
+
+    /**
+     * Returns an array representation of the object
+     * 
+     * @return array
+     */
+    public function toArray(): array
+    {
+        $array = [];
+        foreach ($this->attributes() as $key => $value) {
+            if ($value instanceof Type) {
+                $array[$key] = $value->toArray();
+            } elseif (is_array($value)) {
+                $array[$key] = array_map(fn($v) => $v instanceof Type ? $v->toArray() : $v, $value);
+            } elseif ($this->isEnum($key) && is_object($value)) {
+                $array[$key] = $value->value;
+            } else {
+                $array[$key] = $value;
+            }
+        }
+        
+        return $array;
     }
 }

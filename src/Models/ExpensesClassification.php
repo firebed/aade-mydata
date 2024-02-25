@@ -50,9 +50,9 @@ class ExpensesClassification extends Type
      * Το πεδίο classificationCategory χρησιμοποιείται μόνο για τους χαρακτηρισμούς
      * εξόδων Ε3, αλλιώς αγνοείται.
      *
-     * @param ExpenseClassificationType|string $classificationType Κωδικός Χαρακτηρισμού
+     * @param ExpenseClassificationType|string|null $classificationType Κωδικός Χαρακτηρισμού
      */
-    public function setClassificationType(ExpenseClassificationType|string $classificationType): void
+    public function setClassificationType(ExpenseClassificationType|string|null $classificationType): void
     {
         $this->set('classificationType', $classificationType);
     }
@@ -66,9 +66,9 @@ class ExpensesClassification extends Type
     }
 
     /**
-     * @param ExpenseClassificationCategory|string $classificationCategory Κατηγορία Χαρακτηρισμού
+     * @param ExpenseClassificationCategory|string|null $classificationCategory Κατηγορία Χαρακτηρισμού
      */
-    public function setClassificationCategory(ExpenseClassificationCategory|string $classificationCategory): void
+    public function setClassificationCategory(ExpenseClassificationCategory|string|null $classificationCategory): void
     {
         $this->set('classificationCategory', $classificationCategory);
     }

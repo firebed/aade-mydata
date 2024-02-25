@@ -40,9 +40,9 @@ class IncomeClassification extends Type
     }
 
     /**
-     * @param IncomeClassificationType|string $classificationType Κωδικός Χαρακτηρισμού
+     * @param IncomeClassificationType|string|null $classificationType Κωδικός Χαρακτηρισμού
      */
-    public function setClassificationType(IncomeClassificationType|string $classificationType): void
+    public function setClassificationType(IncomeClassificationType|string|null $classificationType): void
     {
         $this->set('classificationType', $classificationType);
     }
