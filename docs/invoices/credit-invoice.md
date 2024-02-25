@@ -44,6 +44,10 @@ $header->setCurrency('EUR');
 $header->addCorrelatedInvoice('400000017716190');
 ```
 
+> [!CAUTION]
+> Πριν την υποβολή βεβαιωθείτε για την ύπαρξη του συσχετιζόμενου παραστατικού
+> `correlatedInvoice` στο σύστημα της ΑΑΔΕ.
+
 ## Αρχικοποίηση των τρόπων πληρωμής
 
 ```php
@@ -72,7 +76,11 @@ $row1->setLineNumber(1);
 $row1->setNetValue(1000);
 $row1->setVatCategory(VatCategory::VAT_1);
 $row1->setVatAmount(240);
-$row1->addIncomeClassification(IncomeClassificationType::E3_561_001, IncomeClassificationCategory::CATEGORY_1_2, 1000);
+$row1->addIncomeClassification(
+    IncomeClassificationType::E3_561_001, 
+    IncomeClassificationCategory::CATEGORY_1_2, 
+    1000
+);
 
 $row2 = new InvoiceDetails();
 $row2->setLineNumber(2);
@@ -80,7 +88,11 @@ $row2->setNetValue(500);
 $row2->setVatCategory(VatCategory::VAT_1);
 $row2->setVatAmount(120);
 $row2->setDiscountOption(true);
-$row2->addIncomeClassification(IncomeClassificationType::E3_561_001, IncomeClassificationCategory::CATEGORY_1_3, 500);
+$row2->addIncomeClassification(
+    IncomeClassificationType::E3_561_001, 
+    IncomeClassificationCategory::CATEGORY_1_3,
+    500
+ );
 ```
 
 ## Ολοκλήρωση του παραστατικού
@@ -91,11 +103,10 @@ use Firebed\AadeMyData\Models\Invoice;
 $invoice = new Invoice();
 $invoice->setIssuer($issuer);
 $invoice->setCounterpart($counterpart);
-$invoice->setHeader($header);
+$invoice->setInvoiceHeader($header);
 $invoice->addPaymentMethod($payment);
 $invoice->addInvoiceDetails($row1);
 $invoice->addInvoiceDetails($row2);
-$invoice->addTaxesTotals($tax);
 
 // Αρχικοποιεί το σύνοψη του παραστατικού
 $invoice->summarizeInvoice();

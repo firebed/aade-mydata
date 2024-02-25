@@ -39,10 +39,11 @@ $header = new InvoiceHeader();
 $header->setSeries('A');
 $header->setAa(101);
 $header->setIssueDate('2020-04-08');
-$header->setInvoiceType(InvoiceType::TYPE_2_1);
+$header->setInvoiceType(InvoiceType::TYPE_1_1);
 $header->setCurrency('EUR');
 $header->setDispatchDate('2020-04-08');
 $header->setDispatchTime('12:20:00');
+$header->setVehicleNumber('ΕΚΑ 5485');
 $header->setMovePurpose(MovePurpose::TYPE_1);
 ```
 

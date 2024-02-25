@@ -2,17 +2,19 @@
 |---------------------------|-----------------------------|-----------------------------------------|
 | Εισαγωγή                  | ΑΑΔΕ myDATA REST API        | getting-started                         |
 | Εισαγωγή                  | Εγκατάσταση                 | installation                            |
+| Εισαγωγή                  | Αναβάθμιση                  | upgrade-guide                           |
 | Εισαγωγή                  | Σφάλματα                    | exceptions                              |
+| Εισαγωγή                  | Contributing                | contributing                            |
 | Περιγραφή λειτουργιών     | SendInvoices                | http/send-invoices                      |
-| Περιγραφή λειτουργιών     | SendIncomeClassification    | http/send-income-classification         |
-| Περιγραφή λειτουργιών     | SendExpensesClassification  | http/send-expenses-classification       |
-| Περιγραφή λειτουργιών     | SendPaymentsMethod          | http/send-payments-method               |
 | Περιγραφή λειτουργιών     | CancelInvoice               | http/cancel-invoice                     |
 | Περιγραφή λειτουργιών     | RequestDocs                 | http/request-docs                       |
 | Περιγραφή λειτουργιών     | RequestTransmittedDocs      | http/request-transmitted-docs           |
 | Περιγραφή λειτουργιών     | RequestMyIncome             | http/request-my-income                  |
 | Περιγραφή λειτουργιών     | RequestMyExpenses           | http/request-my-expenses                |
 | Περιγραφή λειτουργιών     | RequestVatInfo              | http/request-vat-info                   |
+| Περιγραφή λειτουργιών     | SendPaymentsMethod          | http/send-payments-method               |
+| Περιγραφή λειτουργιών     | SendIncomeClassification    | http/send-income-classification         |
+| Περιγραφή λειτουργιών     | SendExpensesClassification  | http/send-expenses-classification       |
 | Παραδείγματα παραστατικών | Παραδείγματα                | invoices/examples                       |
 | Παραδείγματα παραστατικών | Τιμολόγιο Πώλησης           | invoices/sale-invoice                   |
 | Παραδείγματα παραστατικών | Τιμολόγιο Παροχής           | invoices/service-invoice                |

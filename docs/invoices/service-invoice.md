@@ -66,7 +66,7 @@ $row = new InvoiceDetails();
 $row->setLineNumber(1);
 $row->setNetValue(1000);
 $row->setVatCategory(VatCategory::VAT_1);
-$row->setNetValue(240);
+$row->setVatAmount(240);
 $row->setDiscountOption(true);
 $row->addIncomeClassification(
     IncomeClassificationType::E3_561_001, 

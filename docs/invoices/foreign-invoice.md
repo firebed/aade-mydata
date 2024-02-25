@@ -65,12 +65,14 @@ use Firebed\AadeMyData\Models\InvoiceDetails;
 use Firebed\AadeMyData\Enums\VatCategory;
 use Firebed\AadeMyData\Enums\IncomeClassificationType;
 use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
+use Firebed\AadeMyData\Enums\VatExemption;
 
 $row = new InvoiceDetails();
 $row->setLineNumber(1);
 $row->setNetValue(10000.00);
-$row->setVatCategory(VatCategory::VAT_1);
-$row->setNetValue(2400.00);
+$row->setVatCategory(VatCategory::VAT_7);
+$row->setVatAmount(0);
+$row->setVatExemptionCategory(VatExemption::TYPE_14);
 $row->addIncomeClassification(
     IncomeClassificationType::E3_561_005, // Πωλήσεις αγαθών και υπηρεσιών Εξωτερικού 
     IncomeClassificationCategory::CATEGORY_1_1, // Έσοδα από Πώληση Εμπορευμάτων 

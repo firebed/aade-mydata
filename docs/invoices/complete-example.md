@@ -58,19 +58,19 @@ $row1 = new InvoiceDetails();
 $row1->setLineNumber(1);
 $row1->setNetValue(1000);
 $row1->setVatCategory(VatCategory::VAT_1);
-$row1->setNetValue(240);
+$row1->setVatAmount(240);
 $row1->setDiscountOption(true);
 $row1->addIncomeClassification(
     IncomeClassificationType::E3_561_001, 
     IncomeClassificationCategory::CATEGORY_1_2,
     1000
- );
+);
 
 $row2 = new InvoiceDetails();
 $row2->setLineNumber(2);
 $row2->setNetValue(500);
 $row2->setVatCategory(VatCategory::VAT_1);
-$row2->setNetValue(120);
+$row2->setVatAmount(120);
 $row2->setDiscountOption(true);
 $row2->addIncomeClassification(
     IncomeClassificationType::E3_561_001, 
