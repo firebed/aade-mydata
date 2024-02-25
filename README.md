@@ -74,6 +74,12 @@ For development, you may need to disable client verification if you are not usin
 MyDataRequest::verifyClient(false);
 ```
 
+### Testing
+
+```shell
+composer test
+```
+
 ### Contributing
 
 Please see [CONTRIBUTING](http://docs.invoicemaker.gr/contributing) for details.
