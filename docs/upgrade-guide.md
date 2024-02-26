@@ -22,9 +22,14 @@
 
 ## Πιθανές αλλαγές στη χρήση του API
 
-- Τρόπος αντιμετώπισης των εξαιρέσεων (exceptions)
-- Μετονομασία ορισμένων μεθόδων
+- Μετονομασία `InvoicesDoc`::~~addInvoice()~~ σε `add()`
+- Μετονομασία `RequestedDoc`::~~getInvoicesDoc()~~ => `getInvoices()`
+- Μετονομασία `RequestedDoc`::~~getCancelledInvoicesDoc()~~ => `getCancelledInvoices()`
+- Μετονομασία `RequestedDoc`::~~getIncomeClassificationsDoc()~~ => `getIncomeClassifications()`
+- Μετονομασία `RequestedDoc`::~~getExpensesClassificationsDoc()~~ => `getExpensesClassifications()`
+- Μετονομασία `RequestedDoc`::~~getPaymentMethodsDoc()~~ => `getPaymentMethods()`
 - Μετονομασία της μεθόδου `put` σε `set` για όλα μοντέλα που κληρονομούν την κλάση `Firebed\AadeMyData\Models\Type`
+- Τρόπος αντιμετώπισης των εξαιρέσεων (exceptions)
 
 ## Τρόπος αντιμετώπισης των εξαιρέσεων
 
@@ -43,23 +48,6 @@ try {
     echo $e->getMessage();
 }
 ```
-
-## Μετονομασία ορισμένων μεθόδων
-
-Οι μέθοδοι της κλάσης `Firebed/AadeMyData/Models/RequestedDoc` μετονομάστηκαν ώστε να αντικατοπτρίζουν
-καλύτερα τη λειτουργία τους. Παρακάτω παρατίθενται οι μετονομασίες:
-
-- ~~`getInvoicesDoc()`~~ => `getInvoices()`
-- ~~`getCancelledInvoicesDoc()`~~ => `getCancelledInvoices()`
-- ~~`getIncomeClassificationsDoc()`~~ => `getIncomeClassifications()`
-- ~~`getExpensesClassificationsDoc()`~~ => `getExpensesClassifications()`
-- ~~`getPaymentMethodsDoc()`~~ => `getPaymentMethods()`
-
-## Μετονομασία της μεθόδου `put` σε `set`
-
-Κανονικά η μέθοδος `put` χρησιμοποιείται εσωτερικά για τη μετατροπή του xml σε αντίστοιχα αντικείμενα και
-δεν προορίζεται για εξωτερική χρήση. Σε περίπτωση που τη χρησιμοποιείται, πρέπει να αντικατασταθεί από τη
-μέθοδο `set`.
 
 ## Εσωτερικές αλλαγές
 
