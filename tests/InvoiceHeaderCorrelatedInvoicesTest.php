@@ -1,5 +1,6 @@
 <?php
 
+namespace Tests;
 
 use Firebed\AadeMyData\Enums\InvoiceType;
 use Firebed\AadeMyData\Enums\InvoiceVariationType;

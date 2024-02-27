@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests;
+
 use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
 use Firebed\AadeMyData\Enums\ExpenseClassificationType;
 use Firebed\AadeMyData\Enums\FeesPercentCategory;

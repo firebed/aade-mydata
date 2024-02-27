@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests;
+
 use Firebed\AadeMyData\Models\InvoiceHeader;
 use PHPUnit\Framework\TestCase;
 

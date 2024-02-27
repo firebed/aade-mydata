@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests;
+
 use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\TransportDetail;
 use PHPUnit\Framework\TestCase;
