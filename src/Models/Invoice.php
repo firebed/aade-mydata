@@ -213,9 +213,15 @@ class Invoice extends Type
         $this->set('invoiceSummary', $invoiceSummary);
     }
 
-    public function summarizeInvoice(): InvoiceSummary
+    /**
+     * @param array{
+     *     enableClassificationIds: bool,
+     * } $options
+     * @return InvoiceSummary
+     */
+    public function summarizeInvoice(array $options = []): InvoiceSummary
     {
-        $summary = (new SummarizeInvoice)->handle($this);
+        $summary = (new SummarizeInvoice)->handle($this, $options);
         $this->setInvoiceSummary($summary);
         
         return $summary;

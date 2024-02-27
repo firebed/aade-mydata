@@ -15,9 +15,10 @@ class SummarizeInvoiceRows
 
     /**
      * @param InvoiceDetails[]|null $rows
+     * @param array $options
      * @return void
      */
-    public function handle(?array $rows): void
+    public function handle(?array $rows, array $options = []): void
     {
         if (empty($rows)) {
             return;

@@ -19,8 +19,10 @@ class GroupClassifications
 
     /**
      * @param InvoiceDetails[] $rows
+     * @param array $options
+     * @return array
      */
-    public function handle(?array $rows): array
+    public function handle(?array $rows, array $options = []): array
     {
         if (empty($rows)) {
             return [[], []];
@@ -31,10 +33,10 @@ class GroupClassifications
             $this->groupExpensesClassifications($row);
         }
 
-        return [$this->flattenIncomeClassifications(), $this->flattenExpensesClassifications()];
+        return [$this->flattenIncomeClassifications($options), $this->flattenExpensesClassifications($options)];
     }
 
-    private function flattenIncomeClassifications(): array
+    private function flattenIncomeClassifications(array $options = []): array
     {
         $flattenedIncomeClassifications = [];
 
@@ -42,14 +44,17 @@ class GroupClassifications
             $category = IncomeClassificationCategory::from($iclsCategory);
 
             foreach ($iclsTypes as $iclsType => $amount) {
-                $id = count($flattenedIncomeClassifications) + 1;
                 $type = $iclsType ? IncomeClassificationType::from($iclsType) : null;
 
                 $icls = new IncomeClassification();
                 $icls->setClassificationType($type);
                 $icls->setClassificationCategory($category);
                 $icls->setAmount(round($amount, 2));
-                $icls->setId($id);
+                
+                if (isset($options['enableClassificationIds']) && $options['enableClassificationIds']) {
+                    $id = count($flattenedIncomeClassifications) + 1;
+                    $icls->setId($id);
+                }
 
                 $flattenedIncomeClassifications[] = $icls;
             }
@@ -58,7 +63,7 @@ class GroupClassifications
         return $flattenedIncomeClassifications;
     }
 
-    private function flattenExpensesClassifications(): array
+    private function flattenExpensesClassifications(array $options = []): array
     {
         $flattenedExpensesClassifications = [];
 
@@ -73,9 +78,7 @@ class GroupClassifications
 
                     foreach ($eclsVatExemptions as $vatExemption => $amounts) {
                         $exemption = $vatExemption ? VatExemption::from($vatExemption) : null;
-
-                        $id = count($flattenedExpensesClassifications) + 1;
-
+                        
                         $ecls = new ExpensesClassification();
                         $ecls->setClassificationType($type);
                         $ecls->setClassificationCategory($category);
@@ -83,7 +86,11 @@ class GroupClassifications
                         $ecls->setVatAmount(round($amounts['vatAmount'], 2));
                         $ecls->setVatCategory($vat);
                         $ecls->setVatExemptionCategory($exemption);
-                        $ecls->setId($id);
+
+                        if (isset($options['enableClassificationIds']) && $options['enableClassificationIds']) {
+                            $id = count($flattenedExpensesClassifications) + 1;
+                            $ecls->setId($id);
+                        }
 
                         $flattenedExpensesClassifications[] = $ecls;
                     }

@@ -7,20 +7,20 @@ use Firebed\AadeMyData\Models\InvoiceSummary;
 
 class SummarizeInvoice
 {
-    public function handle(Invoice $invoice): InvoiceSummary
+    public function handle(Invoice $invoice, array $options = []): InvoiceSummary
     {
         $summary = new InvoiceSummary();
 
         $sumInvoiceRows = new SummarizeInvoiceRows();
-        $sumInvoiceRows->handle($invoice->getInvoiceDetails());
+        $sumInvoiceRows->handle($invoice->getInvoiceDetails(), $options);
         $sumInvoiceRows->saveTotals($summary);
 
         $sumInvoiceTaxes = new SummarizeInvoiceTaxes();
-        $sumInvoiceTaxes->handle($invoice->getTaxesTotals());
+        $sumInvoiceTaxes->handle($invoice->getTaxesTotals(), $options);
         $sumInvoiceTaxes->saveTotals($summary);
 
         $classificationsGroup = new GroupClassifications();
-        [$icls, $ecls] = $classificationsGroup->handle($invoice->getInvoiceDetails());
+        [$icls, $ecls] = $classificationsGroup->handle($invoice->getInvoiceDetails(), $options);
 
         $summary->setIncomeClassifications($icls);
         $summary->setExpensesClassifications($ecls);

@@ -194,45 +194,73 @@ class SummarizeInvoiceTest extends TestCase
         $ecls1 = $this->findExpensesClassification($ecls, ExpenseClassificationType::E3_102_001, ExpenseClassificationCategory::CATEGORY_2_1);
         $this->assertNotNull($ecls1);
         $this->assertEquals(301.10, $ecls1->getAmount());
+        $this->assertEmpty($ecls1->getId());
 
         $ecls2 = $this->findExpensesClassification($ecls, ExpenseClassificationType::E3_102_001, ExpenseClassificationCategory::CATEGORY_2_3);
         $this->assertNotNull($ecls2);
         $this->assertEquals(700.80, $ecls2->getAmount());
+        $this->assertEmpty($ecls2->getId());
 
         $ecls3 = $this->findExpensesClassification($ecls, ExpenseClassificationType::E3_102_002, ExpenseClassificationCategory::CATEGORY_2_1);
         $this->assertNotNull($ecls3);
         $this->assertEquals(500.88, $ecls3->getAmount());
+        $this->assertEmpty($ecls3->getId());        
 
         $ecls4 = $this->findExpensesClassification($ecls, ExpenseClassificationType::E3_102_002, ExpenseClassificationCategory::CATEGORY_2_3);
         $this->assertNotNull($ecls4);
         $this->assertEquals(600.66, $ecls4->getAmount());
+        $this->assertEmpty($ecls4->getId());
 
         $ecls5 = $this->findExpensesClassification($ecls, ExpenseClassificationType::E3_102_006, ExpenseClassificationCategory::CATEGORY_2_6);
         $this->assertNotNull($ecls5);
         $this->assertEquals(600, $ecls5->getAmount());
+        $this->assertEmpty($ecls5->getId());
 
         $ecls6 = $this->findExpensesClassification($ecls, null, ExpenseClassificationCategory::CATEGORY_2_6);
         $this->assertNotNull($ecls6);
         $this->assertEquals(61, $ecls6->getAmount());
+        $this->assertEmpty($ecls6->getId());
 
         $ecls7 = $this->findExpensesClassification($ecls, null, ExpenseClassificationCategory::CATEGORY_2_7);
         $this->assertNotNull($ecls7);
         $this->assertEquals(115.66, $ecls7->getAmount());
+        $this->assertEmpty($ecls7->getId());
 
         $ecls8 = $this->findExpensesClassification($ecls, null, ExpenseClassificationCategory::CATEGORY_2_7, VatCategory::VAT_1);
         $this->assertNotNull($ecls8);
         $this->assertEquals(90, $ecls8->getAmount());
         $this->assertEquals(21.6, $ecls8->getVatAmount());
+        $this->assertEmpty($ecls8->getId());
 
-        $ecls10 = $this->findExpensesClassification($ecls, null, ExpenseClassificationCategory::CATEGORY_2_7, VatCategory::VAT_7, VatExemption::TYPE_12);
-        $this->assertNotNull($ecls10);
-        $this->assertEquals(50, $ecls10->getAmount());
-        $this->assertEquals(0, $ecls10->getVatAmount());
+        $ecls9 = $this->findExpensesClassification($ecls, null, ExpenseClassificationCategory::CATEGORY_2_7, VatCategory::VAT_7, VatExemption::TYPE_12);
+        $this->assertNotNull($ecls9);
+        $this->assertEquals(50, $ecls9->getAmount());
+        $this->assertEquals(0, $ecls9->getVatAmount());
+        $this->assertEmpty($ecls9->getId());
 
         $ecls10 = $this->findExpensesClassification($ecls, ExpenseClassificationType::E3_102_006, ExpenseClassificationCategory::CATEGORY_2_7, VatCategory::VAT_7, VatExemption::TYPE_13);
         $this->assertNotNull($ecls10);
         $this->assertEquals(160, $ecls10->getAmount());
         $this->assertEquals(0, $ecls10->getVatAmount());
+        $this->assertEmpty($ecls10->getId());
+    }
+
+    public function test_classification_ids_are_empty_when_disabled()
+    {
+        $row = new InvoiceDetails();
+        $row->addExpensesClassification($this->createEcls(ExpenseClassificationType::E3_102_001, ExpenseClassificationCategory::CATEGORY_2_1, 100.55));
+        
+        $invoice = new Invoice();
+        $invoice->addInvoiceDetails($row);
+        $summary = $invoice->summarizeInvoice(['enableClassificationIds' => true]);
+        
+        $ecls = $summary->getExpensesClassifications();
+        
+        $ecls1 = $this->findExpensesClassification($ecls, ExpenseClassificationType::E3_102_001, ExpenseClassificationCategory::CATEGORY_2_1);
+        $this->assertNotNull($ecls1);
+        $this->assertEquals(100.55, $ecls1->getAmount());
+        $this->assertEquals(0, $ecls1->getVatAmount());
+        $this->assertEquals(1, $ecls1->getId());
     }
     
     public function test_it_summarizes_invoice_taxes()
