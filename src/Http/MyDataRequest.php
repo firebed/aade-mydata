@@ -180,6 +180,9 @@ abstract class MyDataRequest
 
     private function getAction(): string
     {
-        return $this->action ?? (basename(get_class($this)));
+        $action = get_class($this);
+        $action = substr($action, strrpos($action, '\\') + 1);
+
+        return $this->action ?? $action;
     }
 }

@@ -89,6 +89,6 @@ Please see [CONTRIBUTING](http://docs.invoicemaker.gr/contributing) for details.
 
 ### Licence
 
-<p>AADE myDATA is licenced under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.</p>
+AADE myDATA is licenced under the [MIT License](LICENSE.md).
 
-<p>Copyright 2022 Okan Giritli</p>
+Copyright 2022 &copy; Okan Giritli

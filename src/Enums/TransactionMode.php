@@ -5,6 +5,11 @@ namespace Firebed\AadeMyData\Enums;
 enum TransactionMode: int
 {
     /**
+     * Αποδοχή του παραστατικού
+     */
+    case ACCEPT = 0;
+    
+    /**
      * Απόρριψη του παραστατικού λόγω διαφωνίας 
      */
     case REJECT = 1;
