@@ -17,6 +17,7 @@
   "require": {
     "php": "^8.1",
     "ext-dom": "*",
+    "ext-soap": "*",
     "guzzlehttp/guzzle": "^7.0.1"
   },
   "require-dev": {
@@ -28,7 +29,8 @@
   "autoload": {
     "psr-4": {
       "Firebed\\AadeMyData\\": "src/"
-    }
+    },
+    "files": ["src/helpers.php"]
   },
   "autoload-dev": {
     "psr-4": {

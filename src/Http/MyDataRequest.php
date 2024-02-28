@@ -10,6 +10,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use Psr\Http\Message\ResponseInterface;
+use ReflectionClass;
 
 abstract class MyDataRequest
 {
@@ -180,9 +181,6 @@ abstract class MyDataRequest
 
     private function getAction(): string
     {
-        $action = get_class($this);
-        $action = substr($action, strrpos($action, '\\') + 1);
-
-        return $this->action ?? $action;
+        return $this->action ?? (new ReflectionClass($this))->getShortName();
     }
 }

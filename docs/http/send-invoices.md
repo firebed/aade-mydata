@@ -76,10 +76,6 @@ $doc->add(new Invoice())
 $request = new SendInvoices();
 $response = $request->handle($doc);
 
-// Alternatively
-$doc = new InvoicesDoc([new Invoice(), new Invoice()]);
-$request = new SendInvoices();
-
 try {
     $response = $request->handle($doc);
 } catch (MyDataException $e) {

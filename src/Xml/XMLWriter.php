@@ -10,9 +10,6 @@ use Firebed\AadeMyData\Models\Type;
 
 class XMLWriter
 {
-    // Array to store namespaces
-    protected array $namespaces = [];
-
     // DOMDocument object for XML manipulation
     protected DOMDocument $document;
 

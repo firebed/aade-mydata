@@ -5,6 +5,7 @@
 | Εισαγωγή                  | Αναβάθμιση                  | upgrade-guide                           |
 | Εισαγωγή                  | Σφάλματα                    | exceptions                              |
 | Εισαγωγή                  | Contributing                | contributing                            |
+| Περιγραφή λειτουργιών     | Αναζήτηση ΑΦΜ               | http/search-vat                         |
 | Περιγραφή λειτουργιών     | SendInvoices                | http/send-invoices                      |
 | Περιγραφή λειτουργιών     | CancelInvoice               | http/cancel-invoice                     |
 | Περιγραφή λειτουργιών     | RequestDocs                 | http/request-docs                       |

@@ -47,8 +47,10 @@ abstract class Type
         }
         
         // Cast value to enum if it is not already an enum
+        // If the value doesn't correspond to an enum, it
+        // will return null.
         if ($this->isEnum($key) && !is_object($value)) {
-            return $cast::from($value);
+            return $cast::tryFrom($value);
         }
 
         return $value;
