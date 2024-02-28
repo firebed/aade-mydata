@@ -60,6 +60,7 @@ MyDataRequest::setCredentials($user_id, $subscription_key);
 
 ### Available methods
 
+- [Validate VAT Number](http://docs.invoicemaker.gr/http/search-vat)
 - [SendInvoices](http://docs.invoicemaker.gr/http/send-invoices)
 - [CancelInvoice](http://docs.invoicemaker.gr/http/cancel-invoice)
 - [RequestDocs](http://docs.invoicemaker.gr/http/request-docs)
