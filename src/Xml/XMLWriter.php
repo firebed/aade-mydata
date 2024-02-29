@@ -22,6 +22,10 @@ class XMLWriter
 
     protected function build(DOMNode $parent, string $nodeName, mixed $nodeValue, $namespace = null): void
     {
+        if (is_null($nodeValue)) {
+            return;
+        }
+        
         if ($nodeValue instanceof Type) {
             $this->buildType($parent, $nodeName, $nodeValue);
             return;
