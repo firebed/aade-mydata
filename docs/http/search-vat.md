@@ -28,8 +28,8 @@
 χρήση της υπηρεσίας.
 
 ```php
-use Firebed\AadeMyData\Services\Vat\TaxisNet;
-use Firebed\AadeMyData\Services\Vat\VatException;
+use Firebed\VatRegistry\TaxisNet;
+use Firebed\VatRegistry\VatException;
 
 $username = 'your-username';
 $password = 'your-password';
@@ -48,7 +48,7 @@ try {
 Το αποτέλεσμα της παραπάνω κλήσης:
 
 ```php
-Firebed\AadeMyData\Services\Vat\VatEntity {
+Firebed\VatRegistry\VatEntity {
   +vatNumber: "094014201"
   +tax_authority_id: "1159"
   +tax_authority_name: "ΦΑΕ ΑΘΗΝΩΝ"
@@ -97,8 +97,8 @@ Firebed\AadeMyData\Services\Vat\VatEntity {
 - Τον ΑΦΜ που θέλετε να επαληθεύσετε.
 
 ```php
-use Firebed\AadeMyData\Services\Vat\VIES;
-use Firebed\AadeMyData\Services\Vat\VatException;
+use Firebed\VatRegistry\VIES;
+use Firebed\VatRegistry\VatException;
 
 $taxis = new VIES();
 
@@ -114,7 +114,7 @@ try {
 Το αποτέλεσμα της παραπάνω κλήσης:
 
 ```php
-Firebed\AadeMyData\Services\Vat\VatEntity {
+Firebed\VatRegistry\VatEntity {
   +vatNumber: "094014201"
   +tax_authority_id: null
   +tax_authority_name: null
