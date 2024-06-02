@@ -17,7 +17,6 @@
   "require": {
     "php": "^8.1",
     "ext-dom": "*",
-    "ext-soap": "*",
     "firebed/vat-registry": "^1.0",
     "guzzlehttp/guzzle": "^7.0.1"
   },
