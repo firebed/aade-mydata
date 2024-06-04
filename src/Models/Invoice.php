@@ -22,13 +22,13 @@ class Invoice extends Type
     ];
 
     protected array $casts = [
-        'issuer'                => Issuer::class,
-        'counterpart'           => Counterpart::class,
-        'invoiceHeader'         => InvoiceHeader::class,
-        'paymentMethods'        => PaymentMethods::class,
-        'invoiceDetails'        => InvoiceDetails::class,
-        'taxesTotals'           => TaxesTotals::class,
-        'invoiceSummary'        => InvoiceSummary::class,
+        'issuer' => Issuer::class,
+        'counterpart' => Counterpart::class,
+        'invoiceHeader' => InvoiceHeader::class,
+        'paymentMethods' => PaymentMethods::class,
+        'invoiceDetails' => InvoiceDetails::class,
+        'taxesTotals' => TaxesTotals::class,
+        'invoiceSummary' => InvoiceSummary::class,
         'otherTransportDetails' => TransportDetail::class,
     ];
 
@@ -88,7 +88,7 @@ class Invoice extends Type
      * <li>Στην περίπτωση αδυναμίας επικοινωνίας του ERP με το myDATA κατά την έκδοση / διαβίβαση παραστατικού</li>
      * </ol>
      *
-     * @param int|null $transmissionFailure Κωδικός αδυναμίας επικοινωνίας παρόχου
+     * @param  int|null  $transmissionFailure  Κωδικός αδυναμίας επικοινωνίας παρόχου
      */
     public function setTransmissionFailure(?int $transmissionFailure): static
     {
@@ -104,7 +104,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param Issuer $issuer Εκδότης Παραστατικού
+     * @param  Issuer  $issuer  Εκδότης Παραστατικού
      */
     public function setIssuer(Issuer $issuer): static
     {
@@ -120,7 +120,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param Counterpart|null $counterpart Λήπτης Παραστατικού
+     * @param  Counterpart|null  $counterpart  Λήπτης Παραστατικού
      */
     public function setCounterpart(Counterpart|null $counterpart): static
     {
@@ -136,7 +136,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param PaymentMethods|PaymentMethodDetail[] $paymentMethods
+     * @param  PaymentMethods|PaymentMethodDetail[]  $paymentMethods
      */
     public function setPaymentMethods(PaymentMethods|array|null $paymentMethods): static
     {
@@ -150,7 +150,7 @@ class Invoice extends Type
     /**
      * Προσθήκη τρόπου πληρωμής.
      *
-     * @param PaymentMethodDetail $paymentMethodDetail Τρόπος Πληρωμής
+     * @param  PaymentMethodDetail  $paymentMethodDetail  Τρόπος Πληρωμής
      */
     public function addPaymentMethod(PaymentMethodDetail $paymentMethodDetail): static
     {
@@ -168,7 +168,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param InvoiceHeader $invoiceHeader Επικεφαλίδα Παραστατικού
+     * @param  InvoiceHeader  $invoiceHeader  Επικεφαλίδα Παραστατικού
      */
     public function setInvoiceHeader(InvoiceHeader $invoiceHeader): static
     {
@@ -186,7 +186,7 @@ class Invoice extends Type
     /**
      * Προσθήκη γραμμής παραστατικού.
      *
-     * @param InvoiceDetails $invoiceDetails Γραμμή Παραστατικού
+     * @param  InvoiceDetails  $invoiceDetails  Γραμμή Παραστατικού
      */
     public function addInvoiceDetails(InvoiceDetails $invoiceDetails): static
     {
@@ -194,7 +194,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param InvoiceDetails[] $invoiceDetails Γραμμές Παραστατικού
+     * @param  InvoiceDetails[]  $invoiceDetails  Γραμμές Παραστατικού
      */
     public function setInvoiceDetails(array $invoiceDetails): static
     {
@@ -210,7 +210,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param InvoiceSummary $invoiceSummary Περίληψη Παραστατικού
+     * @param  InvoiceSummary  $invoiceSummary  Περίληψη Παραστατικού
      */
     public function setInvoiceSummary(InvoiceSummary $invoiceSummary): static
     {
@@ -218,9 +218,9 @@ class Invoice extends Type
     }
 
     /**
-     * @param array{
+     * @param  array{
      *     enableClassificationIds: bool,
-     * } $options
+     * }  $options
      * @return InvoiceSummary
      */
     public function summarizeInvoice(array $options = []): InvoiceSummary
@@ -255,6 +255,14 @@ class Invoice extends Type
     }
 
     /**
+     * @param  TaxTotals[]|null  $taxTotals
+     */
+    public function setTaxesTotals(?array $taxTotals): static
+    {
+        return $this->set('taxesTotals', new TaxesTotals($taxTotals));
+    }
+
+    /**
      * Συμπληρώνεται από την Υπηρεσία.
      *
      * Κωδικοποιημένο αλφαριθμητικό για να χρησιμοποιηθεί από τα
@@ -280,13 +288,22 @@ class Invoice extends Type
     /**
      * Προσθήκη Λεπτομέρειες Διακίνησης (Ορισμός - Αλλαγή Μτφ Μέσων).
      *
-     * @param TransportDetail $transportDetailType Λεπτομέρειες Διακίνησης
+     * @param  TransportDetail  $transportDetailType  Λεπτομέρειες Διακίνησης
      *
      * @version 1.0.7
      */
     public function addOtherTransportDetail(TransportDetail $transportDetailType): static
     {
         return $this->push('otherTransportDetails', $transportDetailType);
+    }
+
+    /**
+     * @param TransportDetail[]|null $transportDetails
+     * @return $this
+     */
+    public function setOtherTransportDetails(?array $transportDetails): static
+    {
+        return $this->set('otherTransportDetails', $transportDetails);
     }
 
     public function set($key, $value): static
