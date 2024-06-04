@@ -10,6 +10,11 @@ abstract class Type
     protected array $expectedOrder = [];
     protected array $casts         = [];
 
+    public function __construct(array $attributes = [])
+    {
+        $this->setAttributes($attributes);
+    }
+
     public function get($key, $default = null)
     {
         return $this->attributes[$key] ?? $default;
@@ -17,9 +22,7 @@ abstract class Type
 
     public function set($key, $value): static
     {
-        $value = $this->castValue($key, $value);
-
-        $this->attributes[$key] = $value;
+        $this->attributes[$key] = $this->castValue($key, $value);
         return $this;
     }
 
@@ -28,7 +31,7 @@ abstract class Type
         if ($value === null) {
             return null;
         }
-        
+
         // Auto cast 'true' or 'false' values to boolean
         if ($value === 'true' || $value === 'false') {
             return filter_var($value, FILTER_VALIDATE_BOOLEAN);
@@ -46,7 +49,7 @@ abstract class Type
         if ($cast === 'int') {
             return filter_var($value, FILTER_VALIDATE_INT);
         }
-        
+
         // Cast value to enum if it is not already an enum
         // If the value doesn't correspond to an enum, it
         // will return null.
@@ -81,7 +84,7 @@ abstract class Type
 
         $attributes = [];
         foreach ($this->expectedOrder as $key) {
-            if (array_key_exists($key, $this->attributes)) {
+            if (array_key_exists($key, $this->attributes) && $this->attributes[$key] !== null) {
                 $attributes[$key] = $this->attributes[$key];
             }
         }
@@ -118,7 +121,7 @@ abstract class Type
 
     /**
      * Returns an array representation of the object
-     * 
+     *
      * @return array
      */
     public function toArray(): array
@@ -135,7 +138,7 @@ abstract class Type
                 $array[$key] = $value;
             }
         }
-        
+
         return $array;
     }
 }
