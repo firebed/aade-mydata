@@ -22,9 +22,9 @@ class InvoiceIncomeClassification extends Type
     /**
      * @param int $invoiceMark Μοναδικός Αριθμός Καταχώρησης Παραστατικού
      */
-    public function setInvoiceMark(int $invoiceMark): void
+    public function setInvoiceMark(int $invoiceMark): static
     {
-        $this->set('invoiceMark', $invoiceMark);
+        return $this->set('invoiceMark', $invoiceMark);
     }
 
     /**
@@ -50,11 +50,11 @@ class InvoiceIncomeClassification extends Type
      * ο ΑΦΜ της οντότητας που αναφέρεται ο χαρακτηρισμός του παραστατικού αποστέλλεται μέσω του πεδίου entityVatNumber,
      * διαφορετικά το εν λόγω πεδίο παραμένει κενό.
      *
-     * @param string $entityVatNumber ΑΦΜ Οντότητας Αναφοράς
+     * @param  string|null  $entityVatNumber  ΑΦΜ Οντότητας Αναφοράς
      */
-    public function setEntityVatNumber(string $entityVatNumber): void
+    public function setEntityVatNumber(?string $entityVatNumber): static
     {
-        $this->set('entityVatNumber', $entityVatNumber);
+        return $this->set('entityVatNumber', $entityVatNumber);
     }
 
     /**
@@ -73,11 +73,12 @@ class InvoiceIncomeClassification extends Type
      *
      * Ο χρήστης μπορεί να συμπεριλάβει είτε το στοιχείο transactionMode ή λίστα στοιχείων invoicesIncomeClassificationDetails.
      *
-     * @param TransactionMode|int $transactionMode Είδος Συναλλαγής
+     * @param  TransactionMode|int|null  $transactionMode  Είδος Συναλλαγής
+     * @return InvoiceIncomeClassification
      */
-    public function setTransactionMode(TransactionMode|int $transactionMode): void
+    public function setTransactionMode(TransactionMode|int|null $transactionMode): static
     {
-        $this->set('transactionMode', $transactionMode);
+        return $this->set('transactionMode', $transactionMode);
     }
 
     /**
@@ -89,10 +90,10 @@ class InvoiceIncomeClassification extends Type
     }
 
     /**
-     * @param InvoicesIncomeClassificationDetail[] $invoicesIncomeClassificationDetails Στοιχεία Χαρακτηρισμού Εσόδων
+     * @param InvoicesIncomeClassificationDetail[]|null $invoicesIncomeClassificationDetails Στοιχεία Χαρακτηρισμού Εσόδων
      */
-    public function setInvoicesIncomeClassificationDetails(array $invoicesIncomeClassificationDetails): void
+    public function setInvoicesIncomeClassificationDetails(?array $invoicesIncomeClassificationDetails): static
     {
-        $this->set('invoicesIncomeClassificationDetails', $invoicesIncomeClassificationDetails);
+        return $this->set('invoicesIncomeClassificationDetails', $invoicesIncomeClassificationDetails);
     }
 }

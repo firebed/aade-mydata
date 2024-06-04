@@ -14,6 +14,34 @@ use GuzzleHttp\Psr7\Response as HttpResponse;
 
 class SendInvoicesTest extends MyDataHttpTestCase
 {
+    public function test_dev_erp_url_is_correct()
+    {
+        MyDataRequest::init('test_user_id', 'test_user_secret', 'dev');
+        $sendInvoices = new SendInvoices();
+        $this->assertEquals('https://mydataapidev.aade.gr/SendInvoices', $sendInvoices->getUrl());
+    }
+
+    public function test_prod_erp_url_is_correct()
+    {
+        MyDataRequest::init('test_user_id', 'test_user_secret', 'prod');
+        $sendInvoices = new SendInvoices();
+        $this->assertEquals('https://mydatapi.aade.gr/myDATA/SendInvoices', $sendInvoices->getUrl());
+    }
+
+    public function test_dev_provider_url_is_correct()
+    {
+        MyDataRequest::init('test_user_id', 'test_user_secret', 'dev', true);
+        $sendInvoices = new SendInvoices();
+        $this->assertEquals('https://mydataapidev.aade.gr/myDataProvider/SendInvoices', $sendInvoices->getUrl());
+    }
+    
+    public function test_prod_provider_url_is_correct()
+    {
+        MyDataRequest::init('test_user_id', 'test_user_secret', 'prod', true);
+        $sendInvoices = new SendInvoices();
+        $this->assertEquals('https://mydatapi.aade.gr/myDataProvider/SendInvoices', $sendInvoices->getUrl());
+    }    
+    
     /**
      * @throws MyDataException
      */

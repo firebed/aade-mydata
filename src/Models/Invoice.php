@@ -88,11 +88,11 @@ class Invoice extends Type
      * <li>Στην περίπτωση αδυναμίας επικοινωνίας του ERP με το myDATA κατά την έκδοση / διαβίβαση παραστατικού</li>
      * </ol>
      *
-     * @param int $transmissionFailure Κωδικός αδυναμίας επικοινωνίας παρόχου
+     * @param int|null $transmissionFailure Κωδικός αδυναμίας επικοινωνίας παρόχου
      */
-    public function setTransmissionFailure(int $transmissionFailure): void
+    public function setTransmissionFailure(?int $transmissionFailure): static
     {
-        $this->set('transmissionFailure', $transmissionFailure);
+        return $this->set('transmissionFailure', $transmissionFailure);
     }
 
     /**
@@ -106,9 +106,9 @@ class Invoice extends Type
     /**
      * @param Issuer $issuer Εκδότης Παραστατικού
      */
-    public function setIssuer(Issuer $issuer): void
+    public function setIssuer(Issuer $issuer): static
     {
-        $this->set('issuer', $issuer);
+        return $this->set('issuer', $issuer);
     }
 
     /**
@@ -120,11 +120,11 @@ class Invoice extends Type
     }
 
     /**
-     * @param Counterpart $counterpart Λήπτης Παραστατικού
+     * @param Counterpart|null $counterpart Λήπτης Παραστατικού
      */
-    public function setCounterpart(Counterpart $counterpart): void
+    public function setCounterpart(Counterpart|null $counterpart): static
     {
-        $this->set('counterpart', $counterpart);
+        return $this->set('counterpart', $counterpart);
     }
 
     /**
@@ -137,15 +137,14 @@ class Invoice extends Type
 
     /**
      * @param PaymentMethods|PaymentMethodDetail[] $paymentMethods
-     * @return void
      */
-    public function setPaymentMethods(PaymentMethods|array $paymentMethods): void
+    public function setPaymentMethods(PaymentMethods|array|null $paymentMethods): static
     {
         if ($paymentMethods instanceof PaymentMethods) {
-            $this->set('paymentMethods', $paymentMethods);
-        } else {
-            $this->set('paymentMethods', new PaymentMethods($paymentMethods));
+            return $this->set('paymentMethods', $paymentMethods);
         }
+        
+        return $this->set('paymentMethods', new PaymentMethods($paymentMethods));
     }
 
     /**
@@ -153,14 +152,11 @@ class Invoice extends Type
      *
      * @param PaymentMethodDetail $paymentMethodDetail Τρόπος Πληρωμής
      */
-    public function addPaymentMethod(PaymentMethodDetail $paymentMethodDetail): void
+    public function addPaymentMethod(PaymentMethodDetail $paymentMethodDetail): static
     {
-        $paymentMethods = $this->getPaymentMethods();
-        if ($paymentMethods) {
-            $paymentMethods->add($paymentMethodDetail);
-        } else {
-            $this->set('paymentMethods', new PaymentMethods($paymentMethodDetail));
-        }
+        $paymentMethods = $this->getPaymentMethods() ?? new PaymentMethods();
+        $paymentMethods->add($paymentMethodDetail);
+        return $this->set('paymentMethods', $paymentMethods);
     }
 
     /**
@@ -174,9 +170,9 @@ class Invoice extends Type
     /**
      * @param InvoiceHeader $invoiceHeader Επικεφαλίδα Παραστατικού
      */
-    public function setInvoiceHeader(InvoiceHeader $invoiceHeader): void
+    public function setInvoiceHeader(InvoiceHeader $invoiceHeader): static
     {
-        $this->set('invoiceHeader', $invoiceHeader);
+        return $this->set('invoiceHeader', $invoiceHeader);
     }
 
     /**
@@ -192,11 +188,19 @@ class Invoice extends Type
      *
      * @param InvoiceDetails $invoiceDetails Γραμμή Παραστατικού
      */
-    public function addInvoiceDetails(InvoiceDetails $invoiceDetails): void
+    public function addInvoiceDetails(InvoiceDetails $invoiceDetails): static
     {
-        $this->push('invoiceDetails', $invoiceDetails);
+        return $this->push('invoiceDetails', $invoiceDetails);
     }
 
+    /**
+     * @param InvoiceDetails[] $invoiceDetails Γραμμές Παραστατικού
+     */
+    public function setInvoiceDetails(array $invoiceDetails): static
+    {
+        return $this->set('invoiceDetails', $invoiceDetails);
+    }
+    
     /**
      * @return InvoiceSummary|null Περίληψη Παραστατικού
      */
@@ -208,9 +212,9 @@ class Invoice extends Type
     /**
      * @param InvoiceSummary $invoiceSummary Περίληψη Παραστατικού
      */
-    public function setInvoiceSummary(InvoiceSummary $invoiceSummary): void
+    public function setInvoiceSummary(InvoiceSummary $invoiceSummary): static
     {
-        $this->set('invoiceSummary', $invoiceSummary);
+        return $this->set('invoiceSummary', $invoiceSummary);
     }
 
     /**
@@ -243,11 +247,11 @@ class Invoice extends Type
     /**
      * Προσθήκη συνόλου φόρων.
      */
-    public function addTaxesTotals(TaxTotals $taxTotals): void
+    public function addTaxesTotals(TaxTotals $taxTotals): static
     {
         $taxesTotals = $this->getTaxesTotals();
         $taxesTotals->add($taxTotals);
-        $this->set('taxesTotals', $taxesTotals);
+        return $this->set('taxesTotals', $taxesTotals);
     }
 
     /**
@@ -280,22 +284,17 @@ class Invoice extends Type
      *
      * @version 1.0.7
      */
-    public function addOtherTransportDetail(TransportDetail $transportDetailType): void
+    public function addOtherTransportDetail(TransportDetail $transportDetailType): static
     {
-        $this->push('otherTransportDetails', $transportDetailType);
+        return $this->push('otherTransportDetails', $transportDetailType);
     }
 
-    public function set($key, $value): void
+    public function set($key, $value): static
     {
-        if ($key === 'invoiceDetails' || $key === 'otherTransportDetails') {
-            if (is_array($value)) {
-                parent::set($key, $value);
-            } else {
-                $this->push($key, $value);
-            }
-            return;
+        if (($key === 'invoiceDetails' || $key === 'otherTransportDetails') && !is_array($value)) {
+            return $this->push($key, $value);
         }
 
-        parent::set($key, $value);
+        return parent::set($key, $value);
     }
 }

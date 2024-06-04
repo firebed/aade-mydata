@@ -39,8 +39,8 @@ class TransportDetail extends Type
      *
      * @version 1.0.7
      */
-    public function setVehicleNumber(string $vehicleNumber): void
+    public function setVehicleNumber(string $vehicleNumber): static
     {
-        $this->set('vehicleNumber', $vehicleNumber);
+        return $this->set('vehicleNumber', $vehicleNumber);
     }
 }

@@ -37,13 +37,12 @@ class RequestedBookInfo extends Type
         return $this->get('bookInfo');
     }
 
-    public function set($key, $value): void
+    public function set($key, $value): static
     {
-        if ($key === 'bookInfo') {
-            $this->push($key, $value);
-            return;
+        if ($key === 'bookInfo' && !is_array($value)) {
+            return $this->push($key, $value);
         }
 
-        parent::set($key, $value);
+        return parent::set($key, $value);
     }
 }

@@ -39,9 +39,9 @@ class OtherDeliveryNoteHeader extends Type
      * @param Address $loadingAddress Διεύθυνση Φόρτωσης
      * @version 1.0.8
      */
-    public function setLoadingAddress(Address $loadingAddress): void
+    public function setLoadingAddress(Address $loadingAddress): static
     {
-        $this->set('loadingAddress', $loadingAddress);
+        return $this->set('loadingAddress', $loadingAddress);
     }
 
     /**
@@ -60,9 +60,9 @@ class OtherDeliveryNoteHeader extends Type
      * @param Address $deliveryAddress Διεύθυνση Παράδοσης
      * @version 1.0.8
      */
-    public function setDeliveryAddress(Address $deliveryAddress): void
+    public function setDeliveryAddress(Address $deliveryAddress): static
     {
-        $this->set('deliveryAddress', $deliveryAddress);
+        return $this->set('deliveryAddress', $deliveryAddress);
     }
 
     /**
@@ -88,9 +88,9 @@ class OtherDeliveryNoteHeader extends Type
      * @param int|null $startShippingBranch Εγκατάσταση έναρξης διακίνησης (Εκδότη)
      * @version 1.0.8
      */
-    public function setStartShippingBranch(?int $startShippingBranch): void
+    public function setStartShippingBranch(?int $startShippingBranch): static
     {
-        $this->set('startShippingBranch', $startShippingBranch);
+        return $this->set('startShippingBranch', $startShippingBranch);
     }
 
     /**
@@ -116,9 +116,8 @@ class OtherDeliveryNoteHeader extends Type
      * @param int|null $completeShippingBranch Εγκατάσταση ολοκλήρωσης διακίνησης (Λήπτη)
      * @version 1.0.8
      */
-    public function setCompleteShippingBranch(?int $completeShippingBranch): void
+    public function setCompleteShippingBranch(?int $completeShippingBranch): static
     {
-        $this->set('completeShippingBranch', $completeShippingBranch);
+        return $this->set('completeShippingBranch', $completeShippingBranch);
     }
-
 }

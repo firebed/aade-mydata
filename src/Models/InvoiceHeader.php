@@ -37,10 +37,10 @@ class InvoiceHeader extends Type
     ];
 
     protected array $casts = [
-        'invoiceType'             => InvoiceType::class,
-        'movePurpose'             => MovePurpose::class,
-        'specialInvoiceCategory'  => SpecialInvoiceCategory::class,
-        'invoiceVariationType'    => InvoiceVariationType::class,
+        'invoiceType' => InvoiceType::class,
+        'movePurpose' => MovePurpose::class,
+        'specialInvoiceCategory' => SpecialInvoiceCategory::class,
+        'invoiceVariationType' => InvoiceVariationType::class,
         'otherCorrelatedEntities' => EntityType::class,
         'otherDeliveryNoteHeader' => OtherDeliveryNoteHeader::class,
     ];
@@ -56,11 +56,11 @@ class InvoiceHeader extends Type
     /**
      * Σε περίπτωση μή έκδοσης σειράς παραστατικού, το πεδίο series πρέπει να έχει την τιμή 0
      *
-     * @param string $series Σειρά παραστατικού
+     * @param  string  $series  Σειρά παραστατικού
      */
-    public function setSeries(string $series): void
+    public function setSeries(string $series): static
     {
-        $this->set('series', $series);
+        return $this->set('series', $series);
     }
 
     /**
@@ -72,11 +72,11 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param string $aa ΑΑ Παραστατικού, μέγιστο επιτρεπτό μήκος 50
+     * @param  string  $aa  ΑΑ Παραστατικού, μέγιστο επιτρεπτό μήκος 50
      */
-    public function setAa(string $aa): void
+    public function setAa(string $aa): static
     {
-        $this->set('aa', $aa);
+        return $this->set('aa', $aa);
     }
 
     /**
@@ -88,11 +88,11 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param string $issueDate Ημερομηνία Έκδοσης Παραστατικού (Y-m-d)
+     * @param  string  $issueDate  Ημερομηνία Έκδοσης Παραστατικού (Y-m-d)
      */
-    public function setIssueDate(string $issueDate): void
+    public function setIssueDate(string $issueDate): static
     {
-        $this->set('issueDate', $issueDate);
+        return $this->set('issueDate', $issueDate);
     }
 
     /**
@@ -104,11 +104,11 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param InvoiceType|string $invoiceType Είδος Παραστατικού
+     * @param  InvoiceType|string  $invoiceType  Είδος Παραστατικού
      */
-    public function setInvoiceType(InvoiceType|string $invoiceType): void
+    public function setInvoiceType(InvoiceType|string $invoiceType): static
     {
-        $this->set('invoiceType', $invoiceType);
+        return $this->set('invoiceType', $invoiceType);
     }
 
     /**
@@ -120,11 +120,11 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param bool $vatPaymentSuspension Αναστολή Καταβολής ΦΠΑ
+     * @param  bool|null  $vatPaymentSuspension  Αναστολή Καταβολής ΦΠΑ
      */
-    public function setVatPaymentSuspension(bool $vatPaymentSuspension): void
+    public function setVatPaymentSuspension(?bool $vatPaymentSuspension): static
     {
-        $this->set('vatPaymentSuspension', $vatPaymentSuspension);
+        return $this->set('vatPaymentSuspension', $vatPaymentSuspension);
     }
 
     /**
@@ -138,11 +138,11 @@ class InvoiceHeader extends Type
     /**
      * Ο κωδικός νομισμάτων προέρχεται από την αντίστοιχη λίστα σύμφωνα με το πρότυπο ISO4217.
      *
-     * @param string $currency Νόμισμα
+     * @param  string  $currency  Νόμισμα
      */
-    public function setCurrency(string $currency): void
+    public function setCurrency(string $currency): static
     {
-        $this->set('currency', $currency);
+        return $this->set('currency', $currency);
     }
 
     /**
@@ -158,11 +158,11 @@ class InvoiceHeader extends Type
      * Πρέπει να συμπληρώνεται μόνο όταν το νόμισμα δεν έχει τιμή EUR.</p>
      * <p>Ελάχιστη τιμή = 0</p>
      * <p>Δεκαδικά ψηφία = 5</p>
-     * @param float $exchangeRate Ισοτιμία
+     * @param  float|null  $exchangeRate  Ισοτιμία
      */
-    public function setExchangeRate(float $exchangeRate): void
+    public function setExchangeRate(?float $exchangeRate): static
     {
-        $this->set('exchangeRate', $exchangeRate);
+        return $this->set('exchangeRate', $exchangeRate);
     }
 
     /**
@@ -174,13 +174,19 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * Το στοιχείο correlatedInvoices είναι λίστα και περιέχει τα ΜΑΡΚ των συσχετιζόμενων παραστατικών.
-     *
-     * @param int $correlatedInvoice Συσχετιζόμενο Παραστατικό (ΜΑΡΚ)
+     * @param  int  $correlatedInvoice  Συσχετιζόμενο Παραστατικό (ΜΑΡΚ)
      */
-    public function addCorrelatedInvoice(int $correlatedInvoice): void
+    public function addCorrelatedInvoice(int $correlatedInvoice): static
     {
-        $this->push('correlatedInvoices', $correlatedInvoice);
+        return $this->push('correlatedInvoices', $correlatedInvoice);
+    }
+
+    /**
+     * @param  int[]|null  $correlatedInvoices  Συσχετιζόμενα Παραστατικά (ΜΑΡΚ)
+     */
+    public function setCorrelatedInvoices(?array $correlatedInvoices): static
+    {
+        return $this->push('correlatedInvoices', $correlatedInvoices);
     }
 
     /**
@@ -192,11 +198,11 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param bool $selfPricing Ένδειξη Αυτοτιμολόγησης
+     * @param  bool|null  $selfPricing  Ένδειξη Αυτοτιμολόγησης
      */
-    public function setSelfPricing(bool $selfPricing): void
+    public function setSelfPricing(?bool $selfPricing): static
     {
-        $this->set('selfPricing', $selfPricing);
+        return $this->set('selfPricing', $selfPricing);
     }
 
     /**
@@ -208,11 +214,11 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param string $dispatchDate Ημερομηνία Έναρξης Αποστολής
+     * @param  string|null  $dispatchDate  Ημερομηνία Έναρξης Αποστολής
      */
-    public function setDispatchDate(string $dispatchDate): void
+    public function setDispatchDate(?string $dispatchDate): static
     {
-        $this->set('dispatchDate', $dispatchDate);
+        return $this->set('dispatchDate', $dispatchDate);
     }
 
     /**
@@ -224,11 +230,11 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param string $dispatchTime Ώρα Έναρξης Αποστολής hh:mm:ss
+     * @param  string|null  $dispatchTime  Ώρα Έναρξης Αποστολής hh:mm:ss
      */
-    public function setDispatchTime(string $dispatchTime): void
+    public function setDispatchTime(?string $dispatchTime): static
     {
-        $this->set('dispatchTime', $dispatchTime);
+        return $this->set('dispatchTime', $dispatchTime);
     }
 
     /**
@@ -240,11 +246,11 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param string $vehicleNumber Αριθμός Μεταφορικού Μέσου
+     * @param  string|null  $vehicleNumber  Αριθμός Μεταφορικού Μέσου
      */
-    public function setVehicleNumber(string $vehicleNumber): void
+    public function setVehicleNumber(?string $vehicleNumber): static
     {
-        $this->set('vehicleNumber', $vehicleNumber);
+        return $this->set('vehicleNumber', $vehicleNumber);
     }
 
     /**
@@ -256,11 +262,11 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param MovePurpose|string $movePurpose Σκοπός Διακίνησης
+     * @param  MovePurpose|string|null  $movePurpose  Σκοπός Διακίνησης
      */
-    public function setMovePurpose(MovePurpose|string $movePurpose): void
+    public function setMovePurpose(MovePurpose|string|null $movePurpose): static
     {
-        $this->set('movePurpose', $movePurpose);
+        return $this->set('movePurpose', $movePurpose);
     }
 
     /**
@@ -275,11 +281,11 @@ class InvoiceHeader extends Type
      * Το πεδίο fuelInvoice ορίζει αν πρόκειται για παραστατικό πώλησης υγρών καυσίμων και
      * επιτρέπεται η αποστολή μόνο για την περίπτωση των παρόχων
      *
-     * @param bool $fuelInvoice Ένδειξη Παραστατικό καυσίμων
+     * @param  bool|null  $fuelInvoice  Ένδειξη Παραστατικό καυσίμων
      */
-    public function setFuelInvoice(bool $fuelInvoice): void
+    public function setFuelInvoice(?bool $fuelInvoice): static
     {
-        $this->set('fuelInvoice', $fuelInvoice);
+        return $this->set('fuelInvoice', $fuelInvoice);
     }
 
     /**
@@ -294,12 +300,11 @@ class InvoiceHeader extends Type
      * Οι πιθανές τιμές του πεδίου specialInvoiceCategory περιγράφονται αναλυτικά στον
      * αντίστοιχα πίνακα του Παραρτήματος.
      *
-     * @param SpecialInvoiceCategory|int $specialInvoiceCategory Ελάχιστη τιμή = 1, Μέγιστη τιμή = 10
-     * @return void
+     * @param  SpecialInvoiceCategory|int|null  $specialInvoiceCategory  Ελάχιστη τιμή = 1, Μέγιστη τιμή = 10
      */
-    public function setSpecialInvoiceCategory(SpecialInvoiceCategory|int $specialInvoiceCategory): void
+    public function setSpecialInvoiceCategory(SpecialInvoiceCategory|int|null $specialInvoiceCategory): static
     {
-        $this->set('specialInvoiceCategory', $specialInvoiceCategory);
+        return $this->set('specialInvoiceCategory', $specialInvoiceCategory);
     }
 
     /**
@@ -315,14 +320,12 @@ class InvoiceHeader extends Type
      * αντίστοιχα πίνακα του Παραρτήματος. Επίσης, λεπτομέρειες σχετικά με τον τρόπο
      * χρήσης τους από επιχειρησιακής σκοπιάς περιγράφονται στο σχετικό επιχειρησιακό
      * έγγραφο. (Δεν επιτρέπεται στην περίπτωση αποστολής μέσω παρόχων)
-     * @param InvoiceVariationType|int $invoiceVariationType Ελάχιστη τιμή = 1, Μέγιστη τιμή = 4
-     * @return void
+     * @param  InvoiceVariationType|int|null  $invoiceVariationType  Ελάχιστη τιμή = 1, Μέγιστη τιμή = 4
      */
-    public function setInvoiceVariationType(InvoiceVariationType|int $invoiceVariationType): void
+    public function setInvoiceVariationType(InvoiceVariationType|int|null $invoiceVariationType): static
     {
-        $this->set('invoiceVariationType', $invoiceVariationType);
+        return $this->set('invoiceVariationType', $invoiceVariationType);
     }
-
 
     /**
      * @return EntityType[]|null Λοιπές συσχετιζόμενες οντότητες
@@ -335,15 +338,23 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * Λοιπές συσχετιζόμενες οντότητες
-     *
-     * @param EntityType $entityType
+     * @param  EntityType  $entityType  Λοιπές συσχετιζόμενες οντότητες
      *
      * @version 1.0.7
      */
-    public function addOtherCorrelatedEntities(EntityType $entityType): void
+    public function addOtherCorrelatedEntities(EntityType $entityType): static
     {
-        $this->push('otherCorrelatedEntities', $entityType);
+        return $this->push('otherCorrelatedEntities', $entityType);
+    }
+
+    /**
+     * @param  EntityType[]|null  $entities  Λοιπές συσχετιζόμενες οντότητες
+     *
+     * @version 1.0.7
+     */
+    public function setOtherCorrelatedEntities(?array $entities): static
+    {
+        return $this->push('otherCorrelatedEntities', $entities);
     }
 
     /**
@@ -356,12 +367,12 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param OtherDeliveryNoteHeader|null $otherDeliveryNoteHeader Λοιπά Γενικά Στοιχεία Διακίνησης.
+     * @param  OtherDeliveryNoteHeader|null  $otherDeliveryNoteHeader  Λοιπά Γενικά Στοιχεία Διακίνησης.
      * @version 1.0.8
      */
-    public function setOtherDeliveryNoteHeader(?OtherDeliveryNoteHeader $otherDeliveryNoteHeader): void
+    public function setOtherDeliveryNoteHeader(?OtherDeliveryNoteHeader $otherDeliveryNoteHeader): static
     {
-        $this->set('otherDeliveryNoteHeader', $otherDeliveryNoteHeader);
+        return $this->set('otherDeliveryNoteHeader', $otherDeliveryNoteHeader);
     }
 
     /**
@@ -379,12 +390,12 @@ class InvoiceHeader extends Type
      * ένδειξη isDeliveryNote = true, τότε είναι και δελτίο διακίνησης και θα πρέπει να
      * αποσταλούν και επιπλέον στοιχεία διακίνησης).
      *
-     * @param bool $isDeliveryNote Ένδειξη Παραστατικού Διακίνησης
+     * @param  bool|null  $isDeliveryNote  Ένδειξη Παραστατικού Διακίνησης
      * @version 1.0.8
      */
-    public function setIsDeliveryNote(bool $isDeliveryNote): void
+    public function setIsDeliveryNote(?bool $isDeliveryNote): static
     {
-        $this->set('isDeliveryNote', $isDeliveryNote);
+        return $this->set('isDeliveryNote', $isDeliveryNote);
     }
 
     /**
@@ -400,12 +411,12 @@ class InvoiceHeader extends Type
      * Το πεδίο otherMovePurposeTitle συμπληρώνεται όταν έχει επιλεγεί ως
      * movePurpose = 19 (Λοιπές Διακινήσεις) και ορίζει τον τίτλο της άλλης διακίνησης.
      *
-     * @param string|null $otherMovePurposeTitle Τίτλος της Λοιπής Αιτίας Διακίνησης
+     * @param  string|null  $otherMovePurposeTitle  Τίτλος της Λοιπής Αιτίας Διακίνησης
      * @version 1.0.8
      */
-    public function setOtherMovePurposeTitle(?string $otherMovePurposeTitle): void
+    public function setOtherMovePurposeTitle(?string $otherMovePurposeTitle): static
     {
-        $this->set('otherMovePurposeTitle', $otherMovePurposeTitle);
+        return $this->set('otherMovePurposeTitle', $otherMovePurposeTitle);
     }
 
     /**
@@ -424,25 +435,20 @@ class InvoiceHeader extends Type
      * ποσά συναλλαγής για λογαριασμό τρίτων (περίπτωση παραστατικού 8.5 - Απόδειξη
      * Επιστροφής POS).
      *
-     * @param bool $thirdPartyCollection Ένδειξη Είσπραξης Τρίτων
+     * @param  bool|null  $thirdPartyCollection  Ένδειξη Είσπραξης Τρίτων
      * @version 1.0.8
      */
-    public function setThirdPartyCollection(bool $thirdPartyCollection): void
+    public function setThirdPartyCollection(?bool $thirdPartyCollection): static
     {
-        $this->set('thirdPartyCollection', $thirdPartyCollection);
+        return $this->set('thirdPartyCollection', $thirdPartyCollection);
     }
 
-    public function set($key, $value): void
+    public function set($key, $value): static
     {
-        if ($key === 'correlatedInvoices' || $key === 'otherCorrelatedEntities') {
-            if (is_array($value)) {
-                parent::set($key, $value);
-            } else {
-                $this->push($key, $value);
-            }
-            return;
+        if (($key === 'correlatedInvoices' || $key === 'otherCorrelatedEntities') && !is_array($value)) {
+            return $this->push($key, $value);
         }
 
-        parent::set($key, $value);
+        return parent::set($key, $value);
     }
 }

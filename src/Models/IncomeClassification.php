@@ -42,9 +42,9 @@ class IncomeClassification extends Type
     /**
      * @param IncomeClassificationType|string|null $classificationType Κωδικός Χαρακτηρισμού
      */
-    public function setClassificationType(IncomeClassificationType|string|null $classificationType): void
+    public function setClassificationType(IncomeClassificationType|string|null $classificationType): static
     {
-        $this->set('classificationType', $classificationType);
+        return $this->set('classificationType', $classificationType);
     }
 
     /**
@@ -58,9 +58,9 @@ class IncomeClassification extends Type
     /**
      * @param IncomeClassificationCategory|string $classificationCategory Κατηγορία Χαρακτηρισμού
      */
-    public function setClassificationCategory(IncomeClassificationCategory|string $classificationCategory): void
+    public function setClassificationCategory(IncomeClassificationCategory|string $classificationCategory): static
     {
-        $this->set('classificationCategory', $classificationCategory);
+        return $this->set('classificationCategory', $classificationCategory);
     }
 
     /**
@@ -79,9 +79,9 @@ class IncomeClassification extends Type
      *
      * @param float $amount Ποσό
      */
-    public function setAmount(float $amount): void
+    public function setAmount(float $amount): static
     {
-        $this->set('amount', $amount);
+        return $this->set('amount', $amount);
     }
 
     /**
@@ -97,8 +97,8 @@ class IncomeClassification extends Type
      *
      * @param int $id Αύξων αριθμός Χαρακτηρισμού
      */
-    public function setId(int $id): void
+    public function setId(int $id): static
     {
-        $this->set('id', $id);
+        return $this->set('id', $id);
     }
 }

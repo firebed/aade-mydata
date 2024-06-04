@@ -14,8 +14,13 @@ class ProvidersSignature extends Type
     
     public function __construct(string $signingAuthor = null, string $signature = null)
     {
-        $attributes = compact('signingAuthor', 'signature');
-        $this->setAttributes(array_filter($attributes, fn($attr) => !is_null($attr)));
+        if ($signingAuthor !== null) {
+            $this->setSigningAuthor($signingAuthor);
+        }
+        
+        if ($signature !== null) {
+            $this->setSignature($signature);
+        }
     }
 
     /**
@@ -35,9 +40,9 @@ class ProvidersSignature extends Type
      * 
      * @version 1.0.8
      */
-    public function setSigningAuthor(string $signingAuthor): void
+    public function setSigningAuthor(string $signingAuthor): static
     {
-        $this->set('SigningAuthor', $signingAuthor);
+        return $this->set('SigningAuthor', $signingAuthor);
     }
 
     /**
@@ -58,8 +63,8 @@ class ProvidersSignature extends Type
      * 
      * @version 1.0.8
      */
-    public function setSignature(string $signature): void
+    public function setSignature(string $signature): static
     {
-        $this->set('Signature', $signature);
+        return $this->set('Signature', $signature);
     }
 }

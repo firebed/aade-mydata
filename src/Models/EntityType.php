@@ -39,9 +39,9 @@ class EntityType extends Type
      *
      * @version 1.0.7
      */
-    public function setType(EntityTypes|int $type): void
+    public function setType(EntityTypes|int $type): static
     {
-        $this->set('type', $type);
+        return $this->set('type', $type);
     }
 
     /**
@@ -55,12 +55,13 @@ class EntityType extends Type
     }
 
     /**
-     * @param Party $entityData
+     * @param  Party  $entityData
      *
+     * @return EntityType
      * @version 1.0.7
      */
-    public function setEntityData(Party $entityData): void
+    public function setEntityData(Party $entityData): static
     {
-        $this->set('entityData', $entityData);
+        return $this->set('entityData', $entityData);
     }
 }

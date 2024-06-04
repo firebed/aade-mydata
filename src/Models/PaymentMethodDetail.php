@@ -36,9 +36,9 @@ class PaymentMethodDetail extends Type
     /**
      * @param PaymentMethod|string $type Τύπος Πληρωμής
      */
-    public function setType(PaymentMethod|string $type): void
+    public function setType(PaymentMethod|string $type): static
     {
-        $this->set('type', $type);
+        return $this->set('type', $type);
     }
 
     /**
@@ -60,9 +60,9 @@ class PaymentMethodDetail extends Type
      *
      * @param float $amount Ποσό Πληρωμής
      */
-    public function setAmount(float $amount): void
+    public function setAmount(float $amount): static
     {
-        $this->set('amount', $amount);
+        return $this->set('amount', $amount);
     }
 
     /**
@@ -79,9 +79,9 @@ class PaymentMethodDetail extends Type
      *
      * @param string|null $paymentMethodInfo Πληροφορίες γραμμής
      */
-    public function setPaymentMethodInfo(?string $paymentMethodInfo): void
+    public function setPaymentMethodInfo(?string $paymentMethodInfo): static
     {
-        $this->set('paymentMethodInfo', $paymentMethodInfo);
+        return $this->set('paymentMethodInfo', $paymentMethodInfo);
     }
 
     /**
@@ -102,9 +102,9 @@ class PaymentMethodDetail extends Type
      * @param float|null $tipAmount Ποσό φιλοδωρήματος
      * @version 1.0.8
      */
-    public function setTipAmount(?float $tipAmount): void
+    public function setTipAmount(?float $tipAmount): static
     {
-        $this->set('tipAmount', $tipAmount);
+        return $this->set('tipAmount', $tipAmount);
     }
 
     /**
@@ -122,9 +122,9 @@ class PaymentMethodDetail extends Type
      * @param string|null $transactionId Μοναδική Ταυτότητα Πληρωμής
      * @version 1.0.8
      */
-    public function setTransactionId(?string $transactionId): void
+    public function setTransactionId(?string $transactionId): static
     {
-        $this->set('transactionId', $transactionId);
+        return $this->set('transactionId', $transactionId);
     }
 
     /**
@@ -135,13 +135,13 @@ class PaymentMethodDetail extends Type
      * @param string|null $signature
      * @version 1.0.8
      */
-    public function setProvidersSignature(ProvidersSignature|string|null $providersSignature, string $signature = null): void
+    public function setProvidersSignature(ProvidersSignature|string|null $providersSignature, string $signature = null): static
     {
-        if ($signature === null || $providersSignature instanceof ProvidersSignature) {
-            $this->set('ProvidersSignature', $providersSignature);
-        } else {
-            $this->setProvidersSignature(new ProvidersSignature($providersSignature, $signature));
+        if (!($providersSignature instanceof ProvidersSignature) && $signature !== null) {
+            $providersSignature = new ProvidersSignature($providersSignature, $signature);
         }
+
+        return $this->set('ProvidersSignature', $providersSignature);
     }
 
     /**
@@ -161,15 +161,14 @@ class PaymentMethodDetail extends Type
      * @param string|null $sessionNumber
      * @version 1.0.8
      */
-    public function setECRToken(ECRToken|string|null $ecrToken, string $sessionNumber = null): void
+    public function setECRToken(ECRToken|string|null $ecrToken, string $sessionNumber = null): static
     {
-        if ($ecrToken === null || $ecrToken instanceof ECRToken) {
-            $this->set('ECRToken', $ecrToken);
-        } else {
-            $this->setECRToken(new ECRToken($ecrToken, $sessionNumber));
+        if (!($ecrToken instanceof ECRToken) && $sessionNumber !== null) {
+            $ecrToken = new ECRToken($ecrToken, $sessionNumber);
         }
-    }
 
+        return $this->set('ECRToken', $ecrToken);
+    }
     /**
      * @return ECRToken|null Υπογραφή Πληρωμής ΦΗΜ με σύστημα λογισμικού (ERP)
      * @version 1.0.8

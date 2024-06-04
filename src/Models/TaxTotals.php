@@ -39,9 +39,9 @@ class TaxTotals extends Type
     /**
      * @param TaxType|string $taxType Είδος Φόρου
      */
-    public function setTaxType(TaxType|string $taxType): void
+    public function setTaxType(TaxType|string $taxType): static
     {
-        $this->set('taxType', $taxType);
+        return $this->set('taxType', $taxType);
     }
 
     /**
@@ -57,11 +57,11 @@ class TaxTotals extends Type
      * από τον αντίστοιχο πίνακα του Παραρτήματος του φόρου που
      * αναφέρεται στο πεδίο taxType.
      *
-     * @param WithheldPercentCategory|FeesPercentCategory|OtherTaxesPercentCategory|StampCategory|int $taxCategory Κατηγορία Φόρου
+     * @param  WithheldPercentCategory|FeesPercentCategory|OtherTaxesPercentCategory|StampCategory|int|null  $taxCategory  Κατηγορία Φόρου
      */
-    public function setTaxCategory(WithheldPercentCategory|FeesPercentCategory|OtherTaxesPercentCategory|StampCategory|int $taxCategory): void
+    public function setTaxCategory(WithheldPercentCategory|FeesPercentCategory|OtherTaxesPercentCategory|StampCategory|int|null $taxCategory): static
     {
-        $this->set('taxCategory', $taxCategory);
+        return $this->set('taxCategory', $taxCategory);
     }
 
     /**
@@ -78,11 +78,11 @@ class TaxTotals extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param float $underlyingValue Υποκείμενη Αξία
+     * @param  float|null  $underlyingValue  Υποκείμενη Αξία
      */
-    public function setUnderlyingValue(float $underlyingValue): void
+    public function setUnderlyingValue(?float $underlyingValue): static
     {
-        $this->set('underlyingValue', $underlyingValue);
+        return $this->set('underlyingValue', $underlyingValue);
     }
 
     /**
@@ -101,9 +101,9 @@ class TaxTotals extends Type
      *
      * @param float $taxAmount Ποσό Φόρου
      */
-    public function setTaxAmount(float $taxAmount): void
+    public function setTaxAmount(float $taxAmount): static
     {
-        $this->set('taxAmount', $taxAmount);
+        return $this->set('taxAmount', $taxAmount);
     }
 
     /**
@@ -115,11 +115,11 @@ class TaxTotals extends Type
     }
 
     /**
-     * @param int $id Αύξων αριθμός γραμμής
+     * @param  int|null  $id  Αύξων αριθμός γραμμής
      */
-    public function setId(int $id): void
+    public function setId(?int $id): static
     {
-        $this->set('id', $id);
+        return $this->set('id', $id);
     }
 
 }

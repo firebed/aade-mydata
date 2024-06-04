@@ -15,11 +15,12 @@ abstract class Type
         return $this->attributes[$key] ?? $default;
     }
 
-    public function set($key, $value): void
+    public function set($key, $value): static
     {
         $value = $this->castValue($key, $value);
 
         $this->attributes[$key] = $value;
+        return $this;
     }
 
     protected function castValue(string $key, $value)
@@ -56,9 +57,10 @@ abstract class Type
         return $value;
     }
 
-    public function push($key, $value = null): void
+    public function push($key, $value = null): static
     {
         $this->attributes[$key][] = $value;
+        return $this;
     }
 
     public function has($key): bool
@@ -87,9 +89,10 @@ abstract class Type
         return $attributes;
     }
 
-    public function setAttributes(array $attributes): void
+    public function setAttributes(array $attributes): static
     {
         $this->attributes = $attributes;
+        return $this;
     }
 
     public function getCast(string $name)

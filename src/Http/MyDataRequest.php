@@ -14,12 +14,16 @@ use ReflectionClass;
 
 abstract class MyDataRequest
 {
-    private const DEV_URL  = 'https://mydataapidev.aade.gr/';
-    private const PROD_URL = 'https://mydatapi.aade.gr/myDATA/';
+    private const DEV_ERP_URL  = 'https://mydataapidev.aade.gr/';
+    private const PROD_ERP_URL = 'https://mydatapi.aade.gr/myDATA/';
+
+    private const DEV_PROVIDER_URL  = 'https://mydataapidev.aade.gr/myDataProvider/';
+    private const PROD_PROVIDER_URL = 'https://mydatapi.aade.gr/myDataProvider/';
 
     private static ?string     $user_id          = null;
     private static ?string     $subscription_key = null;
     private static ?string     $env              = null;
+    private static ?bool       $is_provider      = false;
     private static bool|string $verify_client    = true;
 
     private static HandlerStack $handler;
@@ -29,10 +33,10 @@ abstract class MyDataRequest
         self::$handler = HandlerStack::create($handler);
     }
 
-    public static function init(string $user_id, string $subscription_key, string $env): void
+    public static function init(string $user_id, string $subscription_key, string $env, bool $is_provider = false): void
     {
         self::setCredentials($user_id, $subscription_key);
-        self::setEnvironment($env);
+        self::setEnvironment($env, $is_provider);
     }
 
     public static function setCredentials(string $user_id, string $subscription_key): void
@@ -41,9 +45,10 @@ abstract class MyDataRequest
         self::$subscription_key = $subscription_key;
     }
 
-    public static function setEnvironment($env): void
+    public static function setEnvironment(string $env, bool $is_provider = false): void
     {
         self::$env = $env;
+        self::$is_provider = $is_provider;
     }
 
     /**
@@ -89,6 +94,21 @@ abstract class MyDataRequest
         return self::$env === 'dev';
     }
 
+    public static function isProvider(): bool
+    {
+        return self::$is_provider;
+    }
+    
+    /**
+     * @throws MyDataAuthenticationException
+     */
+    private static function validateCredentials(): void
+    {
+        if (empty(self::$user_id) || empty(self::$subscription_key)) {
+            throw new MyDataAuthenticationException();
+        }
+    }
+    
     /**
      * @throws MyDataAuthenticationException|MyDataException
      */
@@ -143,25 +163,15 @@ abstract class MyDataRequest
         throw new MyDataException($exception->getMessage(), $exception->getCode());
     }
 
-    /**
-     * @throws MyDataAuthenticationException
-     */
-    private static function validateCredentials(): void
-    {
-        if (empty(self::$user_id) || empty(self::$subscription_key)) {
-            throw new MyDataAuthenticationException();
-        }
-    }
-
     private function client(): Client
     {
         $config = [
             'headers' => [
-                'aade-user-id'              => self::$user_id,
+                'aade-user-id' => self::$user_id,
                 'Ocp-Apim-Subscription-Key' => self::$subscription_key,
-                'Content-Type'              => "text/xml"
+                'Content-Type' => "text/xml"
             ],
-            'verify'  => self::$verify_client
+            'verify' => self::$verify_client
         ];
 
         if (isset(self::$handler)) {
@@ -171,12 +181,22 @@ abstract class MyDataRequest
         return new Client($config);
     }
 
-    private function getUrl(): string
+    public function getUrl(): string
     {
         $action = $this->getAction();
-        return self::isDevelopment()
-            ? self::DEV_URL.$action
-            : self::PROD_URL.$action;
+        $url = self::$is_provider ? $this->getUrlForProvider() : $this->getUrlForErp();
+        
+        return $url.$action;
+    }
+
+    private function getUrlForErp(): string
+    {
+        return self::isDevelopment() ? self::DEV_ERP_URL : self::PROD_ERP_URL;
+    }
+
+    private function getUrlForProvider(): string
+    {
+        return self::isDevelopment() ? self::DEV_PROVIDER_URL : self::PROD_PROVIDER_URL;        
     }
 
     private function getAction(): string

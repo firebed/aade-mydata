@@ -21,9 +21,9 @@ class InvoicesIncomeClassificationDetail extends Type
      * 
      * @param int $lineNumber Αριθμός Γραμμής
      */
-    public function setLineNumber(int $lineNumber): void
+    public function setLineNumber(int $lineNumber): static
     {
-        $this->set('lineNumber', $lineNumber);
+        return $this->set('lineNumber', $lineNumber);
     }
 
     /**
@@ -37,9 +37,9 @@ class InvoicesIncomeClassificationDetail extends Type
     /**
      * @param IncomeClassification[] $incomeClassificationDetailData Λίστα Χαρακτηρισμών Εσόδων
      */
-    public function setIncomeClassificationDetailData(array $incomeClassificationDetailData): void
+    public function setIncomeClassificationDetailData(array $incomeClassificationDetailData): static
     {
-        $this->set('incomeClassificationDetailData', $incomeClassificationDetailData);
+        return $this->set('incomeClassificationDetailData', $incomeClassificationDetailData);
     }
 
 }

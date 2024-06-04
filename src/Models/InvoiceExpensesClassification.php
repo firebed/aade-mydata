@@ -22,9 +22,9 @@ class InvoiceExpensesClassification extends Type
     /**
      * @param int $invoiceMark Μοναδικός Αριθμός Καταχώρησης Παραστατικού
      */
-    public function setInvoiceMark(int $invoiceMark): void
+    public function setInvoiceMark(int $invoiceMark): static
     {
-        $this->set('invoiceMark', $invoiceMark);
+        return $this->set('invoiceMark', $invoiceMark);
     }
 
     /**
@@ -50,11 +50,11 @@ class InvoiceExpensesClassification extends Type
      * ο ΑΦΜ της οντότητας που αναφέρεται ο χαρακτηρισμός του παραστατικού αποστέλλεται μέσω του πεδίου entityVatNumber,
      * διαφορετικά το εν λόγω πεδίο παραμένει κενό
      *
-     * @param string $entityVatNumber ΑΦΜ Οντότητας Αναφοράς
+     * @param  string|null  $entityVatNumber  ΑΦΜ Οντότητας Αναφοράς
      */
-    public function setEntityVatNumber(string $entityVatNumber): void
+    public function setEntityVatNumber(?string $entityVatNumber): static
     {
-        $this->set('entityVatNumber', $entityVatNumber);
+        return $this->set('entityVatNumber', $entityVatNumber);
     }
 
     /**
@@ -73,11 +73,11 @@ class InvoiceExpensesClassification extends Type
      *
      * Ο χρήστης μπορεί να συμπεριλάβει είτε το στοιχείο transactionMode ή λίστα στοιχείων invoicesExpensesClassificationDetails<
      *
-     * @param TransactionMode|int $transactionMode Είδος Συναλλαγής
+     * @param TransactionMode|int|null $transactionMode Είδος Συναλλαγής
      */
-    public function setTransactionMode(TransactionMode|int $transactionMode): void
+    public function setTransactionMode(TransactionMode|int|null $transactionMode): static
     {
-        $this->set('transactionMode', $transactionMode);
+        return $this->set('transactionMode', $transactionMode);
     }
 
     /**
@@ -92,11 +92,11 @@ class InvoiceExpensesClassification extends Type
      * Κάθε στοιχείο invoicesExpensesClassificationDetails περιέχει ένα lineNumber και
      * μια λίστα στοιχείων expensesClassificationDetailData.
      *
-     * @param InvoicesExpensesClassificationDetail[] $invoicesExpensesClassificationDetails Λίστα Χαρακτηρισμών Εξόδων
+     * @param InvoicesExpensesClassificationDetail[]|null $invoicesExpensesClassificationDetails Λίστα Χαρακτηρισμών Εξόδων
      */
-    public function setInvoicesExpensesClassificationDetails(array $invoicesExpensesClassificationDetails): void
+    public function setInvoicesExpensesClassificationDetails(?array $invoicesExpensesClassificationDetails): static
     {
-        $this->set('invoicesExpensesClassificationDetails', $invoicesExpensesClassificationDetails);
+        return $this->set('invoicesExpensesClassificationDetails', $invoicesExpensesClassificationDetails);
     }
 
     /**
@@ -118,8 +118,8 @@ class InvoiceExpensesClassification extends Type
      *
      * @param int $classificationPostMode Μέθοδος Υποβολής Χαρακτηρισμού
      */
-    public function setClassificationPostMode(int $classificationPostMode): void
+    public function setClassificationPostMode(int $classificationPostMode): static
     {
-        $this->set('classificationPostMode', $classificationPostMode);
+        return $this->set('classificationPostMode', $classificationPostMode);
     }
 }

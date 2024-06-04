@@ -21,7 +21,7 @@ trait SummarizesInvoiceTaxes
         $this->totalFeesAmount += abs($row->getFeesAmount() ?? 0);
         $this->totalStampDutyAmount += abs($row->getStampDutyAmount() ?? 0);
         $this->totalOtherTaxesAmount += abs($row->getOtherTaxesAmount() ?? 0);
-        $this->totalDeductionsAmount += abs($row->getDeductionsAmount() ?? 0);        
+        $this->totalDeductionsAmount += abs($row->getDeductionsAmount() ?? 0);
     }
 
     protected function addTaxesFromTaxTotals(TaxTotals $tax): void
@@ -39,7 +39,7 @@ trait SummarizesInvoiceTaxes
     
     protected function saveTaxes(InvoiceSummary $summary): void
     {
-        $withheldAmount = $this->round($summary->getTotalWithheldAmount() +$this->totalWithheldAmount);
+        $withheldAmount = $this->round($summary->getTotalWithheldAmount() + $this->totalWithheldAmount);
         $summary->setTotalWithheldAmount($withheldAmount);
 
         $feesAmount = $this->round($summary->getTotalFeesAmount() + $this->totalFeesAmount);

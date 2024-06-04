@@ -77,15 +77,15 @@ class InvoicePaymentMethodsTest extends TestCase
 
         $this->assertCount(2, $invoice->getPaymentMethods());
     }
-    
+
     public function test_it_converts_multiple_invoice_payment_methods_to_xml_using_array(): void
     {
         $invoice = Invoice::factory()->make();
         $invoice->setPaymentMethods([PaymentMethodDetail::factory(), PaymentMethodDetail::factory()]);
-        
+
         $this->assertCount(2, $invoice->getPaymentMethods());
     }
-    
+
     public function test_it_converts_multiple_invoice_payment_methods_to_xml_using_add(): void
     {
         $invoice = Invoice::factory()->except(['paymentMethods'])->make();
@@ -94,13 +94,13 @@ class InvoicePaymentMethodsTest extends TestCase
 
         $this->assertCount(2, $invoice->getPaymentMethods());
     }
-    
+
     public function test_it_converts_xml_to_invoice_payment_methods(): void
     {
         $invoice = $this->getInvoiceFromXml();
 
         $paymentMethods = $invoice->getPaymentMethods();
-        
+
         $this->assertCount(2, $paymentMethods);
 
         $this->assertEquals(PaymentMethod::METHOD_1, $paymentMethods[0]->getType());

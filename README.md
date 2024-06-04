@@ -1,10 +1,14 @@
 # ΑΑΔΕ - AADE myDATA
-    
+
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/firebed/aade-mydata.svg?style=flat-square)](https://packagist.org/packages/firebed/aade-mydata)
-[![Total Downloads](https://poser.pugx.org/firebed/aade-mydata/downloads)](//packagist.org/packages/firebed/aade-mydata)
+[![Total Downloads](https://poser.pugx.org/firebed/aade-mydata/downloads)](https://packagist.org/packages/firebed/aade-mydata)
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/firebed/aade-mydata/php.yml)
-[![PHP Version Require](https://poser.pugx.org/firebed/aade-mydata/require/php)](//packagist.org/packages/firebed/aade-mydata)
+[![PHP Version Require](https://poser.pugx.org/firebed/aade-mydata/require/php)](https://packagist.org/packages/firebed/aade-mydata)
 [![License](https://poser.pugx.org/firebed/aade-mydata/license)](LICENSE.md)
+
+## Support This Project
+
+If you find this project useful, you can show your appreciation and support by giving it a ⭐. Your support motivates us to work harder and make even better and more useful tools!
 
 ## Introduction
 
@@ -18,10 +22,10 @@ All documentation is available 👉 [on our documentation site](https://docs.inv
 
 | Version | PHP | myDATA |
 |---------|-----|--------|
-| ^v.4.x  | 8.1 | v1.0.8 |
-| ^v.3.x  | 8.1 | v1.0.7 |
-| ^v.2.x  | 8.1 | v1.0.5 |
-| ^v.1.x  | 8.0 | v1.0.3 |
+| ^v4.x   | 8.1 | v1.0.8 |
+| ^v3.x   | 8.1 | v1.0.7 |
+| ^v2.x   | 8.1 | v1.0.5 |
+| ^v1.x   | 8.0 | v1.0.3 |
 
 - guzzlehttp/guzzle >= 7.0
 

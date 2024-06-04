@@ -24,11 +24,11 @@ class Address extends Type
     }
 
     /**
-     * @param string $street Οδός
+     * @param  string|null  $street  Οδός
      */
-    public function setStreet(string $street): void
+    public function setStreet(?string $street): static
     {
-        $this->set('street', $street);
+        return $this->set('street', $street);
     }
 
     /**
@@ -40,11 +40,11 @@ class Address extends Type
     }
 
     /**
-     * @param string $number Αριθμός Οδού
+     * @param  string|null  $number  Αριθμός Οδού
      */
-    public function setNumber(string $number): void
+    public function setNumber(?string $number): static
     {
-        $this->set('number', $number);
+        return $this->set('number', $number);
     }
 
     /**
@@ -58,9 +58,9 @@ class Address extends Type
     /**
      * @param string $postalCode Ταχυδρομικός Κώδικας
      */
-    public function setPostalCode(string $postalCode): void
+    public function setPostalCode(string $postalCode): static
     {
-        $this->set('postalCode', $postalCode);
+        return $this->set('postalCode', $postalCode);
     }
 
     /**
@@ -74,9 +74,8 @@ class Address extends Type
     /**
      * @param string $city Όνομα πόλης
      */
-    public function setCity(string $city): void
+    public function setCity(string $city): static
     {
-        $this->set('city', $city);
+        return $this->set('city', $city);
     }
-    
 }

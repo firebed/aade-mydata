@@ -35,9 +35,9 @@ class ECRToken extends Type
      * 
      * @version 1.0.8
      */
-    public function setSigningAuthor(string $signingAuthor): void
+    public function setSigningAuthor(string $signingAuthor): static
     {
-        $this->set('SigningAuthor', $signingAuthor);
+        return $this->set('SigningAuthor', $signingAuthor);
     }
 
     /**
@@ -57,8 +57,8 @@ class ECRToken extends Type
      * 
      * @version 1.0.8
      */
-    public function setSessionNumber(string $sessionNumber): void
+    public function setSessionNumber(string $sessionNumber): static
     {
-        $this->set('SessionNumber', $sessionNumber);
+        return $this->set('SessionNumber', $sessionNumber);
     }
 }

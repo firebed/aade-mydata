@@ -33,13 +33,14 @@ class PaymentMethod extends Type
     }
 
     /**
-     * @param int $invoiceMark
+     * @param  int  $invoiceMark
      *
+     * @return PaymentMethod
      * @version 1.0.8
      */
-    public function setInvoiceMark(int $invoiceMark): void
+    public function setInvoiceMark(int $invoiceMark): static
     {
-        $this->set('invoiceMark', $invoiceMark);
+        return $this->set('invoiceMark', $invoiceMark);
     }
 
     /**
@@ -69,13 +70,13 @@ class PaymentMethod extends Type
      * αποστέλλεται μέσω του πεδίου entityVatNumber, διαφορετικά το εν λόγω πεδίο
      * παραμένει κενό.
      *
-     * @param string|null $entityVatNumber ΑΦΜ Οντότητας Αναφοράς
+     * @param  string|null  $entityVatNumber  ΑΦΜ Οντότητας Αναφοράς
      *
      * @version 1.0.8
      */
-    public function setEntityVatNumber(?string $entityVatNumber): void
+    public function setEntityVatNumber(?string $entityVatNumber): static
     {
-        $this->set('entityVatNumber', $entityVatNumber);
+        return $this->set('entityVatNumber', $entityVatNumber);
     }
 
     /**
@@ -92,40 +93,34 @@ class PaymentMethod extends Type
      * Το σύνολο των ποσών amount ανά αντικείμενο PaymentMethodType πρέπει να
      * ισούται με το totalValue του παραστατικού στο οποίο αντιστοιχεί το invoiceMark.
      *
-     * @param PaymentMethodDetail $paymentMethodDetails Τρόπος Πληρωμής
+     * @param  PaymentMethodDetail  $paymentMethodDetails  Τρόπος Πληρωμής
      *
      * @version 1.0.8
      */
-    public function addPaymentMethodDetails(PaymentMethodDetail $paymentMethodDetails): void
+    public function addPaymentMethodDetails(PaymentMethodDetail $paymentMethodDetails): static
     {
-        $this->push('paymentMethodDetails', $paymentMethodDetails);
+        return $this->push('paymentMethodDetails', $paymentMethodDetails);
     }
 
     /**
      * Το σύνολο των ποσών amount ανά αντικείμενο PaymentMethodType πρέπει να
      * ισούται με το totalValue του παραστατικού στο οποίο αντιστοιχεί το invoiceMark.
      *
-     * @param PaymentMethodDetail[] $paymentMethodDetails Τρόποι Πληρωμής
-     * @return void
+     * @param  PaymentMethodDetail[]  $paymentMethodDetails  Τρόποι Πληρωμής
      *
      * @version 1.0.8
      */
-    public function setPaymentMethodDetails(array $paymentMethodDetails): void
+    public function setPaymentMethodDetails(array $paymentMethodDetails): static
     {
-        $this->set('paymentMethodDetails', $paymentMethodDetails);
+        return $this->set('paymentMethodDetails', $paymentMethodDetails);
     }
 
-    public function set($key, $value): void
+    public function set($key, $value): static
     {
-        if ($key === 'paymentMethodDetails') {
-            if (is_array($value)) {
-                parent::set($key, $value);
-            } else {
-                $this->addPaymentMethodDetails($value);
-            }
-            return;
+        if ($key === 'paymentMethodDetails' && !is_array($value)) {
+            return $this->addPaymentMethodDetails($value);
         }
 
-        parent::set($key, $value);
+        return parent::set($key, $value);
     }
 }

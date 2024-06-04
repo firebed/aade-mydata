@@ -7,7 +7,7 @@ use Firebed\AadeMyData\Traits\HasFactory;
 class Party extends Type
 {
     use HasFactory;
-    
+
     protected array $expectedOrder = [
         'vatNumber',
         'country',
@@ -18,11 +18,11 @@ class Party extends Type
         'supplyAccountNo',
         'countryDocumentId'
     ];
-    
+
     protected array $casts = [
         'address' => Address::class,
     ];
-    
+
     /**
      * @return string|null Οποιοσδήποτε έγκυρος ΑΦΜ
      */
@@ -32,11 +32,11 @@ class Party extends Type
     }
 
     /**
-     * @param string $vatNumber Οποιοσδήποτε έγκυρος ΑΦΜ
+     * @param  string  $vatNumber  Οποιοσδήποτε έγκυρος ΑΦΜ
      */
-    public function setVatNumber(string $vatNumber): void
+    public function setVatNumber(string $vatNumber): static
     {
-        $this->set('vatNumber', $vatNumber);
+        return $this->set('vatNumber', $vatNumber);
     }
 
     /**
@@ -51,11 +51,11 @@ class Party extends Type
      * Ο κωδικός της χώρας είναι δύο χαρακτήρες και προέρχεται
      * από την αντίστοιχη λίστα χωρών όπως περιγράφεται στο ISO 3166
      *
-     * @param string $country Ο κωδικός της χώρας
+     * @param  string  $country  Ο κωδικός της χώρας
      */
-    public function setCountry(string $country): void
+    public function setCountry(string $country): static
     {
-        $this->set('country', $country);
+        return $this->set('country', $country);
     }
 
     /**
@@ -71,11 +71,11 @@ class Party extends Type
      * <p>Σε περίπτωση που η εγκατάσταση του εκδότη είναι η έδρα ή δεν υφίσταται,
      * το πεδίο branch πρέπει να έχει την τιμή 0</p>
      *
-     * @param int $branch Ελάχιστη τιμή = 0
+     * @param  int  $branch  Ελάχιστη τιμή = 0
      */
-    public function setBranch(int $branch): void
+    public function setBranch(int $branch): static
     {
-        $this->set('branch', $branch);
+        return $this->set('branch', $branch);
     }
 
     /**
@@ -94,11 +94,11 @@ class Party extends Type
      * το παραστατικό αφορά οντότητα εντός Ελλάδας (GR)</li>
      * </ul>
      *
-     * @param string|null $name Επωνυμία
+     * @param  string|null  $name  Επωνυμία
      */
-    public function setName(?string $name): void
+    public function setName(?string $name): static
     {
-        $this->set('name', $name);
+        return $this->set('name', $name);
     }
 
     /**
@@ -117,11 +117,11 @@ class Party extends Type
      * το παραστατικό αφορά οντότητα εντός Ελλάδας (GR)</li>
      * </ul>
      *
-     * @param Address|null $address Διεύθυνση
+     * @param  Address|null  $address  Διεύθυνση
      */
-    public function setAddress(?Address $address): void
+    public function setAddress(?Address $address): static
     {
-        $this->set('address', $address);
+        return $this->set('address', $address);
     }
 
     /**
@@ -144,12 +144,12 @@ class Party extends Type
      * (specialInvoiceCategory = 4)</li>
      * </ul>
      *
-     * @param string|null $documentIdNo
-     * @return void
+     * @param  string|null  $documentIdNo
+     * @return Party
      */
-    public function setDocumentIdNo(?string $documentIdNo): void
+    public function setDocumentIdNo(?string $documentIdNo): static
     {
-        $this->set('documentIdNo', $documentIdNo);
+        return $this->set('documentIdNo', $documentIdNo);
     }
 
     /**
@@ -171,12 +171,12 @@ class Party extends Type
      * καυσίμων.</li>
      * </ul>
      *
-     * @param string|null $supplyAccountNo
-     * @return void
+     * @param  string|null  $supplyAccountNo
+     * @return Party
      */
-    public function setSupplyAccountNo(?string $supplyAccountNo): void
+    public function setSupplyAccountNo(?string $supplyAccountNo): static
     {
-        $this->set('supplyAccountNo', $supplyAccountNo);
+        return $this->set('supplyAccountNo', $supplyAccountNo);
     }
 
     /**
@@ -196,11 +196,11 @@ class Party extends Type
      * το πεδίο αριθμός επίσημου εγγράφου (documentIdNo) και αφορά τον λήπτη του
      * παραστατικού.
      *
-     * @param string|null $countryDocumentId Κωδ. Χώρας Έκδοσης Επίσημου Εγγράφου
+     * @param  string|null  $countryDocumentId  Κωδ. Χώρας Έκδοσης Επίσημου Εγγράφου
      * @version 1.0.7
      */
-    public function setCountryDocumentId(?string $countryDocumentId): void
+    public function setCountryDocumentId(?string $countryDocumentId): static
     {
-        $this->set('countryDocumentId', $countryDocumentId);
+        return $this->set('countryDocumentId', $countryDocumentId);
     }
 }

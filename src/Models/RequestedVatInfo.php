@@ -25,13 +25,12 @@ class RequestedVatInfo extends Type
         return $this->get('VatInfo');
     }
 
-    public function set($key, $value): void
+    public function set($key, $value): static
     {
-        if ($key === 'VatInfo') {
-            $this->push($key, $value);
-            return;
+        if ($key === 'VatInfo' && !is_array($value)) {
+            return $this->push($key, $value);
         }
 
-        parent::set($key, $value);
+        return parent::set($key, $value);
     }
 }

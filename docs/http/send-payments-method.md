@@ -43,7 +43,7 @@ try {
     $paymentMethod->addPaymentMethodDetails($details);
     
     $send = new SendPaymentsMethod();
-    $responses = $send->handle($paymentMethods);
+    $responses = $send->handle($paymentMethod);
     
     // ... handle responses
 } catch (MyDataException $e) {

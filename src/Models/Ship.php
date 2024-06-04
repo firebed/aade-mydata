@@ -26,9 +26,9 @@ class Ship extends Type
     /**
      * @param string $applicationId Αριθμός Δήλωσης Διενέργειας Δραστηριότητας
      */
-    public function setApplicationId(string $applicationId): void
+    public function setApplicationId(string $applicationId): static
     {
-        $this->set('applicationId', $applicationId);
+        return $this->set('applicationId', $applicationId);
     }
 
     /**
@@ -42,9 +42,9 @@ class Ship extends Type
     /**
      * @param string $applicationDate Ημερομηνία Δήλωσης Y-m-d
      */
-    public function setApplicationDate(string $applicationDate): void
+    public function setApplicationDate(string $applicationDate): static
     {
-        $this->set('applicationDate', $applicationDate);
+        return $this->set('applicationDate', $applicationDate);
     }
 
     /**
@@ -56,11 +56,11 @@ class Ship extends Type
     }
 
     /**
-     * @param string $doy Ημερομηνία ΔΟΥ Δήλωσης
+     * @param  string|null  $doy  Ημερομηνία ΔΟΥ Δήλωσης
      */
-    public function setDoy(string $doy): void
+    public function setDoy(?string $doy): static
     {
-        $this->set('doy', $doy);
+        return $this->set('doy', $doy);
     }
 
     /**
@@ -74,8 +74,8 @@ class Ship extends Type
     /**
      * @param string $shipID Στοιχεία Πλοίου
      */
-    public function setShipID(string $shipID): void
+    public function setShipID(string $shipID): static
     {
-        $this->set('shipID', $shipID);
+        return $this->set('shipID', $shipID);
     }
 }

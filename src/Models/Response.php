@@ -20,9 +20,9 @@ class Response extends Type
         return $this->get('index');
     }
 
-    public function setIndex(int $index): void
+    public function setIndex(int $index): static
     {
-        $this->set('index', $index);
+        return $this->set('index', $index);
     }
 
     /**
@@ -50,9 +50,9 @@ class Response extends Type
         return $this->get('statusCode');
     }
 
-    public function setStatusCode(string $statusCode): void
+    public function setStatusCode(string $statusCode): static
     {
-        $this->set('statusCode', $statusCode);
+        return $this->set('statusCode', $statusCode);
     }
 
     /**
@@ -65,9 +65,9 @@ class Response extends Type
         return $this->get('invoiceUid');
     }
 
-    public function setInvoiceUid(string $invoiceUid): void
+    public function setInvoiceUid(string $invoiceUid): static
     {
-        $this->set('invoiceUid', $invoiceUid);
+        return $this->set('invoiceUid', $invoiceUid);
     }
 
     /**
@@ -83,9 +83,9 @@ class Response extends Type
         return $this->get('invoiceMark');
     }
 
-    public function setInvoiceMark(string $invoiceMark): void
+    public function setInvoiceMark(string $invoiceMark): static
     {
-        $this->set('invoiceMark', $invoiceMark);
+        return $this->set('invoiceMark', $invoiceMark);
     }
 
     /**
@@ -98,9 +98,9 @@ class Response extends Type
         return $this->get('classificationMark');
     }
 
-    public function setClassificationMark(string $classificationMark): void
+    public function setClassificationMark(string $classificationMark): static
     {
-        $this->set('classificationMark', $classificationMark);
+        return $this->set('classificationMark', $classificationMark);
     }
 
     /**
@@ -113,9 +113,9 @@ class Response extends Type
         return $this->get('authenticationCode');
     }
 
-    public function setAuthenticationCode(string $authenticationCode): void
+    public function setAuthenticationCode(string $authenticationCode): static
     {
-        $this->set('authenticationCode', $authenticationCode);
+        return $this->set('authenticationCode', $authenticationCode);
     }
 
     /**
@@ -128,9 +128,9 @@ class Response extends Type
         return $this->get('cancellationMark');
     }
 
-    public function setCancellationMark(string $cancellationMark): void
+    public function setCancellationMark(string $cancellationMark): static
     {
-        $this->set('cancellationMark', $cancellationMark);
+        return $this->set('cancellationMark', $cancellationMark);
     }
 
     public function hasErrors(): bool
@@ -151,11 +151,12 @@ class Response extends Type
      * Χρησιμοποιείται από τα προγράμματα για τη δημιουργία QR Code τύπου Url
      *
      * @param $qrUrl
+     * @return Response
      * @version 1.0.7
      */
-    public function setQrUrl($qrUrl): void
+    public function setQrUrl($qrUrl): static
     {
-        $this->set('qrUrl', $qrUrl);
+        return $this->set('qrUrl', $qrUrl);
     }
 
     /**

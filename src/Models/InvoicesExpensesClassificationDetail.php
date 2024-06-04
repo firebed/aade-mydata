@@ -21,9 +21,9 @@ class InvoicesExpensesClassificationDetail extends Type
      *
      * @param int $lineNumber Αριθμός Γραμμής
      */
-    public function setLineNumber(int $lineNumber): void
+    public function setLineNumber(int $lineNumber): static
     {
-        $this->set('lineNumber', $lineNumber);
+        return $this->set('lineNumber', $lineNumber);
     }
 
     /**
@@ -40,8 +40,8 @@ class InvoicesExpensesClassificationDetail extends Type
      * 
      * @param ExpensesClassification[] $expensesClassificationDetailData
      */
-    public function setExpensesClassificationDetailData(array $expensesClassificationDetailData): void
+    public function setExpensesClassificationDetailData(array $expensesClassificationDetailData): static
     {
-        $this->set('expensesClassificationDetailData', $expensesClassificationDetailData);
+        return $this->set('expensesClassificationDetailData', $expensesClassificationDetailData);
     }
 }
