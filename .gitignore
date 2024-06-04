@@ -2,7 +2,6 @@
 /vendor/
 /node_modules/
 /src/TestInvoice.php
-composer.lock
 kernel.php
 .phpunit.result.cache
 requested-doc.xml
