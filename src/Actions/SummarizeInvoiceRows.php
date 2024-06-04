@@ -14,8 +14,8 @@ class SummarizeInvoiceRows
     public float $totalVatAmount = 0;
 
     /**
-     * @param InvoiceDetails[]|null $rows
-     * @param array $options
+     * @param  InvoiceDetails[]|null  $rows
+     * @param  array  $options
      * @return void
      */
     public function handle(?array $rows, array $options = []): void
@@ -27,7 +27,7 @@ class SummarizeInvoiceRows
         foreach ($rows as $row) {
             $this->totalNetValue += abs($row->getNetValue() ?? 0);
             $this->totalVatAmount += abs($row->getVatAmount() ?? 0);
-            
+
             $this->addTaxesFromInvoiceRow($row);
         }
     }
@@ -41,13 +41,13 @@ class SummarizeInvoiceRows
         $summary->setTotalVatAmount($vatAmount);
 
         $this->saveTaxes($summary);
-        
-        $grossValue = $this->round($summary->getTotalGrossValue() + $this->getTotalGrossValue());
+
+        $grossValue = $this->round($this->getTotalGrossValue());
         $summary->setTotalGrossValue($grossValue);
     }
 
     public function getTotalGrossValue(): float
     {
-        return $this->totalNetValue + $this->totalVatAmount - $this->getTotalTaxes();
+        return $this->totalNetValue + $this->totalVatAmount + $this->getTotalTaxes();
     }
 }

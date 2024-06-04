@@ -30,7 +30,7 @@ class SummarizeInvoiceTaxes
     {
         $this->saveTaxes($summary);
 
-        $grossValue = $this->round($summary->getTotalGrossValue() - $this->getTotalTaxes());
+        $grossValue = $this->round($summary->getTotalGrossValue() + $this->getTotalTaxes());
         $summary->setTotalGrossValue($grossValue);
     }
 }

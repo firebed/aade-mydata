@@ -60,7 +60,7 @@ class SummarizeInvoiceTest extends TestCase
         $this->assertEquals(12.26, $summary->getTotalDeductionsAmount());
         $this->assertEquals(14.15, $summary->getTotalFeesAmount());
         $this->assertEquals(6.26, $summary->getTotalStampDutyAmount());
-        $this->assertEquals(113.78, $summary->getTotalGrossValue());
+        $this->assertEquals(142.08, $summary->getTotalGrossValue());
     }
 
     public function test_it_summarizes_invoice_row_income_classifications()
@@ -328,7 +328,7 @@ class SummarizeInvoiceTest extends TestCase
         $this->assertEquals(1620.36, $summary->getTotalDeductionsAmount());
         $this->assertEquals(25, $summary->getTotalFeesAmount());
         $this->assertEquals(699.56, $summary->getTotalStampDutyAmount());
-        $this->assertEquals(15_101.99, $summary->getTotalGrossValue());
+        $this->assertEquals(15_151.99, $summary->getTotalGrossValue());
     }
 
     private function createEcls($type, $category, float $amount, $vat = null, $vatAmount = null, $exemption = null): ExpensesClassification

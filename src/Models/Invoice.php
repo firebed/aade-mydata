@@ -143,7 +143,7 @@ class Invoice extends Type
         if ($paymentMethods instanceof PaymentMethods) {
             return $this->set('paymentMethods', $paymentMethods);
         }
-        
+
         return $this->set('paymentMethods', new PaymentMethods($paymentMethods));
     }
 
@@ -200,7 +200,7 @@ class Invoice extends Type
     {
         return $this->set('invoiceDetails', $invoiceDetails);
     }
-    
+
     /**
      * @return InvoiceSummary|null Περίληψη Παραστατικού
      */
@@ -227,7 +227,7 @@ class Invoice extends Type
     {
         $summary = (new SummarizeInvoice)->handle($this, $options);
         $this->setInvoiceSummary($summary);
-        
+
         return $summary;
     }
 
