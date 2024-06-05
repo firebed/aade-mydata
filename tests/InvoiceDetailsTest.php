@@ -49,7 +49,7 @@ class InvoiceDetailsTest extends TestCase
         $this->assertEquals($row->getDienergia()->getApplicationId(), $rowXml->dienergia->applicationId);
         $this->assertEquals($row->getDienergia()->getApplicationDate(), $rowXml->dienergia->applicationDate);
         $this->assertEquals($row->getDienergia()->getDoy(), $rowXml->dienergia->doy);
-        $this->assertEquals($row->getDienergia()->getShipID(), $rowXml->dienergia->shipID);
+        $this->assertEquals($row->getDienergia()->getShipId(), $rowXml->dienergia->shipId);
         $this->assertEquals($row->isDiscountOption(), filter_var($rowXml->discountOption, FILTER_VALIDATE_BOOLEAN));
         $this->assertEquals($row->getWithheldAmount(), $rowXml->withheldAmount);
         $this->assertEquals($row->getWithheldPercentCategory()->value, $rowXml->withheldPercentCategory);

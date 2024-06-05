@@ -330,7 +330,7 @@ class InvoiceDetails extends Type
             $ship->setApplicationId($dienergia);
             $ship->setApplicationDate($applicationDate);
             $ship->setDoy($doy);
-            $ship->setShipID($shipId);
+            $ship->setShipId($shipId);
             return $this->setDienergia($ship);
         }
     }

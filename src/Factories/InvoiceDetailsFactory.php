@@ -27,7 +27,7 @@ class InvoiceDetailsFactory extends Factory
         return [
             'lineNumber'                   => fake()->unique()->numberBetween(1, 100),
             'recType'                      => fake()->randomElement(RecType::cases()),
-            'TaricNo'                      => fake()->bothify('???###'),
+            'TaricNo'                      => fake()->bothify('???###??##'),
             'itemCode'                     => fake()->bothify('??##??'),
             'itemDescr'                    => fake()->text(),
             'fuelCode'                     => fake()->randomElement(FuelCode::cases()),
@@ -49,12 +49,12 @@ class InvoiceDetailsFactory extends Factory
             'otherTaxesPercentCategory'    => fake()->randomElement(OtherTaxesPercentCategory::cases()),
             'otherTaxesAmount'             => fake()->randomFloat(2, 10, 100),
             'deductionsAmount'             => fake()->randomFloat(2, 10, 100),
-            'lineComments'                 => fake()->text(),
+            'lineComments'                 => fake()->text(150),
             'incomeClassification'         => IncomeClassification::factory(),
             'expensesClassification'       => ExpensesClassification::factory(),
             'quantity15'                   => fake()->randomFloat(2, 10, 50),
             'otherMeasurementUnitQuantity' => fake()->randomDigitNotZero(),
-            'otherMeasurementUnitTitle'    => fake()->text(),
+            'otherMeasurementUnitTitle'    => fake()->text(150),
         ];
     }
 }

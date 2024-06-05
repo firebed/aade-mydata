@@ -14,7 +14,7 @@ class PartyFactory extends Factory
     {
         return [
             'vatNumber'         => fake()->numerify("#########"),
-            'country'           => fake()->countryCode(),
+            'country'           => fake()->randomElement(['GR', 'CY', 'IT', 'DE', 'BG']),
             'branch'            => fake()->randomDigitNotNull(),
             'name'              => fake()->company(),
             'documentIdNo'      => fake()->bothify(),

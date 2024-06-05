@@ -3,8 +3,10 @@
 namespace Firebed\AadeMyData\Models;
 
 
+use DOMDocument;
 use Firebed\AadeMyData\Actions\SummarizeInvoice;
 use Firebed\AadeMyData\Traits\HasFactory;
+use Firebed\AadeMyData\Xml\InvoicesDocWriter;
 
 class Invoice extends Type
 {
@@ -298,7 +300,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param TransportDetail[]|null $transportDetails
+     * @param  TransportDetail[]|null  $transportDetails
      * @return $this
      */
     public function setOtherTransportDetails(?array $transportDetails): static
@@ -313,5 +315,29 @@ class Invoice extends Type
         }
 
         return parent::set($key, $value);
+    }
+
+    public function toXml(): string
+    {
+        $writer = new InvoicesDocWriter();
+        $writer->asXML(new InvoicesDoc($this));
+        $doc = $writer->getDomDocument();
+        return $doc->saveXML($doc->getElementsByTagName('invoice')->item(0));
+    }
+
+    public function validate(): array
+    {
+        libxml_use_internal_errors(true);
+        libxml_clear_errors();
+        
+        $writer = new InvoicesDocWriter();
+        $xml = $writer->asXML(new InvoicesDoc($this));
+        
+        $dom = new DOMDocument();
+        $dom->loadXML($xml);
+        $dom->schemaValidate(__DIR__ . '/../../docs/xsd/InvoicesDoc-v1.0.8.xsd');
+        $errors = libxml_get_errors();
+        
+        return empty($errors) ? [] : array_column($errors, 'message');
     }
 }

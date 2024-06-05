@@ -15,7 +15,7 @@ class ShipFactory extends Factory
             'applicationId'   => fake()->sha1(),
             'applicationDate' => fake()->dateTimeThisMonth()->format('Y-m-d'),
             'doy'             => fake()->city(),
-            'shipID'          => fake()->bothify('#??##??'),
+            'shipId'          => fake()->bothify('#??##??'),
         ];
     }
 }

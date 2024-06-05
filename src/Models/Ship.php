@@ -12,7 +12,7 @@ class Ship extends Type
         'applicationId',
         'applicationDate',
         'doy',
-        'shipID'
+        'shipId'
     ];
     
     /**
@@ -66,16 +66,16 @@ class Ship extends Type
     /**
      * @return string|null Στοιχεία Πλοίου
      */
-    public function getShipID(): ?string
+    public function getShipId(): ?string
     {
-        return $this->get('shipID');
+        return $this->get('shipId');
     }
 
     /**
-     * @param string $shipID Στοιχεία Πλοίου
+     * @param string $shipId Στοιχεία Πλοίου
      */
-    public function setShipID(string $shipID): static
+    public function setShipId(string $shipId): static
     {
-        return $this->set('shipID', $shipID);
+        return $this->set('shipId', $shipId);
     }
 }

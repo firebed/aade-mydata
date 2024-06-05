@@ -16,5 +16,5 @@ $address = new Ship();
 $address->setApplicationId('1234567890');
 $address->setApplicationDate('2023-10-13');
 $address->setDoy('Α΄ Αθηνών');
-$address->setShipID('123456');
+$address->setShipId('123456');
 ```
