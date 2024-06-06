@@ -57,11 +57,11 @@ trait SummarizesInvoiceTaxes
 
     public function getTotalTaxes(): float
     {
-        return - $this->totalWithheldAmount 
+        return - $this->totalWithheldAmount
+               - $this->totalDeductionsAmount
                + $this->totalFeesAmount
-               - $this->totalStampDutyAmount
-               - $this->totalOtherTaxesAmount
-               - $this->totalDeductionsAmount;
+               + $this->totalStampDutyAmount
+               + $this->totalOtherTaxesAmount;
     }
 
     protected function round(float $num, int $precision = 2): float

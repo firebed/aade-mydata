@@ -21,8 +21,7 @@ class InvoiceTest extends TestCase
         $invoice = Invoice::factory()->make();
         $this->assertNotEmpty($invoice->toXml());
     }
-
-
+    
     public function test_it_populates_invoice_auto_filled_attributes()
     {
         $doc = $this->getRequestedDocFromXml();
