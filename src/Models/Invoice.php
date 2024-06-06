@@ -329,15 +329,20 @@ class Invoice extends Type
     {
         libxml_use_internal_errors(true);
         libxml_clear_errors();
-        
+
         $writer = new InvoicesDocWriter();
         $xml = $writer->asXML(new InvoicesDoc($this));
-        
+
         $dom = new DOMDocument();
         $dom->loadXML($xml);
-        $dom->schemaValidate(__DIR__ . '/../../docs/xsd/InvoicesDoc-v1.0.8.xsd');
-        $errors = libxml_get_errors();
-        
-        return empty($errors) ? [] : array_column($errors, 'message');
+        $dom->schemaValidate(__DIR__.'/../../docs/xsd/InvoicesDoc-v1.0.8.xsd');
+
+        return array_map(function ($error) {
+            preg_match("/Element '(.+?)':( \[.*?])? (.+)/", $error->message, $matches);
+            return [
+                'field' => $matches[1] ?? null,
+                'message' => $matches[3] ?? null,
+            ];
+        }, libxml_get_errors());
     }
 }

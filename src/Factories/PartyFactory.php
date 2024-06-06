@@ -19,7 +19,7 @@ class PartyFactory extends Factory
             'name'              => fake()->company(),
             'documentIdNo'      => fake()->bothify(),
             'supplyAccountNo'   => fake()->numerify("#########"),
-            'countryDocumentId' => fake()->countryCode(),
+            'countryDocumentId' => fake()->randomElement(['GR', 'CY', 'IT', 'DE', 'BG']),
             'address'           => Address::factory(),
         ];
     }

@@ -9,13 +9,7 @@ use Tests\Traits\HandlesInvoiceXml;
 class InvoiceTest extends TestCase
 {
     use HandlesInvoiceXml;
-
-    public function test_invoice_validation()
-    {
-        $invoice = Invoice::factory()->make();
-        $this->assertEmpty($invoice->validate());
-    }
-
+    
     public function test_invoice_xml()
     {
         $invoice = Invoice::factory()->make();
@@ -36,5 +30,32 @@ class InvoiceTest extends TestCase
         $this->assertEquals('54AS56DS65VF4S65DF', $invoice->getAuthenticationCode());
         $this->assertEquals(3, $invoice->getTransmissionFailure());
         $this->assertEquals('https://www.akjjasd.com/asdkasdkasdkas?asasd=asdasd', $invoice->getQrCodeUrl());
+    }
+    
+    public function test_invoice_validation()
+    {
+        $invoice = Invoice::factory()->make();
+        $this->assertEmpty($invoice->validate());
+    }
+
+    public function test_invoice_validation_fail()
+    {
+        $invoice = Invoice::factory()->make();
+        $invoice->getInvoiceHeader()->setInvoiceType("wrong");
+        $invoice->getInvoiceSummary()->setTotalGrossValue(-10);
+
+        // "wrong" value will be cast to null because InvoiceType enum does
+        // not have "wrong" value.
+        // Since null values are stripped from the array, we expect a failure
+        // that the next give attribute (vatPaymentSuspension) is not expected
+        $this->assertEquals([
+            "field" => "{http://www.aade.gr/myDATA/invoice/v1.0}vatPaymentSuspension",
+            "message" => "This element is not expected. Expected is ( {http://www.aade.gr/myDATA/invoice/v1.0}invoiceType )."
+        ], $invoice->validate()[0]);        
+        
+        $this->assertEquals([
+            "field" => "{http://www.aade.gr/myDATA/invoice/v1.0}totalGrossValue",
+            "message" => "The value '-10' is less than the minimum value allowed ('0')."
+        ], $invoice->validate()[1]);
     }
 }
