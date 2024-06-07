@@ -22,6 +22,7 @@ All documentation is available 👉 [on our documentation site](https://docs.inv
 
 | Version | PHP | myDATA |
 |---------|-----|--------|
+| ^v5.x   | 8.1 | v1.0.8 |
 | ^v4.x   | 8.1 | v1.0.8 |
 | ^v3.x   | 8.1 | v1.0.7 |
 | ^v2.x   | 8.1 | v1.0.5 |
