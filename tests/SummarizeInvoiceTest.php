@@ -27,20 +27,20 @@ class SummarizeInvoiceTest extends TestCase
     public function test_it_summarizes_invoice_rows()
     {
         $row1 = (new InvoiceDetails())
-            ->setNetValue(100)
-            ->setVatAmount(24)
+            ->setNetValue(100.456)
+            ->setVatAmount(24.1094)
             ->setWithheldAmount(12.3)
             ->setFeesAmount(8.55);
 
         $row2 = (new InvoiceDetails())
-            ->setNetValue(25)
-            ->setVatAmount(6)
+            ->setNetValue(25.123)
+            ->setVatAmount(6.0295)
             ->setWithheldAmount(13.45)
             ->setDeductionsAmount(10.11);
 
         $row3 = (new InvoiceDetails())
-            ->setNetValue(30)
-            ->setVatAmount(7.2)
+            ->setNetValue(30.2987)
+            ->setVatAmount(7.2717)
             ->setOtherTaxesAmount(20)
             ->setFeesAmount(5.6)
             ->setStampDutyAmount(6.26)
@@ -56,14 +56,14 @@ class SummarizeInvoiceTest extends TestCase
         $summary = $invoice->getInvoiceSummary();
 
         $this->assertNotNull($summary);
-        $this->assertEquals(155, $summary->getTotalNetValue());
-        $this->assertEquals(37.2, $summary->getTotalVatAmount());
+        $this->assertEquals(155.88, $summary->getTotalNetValue());
+        $this->assertEquals(37.41, $summary->getTotalVatAmount());
         $this->assertEquals(25.75, $summary->getTotalWithheldAmount());
         $this->assertEquals(20, $summary->getTotalOtherTaxesAmount());
         $this->assertEquals(12.26, $summary->getTotalDeductionsAmount());
         $this->assertEquals(14.15, $summary->getTotalFeesAmount());
         $this->assertEquals(6.26, $summary->getTotalStampDutyAmount());
-        $this->assertEquals(194.60, $summary->getTotalGrossValue());
+        $this->assertEquals(195.69, $summary->getTotalGrossValue());
     }
 
     public function test_it_summarizes_invoice_row_income_classifications()

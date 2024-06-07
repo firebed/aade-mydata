@@ -23,26 +23,26 @@ class SquashInvoiceRowsTest extends TestCase
 
         $invoice->addInvoiceDetails(new InvoiceDetails([
             'vatCategory' => VatCategory::VAT_1,
-            'netValue' => 10,
-            'vatAmount' => 2.4,
+            'netValue' => 4.0323,
+            'vatAmount' => 0.9678,
             'incomeClassification' => [
                 [
                     'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
                     'classificationType' => IncomeClassificationType::E3_106,
-                    'amount' => 10,
+                    'amount' => 4.0323,
                 ]
             ]
         ]));
 
         $invoice->addInvoiceDetails(new InvoiceDetails([
             'vatCategory' => VatCategory::VAT_1,
-            'netValue' => 10,
-            'vatAmount' => 2.4,
+            'netValue' => 8.0645,
+            'vatAmount' => 1.9355,
             'incomeClassification' => [
                 [
                     'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
                     'classificationType' => IncomeClassificationType::E3_106,
-                    'amount' => 10,
+                    'amount' => 8.0645,
                 ]
             ]
         ]));
@@ -53,8 +53,8 @@ class SquashInvoiceRowsTest extends TestCase
         $this->assertNotNull($rows);
         $this->assertCount(1, $rows);
         $this->assertEquals(VatCategory::VAT_1, $rows[0]->getVatCategory());
-        $this->assertEquals(20, $rows[0]->getNetValue());
-        $this->assertEquals(4.8, $rows[0]->getVatAmount());
+        $this->assertEquals(12.10, $rows[0]->getNetValue());
+        $this->assertEquals(2.90, $rows[0]->getVatAmount());
 
         $icls = $rows[0]->getIncomeClassification();
         $this->assertIsArray($icls);
@@ -62,7 +62,7 @@ class SquashInvoiceRowsTest extends TestCase
         
         $this->assertEquals(IncomeClassificationCategory::CATEGORY_1_1, $icls[0]->getClassificationCategory());
         $this->assertEquals(IncomeClassificationType::E3_106, $icls[0]->getClassificationType());
-        $this->assertEquals(20, $rows[0]->getIncomeClassification()[0]->getAmount());
+        $this->assertEquals(12.10, $rows[0]->getIncomeClassification()[0]->getAmount());
     }
 
     public function test_same_vat_exemption_category_rows_are_squashed()
