@@ -141,8 +141,8 @@ class Invoice extends Type
      * @param  PaymentMethods|PaymentMethodDetail[]  $paymentMethods
      */
     public function setPaymentMethods(PaymentMethods|array|null $paymentMethods): static
-    {
-        if ($paymentMethods instanceof PaymentMethods) {
+    {        
+        if ($paymentMethods == null || $paymentMethods instanceof PaymentMethods) {
             return $this->set('paymentMethods', $paymentMethods);
         }
 
@@ -259,8 +259,12 @@ class Invoice extends Type
     /**
      * @param  TaxTotals[]|null  $taxTotals
      */
-    public function setTaxesTotals(?array $taxTotals): static
-    {
+    public function setTaxesTotals(TaxesTotals|array|null $taxTotals): static
+    {        
+        if ($taxTotals === null || $taxTotals instanceof TaxesTotals) {
+            return $this->set('taxesTotals', $taxTotals);
+        }
+        
         return $this->set('taxesTotals', new TaxesTotals($taxTotals));
     }
 

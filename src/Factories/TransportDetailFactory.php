@@ -12,7 +12,7 @@ class TransportDetailFactory extends Factory
     public function definition(): array
     {
         return [
-            'vehicleNumber' => fake()->bothify("???####"),
+            'vehicleNumber' => strtoupper(fake()->bothify("??? ####")),
         ];
     }
 }

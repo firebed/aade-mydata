@@ -94,7 +94,33 @@ abstract class Type
 
     public function setAttributes(array $attributes): static
     {
-        $this->attributes = $attributes;
+        foreach ($attributes as $key => $value) {
+            $set = 'set'.str_replace('_', '', ucwords($key, '_'));
+            
+            if (is_object($value) || !method_exists($this, $set)) {
+                $this->attributes[$key] = $value;
+                continue;
+            }
+            
+            $cast = $this->getCast($key);
+            
+            if ($cast === null || !is_subclass_of($cast, Type::class)) {
+                $this->attributes[$key] = $value;
+                continue;
+            }
+            
+            if (is_subclass_of($cast, TypeArray::class)) {
+                $this->$set(array_shift($value));
+                continue;
+            }
+
+            $this->$set(
+                is_array($value) && isset($value[0])
+                    ? array_map(fn($v) => is_object($v) ? $v : new $cast($v), $value)
+                    : new $cast($value)
+            );
+        }
+
         return $this;
     }
 

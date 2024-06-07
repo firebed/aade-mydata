@@ -21,7 +21,7 @@ class ExpensesClassificationFactory extends Factory
             'vatAmount' => fake()->randomFloat(2, 0, 100),
             'vatCategory' => fake()->numberBetween(1, 8),
             'vatExemptionCategory' => fake()->randomElement(VatExemption::cases()),
-            'id' => fake()->unique()->numberBetween(1, 100),
+            'id' => fake()->numberBetween(1, 100),
         ];
     }
 }

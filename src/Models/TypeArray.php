@@ -24,6 +24,8 @@ class TypeArray extends Type implements IteratorAggregate, ArrayAccess, Countabl
      */
     public function __construct(string $childKey, mixed $items = null)
     {
+        parent::__construct();
+        
         $this->childKey = $childKey;
 
         if ($items !== null) {

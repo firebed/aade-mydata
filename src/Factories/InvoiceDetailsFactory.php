@@ -25,7 +25,7 @@ class InvoiceDetailsFactory extends Factory
     public function definition(): array
     {
         return [
-            'lineNumber'                   => fake()->unique()->numberBetween(1, 100),
+            'lineNumber'                   => fake()->unique()->randomNumber(),
             'recType'                      => fake()->randomElement(RecType::cases()),
             'TaricNo'                      => fake()->bothify('???###??##'),
             'itemCode'                     => fake()->bothify('??##??'),

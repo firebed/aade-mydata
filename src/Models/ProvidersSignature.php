@@ -14,12 +14,8 @@ class ProvidersSignature extends Type
     
     public function __construct(string $signingAuthor = null, string $signature = null)
     {
-        if ($signingAuthor !== null) {
-            $this->setSigningAuthor($signingAuthor);
-        }
-        
-        if ($signature !== null) {
-            $this->setSignature($signature);
+        if ($signingAuthor !== null || $signature !== null) {
+            parent::__construct(compact('signingAuthor', 'signature'));
         }
     }
 

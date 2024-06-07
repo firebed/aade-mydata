@@ -14,8 +14,9 @@ class ECRToken extends Type
     
     public function __construct(string $signingAuthor = null, string $sessionNumber = null)
     {
-        $attributes = compact('signingAuthor', 'sessionNumber');
-        $this->setAttributes(array_filter($attributes, fn($attr) => !is_null($attr)));
+        if ($signingAuthor !== null || $sessionNumber !== null) {
+            parent::__construct(compact('signingAuthor', 'sessionNumber'));
+        }
     }
 
     /**

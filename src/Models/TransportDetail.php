@@ -15,10 +15,12 @@ class TransportDetail extends Type
         'vehicleNumber',
     ];
 
-    public function __construct(string $vehicleNumber = null)
+    public function __construct(string|array $vehicleNumber = null)
     {
-        if ($vehicleNumber !== null) {
-            $this->setVehicleNumber($vehicleNumber);
+        if (is_array($vehicleNumber)) {
+            parent::__construct($vehicleNumber);
+        } else if ($vehicleNumber !== null) {
+            parent::__construct(['vehicleNumber' => $vehicleNumber]);
         }
     }
 

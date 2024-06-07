@@ -246,6 +246,11 @@ class InvoiceDetails extends Type
         return $this->set('netValue', $netValue);
     }
 
+    public function addNetValue(float $amount): static
+    {
+        return $this->set('netValue', $this->getNetValue() + $amount);
+    }
+
     /**
      * @return VatCategory|null Κατηγορία ΦΠΑ
      */
@@ -286,6 +291,11 @@ class InvoiceDetails extends Type
         return $this->set('vatAmount', $vatAmount);
     }
 
+    public function addVatAmount(float $amount): static
+    {
+        return $this->set('vatAmount', $this->getVatAmount() + $amount);
+    }
+    
     /**
      * @return VatExemption|null Κατηγορία Αιτίας Εξαίρεσης ΦΠΑ
      */
@@ -373,6 +383,11 @@ class InvoiceDetails extends Type
         return $this->set('withheldAmount', $withheldAmount);
     }
 
+    public function addWithheldAmount(float $amount): static
+    {
+        return $this->set('withheldAmount', $this->getWithheldAmount() + $amount);
+    }
+
     /**
      * @return WithheldPercentCategory|null Κατηγορία Συντελεστή Παρακράτησης Φόρου
      */
@@ -410,6 +425,11 @@ class InvoiceDetails extends Type
     public function setStampDutyAmount(?float $stampDutyAmount): static
     {
         return $this->set('stampDutyAmount', $stampDutyAmount);
+    }
+
+    public function addStampDutyAmount(float $amount): static
+    {
+        return $this->set('stampDutyAmount', $this->getStampDutyAmount() + $amount);
     }
 
     /**
@@ -451,6 +471,11 @@ class InvoiceDetails extends Type
         return $this->set('feesAmount', $feesAmount);
     }
 
+    public function addFeesAmount(float $amount): static
+    {
+        return $this->set('feesAmount', $this->getFeesAmount() + $amount);
+    }
+    
     /**
      * @return FeesPercentCategory|null Κατηγορία Συντελεστή Τελών
      */
@@ -506,6 +531,11 @@ class InvoiceDetails extends Type
     {
         return $this->set('otherTaxesAmount', $otherTaxesAmount);
     }
+    
+    public function addOtherTaxesAmount(float $amount): static
+    {
+        return $this->set('otherTaxesAmount', $this->getOtherTaxesAmount() + $amount);
+    }
 
     /**
      * @return float|null Ποσό Κρατήσεων
@@ -529,6 +559,11 @@ class InvoiceDetails extends Type
         return $this->set('deductionsAmount', $deductionsAmount);
     }
 
+    public function addDeductionsAmount(float $amount): static
+    {
+        return $this->set('deductionsAmount', $this->getDeductionsAmount() + $amount);
+    }
+    
     /**
      * @return string|null Σχόλια Γραμμής
      */
@@ -733,7 +768,7 @@ class InvoiceDetails extends Type
      */
     public function setOtherMeasurementUnitQuantity(?int $otherMeasurementUnitQuantity): static
     {
-        return $this->push('otherMeasurementUnitQuantity', $otherMeasurementUnitQuantity);
+        return $this->set('otherMeasurementUnitQuantity', $otherMeasurementUnitQuantity);
     }
 
     /**
@@ -754,7 +789,7 @@ class InvoiceDetails extends Type
      */
     public function setOtherMeasurementUnitTitle(?string $otherMeasurementUnitTitle): static
     {
-        return $this->push('otherMeasurementUnitTitle', $otherMeasurementUnitTitle);
+        return $this->set('otherMeasurementUnitTitle', $otherMeasurementUnitTitle);
     }
 
     public function set($key, $value): static
