@@ -712,7 +712,7 @@ class InvoiceDetails extends Type
      */
     public function setOtherMeasurementUnitQuantity(?int $otherMeasurementUnitQuantity): void
     {
-        $this->push('otherMeasurementUnitQuantity', $otherMeasurementUnitQuantity);
+        $this->set('otherMeasurementUnitQuantity', $otherMeasurementUnitQuantity);
     }
 
     /**
@@ -733,7 +733,7 @@ class InvoiceDetails extends Type
      */
     public function setOtherMeasurementUnitTitle(?string $otherMeasurementUnitTitle): void
     {
-        $this->push('otherMeasurementUnitTitle', $otherMeasurementUnitTitle);
+        $this->set('otherMeasurementUnitTitle', $otherMeasurementUnitTitle);
     }
 
     public function set($key, $value): void
