@@ -84,5 +84,5 @@ MyDataRequest::verifyClient(false);
 - [paymentsMethod-v1.0.8.xsd](../xsd/paymentMethods-v1.0.8.xsd)
 - [requestedInvoicesDoc-v1.0.8.xsd](../xsd/requestedInvoicesDoc-v1.0.8.xsd)
 - [RequestedProviderDoc-v1.0.8.xsd](../xsd/RequestedProviderDoc-v1.0.8.xsd)
-- [RequestVatInfo Response-v1.0.8.xsd](../xsd/RequestVatInfo Response.xsd)
+- [RequestVatInfo Response-v1.0.8.xsd](../xsd/RequestVatInfo%20Response.xsd)
 - [response-v1.0.8.xsd](../xsd/response-v1.0.8.xsd)
