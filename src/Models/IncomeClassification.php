@@ -84,6 +84,11 @@ class IncomeClassification extends Type
         return $this->set('amount', $amount);
     }
 
+    public function addAmount(float $amount): static
+    {        
+        return $this->set('amount', $this->getAmount() + $amount);
+    }
+
     /**
      * @return int|null Αύξων αριθμός Χαρακτηρισμού
      */
@@ -100,5 +105,14 @@ class IncomeClassification extends Type
     public function setId(int $id): static
     {
         return $this->set('id', $id);
+    }
+
+    public function roundAmounts(int $precision = 2): static
+    {
+        if ($this->getAmount()) {
+            $this->setAmount(round($this->getAmount(), $precision));
+        }
+        
+        return $this;
     }
 }

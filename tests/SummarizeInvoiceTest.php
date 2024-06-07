@@ -26,33 +26,36 @@ class SummarizeInvoiceTest extends TestCase
 
     public function test_it_summarizes_invoice_rows()
     {
-        $row1 = new InvoiceDetails();
-        $row1->setNetValue(100);
-        $row1->setVatAmount(24);
-        $row1->setWithheldAmount(12.3);
-        $row1->setFeesAmount(8.55);
+        $row1 = (new InvoiceDetails())
+            ->setNetValue(100)
+            ->setVatAmount(24)
+            ->setWithheldAmount(12.3)
+            ->setFeesAmount(8.55);
 
-        $row2 = new InvoiceDetails();
-        $row2->setNetValue(25);
-        $row2->setVatAmount(6);
-        $row2->setWithheldAmount(13.45);
-        $row2->setDeductionsAmount(10.11);
+        $row2 = (new InvoiceDetails())
+            ->setNetValue(25)
+            ->setVatAmount(6)
+            ->setWithheldAmount(13.45)
+            ->setDeductionsAmount(10.11);
 
-        $row3 = new InvoiceDetails();
-        $row3->setNetValue(30);
-        $row3->setVatAmount(7.2);
-        $row3->setOtherTaxesAmount(20);
-        $row3->setFeesAmount(5.6);
-        $row3->setStampDutyAmount(6.26);
-        $row3->setDeductionsAmount(2.15);
+        $row3 = (new InvoiceDetails())
+            ->setNetValue(30)
+            ->setVatAmount(7.2)
+            ->setOtherTaxesAmount(20)
+            ->setFeesAmount(5.6)
+            ->setStampDutyAmount(6.26)
+            ->setDeductionsAmount(2.15);
 
-        $invoice = new Invoice();
-        $invoice->addInvoiceDetails($row1);
-        $invoice->addInvoiceDetails($row2);
-        $invoice->addInvoiceDetails($row3);
+        $invoice = (new Invoice())
+            ->addInvoiceDetails($row1)
+            ->addInvoiceDetails($row2)
+            ->addInvoiceDetails($row3)
+            ->squashInvoiceRows()
+            ->summarizeInvoice();
 
-        $summary = $invoice->summarizeInvoice();
+        $summary = $invoice->getInvoiceSummary();
 
+        $this->assertNotNull($summary);
         $this->assertEquals(155, $summary->getTotalNetValue());
         $this->assertEquals(37.2, $summary->getTotalVatAmount());
         $this->assertEquals(25.75, $summary->getTotalWithheldAmount());
@@ -65,44 +68,29 @@ class SummarizeInvoiceTest extends TestCase
 
     public function test_it_summarizes_invoice_row_income_classifications()
     {
-        $row1 = new InvoiceDetails();
-        $row1->addIncomeClassification(IncomeClassificationType::E3_561_001, IncomeClassificationCategory::CATEGORY_1_2, 100.55);
-
-        $row2 = new InvoiceDetails();
-        $row2->addIncomeClassification(IncomeClassificationType::E3_561_001, IncomeClassificationCategory::CATEGORY_1_2, 200.55);
-
-        $row3 = new InvoiceDetails();
-        $row3->addIncomeClassification(IncomeClassificationType::E3_561_001, IncomeClassificationCategory::CATEGORY_1_3, 300.60);
-
-        $row4 = new InvoiceDetails();
-        $row4->addIncomeClassification(IncomeClassificationType::E3_561_001, IncomeClassificationCategory::CATEGORY_1_3, 400.20);
-
-        $row5 = new InvoiceDetails();
-        $row5->addIncomeClassification(IncomeClassificationType::E3_561_002, IncomeClassificationCategory::CATEGORY_1_2, 500.88);
-
-        $row6 = new InvoiceDetails();
-        $row6->addIncomeClassification(IncomeClassificationType::E3_561_002, IncomeClassificationCategory::CATEGORY_1_3, 600.66);
-
-        $row7 = new InvoiceDetails();
-        $row7->addIncomeClassification(IncomeClassificationType::E3_561_005, IncomeClassificationCategory::CATEGORY_1_6, 600);
-
-        $row8 = new InvoiceDetails();
-        $row8->addIncomeClassification(null, IncomeClassificationCategory::CATEGORY_1_6, 20.55);
-
-        $row9 = new InvoiceDetails();
-        $row9->addIncomeClassification(null, IncomeClassificationCategory::CATEGORY_1_6, 40.45);
-
-        $row10 = new InvoiceDetails();
-        $row10->addIncomeClassification(null, IncomeClassificationCategory::CATEGORY_1_7, 115.66);
+        $icls = [
+            [IncomeClassificationType::E3_561_001, IncomeClassificationCategory::CATEGORY_1_2, 100.55],
+            [IncomeClassificationType::E3_561_001, IncomeClassificationCategory::CATEGORY_1_2, 200.55],
+            [IncomeClassificationType::E3_561_001, IncomeClassificationCategory::CATEGORY_1_3, 300.60],
+            [IncomeClassificationType::E3_561_001, IncomeClassificationCategory::CATEGORY_1_3, 400.20],
+            [IncomeClassificationType::E3_561_002, IncomeClassificationCategory::CATEGORY_1_2, 500.88],
+            [IncomeClassificationType::E3_561_002, IncomeClassificationCategory::CATEGORY_1_3, 600.66],
+            [IncomeClassificationType::E3_561_005, IncomeClassificationCategory::CATEGORY_1_6, 600],
+            [null, IncomeClassificationCategory::CATEGORY_1_6, 20.55],
+            [null, IncomeClassificationCategory::CATEGORY_1_6, 40.45],
+            [null, IncomeClassificationCategory::CATEGORY_1_7, 115.66],
+        ];
 
         $invoice = new Invoice();
-        for ($i = 1; $i <= 10; $i++) {
-            $invoice->addInvoiceDetails(${"row$i"});
+        foreach ($icls as $cls) {
+            $row = new InvoiceDetails();
+            $row->addIncomeClassification(...$cls);
+            $invoice->addInvoiceDetails($row);
         }
 
-        $summary = $invoice->summarizeInvoice();
-        $icls = $summary->getIncomeClassifications();
+        $invoice->squashInvoiceRows()->summarizeInvoice();
 
+        $icls = $invoice->getInvoiceSummary()->getIncomeClassifications();
         $this->assertCount(7, $icls);
 
         $icls1 = $this->findIncomeClassification($icls, IncomeClassificationType::E3_561_001, IncomeClassificationCategory::CATEGORY_1_2);
@@ -136,61 +124,37 @@ class SummarizeInvoiceTest extends TestCase
 
     public function test_it_summarizes_invoice_row_expenses_classifications()
     {
-        $row1 = new InvoiceDetails();
-        $row1->addExpensesClassification($this->createEcls(ExpenseClassificationType::E3_102_001, ExpenseClassificationCategory::CATEGORY_2_1, 100.55));
+        $ecls = [
+            $this->createEcls(ExpenseClassificationType::E3_102_001, ExpenseClassificationCategory::CATEGORY_2_1, 100.55),
+            $this->createEcls(ExpenseClassificationType::E3_102_001, ExpenseClassificationCategory::CATEGORY_2_1, 200.55),
+            $this->createEcls(ExpenseClassificationType::E3_102_001, ExpenseClassificationCategory::CATEGORY_2_3, 300.60),
+            $this->createEcls(ExpenseClassificationType::E3_102_001, ExpenseClassificationCategory::CATEGORY_2_3, 400.20),
+            $this->createEcls(ExpenseClassificationType::E3_102_002, ExpenseClassificationCategory::CATEGORY_2_1, 500.88),
+            $this->createEcls(ExpenseClassificationType::E3_102_002, ExpenseClassificationCategory::CATEGORY_2_3, 600.66),
+            $this->createEcls(ExpenseClassificationType::E3_102_006, ExpenseClassificationCategory::CATEGORY_2_6, 600),
+            $this->createEcls(null, ExpenseClassificationCategory::CATEGORY_2_6, 20.55),
+            $this->createEcls(null, ExpenseClassificationCategory::CATEGORY_2_6, 40.45),
+            $this->createEcls(null, ExpenseClassificationCategory::CATEGORY_2_7, 115.66),
+            $this->createEcls(null, ExpenseClassificationCategory::CATEGORY_2_7, 50, VatCategory::VAT_1, 12),
+            $this->createEcls(null, ExpenseClassificationCategory::CATEGORY_2_7, 40, VatCategory::VAT_1, 9.60),
+            $this->createEcls(null, ExpenseClassificationCategory::CATEGORY_2_7, 50, VatCategory::VAT_7, 0, VatExemption::TYPE_12),
+            $this->createEcls(ExpenseClassificationType::E3_102_006, ExpenseClassificationCategory::CATEGORY_2_7, 150, VatCategory::VAT_7, 0, VatExemption::TYPE_13),
+            $this->createEcls(ExpenseClassificationType::E3_102_006, ExpenseClassificationCategory::CATEGORY_2_7, 10, VatCategory::VAT_7, 0, VatExemption::TYPE_13),
+        ];
 
-        $row2 = new InvoiceDetails();
-        $row2->addExpensesClassification($this->createEcls(ExpenseClassificationType::E3_102_001, ExpenseClassificationCategory::CATEGORY_2_1, 200.55));
-
-        $row3 = new InvoiceDetails();
-        $row3->addExpensesClassification($this->createEcls(ExpenseClassificationType::E3_102_001, ExpenseClassificationCategory::CATEGORY_2_3, 300.60));
-
-        $row4 = new InvoiceDetails();
-        $row4->addExpensesClassification($this->createEcls(ExpenseClassificationType::E3_102_001, ExpenseClassificationCategory::CATEGORY_2_3, 400.20));
-
-        $row5 = new InvoiceDetails();
-        $row5->addExpensesClassification($this->createEcls(ExpenseClassificationType::E3_102_002, ExpenseClassificationCategory::CATEGORY_2_1, 500.88));
-
-        $row6 = new InvoiceDetails();
-        $row6->addExpensesClassification($this->createEcls(ExpenseClassificationType::E3_102_002, ExpenseClassificationCategory::CATEGORY_2_3, 600.66));
-
-        $row7 = new InvoiceDetails();
-        $row7->addExpensesClassification($this->createEcls(ExpenseClassificationType::E3_102_006, ExpenseClassificationCategory::CATEGORY_2_6, 600));
-
-        $row8 = new InvoiceDetails();
-        $row8->addExpensesClassification($this->createEcls(null, ExpenseClassificationCategory::CATEGORY_2_6, 20.55));
-
-        $row9 = new InvoiceDetails();
-        $row9->addExpensesClassification($this->createEcls(null, ExpenseClassificationCategory::CATEGORY_2_6, 40.45));
-
-        $row10 = new InvoiceDetails();
-        $row10->addExpensesClassification($this->createEcls(null, ExpenseClassificationCategory::CATEGORY_2_7, 115.66));
-
-        $row11 = new InvoiceDetails();
-        $row11->addExpensesClassification($this->createEcls(null, ExpenseClassificationCategory::CATEGORY_2_7, 50, VatCategory::VAT_1, 12));
-        
-        $row12 = new InvoiceDetails();
-        $row12->addExpensesClassification($this->createEcls(null, ExpenseClassificationCategory::CATEGORY_2_7, 40, VatCategory::VAT_1, 9.60));
-
-        $row13 = new InvoiceDetails();
-        $row13->addExpensesClassification($this->createEcls(null, ExpenseClassificationCategory::CATEGORY_2_7, 50, VatCategory::VAT_7, 0, VatExemption::TYPE_12));
-
-        $row14 = new InvoiceDetails();
-        $row14->addExpensesClassification($this->createEcls(ExpenseClassificationType::E3_102_006, ExpenseClassificationCategory::CATEGORY_2_7, 150, VatCategory::VAT_7, 0, VatExemption::TYPE_13));
-
-        $row15 = new InvoiceDetails();
-        $row15->addExpensesClassification($this->createEcls(ExpenseClassificationType::E3_102_006, ExpenseClassificationCategory::CATEGORY_2_7, 10, VatCategory::VAT_7, 0, VatExemption::TYPE_13));
-        
         $invoice = new Invoice();
-        for ($i = 1; $i <= 15; $i++) {
-            $invoice->addInvoiceDetails(${"row$i"});
+        foreach ($ecls as $cls) {
+            $row = new InvoiceDetails();
+            $row->addExpensesClassification($cls);
+            $invoice->addInvoiceDetails($row);
         }
 
-        $summary = $invoice->summarizeInvoice();
-        $ecls = $summary->getExpensesClassifications();
+        $invoice->squashInvoiceRows()->summarizeInvoice();
+
+        $ecls = $invoice->getInvoiceSummary()->getExpensesClassifications();
 
         $this->assertCount(10, $ecls);
-        
+
         $ecls1 = $this->findExpensesClassification($ecls, ExpenseClassificationType::E3_102_001, ExpenseClassificationCategory::CATEGORY_2_1);
         $this->assertNotNull($ecls1);
         $this->assertEquals(301.10, $ecls1->getAmount());
@@ -204,7 +168,7 @@ class SummarizeInvoiceTest extends TestCase
         $ecls3 = $this->findExpensesClassification($ecls, ExpenseClassificationType::E3_102_002, ExpenseClassificationCategory::CATEGORY_2_1);
         $this->assertNotNull($ecls3);
         $this->assertEquals(500.88, $ecls3->getAmount());
-        $this->assertEmpty($ecls3->getId());        
+        $this->assertEmpty($ecls3->getId());
 
         $ecls4 = $this->findExpensesClassification($ecls, ExpenseClassificationType::E3_102_002, ExpenseClassificationCategory::CATEGORY_2_3);
         $this->assertNotNull($ecls4);
@@ -249,78 +213,82 @@ class SummarizeInvoiceTest extends TestCase
     {
         $row = new InvoiceDetails();
         $row->addExpensesClassification($this->createEcls(ExpenseClassificationType::E3_102_001, ExpenseClassificationCategory::CATEGORY_2_1, 100.55));
-        
-        $invoice = new Invoice();
-        $invoice->addInvoiceDetails($row);
-        $summary = $invoice->summarizeInvoice(['enableClassificationIds' => true]);
-        
-        $ecls = $summary->getExpensesClassifications();
-        
+
+        $invoice = (new Invoice())
+            ->addInvoiceDetails($row)
+            ->squashInvoiceRows()
+            ->summarizeInvoice(['enableClassificationIds' => true]);
+
+        $ecls = $invoice->getInvoiceSummary()->getExpensesClassifications();
+
         $ecls1 = $this->findExpensesClassification($ecls, ExpenseClassificationType::E3_102_001, ExpenseClassificationCategory::CATEGORY_2_1);
         $this->assertNotNull($ecls1);
         $this->assertEquals(100.55, $ecls1->getAmount());
         $this->assertEquals(0, $ecls1->getVatAmount());
         $this->assertEquals(1, $ecls1->getId());
     }
-    
+
     public function test_it_summarizes_invoice_taxes()
     {
-        $row = new InvoiceDetails();
-        $row->setNetValue(15000);
-        $row->setVatAmount(3600);
+        $row = (new InvoiceDetails())
+            ->setNetValue(15_000)
+            ->setVatAmount(3_600);
 
-        $tax1 = new TaxTotals();
-        $tax1->setTaxAmount(100);
-        $tax1->setTaxType(TaxType::TYPE_1);
-        $tax1->setTaxCategory(WithheldPercentCategory::TAX_1);
+        $tax1 = (new TaxTotals())
+            ->setTaxAmount(100)
+            ->setTaxType(TaxType::TYPE_1)
+            ->setTaxCategory(WithheldPercentCategory::TAX_1);
 
-        $tax2 = new TaxTotals();
-        $tax2->setTaxAmount(25);
-        $tax2->setTaxType(TaxType::TYPE_2);
-        $tax2->setTaxCategory(FeesPercentCategory::TYPE_18);
+        $tax2 = (new TaxTotals())
+            ->setTaxAmount(25)
+            ->setTaxType(TaxType::TYPE_2)
+            ->setTaxCategory(FeesPercentCategory::TYPE_18);
 
-        $tax3 = new TaxTotals();
-        $tax3->setTaxAmount(36.55);
-        $tax3->setTaxType(TaxType::TYPE_3);
-        $tax3->setTaxCategory(OtherTaxesPercentCategory::TAX_13);
+        $tax3 = (new TaxTotals())
+            ->setTaxAmount(36.55)
+            ->setTaxType(TaxType::TYPE_3)
+            ->setTaxCategory(OtherTaxesPercentCategory::TAX_13);
 
-        $tax4 = new TaxTotals();
-        $tax4->setTaxAmount(155.44);
-        $tax4->setTaxType(TaxType::TYPE_4);
-        $tax4->setTaxCategory(StampCategory::TYPE_2);
+        $tax4 = (new TaxTotals())
+            ->setTaxAmount(155.44)
+            ->setTaxType(TaxType::TYPE_4)
+            ->setTaxCategory(StampCategory::TYPE_2);
 
-        $tax5 = new TaxTotals();
-        $tax5->setTaxAmount(1620.36);
-        $tax5->setTaxType(TaxType::TYPE_5);
+        $tax5 = (new TaxTotals())
+            ->setTaxAmount(1620.36)
+            ->setTaxType(TaxType::TYPE_5);
 
-        $tax6 = new TaxTotals();
-        $tax6->setTaxAmount(544.12);
-        $tax6->setTaxType(TaxType::TYPE_4);
-        $tax6->setTaxCategory(StampCategory::TYPE_1);
+        $tax6 = (new TaxTotals())
+            ->setTaxAmount(544.12)
+            ->setTaxType(TaxType::TYPE_4)
+            ->setTaxCategory(StampCategory::TYPE_1);
 
-        $tax7 = new TaxTotals();
-        $tax7->setTaxAmount(665.88);
-        $tax7->setTaxType(TaxType::TYPE_3);
-        $tax7->setTaxCategory(OtherTaxesPercentCategory::TAX_6);
+        $tax7 = (new TaxTotals())
+            ->setTaxAmount(665.88)
+            ->setTaxType(TaxType::TYPE_3)
+            ->setTaxCategory(OtherTaxesPercentCategory::TAX_6);
 
-        $tax8 = new TaxTotals();
-        $tax8->setTaxAmount(350.66);
-        $tax8->setTaxType(TaxType::TYPE_1);
-        $tax8->setTaxCategory(WithheldPercentCategory::TAX_11);
+        $tax8 = (new TaxTotals())
+            ->setTaxAmount(350.66)
+            ->setTaxType(TaxType::TYPE_1)
+            ->setTaxCategory(WithheldPercentCategory::TAX_11);
 
-        $invoice = new Invoice();
-        $invoice->addInvoiceDetails($row);
-        $invoice->addTaxesTotals($tax1);
-        $invoice->addTaxesTotals($tax2);
-        $invoice->addTaxesTotals($tax3);
-        $invoice->addTaxesTotals($tax4);
-        $invoice->addTaxesTotals($tax5);
-        $invoice->addTaxesTotals($tax6);
-        $invoice->addTaxesTotals($tax7);
-        $invoice->addTaxesTotals($tax8);
+        $invoice = (new Invoice())
+            ->addInvoiceDetails($row)
+            ->addTaxesTotals($tax1)
+            ->addTaxesTotals($tax2)
+            ->addTaxesTotals($tax3)
+            ->addTaxesTotals($tax4)
+            ->addTaxesTotals($tax5)
+            ->addTaxesTotals($tax6)
+            ->addTaxesTotals($tax7)
+            ->addTaxesTotals($tax8)
+            ->squashInvoiceRows()
+            ->summarizeInvoice();
 
-        $summary = $invoice->summarizeInvoice();
+        $summary = $invoice->getInvoiceSummary();
 
+        $this->assertNotNull($summary);
         $this->assertEquals(15_000, $summary->getTotalNetValue());
         $this->assertEquals(3_600, $summary->getTotalVatAmount());
         $this->assertEquals(450.66, $summary->getTotalWithheldAmount());
@@ -333,14 +301,13 @@ class SummarizeInvoiceTest extends TestCase
 
     private function createEcls($type, $category, float $amount, $vat = null, $vatAmount = null, $exemption = null): ExpensesClassification
     {
-        $ecls = new ExpensesClassification();
-        $ecls->setClassificationCategory($category);
-        $ecls->setClassificationType($type);
-        $ecls->setAmount($amount);
-        $ecls->setVatCategory($vat);
-        $ecls->setVatExemptionCategory($exemption);
-        $ecls->setVatAmount($vatAmount);
-        return $ecls;
+        return (new ExpensesClassification())
+            ->setClassificationCategory($category)
+            ->setClassificationType($type)
+            ->setAmount($amount)
+            ->setVatCategory($vat)
+            ->setVatExemptionCategory($exemption)
+            ->setVatAmount($vatAmount);
     }
 
     private function findIncomeClassification(array $source, $type, $category)
@@ -365,7 +332,7 @@ class SummarizeInvoiceTest extends TestCase
 
         foreach ($source as $ecls) {
             if (
-                ($ecls->getClassificationCategory()->value ?? null) === $category 
+                ($ecls->getClassificationCategory()->value ?? null) === $category
                 && ($ecls->getClassificationType()->value ?? null) === $type
                 && ($ecls->getVatCategory()->value ?? null) === $vat
                 && ($ecls->getVatExemptionCategory()->value ?? null) === $exemption

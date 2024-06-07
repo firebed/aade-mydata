@@ -246,8 +246,12 @@ class InvoiceDetails extends Type
         return $this->set('netValue', $netValue);
     }
 
-    public function addNetValue(float $amount): static
+    public function addNetValue(?float $amount): static
     {
+        if ($amount === null) {
+            return $this;
+        }
+
         return $this->set('netValue', $this->getNetValue() + $amount);
     }
 
@@ -291,11 +295,15 @@ class InvoiceDetails extends Type
         return $this->set('vatAmount', $vatAmount);
     }
 
-    public function addVatAmount(float $amount): static
+    public function addVatAmount(?float $amount): static
     {
+        if ($amount === null) {
+            return $this;
+        }
+
         return $this->set('vatAmount', $this->getVatAmount() + $amount);
     }
-    
+
     /**
      * @return VatExemption|null Κατηγορία Αιτίας Εξαίρεσης ΦΠΑ
      */
@@ -427,8 +435,12 @@ class InvoiceDetails extends Type
         return $this->set('stampDutyAmount', $stampDutyAmount);
     }
 
-    public function addStampDutyAmount(float $amount): static
+    public function addStampDutyAmount(?float $amount): static
     {
+        if ($amount === null) {
+            return $this;
+        }
+
         return $this->set('stampDutyAmount', $this->getStampDutyAmount() + $amount);
     }
 
@@ -471,11 +483,15 @@ class InvoiceDetails extends Type
         return $this->set('feesAmount', $feesAmount);
     }
 
-    public function addFeesAmount(float $amount): static
+    public function addFeesAmount(?float $amount): static
     {
+        if ($amount === null) {
+            return $this;
+        }
+
         return $this->set('feesAmount', $this->getFeesAmount() + $amount);
     }
-    
+
     /**
      * @return FeesPercentCategory|null Κατηγορία Συντελεστή Τελών
      */
@@ -531,9 +547,13 @@ class InvoiceDetails extends Type
     {
         return $this->set('otherTaxesAmount', $otherTaxesAmount);
     }
-    
-    public function addOtherTaxesAmount(float $amount): static
+
+    public function addOtherTaxesAmount(?float $amount): static
     {
+        if ($amount === null) {
+            return $this;
+        }
+
         return $this->set('otherTaxesAmount', $this->getOtherTaxesAmount() + $amount);
     }
 
@@ -559,11 +579,15 @@ class InvoiceDetails extends Type
         return $this->set('deductionsAmount', $deductionsAmount);
     }
 
-    public function addDeductionsAmount(float $amount): static
+    public function addDeductionsAmount(?float $amount): static
     {
+        if ($amount === null) {
+            return $this;
+        }
+
         return $this->set('deductionsAmount', $this->getDeductionsAmount() + $amount);
     }
-    
+
     /**
      * @return string|null Σχόλια Γραμμής
      */
@@ -799,5 +823,46 @@ class InvoiceDetails extends Type
         }
 
         return parent::set($key, $value);
+    }
+
+    public function roundAmounts(int $precision = 2): static
+    {
+        $properties = [
+            'NetValue',
+            'VatAmount',
+            'WithheldAmount',
+            'StampDutyAmount',
+            'FeesAmount',
+            'OtherTaxesAmount',
+            'DeductionsAmount'
+        ];
+
+        $this->roundProperties($properties, $precision);
+        $this->roundClassificationAmounts($this->getIncomeClassification(), $precision);
+        $this->roundClassificationAmounts($this->getExpensesClassification(), $precision);
+
+        return $this;
+    }
+
+    private function roundProperties(array $properties, int $precision): void
+    {
+        foreach ($properties as $property) {
+            $getter = 'get'.$property;
+            $setter = 'set'.$property;
+
+            $value = $this->$getter();
+            if ($value !== null) {
+                $this->$setter(round($value, $precision));
+            }
+        }
+    }
+
+    private function roundClassificationAmounts($classifications, int $precision): void
+    {
+        if ($classifications) {
+            foreach ($classifications as $classification) {
+                $classification->roundAmounts($precision);
+            }
+        }
     }
 }

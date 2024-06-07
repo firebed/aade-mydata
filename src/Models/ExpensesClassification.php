@@ -94,6 +94,15 @@ class ExpensesClassification extends Type
         return $this->set('amount', $amount);
     }
 
+    public function addAmount(?float $amount): static
+    {
+        if ($amount === null) {
+            return $this;
+        }
+        
+        return $this->set('amount', $this->getAmount() + $amount);
+    }
+    
     /**
      * @return float|null Ποσό ΦΠΑ
      * @version 1.0.7
@@ -102,7 +111,7 @@ class ExpensesClassification extends Type
     {
         return $this->get('vatAmount');
     }
-
+    
     /**
      * Χρησιμοποιείτε μόνο για τους χαρακτηρισμούς εξόδων ΦΠΑ, διαφορετικά αγνοείται.
      *
@@ -112,6 +121,15 @@ class ExpensesClassification extends Type
     public function setVatAmount(?float $vatAmount): static
     {
         return $this->set('vatAmount', $vatAmount);
+    }
+
+    public function addVatAmount(?float $amount): static
+    {        
+        if ($amount === null) {
+            return $this;
+        }
+        
+        return $this->set('vatAmount', $this->getVatAmount() + $amount);
     }
 
     /**
@@ -170,5 +188,19 @@ class ExpensesClassification extends Type
     public function setId(int $id): static
     {
         return $this->set('id', $id);
+    }
+
+
+    public function roundAmounts(int $precision = 2): static
+    {
+        if ($this->getAmount()) {
+            $this->setAmount(round($this->getAmount(), $precision));
+        }
+        
+        if ($this->getVatAmount()) {
+            $this->setVatAmount(round($this->getVatAmount(), $precision));
+        }
+
+        return $this;
     }
 }

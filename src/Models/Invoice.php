@@ -4,6 +4,7 @@ namespace Firebed\AadeMyData\Models;
 
 
 use DOMDocument;
+use Firebed\AadeMyData\Actions\SquashInvoiceRows;
 use Firebed\AadeMyData\Actions\SummarizeInvoice;
 use Firebed\AadeMyData\Traits\HasFactory;
 use Firebed\AadeMyData\Xml\InvoicesDocWriter;
@@ -141,7 +142,7 @@ class Invoice extends Type
      * @param  PaymentMethods|PaymentMethodDetail[]  $paymentMethods
      */
     public function setPaymentMethods(PaymentMethods|array|null $paymentMethods): static
-    {        
+    {
         if ($paymentMethods == null || $paymentMethods instanceof PaymentMethods) {
             return $this->set('paymentMethods', $paymentMethods);
         }
@@ -219,18 +220,23 @@ class Invoice extends Type
         return $this->set('invoiceSummary', $invoiceSummary);
     }
 
+    public function squashInvoiceRows(): static
+    {
+        $squash = new SquashInvoiceRows();
+        $this->setInvoiceDetails($squash->handle($this->getInvoiceDetails()));
+        return $this;
+    }
+
     /**
-     * @param  array{
-     *     enableClassificationIds: bool,
-     * }  $options
-     * @return InvoiceSummary
+     * @param  array{enableClassificationIds: bool}  $options
+     * @return static
      */
-    public function summarizeInvoice(array $options = []): InvoiceSummary
+    public function summarizeInvoice(array $options = []): static
     {
         $summary = (new SummarizeInvoice)->handle($this, $options);
         $this->setInvoiceSummary($summary);
 
-        return $summary;
+        return $this;
     }
 
     /**
@@ -260,11 +266,11 @@ class Invoice extends Type
      * @param  TaxTotals[]|null  $taxTotals
      */
     public function setTaxesTotals(TaxesTotals|array|null $taxTotals): static
-    {        
+    {
         if ($taxTotals === null || $taxTotals instanceof TaxesTotals) {
             return $this->set('taxesTotals', $taxTotals);
         }
-        
+
         return $this->set('taxesTotals', new TaxesTotals($taxTotals));
     }
 
@@ -339,7 +345,7 @@ class Invoice extends Type
 
         $dom = new DOMDocument();
         $dom->loadXML($xml);
-        $dom->schemaValidate(__DIR__.'/../../docs/xsd/InvoicesDoc-v1.0.8.xsd');
+        $dom->schemaValidate(__DIR__.'/../../xsd/InvoicesDoc-v1.0.8.xsd');
 
         return array_map(function ($error) {
             preg_match("/Element '(.+?)':( \[.*?])? (.+)/", $error->message, $matches);
