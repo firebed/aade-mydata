@@ -20,13 +20,13 @@ All documentation is available 👉 [on our documentation site](https://docs.inv
 
 ## Requirements
 
-| Version | PHP | myDATA |
-|---------|-----|--------|
-| ^v5.x   | 8.1 | v1.0.8 |
-| ^v4.x   | 8.1 | v1.0.8 |
-| ^v3.x   | 8.1 | v1.0.7 |
-| ^v2.x   | 8.1 | v1.0.5 |
-| ^v1.x   | 8.0 | v1.0.3 |
+| Version | PHP | myDATA | Support |
+|---------|-----|--------|---------|
+| ^v5.x   | 8.1 | v1.0.8 | Active  |
+| ^v4.x   | 8.1 | v1.0.8 | Ended   |
+| ^v3.x   | 8.1 | v1.0.7 | Ended   |
+| ^v2.x   | 8.1 | v1.0.5 | Ended   |
+| ^v1.x   | 8.0 | v1.0.3 | Ended   |
 
 - guzzlehttp/guzzle >= 7.0
 
