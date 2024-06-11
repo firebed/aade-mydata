@@ -8,16 +8,25 @@ use Firebed\AadeMyData\Models\InvoiceDetails;
 
 class SquashInvoiceRows
 {
+    /**
+     * @var array Variable to store rows with RecType.
+     */
     private array $rowsWithRecType = [];
 
     /**
-     * @var InvoiceDetails[]
+     * @var InvoiceDetails[] Variable to store squashed rows.
      */
-    private array $squashedRows    = [];
-    
-    private array $squashedIcls    = [];
-    
-    private array $squashedEcls    = [];
+    private array $squashedRows = [];
+
+    /**
+     * @var array Variable to store squashed income classifications.
+     */
+    private array $squashedIcls = [];
+
+    /**
+     * @var array Variable to store squashed expenses classifications.
+     */
+    private array $squashedEcls = [];
 
     /**
      * Groups similar rows and returns a new array with the rows summed.
@@ -57,7 +66,7 @@ class SquashInvoiceRows
             $this->aggregateExpenseClassifications($rowKey, $row->getExpensesClassification());
         }
 
-        return $this->mergeResults();
+        return $this->mergeAndRoundResults();
     }
 
     /**
@@ -180,9 +189,9 @@ class SquashInvoiceRows
      *
      * @return array
      */
-    private function mergeResults(): array
+    private function mergeAndRoundResults(): array
     {
-        foreach ($this->squashedRows as $key => $row) {            
+        foreach ($this->squashedRows as $key => $row) {
             if (isset($this->squashedIcls[$key])) {
                 $row->setIncomeClassification(array_values($this->squashedIcls[$key]));
             }
@@ -191,9 +200,90 @@ class SquashInvoiceRows
                 $row->setExpensesClassification(array_values($this->squashedEcls[$key]));
             }
 
-            $row->roundAmounts();
+            $this->roundRow($row);
+            $this->roundClassifications($row);
+            $this->adjustClassificationAmount($row);
         }
 
         return array_merge(array_values($this->squashedRows), $this->rowsWithRecType);
+    }
+
+    /**
+     * Rounds the values of a row.
+     * 
+     * @param  InvoiceDetails  $row
+     * @return void
+     */
+    private function roundRow(InvoiceDetails $row): void
+    {
+        if ($row->getNetValue() !== null) {
+            $row->setNetValue(round($row->getNetValue(), 2));
+        }
+        
+        if ($row->getVatAmount() !== null) {
+            $row->setVatAmount(round($row->getVatAmount(), 2));
+        }
+        
+        if ($row->getWithheldAmount() !== null) {
+            $row->setWithheldAmount(round($row->getWithheldAmount(), 2));
+        }
+        
+        if ($row->getFeesAmount() !== null) {
+            $row->setFeesAmount(round($row->getFeesAmount(), 2));
+        }
+        
+        if ($row->getOtherTaxesAmount() !== null) {
+            $row->setOtherTaxesAmount(round($row->getOtherTaxesAmount(), 2));
+        }
+        
+        if ($row->getStampDutyAmount() !== null) {
+            $row->setStampDutyAmount(round($row->getStampDutyAmount(), 2));
+        }
+        
+        if ($row->getDeductionsAmount() !== null) {
+            $row->setDeductionsAmount(round($row->getDeductionsAmount(), 2));
+        }
+    }
+
+    private function roundClassifications(InvoiceDetails $row): void
+    {
+        if ($row->getIncomeClassification()) {
+            foreach ($row->getIncomeClassification() as $classification) {
+                if ($classification->getAmount() !== null) {
+                    $classification->setAmount(round($classification->getAmount(), 2));
+                }
+            }
+        }
+
+        if ($row->getExpensesClassification()) {
+            foreach ($row->getExpensesClassification() as $classification) {
+                if ($classification->getAmount() !== null) {
+                    $classification->setAmount(round($classification->getAmount(), 2));
+                }
+
+                if ($classification->getVatAmount() !== null) {
+                    $classification->setVatAmount(round($classification->getVatAmount(), 2));
+                }
+            }
+        }
+    }
+
+    private function adjustClassificationAmount(InvoiceDetails $row): void
+    {
+        $incomeClassification = $row->getIncomeClassification() ?? [];
+        $expensesClassification = $row->getExpensesClassification() ?? [];
+
+        $classifications = array_merge($incomeClassification, $expensesClassification);
+
+        $classificationSum = array_sum(array_map(fn($item) => $item->getAmount(), $classifications));
+        $diff = round($row->getNetValue() - $classificationSum, 2);
+        
+        if ($diff != 0) {
+            end($classifications);
+            $lastKey = key($classifications);
+            if ($lastKey !== null) {
+                $classifications[$lastKey]->addAmount($diff);
+            }
+        }
     }
 }

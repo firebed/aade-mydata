@@ -824,45 +824,4 @@ class InvoiceDetails extends Type
 
         return parent::set($key, $value);
     }
-
-    public function roundAmounts(int $precision = 2): static
-    {
-        $properties = [
-            'NetValue',
-            'VatAmount',
-            'WithheldAmount',
-            'StampDutyAmount',
-            'FeesAmount',
-            'OtherTaxesAmount',
-            'DeductionsAmount'
-        ];
-
-        $this->roundProperties($properties, $precision);
-        $this->roundClassificationAmounts($this->getIncomeClassification(), $precision);
-        $this->roundClassificationAmounts($this->getExpensesClassification(), $precision);
-
-        return $this;
-    }
-
-    private function roundProperties(array $properties, int $precision): void
-    {
-        foreach ($properties as $property) {
-            $getter = 'get'.$property;
-            $setter = 'set'.$property;
-
-            $value = $this->$getter();
-            if ($value !== null) {
-                $this->$setter(round($value, $precision));
-            }
-        }
-    }
-
-    private function roundClassificationAmounts($classifications, int $precision): void
-    {
-        if ($classifications) {
-            foreach ($classifications as $classification) {
-                $classification->roundAmounts($precision);
-            }
-        }
-    }
 }

@@ -32,10 +32,10 @@ class ExpensesClassification extends Type
     ];
 
     protected array $casts = [
-        'classificationType'     => ExpenseClassificationType::class,
+        'classificationType' => ExpenseClassificationType::class,
         'classificationCategory' => ExpenseClassificationCategory::class,
-        'vatCategory'            => VatCategory::class,
-        'vatExemptionCategory'   => VatExemption::class,
+        'vatCategory' => VatCategory::class,
+        'vatExemptionCategory' => VatExemption::class,
     ];
 
     /**
@@ -50,7 +50,7 @@ class ExpensesClassification extends Type
      * Το πεδίο classificationCategory χρησιμοποιείται μόνο για τους χαρακτηρισμούς
      * εξόδων Ε3, αλλιώς αγνοείται.
      *
-     * @param ExpenseClassificationType|string|null $classificationType Κωδικός Χαρακτηρισμού
+     * @param  ExpenseClassificationType|string|null  $classificationType  Κωδικός Χαρακτηρισμού
      */
     public function setClassificationType(ExpenseClassificationType|string|null $classificationType): static
     {
@@ -66,7 +66,7 @@ class ExpensesClassification extends Type
     }
 
     /**
-     * @param ExpenseClassificationCategory|string|null $classificationCategory Κατηγορία Χαρακτηρισμού
+     * @param  ExpenseClassificationCategory|string|null  $classificationCategory  Κατηγορία Χαρακτηρισμού
      */
     public function setClassificationCategory(ExpenseClassificationCategory|string|null $classificationCategory): static
     {
@@ -87,7 +87,7 @@ class ExpensesClassification extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param float $amount Ποσό
+     * @param  float  $amount  Ποσό
      */
     public function setAmount(float $amount): static
     {
@@ -99,10 +99,10 @@ class ExpensesClassification extends Type
         if ($amount === null) {
             return $this;
         }
-        
+
         return $this->set('amount', $this->getAmount() + $amount);
     }
-    
+
     /**
      * @return float|null Ποσό ΦΠΑ
      * @version 1.0.7
@@ -111,11 +111,11 @@ class ExpensesClassification extends Type
     {
         return $this->get('vatAmount');
     }
-    
+
     /**
      * Χρησιμοποιείτε μόνο για τους χαρακτηρισμούς εξόδων ΦΠΑ, διαφορετικά αγνοείται.
      *
-     * @param float|null $vatAmount Ποσό ΦΠΑ (Ελάχιστη τιμή 0, δεκαδικά 2)
+     * @param  float|null  $vatAmount  Ποσό ΦΠΑ (Ελάχιστη τιμή 0, δεκαδικά 2)
      * @version 1.0.7
      */
     public function setVatAmount(?float $vatAmount): static
@@ -124,11 +124,11 @@ class ExpensesClassification extends Type
     }
 
     public function addVatAmount(?float $amount): static
-    {        
+    {
         if ($amount === null) {
             return $this;
         }
-        
+
         return $this->set('vatAmount', $this->getVatAmount() + $amount);
     }
 
@@ -144,7 +144,7 @@ class ExpensesClassification extends Type
     /**
      * Χρησιμοποιείτε μόνο για τους χαρακτηρισμούς εξόδων ΦΠΑ, διαφορετικά αγνοείται.
      *
-     * @param VatCategory|int|null $vatCategory Κατηγορία ΦΠΑ
+     * @param  VatCategory|int|null  $vatCategory  Κατηγορία ΦΠΑ
      * @version 1.0.7
      */
     public function setVatCategory(VatCategory|int|null $vatCategory): static
@@ -164,7 +164,7 @@ class ExpensesClassification extends Type
     /**
      * Χρησιμοποιείτε μόνο για τους χαρακτηρισμούς εξόδων ΦΠΑ, διαφορετικά αγνοείται.
      *
-     * @param VatExemption|int|null $vatExemptionCategory Κατηγορία Εξαίρεσης ΦΠΑ
+     * @param  VatExemption|int|null  $vatExemptionCategory  Κατηγορία Εξαίρεσης ΦΠΑ
      * @version 1.0.7
      */
     public function setVatExemptionCategory(VatExemption|int|null $vatExemptionCategory): static
@@ -183,24 +183,10 @@ class ExpensesClassification extends Type
     /**
      * Το πεδίο id προσφέρεται για σειριακή αρίθμηση (1,2,3… κλπ) των χαρακτηρισμών εντός μιας γραμμής.
      *
-     * @param int $id Αύξων αριθμός Χαρακτηρισμού
+     * @param  int  $id  Αύξων αριθμός Χαρακτηρισμού
      */
     public function setId(int $id): static
     {
         return $this->set('id', $id);
-    }
-
-
-    public function roundAmounts(int $precision = 2): static
-    {
-        if ($this->getAmount()) {
-            $this->setAmount(round($this->getAmount(), $precision));
-        }
-        
-        if ($this->getVatAmount()) {
-            $this->setVatAmount(round($this->getVatAmount(), $precision));
-        }
-
-        return $this;
     }
 }

@@ -28,7 +28,7 @@ class SquashInvoiceRowsTest extends TestCase
             'incomeClassification' => [
                 [
                     'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
-                    'classificationType' => IncomeClassificationType::E3_106,
+                    'classificationType' => IncomeClassificationType::E3_561_001,
                     'amount' => 4.0323,
                 ]
             ]
@@ -36,19 +36,42 @@ class SquashInvoiceRowsTest extends TestCase
 
         $invoice->addInvoiceDetails(new InvoiceDetails([
             'vatCategory' => VatCategory::VAT_1,
-            'netValue' => 8.0645,
-            'vatAmount' => 1.9355,
+            'netValue' => 4.0323,
+            'vatAmount' => 0.9678,
             'incomeClassification' => [
                 [
                     'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
-                    'classificationType' => IncomeClassificationType::E3_106,
-                    'amount' => 8.0645,
+                    'classificationType' => IncomeClassificationType::E3_561_001,
+                    'amount' => 2.0162,
+                ],
+                [
+                    'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
+                    'classificationType' => IncomeClassificationType::E3_561_007,
+                    'amount' => 2.0162,
                 ]
             ]
         ]));
-        
+
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_1,
+            'netValue' => 4.0323,
+            'vatAmount' => 0.9678,
+            'incomeClassification' => [
+                [
+                    'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
+                    'classificationType' => IncomeClassificationType::E3_561_001,
+                    'amount' => 2.0162,
+                ],
+                [
+                    'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
+                    'classificationType' => IncomeClassificationType::E3_561_007,
+                    'amount' => 2.0162,
+                ]
+            ]
+        ]));
+
         $invoice->squashInvoiceRows();
-        
+
         $rows = $invoice->getInvoiceDetails();
         $this->assertNotNull($rows);
         $this->assertCount(1, $rows);
@@ -58,13 +81,17 @@ class SquashInvoiceRowsTest extends TestCase
 
         $icls = $rows[0]->getIncomeClassification();
         $this->assertIsArray($icls);
-        $this->assertCount(1, $icls);
-        
-        $this->assertEquals(IncomeClassificationCategory::CATEGORY_1_1, $icls[0]->getClassificationCategory());
-        $this->assertEquals(IncomeClassificationType::E3_106, $icls[0]->getClassificationType());
-        $this->assertEquals(12.10, $rows[0]->getIncomeClassification()[0]->getAmount());
-    }
+        $this->assertCount(2, $icls);
 
+        $this->assertEquals(IncomeClassificationCategory::CATEGORY_1_1, $icls[0]->getClassificationCategory());
+        $this->assertEquals(IncomeClassificationType::E3_561_001, $icls[0]->getClassificationType());
+        $this->assertEquals(8.06, $rows[0]->getIncomeClassification()[0]->getAmount());
+
+        $this->assertEquals(IncomeClassificationCategory::CATEGORY_1_1, $icls[1]->getClassificationCategory());
+        $this->assertEquals(IncomeClassificationType::E3_561_007, $icls[1]->getClassificationType());
+        $this->assertEquals(4.04, $rows[0]->getIncomeClassification()[1]->getAmount());
+    }
+    
     public function test_same_vat_exemption_category_rows_are_squashed()
     {
         $invoice = new Invoice();
@@ -166,12 +193,12 @@ class SquashInvoiceRowsTest extends TestCase
         $rows = $invoice->getInvoiceDetails();
         $this->assertNotNull($rows);
         $this->assertCount(2, $rows);
-        
+
         $this->assertEquals(VatCategory::VAT_1, $rows[0]->getVatCategory());
         $this->assertEquals(VatExemption::TYPE_5, $rows[0]->getVatExemptionCategory());
         $this->assertEquals(20, $rows[0]->getNetValue());
         $this->assertEquals(0, $rows[0]->getVatAmount());
-        
+
         // Income classification for row 0
         $this->assertIsArray($rows[0]->getIncomeClassification());
         $this->assertCount(1, $rows[0]->getIncomeClassification());

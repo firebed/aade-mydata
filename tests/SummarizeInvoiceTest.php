@@ -84,6 +84,7 @@ class SummarizeInvoiceTest extends TestCase
         $invoice = new Invoice();
         foreach ($icls as $cls) {
             $row = new InvoiceDetails();
+            $row->setNetValue($cls[2]);
             $row->addIncomeClassification(...$cls);
             $invoice->addInvoiceDetails($row);
         }
@@ -145,6 +146,7 @@ class SummarizeInvoiceTest extends TestCase
         $invoice = new Invoice();
         foreach ($ecls as $cls) {
             $row = new InvoiceDetails();
+            $row->setNetValue($cls->getAmount());
             $row->addExpensesClassification($cls);
             $invoice->addInvoiceDetails($row);
         }
@@ -213,6 +215,7 @@ class SummarizeInvoiceTest extends TestCase
     {
         $row = new InvoiceDetails();
         $row->addExpensesClassification($this->createEcls(ExpenseClassificationType::E3_102_001, ExpenseClassificationCategory::CATEGORY_2_1, 100.55));
+        $row->setNetValue($row->getExpensesClassification()[0]->getAmount());
 
         $invoice = (new Invoice())
             ->addInvoiceDetails($row)

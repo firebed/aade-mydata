@@ -106,13 +106,4 @@ class IncomeClassification extends Type
     {
         return $this->set('id', $id);
     }
-
-    public function roundAmounts(int $precision = 2): static
-    {
-        if ($this->getAmount()) {
-            $this->setAmount(round($this->getAmount(), $precision));
-        }
-        
-        return $this;
-    }
 }
