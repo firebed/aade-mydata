@@ -2,7 +2,7 @@
 
 [👉 Προβολή στο GitHub][1]
 
-[1]: https://github.com/firebed/aade-mydata/blob/4.x/docs/samples/complete-example.php
+[1]: https://github.com/firebed/aade-mydata/blob/5.x/docs/samples/complete-example.php
 
 ```php
 use Firebed\AadeMyData\Models\Issuer;

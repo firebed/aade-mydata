@@ -1,5 +1,54 @@
 # Οδηγός Αναβάθμισης
 
+## Upgrade guide from 4.x to 5.x
+
+### Breaking changes
+- Removed vat-registry dependency from composer. You can include vat-registry by running `composer require firebed/vat-registry`.
+- [See vat-registry](https://github.com/firebed/vat-registry) documentation for more information.
+- If you were not using vat search, you can safely ignore this change.
+ 
+### Features
+
+- Ability to "squash" invoice rows `$invoice->squashInvoiceRows()`.
+  > Ο Πάροχος ηλεκτρονικής τιμολόγησης και τα ERP διαβιβάζουν υποχρεωτικά μόνο τη σύνοψη
+    γραμμών και χαρακτηρισμών των παραστατικών και όχι αναλυτικά τις γραμμές. [Δείτε Σύνοψη Γραμμών Παραστατικού](../docs/squashing-invoice-rows) για περισσότερες λεπτομέρειες.
+- Ability to validate invoices against xsd files before sending them to myDATA.
+  - `$invoice->validate()`.
+- Ability to preview invoice xml before sending it to myDATA.
+  - `$invoice->toXml()`.
+- Ability to populate model attributes within constructor by using **<u>mixed</u>** array values as parameter.
+  ```php
+  use Firebed\AadeMyData\Models\InvoiceDetails;
+  use Firebed\AadeMyData\Enums\RecType;
+  use Firebed\AadeMyData\Enums\IncomeClassificationType;
+  use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
+  
+  new InvoiceDetails([
+    'lineNumber' => 1,
+    'netValue' => 5,
+    'recType' => RecType::TYPE_2,
+    'incomeClassification' => [
+        [
+            'classificationType' => IncomeClassificationType::E3_561_001,
+            'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
+            'amount' => '5'
+        ]
+    ]
+  ])
+  ```
+- Model setters are now fluent (chainable).
+  - `$invoice->setIssuer(...)->setCounterpart(...)`.
+- New methods: Invoice::setTaxesTotals, Invoice::setOtherTransportDetails.
+- Implemented `add_` methods to add an amount to InvoiceDetails and Classifications attributes (e.g. `$row->addNetValue(5)`, `$row->addVatAmount(1.2)` etc).
+- Implemented endpoints for electronic invoice providers.
+
+### Fixes
+
+- Fixed tax calculation when summarizing invoice.
+- Removed ext-soap dependency from composer.
+- Fixed InvoiceDetails::setOtherMeasurementUnitQuantity
+- Fixed InvoiceDetails::setOtherMeasurementUnitTitle
+
 ## Αναβάθμιση από 3.x σε 4.x
 
 Η έκδοση 4.x περιέχει αρκετές αλλαγές, μεταξύ των οποίων αρκετές

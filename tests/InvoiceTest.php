@@ -2,7 +2,11 @@
 
 namespace Tests;
 
+use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
+use Firebed\AadeMyData\Enums\IncomeClassificationType;
+use Firebed\AadeMyData\Enums\RecType;
 use Firebed\AadeMyData\Models\Invoice;
+use Firebed\AadeMyData\Models\InvoiceDetails;
 use PHPUnit\Framework\TestCase;
 use Tests\Traits\HandlesInvoiceXml;
 
@@ -12,6 +16,19 @@ class InvoiceTest extends TestCase
 
     public function test_invoice_xml()
     {
+        new InvoiceDetails([
+            'lineNumber' => 1,
+            'netValue' => 5,
+            'recType' => RecType::TYPE_2,
+            'incomeClassification' => [
+                [
+                    'classificationType' => IncomeClassificationType::E3_561_001,
+                    'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
+                    'amount' => '5'
+                ]
+            ]
+        ]);
+            
         $invoice = Invoice::factory()->make();
         $this->assertNotEmpty($invoice->toXml());
     }

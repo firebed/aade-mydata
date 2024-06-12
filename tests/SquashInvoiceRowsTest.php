@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
+use Firebed\AadeMyData\Enums\ExpenseClassificationType;
 use Firebed\AadeMyData\Enums\FeesPercentCategory;
 use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
 use Firebed\AadeMyData\Enums\IncomeClassificationType;
@@ -69,9 +71,8 @@ class SquashInvoiceRowsTest extends TestCase
                 ]
             ]
         ]));
-
-        $invoice->squashInvoiceRows()->summarizeInvoice();
-
+        $invoice->squashInvoiceRows(['clsLineNumber' => true])->summarizeInvoice();
+        
         $rows = $invoice->getInvoiceDetails();
         $this->assertNotNull($rows);
         $this->assertCount(1, $rows);
@@ -86,10 +87,12 @@ class SquashInvoiceRowsTest extends TestCase
         $this->assertEquals(IncomeClassificationCategory::CATEGORY_1_1, $icls[0]->getClassificationCategory());
         $this->assertEquals(IncomeClassificationType::E3_561_001, $icls[0]->getClassificationType());
         $this->assertEquals(8.07, $rows[0]->getIncomeClassification()[0]->getAmount());
+        $this->assertEquals(1, $rows[0]->getIncomeClassification()[0]->getId());
 
         $this->assertEquals(IncomeClassificationCategory::CATEGORY_1_1, $icls[1]->getClassificationCategory());
         $this->assertEquals(IncomeClassificationType::E3_561_007, $icls[1]->getClassificationType());
         $this->assertEquals(4.02, $rows[0]->getIncomeClassification()[1]->getAmount());
+        $this->assertEquals(2, $rows[0]->getIncomeClassification()[1]->getId());
         
         $this->assertEquals(15, $invoice->getInvoiceSummary()->getTotalGrossValue());
         $this->assertEquals(8.07, $invoice->getInvoiceSummary()->getIncomeClassifications()[0]->getAmount());
@@ -127,7 +130,7 @@ class SquashInvoiceRowsTest extends TestCase
                 ]
             ]
         ]));
-
+        
         $invoice->squashInvoiceRows();
 
         $rows = $invoice->getInvoiceDetails();
@@ -143,7 +146,57 @@ class SquashInvoiceRowsTest extends TestCase
         $this->assertEquals(IncomeClassificationCategory::CATEGORY_1_1, $rows[0]->getIncomeClassification()[0]->getClassificationCategory());
         $this->assertEquals(IncomeClassificationType::E3_106, $rows[0]->getIncomeClassification()[0]->getClassificationType());
         $this->assertEquals(20, $rows[0]->getIncomeClassification()[0]->getAmount());
-        $this->assertEquals(20, $rows[0]->getIncomeClassification()[0]->getAmount());
+    }
+
+    public function test_same_vat_category_with_income_and_expense_classifications()
+    {
+        $invoice = new Invoice();
+
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_1,
+            'netValue' => 10,
+            'vatAmount' => 2.4,
+            'incomeClassification' => [
+                [
+                    'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
+                    'classificationType' => IncomeClassificationType::E3_106,
+                    'amount' => 10,
+                ]
+            ]
+        ]));
+
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_1,
+            'netValue' => 10,
+            'vatAmount' => 2.4,
+            'expensesClassification' => [
+                [
+                    'classificationCategory' => ExpenseClassificationCategory::CATEGORY_2_1,
+                    'classificationType' => ExpenseClassificationType::E3_101,
+                    'amount' => 10,
+                ]
+            ]
+        ]));
+        
+        $invoice->squashInvoiceRows();
+
+        $rows = $invoice->getInvoiceDetails();
+        $this->assertNotNull($rows);
+        $this->assertCount(1, $rows);
+        $this->assertEquals(VatCategory::VAT_1, $rows[0]->getVatCategory());
+        $this->assertEquals(20, $rows[0]->getNetValue());
+
+        $this->assertIsArray($rows[0]->getIncomeClassification());
+        $this->assertCount(1, $rows[0]->getIncomeClassification());
+        $this->assertEquals(IncomeClassificationCategory::CATEGORY_1_1, $rows[0]->getIncomeClassification()[0]->getClassificationCategory());
+        $this->assertEquals(IncomeClassificationType::E3_106, $rows[0]->getIncomeClassification()[0]->getClassificationType());
+        $this->assertEquals(10, $rows[0]->getIncomeClassification()[0]->getAmount());
+
+        $this->assertIsArray($rows[0]->getExpensesClassification());
+        $this->assertCount(1, $rows[0]->getExpensesClassification());
+        $this->assertEquals(ExpenseClassificationCategory::CATEGORY_2_1, $rows[0]->getExpensesClassification()[0]->getClassificationCategory());
+        $this->assertEquals(ExpenseClassificationType::E3_101, $rows[0]->getExpensesClassification()[0]->getClassificationType());
+        $this->assertEquals(10, $rows[0]->getExpensesClassification()[0]->getAmount());
     }
 
     public function test_same_mixed_vat_exemption_category_rows_are_squashed()

@@ -220,10 +220,18 @@ class Invoice extends Type
         return $this->set('invoiceSummary', $invoiceSummary);
     }
 
-    public function squashInvoiceRows(): static
+    /**
+     * "Squashes" similar invoice lines and sums up their values.
+     *
+     * @param  array{clsLineNumber: bool}  $options  Squashing options.
+     * If 'clsLineNumber' == true the process will add line numbers to classifications.
+     *
+     * @return $this
+     */
+    public function squashInvoiceRows(array $options = []): static
     {
         $squash = new SquashInvoiceRows();
-        $this->setInvoiceDetails($squash->handle($this->getInvoiceDetails()));
+        $this->setInvoiceDetails($squash->handle($this->getInvoiceDetails(), $options));
         return $this;
     }
 

@@ -3,6 +3,7 @@
 | Εισαγωγή                  | ΑΑΔΕ myDATA REST API        | getting-started                         |
 | Εισαγωγή                  | Εγκατάσταση                 | installation                            |
 | Εισαγωγή                  | Αναβάθμιση                  | upgrade-guide                           |
+| Εισαγωγή                  | Σύνοψη Γραμμών              | squashing-invoice-rows                  |
 | Εισαγωγή                  | Σφάλματα                    | exceptions                              |
 | Εισαγωγή                  | Contributing                | contributing                            |
 | Περιγραφή λειτουργιών     | Αναζήτηση ΑΦΜ               | http/search-vat                         |

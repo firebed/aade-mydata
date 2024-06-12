@@ -28,17 +28,22 @@ class SquashInvoiceRows
      */
     private array $squashedEcls = [];
 
+    private array $options = [];
+
     /**
      * Groups similar rows and returns a new array with the rows summed.
      *
      * @param  InvoiceDetails[]|null  $invoiceRows  An array of invoice rows.
+     * @param  array  $options  Additional options.
      * @return array|null An array of squashed invoice rows.
      */
-    public function handle(?array $invoiceRows): ?array
+    public function handle(?array $invoiceRows, array $options = []): ?array
     {
         if ($invoiceRows === null) {
             return null;
         }
+
+        $this->options = $options;
 
         return $this->squashInvoiceRows($invoiceRows);
     }
@@ -192,12 +197,14 @@ class SquashInvoiceRows
     private function mergeAndRoundResults(): array
     {
         foreach ($this->squashedRows as $key => $row) {
+            $clsLineNumber = 1;
+
             if (isset($this->squashedIcls[$key])) {
-                $row->setIncomeClassification(array_values($this->squashedIcls[$key]));
+                $row->setIncomeClassification($this->mapClassifications($this->squashedIcls[$key], $clsLineNumber));
             }
 
             if (isset($this->squashedEcls[$key])) {
-                $row->setExpensesClassification(array_values($this->squashedEcls[$key]));
+                $row->setExpensesClassification($this->mapClassifications($this->squashedEcls[$key], $clsLineNumber));
             }
 
             $this->roundRow($row);
@@ -209,8 +216,26 @@ class SquashInvoiceRows
     }
 
     /**
+     * @param  ExpensesClassification[]|IncomeClassification[]  $classifications
+     * @param  int  $lineNumber
+     * @return array
+     */
+    private function mapClassifications(array $classifications, int &$lineNumber = 1): array
+    {
+        // If clsLineNumber option is set to true, we will add a line number to each classification.
+        if (isset($this->options['clsLineNumber']) && $this->options['clsLineNumber'] === true) {
+            return array_map(function ($cls) use (&$lineNumber) {
+                $cls->setId($lineNumber++);
+                return $cls;
+            }, array_values($classifications));
+        }
+
+        return array_values($classifications);
+    }
+
+    /**
      * Rounds the values of a row.
-     * 
+     *
      * @param  InvoiceDetails  $row
      * @return void
      */
@@ -219,27 +244,27 @@ class SquashInvoiceRows
         if ($row->getNetValue() !== null) {
             $row->setNetValue(round($row->getNetValue(), 2));
         }
-        
+
         if ($row->getVatAmount() !== null) {
             $row->setVatAmount(round($row->getVatAmount(), 2));
         }
-        
+
         if ($row->getWithheldAmount() !== null) {
             $row->setWithheldAmount(round($row->getWithheldAmount(), 2));
         }
-        
+
         if ($row->getFeesAmount() !== null) {
             $row->setFeesAmount(round($row->getFeesAmount(), 2));
         }
-        
+
         if ($row->getOtherTaxesAmount() !== null) {
             $row->setOtherTaxesAmount(round($row->getOtherTaxesAmount(), 2));
         }
-        
+
         if ($row->getStampDutyAmount() !== null) {
             $row->setStampDutyAmount(round($row->getStampDutyAmount(), 2));
         }
-        
+
         if ($row->getDeductionsAmount() !== null) {
             $row->setDeductionsAmount(round($row->getDeductionsAmount(), 2));
         }
@@ -277,7 +302,7 @@ class SquashInvoiceRows
 
         $classificationSum = array_sum(array_map(fn($item) => $item->getAmount(), $classifications));
         $diff = round($row->getNetValue() - $classificationSum, 2);
-        
+
         if ($diff != 0) {
             end($classifications);
             $lastKey = key($classifications);
