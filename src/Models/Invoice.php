@@ -335,10 +335,15 @@ class Invoice extends Type
         return parent::set($key, $value);
     }
 
-    public function toXml(): string
+    public function toXml(bool $asInvoicesDoc = false): string
     {
         $writer = new InvoicesDocWriter();
-        $writer->asXML(new InvoicesDoc($this));
+        $fullXml = $writer->asXML(new InvoicesDoc($this));
+        
+        if ($asInvoicesDoc) {
+            return $fullXml;
+        }
+        
         $doc = $writer->getDomDocument();
         return $doc->saveXML($doc->getElementsByTagName('invoice')->item(0));
     }
