@@ -116,11 +116,11 @@ class SquashInvoiceRows
     {
         $target->addNetValue($source->getNetValue());
         $target->addVatAmount($source->getVatAmount());
-        $target->addWithheldAmount($source->getWithheldAmount() ?? 0);
-        $target->addFeesAmount($source->getFeesAmount() ?? 0);
-        $target->addOtherTaxesAmount($source->getOtherTaxesAmount() ?? 0);
-        $target->addStampDutyAmount($source->getStampDutyAmount() ?? 0);
-        $target->addDeductionsAmount($source->getDeductionsAmount() ?? 0);
+        $target->addWithheldAmount($source->getWithheldAmount());
+        $target->addFeesAmount($source->getFeesAmount());
+        $target->addOtherTaxesAmount($source->getOtherTaxesAmount());
+        $target->addStampDutyAmount($source->getStampDutyAmount());
+        $target->addDeductionsAmount($source->getDeductionsAmount());
     }
 
     /**

@@ -391,8 +391,12 @@ class InvoiceDetails extends Type
         return $this->set('withheldAmount', $withheldAmount);
     }
 
-    public function addWithheldAmount(float $amount): static
+    public function addWithheldAmount(?float $amount): static
     {
+        if ($amount === null) {
+            return $this;
+        }
+        
         return $this->set('withheldAmount', $this->getWithheldAmount() + $amount);
     }
 
