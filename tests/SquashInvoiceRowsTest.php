@@ -434,16 +434,22 @@ class SquashInvoiceRowsTest extends TestCase
     public function test_rows_with_rec_type_are_not_squashed()
     {
         $invoice = new Invoice();
-        $invoice->setInvoiceDetails(InvoiceDetails::factory(4)->make([
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_1,
+            'netValue' => 10,
             'recType' => null,
-            'withheldPercentCategory' => null,
-            'stampDutyPercentCategory' => null,
-            'otherTaxesPercentCategory' => null,
-            'feesPercentCategory' => null,
+        ]));
+
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_1,
+            'netValue' => 40,
+            'recType' => null,
         ]));
 
         for ($i = 0; $i < 5; $i++) {
-            $invoice->addInvoiceDetails(InvoiceDetails::factory()->make([
+            $invoice->addInvoiceDetails(new InvoiceDetails([
+                'vatCategory' => VatCategory::VAT_1,
+                'netAmount' => 10,
                 'recType' => RecType::TYPE_5,
             ]));
         }
@@ -453,13 +459,10 @@ class SquashInvoiceRowsTest extends TestCase
         
         $this->assertIsArray($rows);
         $this->assertCount(6, $rows);
-        $this->assertEquals(1, $rows[0]->getLineNumber());
-
         $this->assertCount(5, array_filter($invoice->getInvoiceDetails(), fn($row) => $row->getRecType() === RecType::TYPE_5));
-        $this->assertEquals(2, $rows[1]->getLineNumber());
-        $this->assertEquals(3, $rows[2]->getLineNumber());
-        $this->assertEquals(4, $rows[3]->getLineNumber());
-        $this->assertEquals(5, $rows[4]->getLineNumber());
-        $this->assertEquals(6, $rows[5]->getLineNumber());
+        
+        for ($i=0; $i<count($rows); $i++) {
+            $this->assertEquals($i + 1, $rows[$i]->getLineNumber());
+        }
     }
 }
