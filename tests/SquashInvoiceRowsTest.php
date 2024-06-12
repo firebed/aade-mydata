@@ -76,6 +76,7 @@ class SquashInvoiceRowsTest extends TestCase
         $rows = $invoice->getInvoiceDetails();
         $this->assertNotNull($rows);
         $this->assertCount(1, $rows);
+        $this->assertEquals(1, $rows[0]->getLineNumber());
         $this->assertEquals(VatCategory::VAT_1, $rows[0]->getVatCategory());
         $this->assertEquals(12.09, $rows[0]->getNetValue());
         $this->assertEquals(2.91, $rows[0]->getVatAmount());
@@ -136,6 +137,7 @@ class SquashInvoiceRowsTest extends TestCase
         $rows = $invoice->getInvoiceDetails();
         $this->assertNotNull($rows);
         $this->assertCount(1, $rows);
+        $this->assertEquals(1, $rows[0]->getLineNumber());
         $this->assertEquals(VatCategory::VAT_1, $rows[0]->getVatCategory());
         $this->assertEquals(VatExemption::TYPE_5, $rows[0]->getVatExemptionCategory());
         $this->assertEquals(20, $rows[0]->getNetValue());
@@ -183,6 +185,7 @@ class SquashInvoiceRowsTest extends TestCase
         $rows = $invoice->getInvoiceDetails();
         $this->assertNotNull($rows);
         $this->assertCount(1, $rows);
+        $this->assertEquals(1, $rows[0]->getLineNumber());
         $this->assertEquals(VatCategory::VAT_1, $rows[0]->getVatCategory());
         $this->assertEquals(20, $rows[0]->getNetValue());
 
@@ -251,6 +254,7 @@ class SquashInvoiceRowsTest extends TestCase
         $this->assertNotNull($rows);
         $this->assertCount(2, $rows);
 
+        $this->assertEquals(1, $rows[0]->getLineNumber());
         $this->assertEquals(VatCategory::VAT_1, $rows[0]->getVatCategory());
         $this->assertEquals(VatExemption::TYPE_5, $rows[0]->getVatExemptionCategory());
         $this->assertEquals(20, $rows[0]->getNetValue());
@@ -263,6 +267,7 @@ class SquashInvoiceRowsTest extends TestCase
         $this->assertEquals(IncomeClassificationType::E3_106, $rows[0]->getIncomeClassification()[0]->getClassificationType());
         $this->assertEquals(20, $rows[0]->getIncomeClassification()[0]->getAmount());
 
+        $this->assertEquals(2, $rows[1]->getLineNumber());
         $this->assertEquals(VatCategory::VAT_1, $rows[1]->getVatCategory());
         $this->assertEquals(VatExemption::TYPE_4, $rows[1]->getVatExemptionCategory());
         $this->assertEquals(30, $rows[1]->getNetValue());
@@ -329,6 +334,7 @@ class SquashInvoiceRowsTest extends TestCase
         $rows = $invoice->getInvoiceDetails();
         $this->assertIsArray($rows);
         $this->assertEquals(100, $rows[0]->getNetValue());
+        $this->assertEquals(1, $rows[0]->getLineNumber());
         $this->assertEquals(24, $rows[0]->getVatAmount());
         $this->assertEquals(20, $rows[0]->getWithheldAmount());
         $this->assertEquals(1.5, $rows[0]->getStampDutyAmount());
@@ -396,6 +402,7 @@ class SquashInvoiceRowsTest extends TestCase
         $this->assertIsArray($rows);
         $this->assertCount(2, $rows);
 
+        $this->assertEquals(1, $rows[0]->getLineNumber());
         $this->assertEquals(50, $rows[0]->getNetValue());
         $this->assertEquals(12, $rows[0]->getVatAmount());
         $this->assertEquals(10, $rows[0]->getWithheldAmount());
@@ -409,6 +416,7 @@ class SquashInvoiceRowsTest extends TestCase
         $this->assertEquals(FeesPercentCategory::TYPE_1, $rows[0]->getFeesPercentCategory());
         $this->assertEquals(OtherTaxesPercentCategory::TAX_2, $rows[0]->getOtherTaxesPercentCategory());
 
+        $this->assertEquals(2, $rows[1]->getLineNumber());
         $this->assertEquals(50, $rows[1]->getNetValue());
         $this->assertEquals(12, $rows[1]->getVatAmount());
         $this->assertEquals(10, $rows[1]->getWithheldAmount());
@@ -441,7 +449,17 @@ class SquashInvoiceRowsTest extends TestCase
         }
 
         $invoice->squashInvoiceRows();
-        $this->assertCount(6, $invoice->getInvoiceDetails());
+        $rows = $invoice->getInvoiceDetails();
+        
+        $this->assertIsArray($rows);
+        $this->assertCount(6, $rows);
+        $this->assertEquals(1, $rows[0]->getLineNumber());
+
         $this->assertCount(5, array_filter($invoice->getInvoiceDetails(), fn($row) => $row->getRecType() === RecType::TYPE_5));
+        $this->assertEquals(2, $rows[1]->getLineNumber());
+        $this->assertEquals(3, $rows[2]->getLineNumber());
+        $this->assertEquals(4, $rows[3]->getLineNumber());
+        $this->assertEquals(5, $rows[4]->getLineNumber());
+        $this->assertEquals(6, $rows[5]->getLineNumber());
     }
 }

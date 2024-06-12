@@ -9,7 +9,7 @@ use Firebed\AadeMyData\Models\InvoiceDetails;
 class SquashInvoiceRows
 {
     /**
-     * @var array Variable to store rows with RecType.
+     * @var InvoiceDetails[] Variable to store rows with RecType.
      */
     private array $rowsWithRecType = [];
 
@@ -196,6 +196,8 @@ class SquashInvoiceRows
      */
     private function mergeAndRoundResults(): array
     {
+        $lineNumber = 1;
+        
         foreach ($this->squashedRows as $key => $row) {
             $clsLineNumber = 1;
 
@@ -207,9 +209,15 @@ class SquashInvoiceRows
                 $row->setExpensesClassification($this->mapClassifications($this->squashedEcls[$key], $clsLineNumber));
             }
 
+            $row->setLineNumber($lineNumber++);
+            
             $this->roundRow($row);
             $this->roundClassifications($row);
             $this->adjustClassificationAmount($row);
+        }
+        
+        foreach ($this->rowsWithRecType as $row) {
+            $row->setLineNumber($lineNumber++);
         }
 
         return array_merge(array_values($this->squashedRows), $this->rowsWithRecType);
