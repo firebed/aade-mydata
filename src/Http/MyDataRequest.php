@@ -20,11 +20,11 @@ abstract class MyDataRequest
     private const DEV_PROVIDER_URL  = 'https://mydataapidev.aade.gr/myDataProvider/';
     private const PROD_PROVIDER_URL = 'https://mydatapi.aade.gr/myDataProvider/';
 
-    private static ?string     $user_id          = null;
-    private static ?string     $subscription_key = null;
-    private static ?string     $env              = null;
-    private static ?bool       $is_provider      = false;
-    private static bool|string $verify_client    = true;
+    private static ?string $user_id          = null;
+    private static ?string $subscription_key = null;
+    private static ?string $env              = null;
+    private static ?bool   $is_provider      = false;
+    private static array   $request_options;
 
     private static HandlerStack $handler;
 
@@ -76,12 +76,38 @@ abstract class MyDataRequest
      * setting to point to the path to the file, allowing you to omit the "verify" request option.
      * Much more detail on SSL certificates can be found on the <a href="http://curl.haxx.se/docs/sslcerts.html">cURL website</a>.</p>
      *
-     * @param bool|string $verify
+     * @param  bool|string  $verify
      * @return void
      */
     public static function verifyClient(bool|string $verify = true): void
     {
-        self::$verify_client = $verify;
+        self::$request_options['verify'] = $verify;
+    }
+
+    /**
+     * The number of seconds to wait while trying to connect to myDATA server.
+     * Use 0 to wait indefinitely (the default behavior).
+     *
+     * @param  int  $seconds
+     * @return void
+     */
+    public static function setConnectTimeout(int $seconds): void
+    {
+        self::$request_options['connect_timeout'] = $seconds;
+    }
+
+    /**
+     * You can customize requests created and transferred by a client using request options. 
+     * Request options control various aspects of a request including, headers, query string 
+     * parameters, timeout settings, the body of a request, and much more.
+     * 
+     * @param  array  $requestOptions
+     * @return void
+     * @see https://docs.guzzlephp.org/en/stable/request-options.html
+     */
+    public static function setRequestOptions(array $requestOptions): void
+    {
+        self::$request_options = $requestOptions;
     }
 
     public static function isProduction(): bool
@@ -98,7 +124,7 @@ abstract class MyDataRequest
     {
         return self::$is_provider;
     }
-    
+
     /**
      * @throws MyDataAuthenticationException
      */
@@ -108,7 +134,7 @@ abstract class MyDataRequest
             throw new MyDataAuthenticationException();
         }
     }
-    
+
     /**
      * @throws MyDataAuthenticationException|MyDataException
      */
@@ -171,11 +197,14 @@ abstract class MyDataRequest
                 'Ocp-Apim-Subscription-Key' => self::$subscription_key,
                 'Content-Type' => "text/xml"
             ],
-            'verify' => self::$verify_client
         ];
 
         if (isset(self::$handler)) {
             $config['handler'] = self::$handler;
+        }
+
+        if (isset(self::$request_options)) {
+            $config = array_merge($config, self::$request_options);
         }
 
         return new Client($config);
@@ -185,7 +214,7 @@ abstract class MyDataRequest
     {
         $action = $this->getAction();
         $url = self::$is_provider ? $this->getUrlForProvider() : $this->getUrlForErp();
-        
+
         return $url.$action;
     }
 
@@ -196,7 +225,7 @@ abstract class MyDataRequest
 
     private function getUrlForProvider(): string
     {
-        return self::isDevelopment() ? self::DEV_PROVIDER_URL : self::PROD_PROVIDER_URL;        
+        return self::isDevelopment() ? self::DEV_PROVIDER_URL : self::PROD_PROVIDER_URL;
     }
 
     private function getAction(): string
