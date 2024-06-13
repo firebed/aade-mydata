@@ -91,7 +91,7 @@ abstract class MyDataRequest
      * @param  int  $seconds
      * @return void
      */
-    public static function setConnectTimeout(int $seconds): void
+    public static function setConnectionTimeout(int $seconds): void
     {
         self::$request_options['connect_timeout'] = $seconds;
     }
@@ -181,7 +181,7 @@ abstract class MyDataRequest
             throw new MyDataAuthenticationException();
         }
 
-        // In case the endpoint url is wrong
+        // In case the endpoint url is wrong or connection timed out
         if ($exception->getCode() === 0) {
             throw new MyDataConnectionException();
         }

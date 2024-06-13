@@ -6,6 +6,7 @@ namespace Firebed\AadeMyData\Models;
 use DOMDocument;
 use Firebed\AadeMyData\Actions\SquashInvoiceRows;
 use Firebed\AadeMyData\Actions\SummarizeInvoice;
+use Firebed\AadeMyData\Enums\TransmissionFailure;
 use Firebed\AadeMyData\Traits\HasFactory;
 use Firebed\AadeMyData\Xml\InvoicesDocWriter;
 
@@ -91,9 +92,10 @@ class Invoice extends Type
      * <li>Στην περίπτωση αδυναμίας επικοινωνίας του ERP με το myDATA κατά την έκδοση / διαβίβαση παραστατικού</li>
      * </ol>
      *
-     * @param  int|null  $transmissionFailure  Κωδικός αδυναμίας επικοινωνίας παρόχου
+     * @param  TransmissionFailure|int|null  $transmissionFailure  Κωδικός αδυναμίας επικοινωνίας παρόχου
+     * @return Invoice
      */
-    public function setTransmissionFailure(?int $transmissionFailure): static
+    public function setTransmissionFailure(TransmissionFailure|int|null $transmissionFailure): static
     {
         return $this->set('transmissionFailure', $transmissionFailure);
     }
