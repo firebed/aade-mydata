@@ -13,9 +13,9 @@ class ResponseFactory extends Factory
     {
         return [
             'index'             => 1,
-            'invoiceUid'        => fake()->sha1(),
-            'invoiceMark'       => fake()->numerify("800000#########"),
-            'paymentMethodMark' => fake()->numerify("800000#########"),
+            'invoiceUid'        => strtoupper(fake()->sha1()),
+            'invoiceMark'       => fake()->numerify("900000#########"),
+            'paymentMethodMark' => fake()->numerify("900000#########"),
             'qrUrl'             => fake()->url(),
             'statusCode'        => 'Success'
         ];
@@ -24,7 +24,7 @@ class ResponseFactory extends Factory
     public function cancelled(): self
     {
         return $this->state([
-            'cancellationMark' => fake()->numerify("800000#########")
+            'cancellationMark' => fake()->numerify("900000#########")
         ])->except([
             'index',
             'invoiceUid',
