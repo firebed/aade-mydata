@@ -12,12 +12,13 @@ class ResponseFactory extends Factory
     public function definition(): array
     {
         return [
-            'index'             => 1,
-            'invoiceUid'        => strtoupper(fake()->sha1()),
-            'invoiceMark'       => fake()->numerify("900000#########"),
+            'index' => 1,
+            'invoiceUid' => strtoupper(fake()->sha1()),
+            'authenticationCode' => strtoupper(fake()->sha1()),
+            'invoiceMark' => fake()->numerify("900000#########"),
             'paymentMethodMark' => fake()->numerify("900000#########"),
-            'qrUrl'             => fake()->url(),
-            'statusCode'        => 'Success'
+            'qrUrl' => fake()->url(),
+            'statusCode' => 'Success'
         ];
     }
 
