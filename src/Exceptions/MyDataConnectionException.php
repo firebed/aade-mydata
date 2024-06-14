@@ -2,10 +2,12 @@
 
 namespace Firebed\AadeMyData\Exceptions;
 
-class MyDataConnectionException extends MyDataException
+use Throwable;
+
+class MyDataConnectionException extends TransmissionFailedException
 {
-    public function __construct()
+    public function __construct(int $code = 0, Throwable $previous = null)
     {
-        parent::__construct("myDATA servers are down or unreachable. Please try again later.");
+        parent::__construct("myDATA servers are down or unreachable. Please try again later.", $code, $previous);
     }
 }

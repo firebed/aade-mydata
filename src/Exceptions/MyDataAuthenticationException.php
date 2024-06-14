@@ -2,10 +2,13 @@
 
 namespace Firebed\AadeMyData\Exceptions;
 
-class MyDataAuthenticationException extends MyDataException
+
+use Throwable;
+
+class MyDataAuthenticationException extends TransmissionFailedException
 {
-    public function __construct()
+    public function __construct(int $code = 0, Throwable $previous = null)
     {
-        parent::__construct("Authentication failed. Please check your user id and subscription key.", 401);
+        parent::__construct("Authentication failed. Please check your user id and subscription key.", $code, $previous);
     }
 }

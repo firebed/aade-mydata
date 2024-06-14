@@ -5,6 +5,8 @@ namespace Firebed\AadeMyData\Http;
 use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
 use Firebed\AadeMyData\Exceptions\MyDataConnectionException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Exceptions\RateLimitExceededException;
+use Firebed\AadeMyData\Exceptions\TransmissionFailedException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Handler\MockHandler;
@@ -97,10 +99,10 @@ abstract class MyDataRequest
     }
 
     /**
-     * You can customize requests created and transferred by a client using request options. 
-     * Request options control various aspects of a request including, headers, query string 
+     * You can customize requests created and transferred by a client using request options.
+     * Request options control various aspects of a request including, headers, query string
      * parameters, timeout settings, the body of a request, and much more.
-     * 
+     *
      * @param  array  $requestOptions
      * @return void
      * @see https://docs.guzzlephp.org/en/stable/request-options.html
@@ -131,7 +133,7 @@ abstract class MyDataRequest
     private static function validateCredentials(): void
     {
         if (empty(self::$user_id) || empty(self::$subscription_key)) {
-            throw new MyDataAuthenticationException();
+            throw new MyDataAuthenticationException(401);
         }
     }
 
@@ -145,7 +147,7 @@ abstract class MyDataRequest
         try {
             return $this->client()->get($this->getUrl(), ['query' => $query]);
         } catch (GuzzleException $e) {
-            $this->handleException($e);
+            $this->handleTransmissionException($e);
         }
     }
 
@@ -168,25 +170,33 @@ abstract class MyDataRequest
         try {
             return $this->client()->post($this->getUrl(), $params);
         } catch (GuzzleException $e) {
-            $this->handleException($e);
+            $this->handleTransmissionException($e);
         }
     }
 
     /**
+     * Authorization errors, bad request, communication errors,
+     * myDATA server errors, rate limits, connection timeout, etc.
+     * 
      * @throws MyDataAuthenticationException|MyDataException
      */
-    protected function handleException(GuzzleException $exception)
+    protected function handleTransmissionException(GuzzleException $exception)
     {
         if ($exception->getCode() === 401) {
-            throw new MyDataAuthenticationException();
+            throw new MyDataAuthenticationException($exception->getCode(), $exception);
         }
 
         // In case the endpoint url is wrong or connection timed out
         if ($exception->getCode() === 0) {
-            throw new MyDataConnectionException();
+            throw new MyDataConnectionException($exception->getCode(), $exception);
+        }
+        
+        // Rate limit exception
+        if ($exception->getCode() === 429) {
+            throw new RateLimitExceededException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
-        throw new MyDataException($exception->getMessage(), $exception->getCode());
+        throw new TransmissionFailedException($exception->getMessage(), $exception->getCode(), $exception);
     }
 
     private function client(): Client
