@@ -3,6 +3,7 @@
 namespace Tests\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Exceptions\TransmissionFailedException;
 use Firebed\AadeMyData\Factories\ResponseDocXmlFactory;
 use Firebed\AadeMyData\Http\MyDataRequest;
 use Firebed\AadeMyData\Http\SendInvoices;
@@ -34,14 +35,14 @@ class SendInvoicesTest extends MyDataHttpTestCase
         $sendInvoices = new SendInvoices();
         $this->assertEquals('https://mydataapidev.aade.gr/myDataProvider/SendInvoices', $sendInvoices->getUrl());
     }
-    
+
     public function test_prod_provider_url_is_correct()
     {
         MyDataRequest::init('test_user_id', 'test_user_secret', 'prod', true);
         $sendInvoices = new SendInvoices();
         $this->assertEquals('https://mydatapi.aade.gr/myDataProvider/SendInvoices', $sendInvoices->getUrl());
-    }    
-    
+    }
+
     /**
      * @throws MyDataException
      */
@@ -59,7 +60,7 @@ class SendInvoicesTest extends MyDataHttpTestCase
 
         $this->assertCount(1, $responseDoc);
     }
-    
+
     /**
      * @throws MyDataException
      */
@@ -125,5 +126,20 @@ class SendInvoicesTest extends MyDataHttpTestCase
         $responseDoc = $sendInvoices->handle(new Invoice());
 
         $this->assertCount(1, $responseDoc);
+    }
+
+    /**
+     * @throws MyDataException
+     */
+    public function test_transmission_failure_throws_exception()
+    {
+        MyDataRequest::setHandler(new MockHandler([
+            new HttpResponse(500),
+        ]));
+
+        $this->expectException(TransmissionFailedException::class);
+
+        $sendInvoices = new SendInvoices();
+        $sendInvoices->handle(new Invoice());
     }
 }

@@ -28,7 +28,7 @@ class InvoiceTest extends TestCase
                 ]
             ]
         ]);
-            
+
         $invoice = Invoice::factory()->make();
         $this->assertNotEmpty($invoice->toXml());
     }
@@ -54,13 +54,13 @@ class InvoiceTest extends TestCase
         $invoice = Invoice::factory()->make();
         $this->assertEmpty($invoice->validate());
     }
-    
+
     public function test_invoice_validation_fail()
     {
         $invoice = Invoice::factory()->make();
         $invoice->getInvoiceHeader()->setInvoiceType("wrong");
         $invoice->getInvoiceSummary()->setTotalGrossValue(-10);
-        
+
         // "wrong" value will be cast to null because InvoiceType enum does
         // not have "wrong" value.
         // Since null values are stripped from the array, we expect a failure
