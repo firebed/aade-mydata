@@ -79,7 +79,7 @@ class SendInvoicesTest extends MyDataHttpTestCase
 
         $invoicesDoc = new InvoicesDoc([new Invoice(), new Invoice()]);
         $invoicesDoc->add(new Invoice());
-        $invoicesDoc->add(new Invoice());
+        $invoicesDoc->add(Invoice::make());
         $invoicesDoc->add(new Invoice());
 
         $sendInvoices = new SendInvoices();

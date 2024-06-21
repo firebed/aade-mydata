@@ -36,6 +36,11 @@ class Invoice extends Type
         'otherTransportDetails' => TransportDetail::class,
     ];
 
+    public static function make(array $attributes = []): self
+    {
+        return new Invoice($attributes);
+    }
+
     /**
      * Συμπληρώνεται από την Υπηρεσία.
      *
@@ -341,11 +346,11 @@ class Invoice extends Type
     {
         $writer = new InvoicesDocWriter();
         $fullXml = $writer->asXML(new InvoicesDoc($this));
-        
+
         if ($asInvoicesDoc) {
             return $fullXml;
         }
-        
+
         $doc = $writer->getDomDocument();
         return $doc->saveXML($doc->getElementsByTagName('invoice')->item(0));
     }
