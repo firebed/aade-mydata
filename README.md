@@ -18,6 +18,41 @@ This package provides an expressive, fluent interface to ΑΑΔΕ myDATA invoici
 
 All documentation is available 👉 [on our documentation site](https://docs.invoicemaker.gr/getting-started)
 
+## v5 Features
+
+- Ability to "squash" invoice rows `$invoice->squashInvoiceRows()`.
+  > Ο Πάροχος ηλεκτρονικής τιμολόγησης και τα ERP διαβιβάζουν υποχρεωτικά μόνο τη σύνοψη
+  γραμμών και χαρακτηρισμών των παραστατικών και όχι αναλυτικά τις γραμμές. [Δείτε Σύνοψη Γραμμών Παραστατικού](/docs/squashing-invoice-rows) για περισσότερες λεπτομέρειες.
+- Ability to validate invoices against xsd files before sending them to myDATA.
+    - `$invoice->validate()`.
+- Ability to preview invoice xml before sending it to myDATA.
+    - `$invoice->toXml()`.
+- Ability to populate model attributes within constructor by using **<u>mixed</u>** array values as parameter.
+  ```php
+  use Firebed\AadeMyData\Models\InvoiceDetails;
+  use Firebed\AadeMyData\Enums\RecType;
+  use Firebed\AadeMyData\Enums\IncomeClassificationType;
+  use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
+  
+  new InvoiceDetails([
+    'lineNumber' => 1,
+    'netValue' => 5,
+    'recType' => RecType::TYPE_2,
+    'incomeClassification' => [
+        [
+            'classificationType' => IncomeClassificationType::E3_561_001,
+            'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
+            'amount' => '5'
+        ]
+    ]
+  ])
+  ```
+- Model setters are now fluent (chainable).
+    - `$invoice->setIssuer(...)->setCounterpart(...)`.
+- New methods: Invoice::setTaxesTotals, Invoice::setOtherTransportDetails.
+- Implemented `add_` methods to add an amount to InvoiceDetails and Classifications attributes (e.g. `$row->addNetValue(5)`, `$row->addVatAmount(1.2)` etc).
+- Implemented endpoints for electronic invoice providers (Πάροχοι Ηλεκτρονικής Τιμολόγησης).
+
 ## Requirements
 
 | Version | PHP | myDATA | Support |
