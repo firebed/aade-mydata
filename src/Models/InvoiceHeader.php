@@ -354,7 +354,7 @@ class InvoiceHeader extends Type
      */
     public function setOtherCorrelatedEntities(?array $entities): static
     {
-        return $this->push('otherCorrelatedEntities', $entities);
+        return $this->set('otherCorrelatedEntities', $entities);
     }
 
     /**
