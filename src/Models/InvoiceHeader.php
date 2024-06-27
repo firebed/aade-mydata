@@ -186,7 +186,7 @@ class InvoiceHeader extends Type
      */
     public function setCorrelatedInvoices(?array $correlatedInvoices): static
     {
-        return $this->push('correlatedInvoices', $correlatedInvoices);
+        return $this->set('correlatedInvoices', $correlatedInvoices);
     }
 
     /**

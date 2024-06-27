@@ -4,6 +4,7 @@ namespace Firebed\AadeMyData\Models;
 
 
 use DOMDocument;
+use Firebed\AadeMyData\Actions\GenerateUid;
 use Firebed\AadeMyData\Actions\SquashInvoiceRows;
 use Firebed\AadeMyData\Actions\SummarizeInvoice;
 use Firebed\AadeMyData\Enums\TransmissionFailure;
@@ -49,6 +50,20 @@ class Invoice extends Type
     public function getUid(): ?string
     {
         return $this->get('uid');
+    }
+
+    public function guessUid(): ?string
+    {
+        $generator = new GenerateUid();
+        return $generator->handle(
+            vatNumber: $this->getIssuer()->getVatNumber(),
+            issueDate: $this->getInvoiceHeader()->getIssueDate(),
+            branchId: $this->getIssuer()->getBranch(),
+            invoiceType: $this->getInvoiceHeader()->getInvoiceType(),
+            series: $this->getInvoiceHeader()->getSeries(),
+            number: $this->getInvoiceHeader()->getAa(),
+            invoiceVariationType: $this->getInvoiceHeader()->getInvoiceVariationType(),
+        );
     }
 
     /**
