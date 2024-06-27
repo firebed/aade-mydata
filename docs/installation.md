@@ -78,11 +78,11 @@ MyDataRequest::verifyClient(false);
 
 ## Αρχεία XSD
 
-- [expensesClassification-v1.0.8.xsd](../xsd/expensesClassification-v1.0.8.xsd)
-- [incomeClassification-v1.0.8.xsd](../xsd/incomeClassification-v1.0.8.xsd)
-- [InvoicesDoc-v1.0.8.xsd](../xsd/InvoicesDoc-v1.0.8.xsd)
-- [paymentsMethod-v1.0.8.xsd](../xsd/paymentMethods-v1.0.8.xsd)
-- [requestedInvoicesDoc-v1.0.8.xsd](../xsd/requestedInvoicesDoc-v1.0.8.xsd)
-- [RequestedProviderDoc-v1.0.8.xsd](../xsd/RequestedProviderDoc-v1.0.8.xsd)
-- [RequestVatInfo Response-v1.0.8.xsd](../xsd/RequestVatInfo%20Response.xsd)
-- [response-v1.0.8.xsd](../xsd/response-v1.0.8.xsd)
+- [expensesClassification-v1.0.9.xsd](../xsd/expensesClassification-v1.0.9.xsd)
+- [incomeClassification-v1.0.9.xsd](../xsd/incomeClassification-v1.0.9.xsd)
+- [InvoicesDoc-v1.0.9.xsd](../xsd/InvoicesDoc-v1.0.9.xsd)
+- [paymentsMethod-v1.0.9.xsd](../xsd/paymentMethods-v1.0.9.xsd)
+- [requestedInvoicesDoc-v1.0.9.xsd](../xsd/requestedInvoicesDoc-v1.0.9.xsd)
+- [RequestedProviderDoc-v1.0.9.xsd](../xsd/RequestedProviderDoc-v1.0.9.xsd)
+- [RequestVatInfoResponse-v1.0.9.xsd](../xsd/RequestVatInfoResponse-v1.0.9.xsd)
+- [response-v1.0.9.xsd](../xsd/response-v1.0.9.xsd)

@@ -30,7 +30,7 @@ class InvoiceDetailsTest extends TestCase
         $this->assertCount(1, $rows);
 
         // Invoice rows assertions
-        $this->assertCount(30, $rowXml);
+        $this->assertCount(31, $rowXml);
 
         $row = $rows[0];
         $this->assertEquals($row->getLineNumber(), $rowXml->lineNumber);
@@ -64,6 +64,7 @@ class InvoiceDetailsTest extends TestCase
         $this->assertEquals($row->getQuantity15(), $rowXml->quantity15);
         $this->assertEquals($row->getOtherMeasurementUnitQuantity(), $rowXml->otherMeasurementUnitQuantity);
         $this->assertEquals($row->getOtherMeasurementUnitTitle(), $rowXml->otherMeasurementUnitTitle);
+        $this->assertEquals($row->getNotVAT195(), filter_var($rowXml->notVAT195, FILTER_VALIDATE_BOOLEAN));
 
         $icls = $invoice->getInvoiceDetails()[0]->getIncomeClassification()[0];
         $this->assertEquals($icls->getClassificationType()->value, $rowXml->incomeClassification->get('icls:classificationType'));

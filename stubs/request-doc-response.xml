@@ -41,7 +41,7 @@
                 <invoiceType>1.1</invoiceType>
                 <vatPaymentSuspension>false</vatPaymentSuspension>
                 <currency>EUR</currency>
-                <exchangeRate>12.345678</exchangeRate>
+                <exchangeRate>12.34567</exchangeRate>
                 <correlatedInvoices>8000000165487234</correlatedInvoices>
                 <correlatedInvoices>8000000165487568</correlatedInvoices>
                 <correlatedInvoices>8000000165487101</correlatedInvoices>
@@ -108,6 +108,11 @@
                 <isDeliveryNote>true</isDeliveryNote>
                 <otherMovePurposeTitle>Έκθεση</otherMovePurposeTitle>
                 <thirdPartyCollection>true</thirdPartyCollection>
+                <multipleConnectedMarks>8000000165487234</multipleConnectedMarks>
+                <multipleConnectedMarks>8000000165487568</multipleConnectedMarks>
+                <multipleConnectedMarks>8000000165487101</multipleConnectedMarks>
+                <tableAA>A14</tableAA>
+                <totalCancelDeliveryOrders>true</totalCancelDeliveryOrders>
             </invoiceHeader>
             <paymentMethods>
                 <paymentMethodDetails>

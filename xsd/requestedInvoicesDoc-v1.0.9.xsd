@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:inv="http://www.aade.gr/myDATA/invoice/v1.0" xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" xmlns:pm="https://www.aade.gr/myDATA/paymentMethod/v1.0" targetNamespace="http://www.aade.gr/myDATA/invoice/v1.0" elementFormDefault="qualified" version="1.0.8">
-  <xs:import namespace="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" schemaLocation="incomeClassification-v1.0.8.xsd"/>
-  <xs:import namespace="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" schemaLocation="expensesClassification-v1.0.8.xsd"/>
-  <xs:import namespace="https://www.aade.gr/myDATA/paymentMethod/v1.0" schemaLocation="paymentMethods-v1.0.8.xsd"/>
-  <xs:include schemaLocation="InvoicesDoc-v1.0.8.xsd"/>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:inv="http://www.aade.gr/myDATA/invoice/v1.0" xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" xmlns:pm="https://www.aade.gr/myDATA/paymentMethod/v1.0" targetNamespace="http://www.aade.gr/myDATA/invoice/v1.0" elementFormDefault="qualified" version="1.0.9">
+  <xs:import namespace="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" schemaLocation="incomeClassification-v1.0.9.xsd"/>
+  <xs:import namespace="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" schemaLocation="expensesClassification-v1.0.9.xsd"/>
+  <xs:import namespace="https://www.aade.gr/myDATA/paymentMethod/v1.0" schemaLocation="paymentMethods-v1.0.9.xsd"/>
+  <xs:include schemaLocation="InvoicesDoc-v1.0.9.xsd"/>
   <xs:element name="RequestedDoc">
     <xs:complexType>
       <xs:sequence>

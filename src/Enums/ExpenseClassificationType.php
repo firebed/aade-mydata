@@ -517,4 +517,10 @@ enum ExpenseClassificationType: string
      * Αγορές αγαθών που υπάγονται σε ΕΦΚ
      */
     case E3_598_002 = "E3_598_002";
+
+
+    /**
+     * Μη συμμετοχή στο ΦΠΑ (έξοδα – εισροές)
+     */
+    case NOT_VAT_295 = "NOT_VAT_295";
 }

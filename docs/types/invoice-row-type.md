@@ -4,38 +4,39 @@
 
 ## Το αντικείμενο αυτό περιέχει τα εξής πεδία:
 
-| Πεδίο                                                                       | Υποχρεωτικό | Περιγραφή                               |
-|-----------------------------------------------------------------------------|-------------|-----------------------------------------|
-| lineNumber                                                                  | **Ναι**     | ΑΑ γραμμής (ελάχιστη τιμή 1)            |
-| [**recType**](../appendix/rec-types)                                        | Όχι         | Είδος Γραμμής                           |
-| [**fuelCode**](../appendix/fuel-types)                                      | Όχι         | Κωδικός Καυσίμου                        |
-| quantity                                                                    | Όχι         | Ποσότητα (ελάχιστη τιμή 0)              |
-| [**measurementUnit**](../appendix/measurement-units)                        | Όχι         | Είδος Ποσότητας                         |
-| [**invoiceDetailType**](../appendix/invoice-detail-types)                   | Όχι         | Επισήμανση                              |
-| netValue                                                                    | **Ναι**     | Καθαρή αξία                             |
-| [**vatCategory**](../appendix/vat-categories)                               | **Ναι**     | Κατηγορία ΦΠΑ                           |
-| vatCategory                                                                 | **Ναι**     | Ποσό ΦΠΑ                                |
-| [**vatExemptionCategory**](../appendix/vat-exemption-categories)            | Όχι         | Κατηγορία Αιτίας Εξαίρεσης ΦΠΑ          |
-| [**dienergia**](ship-type)                                                  | Όχι         | ΠΟΛ 1177/2018 Αρ. 27                    |
-| discountOption                                                              | Όχι         | Δικαίωμα Έκπτωσης (`boolean`)           |
-| withheldAmount                                                              | Όχι         | Ποσό Παρακράτησης Φόρου                 |
-| [**withheldPercentCategory**](../appendix/withheld-percent-categories)      | Όχι         | Κατηγορία Συντελεστή Παρακράτησης Φόρου |
-| stampDutyAmount                                                             | Όχι         | Ποσό Χαρτοσήμου                         |
-| [**stampDutyPercentCategory**](../appendix/stamp-categories)                | Όχι         | Κατηγορία Συντελεστή Χαρτοσήμου         |
-| feesAmount                                                                  | Όχι         | Ποσό Τελών                              |
-| [**feesPercentCategory**](../appendix/fees-percent-categories)              | Όχι         | Κατηγορία Συντελεστή Τελών              |
-| otherTaxesAmount                                                            | Όχι         | Ποσό Λοιπών Φόρων                       |
-| [**otherTaxesPercentCategory**](../appendix/other-taxes-percent-categories) | Όχι         | Κατηγορία Συντελεστή Λοιπών Φόρων       |
-| deductionsAmount                                                            | Όχι         | Ποσό Κρατήσεων                          |
-| lineComments                                                                | Όχι         | Σχόλια Γραμμής                          |
-| [**incomeClassification[]**](income-classification-type)                    | Όχι         | Χαρακτηρισμοί Εσόδων                    |
-| [**expensesClassification[]**](expenses-classification-type)                | Όχι         | Χαρακτηρισμοί Εξόδων                    |
-| quantity15                                                                  | Όχι         | Ποσότητα Θερμοκρασίας 15 βαθμών         |
-| itemDescr                                                                   | Όχι         | Περιγραφή Είδους                        |
-| TaricNo                                                                     | Όχι         | Κωδικός Taric                           |
-| itemCode                                                                    | Όχι         | Κωδικός Είδους                          |
-| otherMeasurementUnitQuantity                                                | Όχι         | Πλήθος Μονάδας Μέτρησης Τεμάχια Άλλα    |
-| otherMeasurementUnitTitle                                                   | Όχι         | Τίτλος Μονάδας Μέτρησης Τεμάχια Άλλα    |
+| Πεδίο                                                                       | Υποχρεωτικό | Περιγραφή                                      |
+|-----------------------------------------------------------------------------|-------------|------------------------------------------------|
+| lineNumber                                                                  | **Ναι**     | ΑΑ γραμμής (ελάχιστη τιμή 1)                   |
+| [**recType**](../appendix/rec-types)                                        | Όχι         | Είδος Γραμμής                                  |
+| [**fuelCode**](../appendix/fuel-types)                                      | Όχι         | Κωδικός Καυσίμου                               |
+| quantity                                                                    | Όχι         | Ποσότητα (ελάχιστη τιμή 0)                     |
+| [**measurementUnit**](../appendix/measurement-units)                        | Όχι         | Είδος Ποσότητας                                |
+| [**invoiceDetailType**](../appendix/invoice-detail-types)                   | Όχι         | Επισήμανση                                     |
+| netValue                                                                    | **Ναι**     | Καθαρή αξία                                    |
+| [**vatCategory**](../appendix/vat-categories)                               | **Ναι**     | Κατηγορία ΦΠΑ                                  |
+| vatCategory                                                                 | **Ναι**     | Ποσό ΦΠΑ                                       |
+| [**vatExemptionCategory**](../appendix/vat-exemption-categories)            | Όχι         | Κατηγορία Αιτίας Εξαίρεσης ΦΠΑ                 |
+| [**dienergia**](ship-type)                                                  | Όχι         | ΠΟΛ 1177/2018 Αρ. 27                           |
+| discountOption                                                              | Όχι         | Δικαίωμα Έκπτωσης (`boolean`)                  |
+| withheldAmount                                                              | Όχι         | Ποσό Παρακράτησης Φόρου                        |
+| [**withheldPercentCategory**](../appendix/withheld-percent-categories)      | Όχι         | Κατηγορία Συντελεστή Παρακράτησης Φόρου        |
+| stampDutyAmount                                                             | Όχι         | Ποσό Χαρτοσήμου                                |
+| [**stampDutyPercentCategory**](../appendix/stamp-categories)                | Όχι         | Κατηγορία Συντελεστή Χαρτοσήμου                |
+| feesAmount                                                                  | Όχι         | Ποσό Τελών                                     |
+| [**feesPercentCategory**](../appendix/fees-percent-categories)              | Όχι         | Κατηγορία Συντελεστή Τελών                     |
+| otherTaxesAmount                                                            | Όχι         | Ποσό Λοιπών Φόρων                              |
+| [**otherTaxesPercentCategory**](../appendix/other-taxes-percent-categories) | Όχι         | Κατηγορία Συντελεστή Λοιπών Φόρων              |
+| deductionsAmount                                                            | Όχι         | Ποσό Κρατήσεων                                 |
+| lineComments                                                                | Όχι         | Σχόλια Γραμμής                                 |
+| [**incomeClassification[]**](income-classification-type)                    | Όχι         | Χαρακτηρισμοί Εσόδων                           |
+| [**expensesClassification[]**](expenses-classification-type)                | Όχι         | Χαρακτηρισμοί Εξόδων                           |
+| quantity15                                                                  | Όχι         | Ποσότητα Θερμοκρασίας 15 βαθμών                |
+| itemDescr                                                                   | Όχι         | Περιγραφή Είδους                               |
+| TaricNo                                                                     | Όχι         | Κωδικός Taric                                  |
+| itemCode                                                                    | Όχι         | Κωδικός Είδους                                 |
+| otherMeasurementUnitQuantity                                                | Όχι         | Πλήθος Μονάδας Μέτρησης Τεμάχια Άλλα           |
+| otherMeasurementUnitTitle                                                   | Όχι         | Τίτλος Μονάδας Μέτρησης Τεμάχια Άλλα           |
+| notVAT195                                                                   | Όχι         | Ένδειξη μη συμμετοχής στο ΦΠΑ (έσοδα – εκροές) |
 
 ## Παρατηρήσεις
 
@@ -91,6 +92,10 @@
   στο λεκτικό πεδίο (`otherMeasurementUnitTitle`) π.χ. `3_Παλέτες`. Σημειώνεται ότι
   το πεδίο `quantity` («Ποσότητα») σε κάθε περίπτωση αντιστοιχεί στο πλήθος των ειδών που
   διακινούνται και όχι στο πλήθος των ειδών συσκευασίας.
+- Συμπληρώνοντας την ένδειξη του πεδίου `notVAT195` (με την τιμή true) τα ποσά των
+  γραμμών του παραστατικού δε συμμετέχουν στη δήλωση ΦΠΑ (εκροές). Είναι
+  αποδεκτό μόνο για παραστατικαά εσόδων των τύπων μεταξύ 1.1 – 11.5.
+
 
 ## Απλό παράδειγμα κλασσικής υποβολής γραμμής παραστατικού
 

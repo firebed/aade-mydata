@@ -15,14 +15,15 @@ class PaymentMethodDetail extends Type
         'paymentMethodInfo',
         'tipAmount',
         'transactionId',
+        'tid',
         'ProvidersSignature',
         'ECRToken'
     ];
 
     protected array $casts = [
-        'type'               => PaymentMethod::class,
+        'type' => PaymentMethod::class,
         'ProvidersSignature' => ProvidersSignature::class,
-        'ECRToken'           => ECRToken::class
+        'ECRToken' => ECRToken::class
     ];
 
     /**
@@ -34,7 +35,7 @@ class PaymentMethodDetail extends Type
     }
 
     /**
-     * @param PaymentMethod|string $type Τύπος Πληρωμής
+     * @param  PaymentMethod|string  $type  Τύπος Πληρωμής
      */
     public function setType(PaymentMethod|string $type): static
     {
@@ -58,7 +59,7 @@ class PaymentMethodDetail extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param float $amount Ποσό Πληρωμής
+     * @param  float  $amount  Ποσό Πληρωμής
      */
     public function setAmount(float $amount): static
     {
@@ -77,7 +78,7 @@ class PaymentMethodDetail extends Type
      * Το πεδίο Πληροφορίες μπορεί να περιέχει επιπλέον πληροφορίες σχετικά με
      * τον συγκεκριμένο τύπο (πχ Αρ. Λογαριασμού Τραπέζης)
      *
-     * @param string|null $paymentMethodInfo Πληροφορίες γραμμής
+     * @param  string|null  $paymentMethodInfo  Πληροφορίες γραμμής
      */
     public function setPaymentMethodInfo(?string $paymentMethodInfo): static
     {
@@ -99,7 +100,7 @@ class PaymentMethodDetail extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param float|null $tipAmount Ποσό φιλοδωρήματος
+     * @param  float|null  $tipAmount  Ποσό φιλοδωρήματος
      * @version 1.0.8
      */
     public function setTipAmount(?float $tipAmount): static
@@ -119,7 +120,7 @@ class PaymentMethodDetail extends Type
     /**
      * Το πεδίο transactionId διαβιβάζεται στην περίπτωση πληρωμών με type = 7
      *
-     * @param string|null $transactionId Μοναδική Ταυτότητα Πληρωμής
+     * @param  string|null  $transactionId  Μοναδική Ταυτότητα Πληρωμής
      * @version 1.0.8
      */
     public function setTransactionId(?string $transactionId): static
@@ -128,11 +129,34 @@ class PaymentMethodDetail extends Type
     }
 
     /**
+     * @return string|null Κωδικός tid POS
+     * @version 1.0.9
+     */
+    public function getTid(): ?string
+    {
+        return $this->get('tid');
+    }
+
+    /**
+     * Το πεδίο tid, είναι το tid του POS και διαβιβάζεται υποχρεωτικά στην περίπτωση
+     * πληρωμών με type = 7 (POS) και έχει διαβιβαστεί είτε το ProvidersSignature είτε το
+     * ECRToken (ανάλογα την περίπτωση)
+     * 
+     * @param  string|null  $tid  Κωδικός tid POS (Μέγιστο επιτρεπτό μήκος 200)
+     * @return $this
+     * @version 1.0.9
+     */
+    public function setTid(?string $tid): static
+    {
+        return $this->set('tid', $tid);
+    }
+
+    /**
      * Το πεδίο ProvidersSignature διαβιβάζεται στην περίπτωση
      * πληρωμών με type = 7 και όταν η διαβίβαση γίνεται από το κανάλι του παρόχου
      *
-     * @param ProvidersSignature|string|null $providersSignature Υπογραφή Πληρωμής Παρόχου
-     * @param string|null $signature
+     * @param  ProvidersSignature|string|null  $providersSignature  Υπογραφή Πληρωμής Παρόχου
+     * @param  string|null  $signature
      * @version 1.0.8
      */
     public function setProvidersSignature(ProvidersSignature|string|null $providersSignature, string $signature = null): static
@@ -157,8 +181,8 @@ class PaymentMethodDetail extends Type
      * Το πεδίο ECRToken διαβιβάζεται στην περίπτωση πληρωμών με type = 7 και
      * όταν η διαβίβαση γίνεται από ERP.
      *
-     * @param ECRToken|string|null $ecrToken Υπογραφή Πληρωμής ΦΗΜ με σύστημα λογισμικού (ERP)
-     * @param string|null $sessionNumber
+     * @param  ECRToken|string|null  $ecrToken  Υπογραφή Πληρωμής ΦΗΜ με σύστημα λογισμικού (ERP)
+     * @param  string|null  $sessionNumber
      * @version 1.0.8
      */
     public function setECRToken(ECRToken|string|null $ecrToken, string $sessionNumber = null): static
@@ -169,6 +193,7 @@ class PaymentMethodDetail extends Type
 
         return $this->set('ECRToken', $ecrToken);
     }
+
     /**
      * @return ECRToken|null Υπογραφή Πληρωμής ΦΗΜ με σύστημα λογισμικού (ERP)
      * @version 1.0.8

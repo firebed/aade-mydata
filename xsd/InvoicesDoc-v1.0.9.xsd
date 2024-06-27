@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:inv="http://www.aade.gr/myDATA/invoice/v1.0" xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" targetNamespace="http://www.aade.gr/myDATA/invoice/v1.0" elementFormDefault="qualified" version="1.0.8">
-	<xs:import namespace="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" schemaLocation="incomeClassification-v1.0.8.xsd"/>
-	<xs:import namespace="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" schemaLocation="expensesClassification-v1.0.8.xsd"/>
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:inv="http://www.aade.gr/myDATA/invoice/v1.0" xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" targetNamespace="http://www.aade.gr/myDATA/invoice/v1.0" elementFormDefault="qualified" version="1.0.9">
+	<xs:import namespace="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" schemaLocation="incomeClassification-v1.0.9.xsd"/>
+	<xs:import namespace="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" schemaLocation="expensesClassification-v1.0.9.xsd"/>
 	<xs:element name="InvoicesDoc">
 		<xs:annotation>
 			<xs:documentation>Παραστατικό ΑΑΔΕ</xs:documentation>
@@ -243,6 +243,26 @@
 					<xs:documentation>Ένδειξη Εισπράξης Τρίτων</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="multipleConnectedMarks" type="xs:long" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Πολλαπλά Συνδεόμενα MARKs</xs:documentation>
+				</xs:annotation>
+			</xs:element>			
+			<xs:element name="tableAA" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>AA ΤΡΑΠΕΖΙOY (για Δελτία Παραγγελίας Εστίασης)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="totalCancelDeliveryOrders" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Ένδειξη συνολικής αναίρεσης Δελτίων Παραγελίας</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="InvoiceRowType">
@@ -446,6 +466,11 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="notVAT195" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Ένδειξη μη συμμετοχής στο ΦΠΑ (έσοδα – εκροές)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="InvoiceSummaryType">
@@ -634,7 +659,7 @@
 				<xs:simpleType>
 					<xs:restriction base="xs:int">
 						<xs:minInclusive value="1"/>
-						<xs:maxInclusive value="7"/>
+						<xs:maxInclusive value="8"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -657,6 +682,16 @@
 				<xs:annotation>
 					<xs:documentation>Μοναδική Ταυτότητα Πληρωμής</xs:documentation>
 				</xs:annotation>
+			</xs:element>
+			<xs:element name="tid" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>tid POS</xs:documentation>
+				</xs:annotation>				
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="ProvidersSignature" type="inv:ProviderSignatureType" minOccurs="0">
 				<xs:annotation>
@@ -1207,7 +1242,7 @@
 	<xs:simpleType name="VatType">
 		<xs:restriction base="xs:int">
 			<xs:minInclusive value="1"/>
-			<xs:maxInclusive value="9"/>
+			<xs:maxInclusive value="10"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="VatExemptionType">
@@ -1237,7 +1272,7 @@
 	<xs:simpleType name="OtherTaxesType">
 		<xs:restriction base="xs:int">
 			<xs:minInclusive value="1"/>
-			<xs:maxInclusive value="19"/>
+			<xs:maxInclusive value="30"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="DeductionsType">

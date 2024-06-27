@@ -380,7 +380,7 @@ class Invoice extends Type
 
         $dom = new DOMDocument();
         $dom->loadXML($xml);
-        $dom->schemaValidate(__DIR__.'/../../xsd/InvoicesDoc-v1.0.8.xsd');
+        $dom->schemaValidate(__DIR__.'/../../xsd/InvoicesDoc-v1.0.9.xsd');
 
         return array_map(function ($error) {
             preg_match("/Element '(.+?)':( \[.*?])? (.+)/", $error->message, $matches);

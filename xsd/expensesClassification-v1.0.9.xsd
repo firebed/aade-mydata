@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" xmlns:inv="http://www.aade.gr/myDATA/invoice/v1.0" targetNamespace="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0.8">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" xmlns:inv="http://www.aade.gr/myDATA/invoice/v1.0" targetNamespace="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0.9">
   <xs:element name="ExpensesClassificationsDoc">
     <xs:annotation>
       <xs:documentation>Χαρατηρισμοί Εξόδων Πρότυπων Παραστατικών ΑΑΔΕ</xs:documentation>
@@ -202,6 +202,7 @@
       <xs:enumeration value="E3_310"/>
       <xs:enumeration value="E3_318"/>
       <xs:enumeration value="E3_598_002"/>
+	  <xs:enumeration value="NOT_VAT_295"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="ExpensesClassificationCategoryType">
