@@ -635,11 +635,11 @@ class InvoiceDetails extends Type
      * Προσθήκη χαρακτηρισμού εσόδων.
      *
      * @param  IncomeClassification|IncomeClassificationType|string|null  $type  Χαρακτηρισμός Εσόδων
-     * @param  IncomeClassificationCategory|null  $category
+     * @param  IncomeClassificationCategory|string|null  $category
      * @param  float|null  $amount
      * @return InvoiceDetails
      */
-    public function addIncomeClassification(IncomeClassification|IncomeClassificationType|string|null $type, IncomeClassificationCategory $category = null, float $amount = null): static
+    public function addIncomeClassification(IncomeClassification|IncomeClassificationType|string|null $type, IncomeClassificationCategory|string $category = null, float $amount = null): static
     {
         if ($type instanceof IncomeClassification) {
             $this->push('incomeClassification', $type);
@@ -678,11 +678,11 @@ class InvoiceDetails extends Type
      * Προσθήκη χαρακτηρισμού εξόδων.
      *
      * @param  ExpensesClassification|ExpenseClassificationType|string|null  $type  Χαρακτηρισμός εξόδων
-     * @param  ExpenseClassificationCategory|null  $category
+     * @param  ExpenseClassificationCategory|string|null  $category
      * @param  float|null  $amount
      * @return InvoiceDetails
      */
-    public function addExpensesClassification(ExpensesClassification|ExpenseClassificationType|string|null $type, ExpenseClassificationCategory $category = null, float $amount = null): static
+    public function addExpensesClassification(ExpensesClassification|ExpenseClassificationType|string|null $type, ExpenseClassificationCategory|string $category = null, float $amount = null): static
     {
         if ($type instanceof ExpensesClassification) {
             $this->push('expensesClassification', $type);
