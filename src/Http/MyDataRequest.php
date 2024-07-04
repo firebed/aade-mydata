@@ -28,9 +28,9 @@ abstract class MyDataRequest
     private static ?bool   $is_provider      = false;
     private static array   $request_options;
 
-    private static HandlerStack $handler;
+    private static ?HandlerStack $handler;
 
-    public static function setHandler(MockHandler $handler): void
+    public static function setHandler(?MockHandler $handler): void
     {
         self::$handler = HandlerStack::create($handler);
     }
