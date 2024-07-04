@@ -15,7 +15,10 @@ class ECRToken extends Type
     public function __construct(string $signingAuthor = null, string $sessionNumber = null)
     {
         if ($signingAuthor !== null || $sessionNumber !== null) {
-            parent::__construct(compact('signingAuthor', 'sessionNumber'));
+            parent::__construct([
+                'SigningAuthor' => $signingAuthor,
+                'SessionNumber' => $sessionNumber
+            ]);
         }
     }
 
