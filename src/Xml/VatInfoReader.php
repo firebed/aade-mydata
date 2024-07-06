@@ -4,6 +4,9 @@ namespace Firebed\AadeMyData\Xml;
 
 use Firebed\AadeMyData\Models\RequestedVatInfo;
 
+/**
+ * @extends XMLReader<RequestedVatInfo>
+ */
 class VatInfoReader extends XMLReader
 {
     public function parseXML(string $xmlString): RequestedVatInfo

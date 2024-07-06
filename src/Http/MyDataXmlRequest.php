@@ -21,17 +21,14 @@ abstract class MyDataXmlRequest extends MyDataRequest
     {
         // Create the request XML
         $requestXML = $writer->asXML($data);
+        $this->requestDom = $writer->getDomDocument();
 
         // Get the response XML
         $response = $this->post(body: $requestXML);
         $responseXML = $response->getBody()->getContents();
-
-        // Parse the response XML
         $responseDoc = $reader->parseXML($responseXML);
-
         $this->responseDom = $reader->getDomDocument();
-        $this->requestDom = $writer->getDomDocument();
-
+        
         return $responseDoc;
     }
 }

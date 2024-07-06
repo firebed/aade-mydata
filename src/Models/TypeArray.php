@@ -8,7 +8,7 @@ use Countable;
 use IteratorAggregate;
 use Traversable;
 
-/** *
+/**
  * @template TType
  *
  * @template-implements IteratorAggregate<int, TType>
