@@ -13,8 +13,9 @@ trait HasResponseDom
         return $this->responseDom;
     }
 
-    public function getResponseXML(): ?string
+    public function getResponseXML(bool $formatOutput = true): ?string
     {
+        $this->responseDom->formatOutput = $formatOutput;
         return $this->responseDom?->saveXML();
     }
 
