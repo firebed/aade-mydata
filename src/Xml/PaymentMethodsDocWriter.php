@@ -2,6 +2,9 @@
 
 namespace Firebed\AadeMyData\Xml;
 
+/**
+ * @extends XMLWriter<array>
+ */
 class PaymentMethodsDocWriter extends XMLWriter
 {
     private const XMLNS = 'https://www.aade.gr/myDATA/paymentMethod/v1.0';
@@ -17,7 +20,7 @@ class PaymentMethodsDocWriter extends XMLWriter
     ];
 
     /** @noinspection PhpUnhandledExceptionInspection */
-    public function asXML(array $paymentMethods): string
+    public function asXML($data): string
     {
         $rootNode = $this->document->createElementNS(self::XMLNS, 'PaymentMethodsDoc');
         $this->document->appendChild($rootNode);
@@ -25,7 +28,7 @@ class PaymentMethodsDocWriter extends XMLWriter
         $rootNode->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xsi', self::XSI);
         $rootNode->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:inv', self::INV);
 
-        $this->buildArray($rootNode, 'paymentMethods', $paymentMethods);
+        $this->buildArray($rootNode, 'paymentMethods', $data);
 
         return $this->document->saveXML();
     }

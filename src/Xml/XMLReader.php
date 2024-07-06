@@ -7,14 +7,18 @@ use DOMElement;
 use Firebed\AadeMyData\Models\Type;
 use IteratorAggregate;
 
-class XMLReader
+/**
+ * @template T of Type
+ */
+abstract class XMLReader
 {
     private DOMDocument $document;
-    
+
     protected function loadXML(string $xmlString, Type $parent): void
     {
         $this->document = new DOMDocument();
         $this->document->preserveWhiteSpace = false;
+        $this->document->formatOutput = true;
         $this->document->loadXML($xmlString);
 
         $this->parseDOMElement($this->document->documentElement->childNodes, $parent);
@@ -64,9 +68,15 @@ class XMLReader
         $cast = $parent->getCast($name);
         return $cast ? new $cast() : null;
     }
-    
+
     public function getDomDocument(): DOMDocument
     {
         return $this->document;
     }
+
+    /**
+     * @param  string  $xmlString
+     * @return T
+     */
+    public abstract function parseXml(string $xmlString): mixed;
 }

@@ -8,7 +8,10 @@ use DOMElement;
 use DOMNode;
 use Firebed\AadeMyData\Models\Type;
 
-class XMLWriter
+/**
+ * @template T
+ */
+abstract class XMLWriter
 {
     // DOMDocument object for XML manipulation
     protected DOMDocument $document;
@@ -128,4 +131,10 @@ class XMLWriter
     {
         return $this->document;
     }
+
+    /**
+     * @param T $data
+     * @return string
+     */
+    public abstract function asXml($data): string;
 }
