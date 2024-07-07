@@ -17,6 +17,10 @@ class PaymentMethodsDocWriter extends XMLWriter
             ''  => self::INV,
             '*' => self::INV
         ],
+        'ProvidersSignature'   => [
+            '' => self::INV,
+            '*' => self::INV,
+        ],
     ];
 
     /** @noinspection PhpUnhandledExceptionInspection */

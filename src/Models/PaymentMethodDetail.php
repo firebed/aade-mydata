@@ -35,9 +35,10 @@ class PaymentMethodDetail extends Type
     }
 
     /**
-     * @param  PaymentMethod|string  $type  Τύπος Πληρωμής
+     * @param  PaymentMethod|int  $type  Τύπος Πληρωμής
+     * @return PaymentMethodDetail
      */
-    public function setType(PaymentMethod|string $type): static
+    public function setType(PaymentMethod|int $type): static
     {
         return $this->set('type', $type);
     }
