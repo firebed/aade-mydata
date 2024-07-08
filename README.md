@@ -57,7 +57,7 @@ All documentation is available 👉 [on our documentation site](https://docs.inv
 
 | Version | PHP | myDATA | Support |
 |---------|-----|--------|---------|
-| ^v5.x   | 8.1 | v1.0.8 | Active  |
+| ^v5.x   | 8.1 | v1.0.9 | Active  |
 | ^v4.x   | 8.1 | v1.0.8 | Ended   |
 | ^v3.x   | 8.1 | v1.0.7 | Ended   |
 | ^v2.x   | 8.1 | v1.0.5 | Ended   |

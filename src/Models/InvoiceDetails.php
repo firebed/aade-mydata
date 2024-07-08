@@ -68,7 +68,8 @@ class InvoiceDetails extends Type
         'expensesClassification',
         'quantity15',
         'otherMeasurementUnitQuantity',
-        'otherMeasurementUnitTitle'
+        'otherMeasurementUnitTitle',
+        'notVAT195',
     ];
 
     protected array $casts = [
@@ -820,6 +821,29 @@ class InvoiceDetails extends Type
     public function setOtherMeasurementUnitTitle(?string $otherMeasurementUnitTitle): static
     {
         return $this->set('otherMeasurementUnitTitle', $otherMeasurementUnitTitle);
+    }
+
+    /**
+     * @return bool|null Ένδειξη μη συμμετοχής στο ΦΠΑ (έσοδα – εκροές)
+     * @version 1.0.9
+     */
+    public function getNotVAT195(): ?bool
+    {
+        return $this->get('notVAT195');
+    }
+    
+    /**
+     * Συμπληρώνοντας την ένδειξη του πεδίου notVAT195 (με την τιμή true) τα ποσά των
+     * γραμμών του παραστατικού δε συμμετέχουν στη δήλωση ΦΠΑ (εκροές). Είναι
+     * αποδεκτό μόνο για παραστατικά εσόδων των τύπων μεταξύ 1.1 – 11.5.
+     * 
+     * @param  bool|null  $notVAT195 Ένδειξη μη συμμετοχής στο ΦΠΑ (έσοδα – εκροές)
+     * @return $this
+     * @version 1.0.9
+     */
+    public function setNotVAT195(?bool $notVAT195): static
+    {
+        return $this->set('notVAT195', $notVAT195);
     }
 
     public function set($key, $value): static

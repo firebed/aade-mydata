@@ -11,6 +11,7 @@
 | paymentMethodInfo                                    | Όχι         | Πληροφορίες                                       |
 | tipAmount                                            | Όχι         | Ποσό φιλοδωρήματος                                |
 | transactionId                                        | Όχι         | Μοναδική Ταυτότητα Πληρωμής                       |
+| tid                                                  | Όχι         | Κωδικός tid POS                                   |
 | [**ProvidersSignature**](./providers-signature-type) | Όχι         | Υπογραφή Πληρωμής Παρόχου                         |
 | [**ECRToken**](./ecr-token-type)                     | Όχι         | Υπογραφή Πληρωμής ΦΗΜ με σύστημα λογισμικού (ERP) |
 
@@ -25,6 +26,9 @@
   και όταν η διαβίβαση γίνεται από το **κανάλι του παρόχου**.
 - Το πεδίο `ECRToken` διαβιβάζεται στην περίπτωση πληρωμών με `type = 7` και
   όταν η διαβίβαση γίνεται **από ERP**.
+- Το πεδίο tid, είναι το tid του POS και διαβιβάζεται υποχρεωτικά στην περίπτωση
+  πληρωμών με type = 7 (POS) και έχει διαβιβαστεί είτε το ProvidersSignature είτε το
+  ECRToken (ανάλογα την περίπτωση).
 
 ## Παραδείγματα
 
@@ -50,7 +54,8 @@ use Firebed\AadeMyData\Models\ECRToken;
 use Firebed\AadeMyData\Enums\PaymentMethod;
 
 $pmd = new PaymentMethodDetail();
-$pmd->setType(PaymentMethod::METHOD_7); // E-POS
+$pmd->setType(PaymentMethod::METHOD_7);
+$pmd->setTid('example-id');
 $pmd->setAmount(50);
 
 // Υπογραφή Πληρωμής ERP

@@ -373,4 +373,20 @@ class VatInfo extends Type
     {
         return $this->get('Vat422');
     }
+
+    /**
+     * @return float|null Ποσό ΦΠΑ πεδίου 361 μη χαρακτηρισμένα
+     */
+    public function getVatUnclassified361(): ?float
+    {
+        return $this->get('VatUnclassified361');
+    }
+
+    /**
+     * @return float|null Ποσό ΦΠΑ πεδίου 381 μη χαρακτηρισμένα
+     */
+    public function getVatUnclassified381(): ?float
+    {
+        return $this->get('VatUnclassified381');
+    }
 }

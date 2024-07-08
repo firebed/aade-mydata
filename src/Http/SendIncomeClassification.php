@@ -2,12 +2,11 @@
 
 namespace Firebed\AadeMyData\Http;
 
-use Exception;
-use Firebed\AadeMyData\Enums\TransactionMode;
 use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Http\Traits\HasRequestDom;
 use Firebed\AadeMyData\Http\Traits\HasResponseDom;
-use Firebed\AadeMyData\Models\InvoicesIncomeClassificationDetail;
+use Firebed\AadeMyData\Models\IncomeClassificationsDoc;
+use Firebed\AadeMyData\Models\InvoiceIncomeClassification;
 use Firebed\AadeMyData\Models\ResponseDoc;
 
 class SendIncomeClassification extends MyDataRequest
@@ -31,13 +30,16 @@ class SendIncomeClassification extends MyDataRequest
      * entityVatNumber, διαφορετικά το εν λόγω πεδίο παραμένει κενό</li>
      * </ul>
      *
-     * @param InvoicesIncomeClassificationDetail|InvoicesIncomeClassificationDetail[] $classificationDetails
+     * @param  IncomeClassificationsDoc|InvoiceIncomeClassification|array  $incomeClassifications
      * @return ResponseDoc
      * @throws MyDataException
      */
-    public function handle(InvoicesIncomeClassificationDetail|array $classificationDetails): ResponseDoc
+    public function handle(IncomeClassificationsDoc|InvoiceIncomeClassification|array $incomeClassifications): ResponseDoc
     {
-        //TODO Implement
+        if (!$incomeClassifications instanceof IncomeClassificationsDoc) {
+            $incomeClassifications = new IncomeClassificationsDoc($incomeClassifications);
+        }
+
         throw new MyDataException('Not implemented');
     }
 }

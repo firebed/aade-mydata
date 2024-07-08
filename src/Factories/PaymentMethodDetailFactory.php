@@ -13,11 +13,12 @@ class PaymentMethodDetailFactory extends Factory
     public function definition(): array
     {
         return [
-            'type'              => fake()->randomElement(PaymentMethod::cases())->value,
-            'amount'            => fake()->randomFloat(2, 20, 100),
+            'type' => fake()->randomElement(PaymentMethod::cases())->value,
+            'amount' => fake()->randomFloat(2, 20, 100),
             'paymentMethodInfo' => fake()->text(100),
-            'tipAmount'         => fake()->randomFloat(2, 0, 10),
-            'transactionId'     => 'Success'
+            'tipAmount' => fake()->randomFloat(2, 0, 10),
+            'transactionId' => fake()->sha1(),
+            'tid' => fake()->sha1(),
         ];
     }
 

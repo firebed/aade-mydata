@@ -8,8 +8,8 @@
 	</xs:complexType>
 	<xs:complexType name="InvoiceVatDetailType">
 		<xs:sequence>
-			<xs:element name="Mark" type="xs:string" minOccurs="0"/>
-			<xs:element name="IsCancelled" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="Mark" type="xs:string" minOccurs="0"/>
+      <xs:element name="IsCancelled" type="xs:boolean" minOccurs="0"/>
 			<xs:element name="IssueDate" type="xs:dateTime"/>
 			<xs:element name="Vat301" type="xs:decimal" minOccurs="0"/>
 			<xs:element name="Vat302" type="xs:decimal" minOccurs="0"/>

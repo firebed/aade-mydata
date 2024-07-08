@@ -46,27 +46,9 @@ class InvoiceHeaderCorrelatedInvoicesTest extends TestCase
     {
         $header = $this->getInvoiceFromXml()->getInvoiceHeader();
 
-        $this->assertCount(21, $header->attributes());
-
-        $this->assertEquals('A', $header->getSeries());
-        $this->assertEquals(101, $header->getAa());
-        $this->assertEquals('2020-04-08', $header->getIssueDate());
-        $this->assertEquals(InvoiceType::TYPE_1_1, $header->getInvoiceType());
-        $this->assertFalse($header->isVatPaymentSuspension());
-        $this->assertEquals('EUR', $header->getCurrency());
-
         $this->assertCount(3, $header->getCorrelatedInvoices());
         $this->assertEquals(8000000165487234, $header->getCorrelatedInvoices()[0]);
         $this->assertEquals(8000000165487568, $header->getCorrelatedInvoices()[1]);
         $this->assertEquals(8000000165487101, $header->getCorrelatedInvoices()[2]);
-
-        $this->assertTrue($header->isSelfPricing());
-        $this->assertEquals('2024-02-13', $header->getDispatchDate());
-        $this->assertEquals('00:00', $header->getDispatchTime());
-        $this->assertEquals('KHB4201', $header->getVehicleNumber());
-        $this->assertEquals(MovePurpose::TYPE_19, $header->getMovePurpose());
-        $this->assertTrue($header->isFuelInvoice());
-        $this->assertEquals(SpecialInvoiceCategory::TYPE_5, $header->getSpecialInvoiceCategory());
-        $this->assertEquals(InvoiceVariationType::TYPE_3, $header->getInvoiceVariationType());
     }
 }

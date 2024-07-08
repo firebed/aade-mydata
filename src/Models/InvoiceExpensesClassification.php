@@ -6,6 +6,14 @@ use Firebed\AadeMyData\Enums\TransactionMode;
 
 class InvoiceExpensesClassification extends Type
 {
+    protected array $expectedOrder = [
+        'invoiceMark',
+        'entityVatNumber',
+        'transactionMode',
+        'invoicesExpensesClassificationDetails',
+        'classificationPostMode',
+    ];
+    
     protected array $casts = [
         'transactionMode'                       => TransactionMode::class,
         'invoicesExpensesClassificationDetails' => InvoicesExpensesClassificationDetail::class,

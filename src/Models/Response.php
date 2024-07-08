@@ -88,6 +88,16 @@ class Response extends Type
         return $this->set('invoiceMark', $invoiceMark);
     }
 
+    public function getPaymentMethodMark(): ?string
+    {
+        return $this->get('paymentMethodMark');
+    }
+
+    public function setPaymentMethodMark(?string $paymentMethodMark): static
+    {
+        return $this->set('paymentMethodMark', $paymentMethodMark);
+    }
+
     /**
      * Επιστρέφει μόνο στην περίπτωση που η υποβολή αφορούσε χαρακτηρισμό.
      *

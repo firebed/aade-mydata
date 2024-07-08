@@ -4,6 +4,11 @@ namespace Firebed\AadeMyData\Models;
 
 class InvoicesExpensesClassificationDetail extends Type
 {
+    protected array $expectedOrder = [
+        'lineNumber',
+        'expensesClassificationDetailData',
+    ];
+    
     protected array $casts = [
         'expensesClassificationDetailData' => ExpensesClassification::class,
     ];

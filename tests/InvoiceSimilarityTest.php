@@ -15,18 +15,17 @@ use Firebed\AadeMyData\Models\InvoiceHeader;
 use Firebed\AadeMyData\Models\Issuer;
 use Firebed\AadeMyData\Models\OtherDeliveryNoteHeader;
 use Firebed\AadeMyData\Models\Party;
-use Firebed\AadeMyData\Models\PaymentMethods;
 use PHPUnit\Framework\TestCase;
 use Tests\Traits\HandlesInvoiceXml;
 
 class InvoiceSimilarityTest extends TestCase
 {
     use HandlesInvoiceXml;
-    
+
     public function test_invoices_are_identical()
     {
         $invoiceFromXml = $this->getInvoiceFromXml();
-        
+
         $invoice = new Invoice();
         $invoice->setIssuer($this->createIssuer());
         $invoice->setCounterpart($this->createCounterpart());
@@ -35,7 +34,6 @@ class InvoiceSimilarityTest extends TestCase
         $this->assertEquals($invoice->getIssuer(), $invoiceFromXml->getIssuer());
         $this->assertEquals($invoice->getCounterpart(), $invoiceFromXml->getCounterpart());
         $this->assertEquals($invoice->getInvoiceHeader(), $invoiceFromXml->getInvoiceHeader());
-        
     }
 
     private function createIssuer(): Issuer
@@ -46,7 +44,7 @@ class InvoiceSimilarityTest extends TestCase
         $address->setPostalCode('44458');
         $address->setCity('44458');
         $address->setCity('Ηράκλειο');
-        
+
         $issuer = new Issuer();
         $issuer->setVatNumber('888888888');
         $issuer->setCountry('GR');
@@ -56,7 +54,7 @@ class InvoiceSimilarityTest extends TestCase
         $issuer->setDocumentIdNo('AAA5454');
         $issuer->setSupplyAccountNo('7845547781');
         $issuer->setCountryDocumentId('GR');
-        
+
         return $issuer;
     }
 
@@ -90,7 +88,7 @@ class InvoiceSimilarityTest extends TestCase
         $invoiceHeader->setInvoiceType(InvoiceType::TYPE_1_1);
         $invoiceHeader->setVatPaymentSuspension(false);
         $invoiceHeader->setCurrency('EUR');
-        $invoiceHeader->setExchangeRate(12.345678);
+        $invoiceHeader->setExchangeRate(12.34567);
         $invoiceHeader->addCorrelatedInvoice(8000000165487234);
         $invoiceHeader->addCorrelatedInvoice(8000000165487568);
         $invoiceHeader->addCorrelatedInvoice(8000000165487101);
@@ -108,6 +106,11 @@ class InvoiceSimilarityTest extends TestCase
         $invoiceHeader->setIsDeliveryNote(true);
         $invoiceHeader->setOtherMovePurposeTitle('Έκθεση');
         $invoiceHeader->setThirdPartyCollection(true);
+        $invoiceHeader->addMultipleConnectedMark(8000000165487234);
+        $invoiceHeader->addMultipleConnectedMark(8000000165487568);
+        $invoiceHeader->addMultipleConnectedMark(8000000165487101);
+        $invoiceHeader->setTableAA('A14');
+        $invoiceHeader->setTotalCancelDeliveryOrders(true);
         return $invoiceHeader;
     }
 
@@ -128,10 +131,10 @@ class InvoiceSimilarityTest extends TestCase
         $entity->getEntityData()->setDocumentIdNo('123456');
         $entity->getEntityData()->setSupplyAccountNo('8009988811');
         $entity->getEntityData()->setCountryDocumentId('GR');
-        
+
         return $entity;
     }
-    
+
     private function createCorrelatedEntity2(): EntityType
     {
         $entity = new EntityType();
@@ -162,20 +165,15 @@ class InvoiceSimilarityTest extends TestCase
         $header->getLoadingAddress()->setPostalCode('13152');
         $header->getLoadingAddress()->setCity('Θεσσαλονίκη');
         $header->setDeliveryAddress(new Address());
-        
+
         $header->getDeliveryAddress()->setStreet('Παπανδρέου');
         $header->getDeliveryAddress()->setNumber('52');
         $header->getDeliveryAddress()->setPostalCode('11255');
         $header->getDeliveryAddress()->setCity('Αθήνα');
-        
+
         $header->setStartShippingBranch(1);
         $header->setCompleteShippingBranch(2);
-        
-        return $header;
-    }
 
-    private function createPaymentMethods(): PaymentMethods
-    {
-        
+        return $header;
     }
 }

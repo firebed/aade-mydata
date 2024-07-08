@@ -34,6 +34,9 @@ class InvoiceHeader extends Type
         'isDeliveryNote',
         'otherMovePurposeTitle',
         'thirdPartyCollection',
+        'multipleConnectedMarks',
+        'tableAA',
+        'totalCancelDeliveryOrders',
     ];
 
     protected array $casts = [
@@ -443,9 +446,95 @@ class InvoiceHeader extends Type
         return $this->set('thirdPartyCollection', $thirdPartyCollection);
     }
 
+    /**
+     * @return array|null Πολλαπλά Συνδεόμενα MARKs
+     * @version 1.0.9
+     */
+    public function getMultipleConnectedMarks(): ?array
+    {
+        return $this->get('multipleConnectedMarks');
+    }
+
+    /**
+     * @param  int  $multipleConnectedMark  Πολλαπλά Συνδεόμενα MARKs
+     * 
+     * @return $this
+     * @version 1.0.9
+     */
+    public function addMultipleConnectedMark(int $multipleConnectedMark): static
+    {
+        return $this->push('multipleConnectedMarks', $multipleConnectedMark);
+    }
+
+    /**
+     * Το πεδίο multipleConnectedMarks είναι λίστα που περιέχει πολλαπλά συνδεόμενα
+     * ΜΑΡΚs (π.χ. μπορεί να χρησιμοποιηθεί κατά έκδοση τιμολογίου/απόδειξης για
+     * πολλά δελτία παραγγελιών εστίασης).
+     * 
+     * Δεν είναι αποδεκτό για τα παραστατικά των τύπων 1.6, 2.4 και 5.1.
+     * 
+     * @param  array|null  $multipleConnectedMarks Πολλαπλά Συνδεόμενα MARKs
+     * @return $this
+     * @version 1.0.9
+     */
+    public function setMultipleConnectedMarks(?array $multipleConnectedMarks): static
+    {
+        return $this->set('multipleConnectedMarks', $multipleConnectedMarks);
+    }
+
+    /**
+     * @return string|null ΑΑ Τραπεζιού
+     * @version 1.0.9
+     */
+    public function getTableAA(): ?string
+    {
+        return $this->get('tableAA');
+    }
+
+    /**
+     * Αποδεκτό μόνο για παραστατικό τύπου 8.6.
+     * Μέγιστο επιτρεπτό μήκος 50
+     * 
+     * @param  string  $tableAA ΑΑ Τραπεζιού
+     * @return $this
+     * @version 1.0.9
+     */
+    public function setTableAA(string $tableAA): static
+    {
+        return $this->set('tableAA', $tableAA);
+    }
+
+    /**
+     * @return bool|null Ένδειξη συνολικής αναίρεσης Δελτίων Παραγγελίας
+     * @version 1.0.9
+     */
+    public function getTotalCancelDeliveryOrders(): ?bool
+    {
+        return $this->get('totalCancelDeliveryOrders');
+    }
+
+    /**
+     * Το πεδίο totalCancelDeliveryOrders είναι έγκυρο μόνο για παραστατικά τύπου 8.6
+     * (δελτίο παραγγελίας εστίασης) και ορίζει αν το παραστατικό αναιρεί («ακυρώνει»)
+     * συνολικά τα MARKs των δελτίων παραγγελιών εστίασης που έχουν δηλωθεί στο
+     * πεδίο multipleConnectedMarks (σε αυτήν την περίπτωση στο πεδίο
+     * multipleConnectedMarks πρέπει να δηλωθούν MARKs των δελτίων παραγγελίας
+     * εστίασης – τύπου 8.6 – για τα οποία θα γίνει συνολική αναίρεση τους). Στην
+     * περίπτωση αυτή το παραστατικό πρέπει να διαβιβάζεται με μια μόνο γραμμή με
+     * μηδενικές αξίες και κατηγορία ΦΠΑ την 8 (Εγγραφές χωρίς ΦΠΑ).
+     * 
+     * @param  bool|null  $totalCancelDeliveryOrders Ένδειξη συνολικής αναίρεσης Δελτίων Παραγγελίας
+     * @return $this
+     * @version 1.0.9
+     */
+    public function setTotalCancelDeliveryOrders(?bool $totalCancelDeliveryOrders): static
+    {
+        return $this->set('totalCancelDeliveryOrders', $totalCancelDeliveryOrders);
+    }
+
     public function set($key, $value): static
     {
-        if (($key === 'correlatedInvoices' || $key === 'otherCorrelatedEntities') && !is_array($value)) {
+        if (in_array($key, ['correlatedInvoices', 'otherCorrelatedEntities', 'multipleConnectedMarks']) && !is_array($value)) {
             return $this->push($key, $value);
         }
 

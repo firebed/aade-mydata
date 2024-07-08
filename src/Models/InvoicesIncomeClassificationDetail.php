@@ -4,6 +4,11 @@ namespace Firebed\AadeMyData\Models;
 
 class InvoicesIncomeClassificationDetail extends Type
 {
+    protected array $expectedOrder = [
+        'lineNumber',
+        'incomeClassificationDetailData',
+    ];
+    
     protected array $casts = [
         'incomeClassificationDetailData' => IncomeClassification::class,
     ];
@@ -29,17 +34,22 @@ class InvoicesIncomeClassificationDetail extends Type
     /**
      * @return IncomeClassification[]|null Λίστα Χαρακτηρισμών Εσόδων
      */
-    public function getIncomeClassificationDetailData(): ?array
+    public function getClassificationDetails(): ?array
     {
         return $this->get('incomeClassificationDetailData');
     }
 
-    /**
-     * @param IncomeClassification[] $incomeClassificationDetailData Λίστα Χαρακτηρισμών Εσόδων
-     */
-    public function setIncomeClassificationDetailData(array $incomeClassificationDetailData): static
+    public function addClassificationDetail(IncomeClassification $classification): static
     {
-        return $this->set('incomeClassificationDetailData', $incomeClassificationDetailData);
+        return $this->push('incomeClassificationDetailData', $classification);
+    }
+
+    /**
+     * @param IncomeClassification[] $classificationDetails Λίστα Χαρακτηρισμών Εσόδων
+     */
+    public function setClassificationDetails(array $classificationDetails): static
+    {
+        return $this->set('incomeClassificationDetailData', $classificationDetails);
     }
 
 }
