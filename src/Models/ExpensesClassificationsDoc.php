@@ -11,9 +11,12 @@ class ExpensesClassificationsDoc extends TypeArray
         'expensesInvoiceClassification' => InvoiceExpensesClassification::class,
     ];
 
-    public function __construct()
+    /**
+     * @param  InvoiceExpensesClassification|InvoiceExpensesClassification[]  $classifications
+     */
+    public function __construct(InvoiceExpensesClassification|array $classifications = [])
     {
-        parent::__construct('expensesInvoiceClassification');
+        parent::__construct('expensesInvoiceClassification', $classifications);
     }
 
     public function offsetGet($offset): ExpensesClassification

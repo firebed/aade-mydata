@@ -8,12 +8,15 @@ namespace Firebed\AadeMyData\Models;
 class IncomeClassificationsDoc extends TypeArray
 {
     protected array $casts = [
-        'incomeClassificationsDoc' => InvoiceIncomeClassification::class,
+        'incomeInvoiceClassification' => InvoiceIncomeClassification::class,
     ];
 
-    public function __construct()
+    /**
+     * @param InvoiceIncomeClassification|InvoiceIncomeClassification[] $classifications
+     */
+    public function __construct(InvoiceIncomeClassification|array $classifications = [])
     {
-        parent::__construct('incomeClassificationsDoc');
+        parent::__construct('incomeClassificationsDoc', $classifications);
     }
 
     public function offsetGet($offset): IncomeClassification

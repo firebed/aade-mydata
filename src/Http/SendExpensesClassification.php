@@ -3,6 +3,7 @@
 namespace Firebed\AadeMyData\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Models\ExpensesClassificationsDoc;
 use Firebed\AadeMyData\Models\InvoiceExpensesClassification;
 use Firebed\AadeMyData\Models\ResponseDoc;
 
@@ -29,12 +30,15 @@ class SendExpensesClassification extends MyDataRequest
      * </ul>
      * With this method the user can classify invoices that produce income.
      *
-     * @param InvoiceExpensesClassification[] $invoiceExpensesClassificationTypes
+     * @param ExpensesClassificationsDoc|InvoiceExpensesClassification[] $expensesClassifications
      * @throws MyDataException
      */
-    public function handle(InvoiceExpensesClassification|array $invoiceExpensesClassificationTypes): ResponseDoc
+    public function handle(ExpensesClassificationsDoc|array $expensesClassifications): ResponseDoc
     {
-        //TODO Implement
+        if (!$expensesClassifications instanceof ExpensesClassificationsDoc) {
+            $expensesClassifications = new ExpensesClassificationsDoc($expensesClassifications);
+        }
+        
         throw new MyDataException('Not implemented');
     }
 }

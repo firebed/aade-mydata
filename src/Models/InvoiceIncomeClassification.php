@@ -6,6 +6,13 @@ use Firebed\AadeMyData\Enums\TransactionMode;
 
 class InvoiceIncomeClassification extends Type
 {
+    protected array $expectedOrder = [
+        'invoiceMark',
+        'entityVatNumber',
+        'transactionMode',
+        'invoicesIncomeClassificationDetails',
+    ];
+    
     protected array $casts = [
         'transactionMode'                     => TransactionMode::class,
         'invoicesIncomeClassificationDetails' => InvoicesIncomeClassificationDetail::class,
@@ -84,16 +91,21 @@ class InvoiceIncomeClassification extends Type
     /**
      * @return InvoicesIncomeClassificationDetail[]|null Στοιχεία Χαρακτηρισμού Εσόδων
      */
-    public function getInvoiceIncomeClassificationDetails(): ?array
+    public function getIncomeClassifications(): ?array
     {
         return $this->get('invoicesIncomeClassificationDetails');
     }
 
-    /**
-     * @param InvoicesIncomeClassificationDetail[]|null $invoicesIncomeClassificationDetails Στοιχεία Χαρακτηρισμού Εσόδων
-     */
-    public function setInvoicesIncomeClassificationDetails(?array $invoicesIncomeClassificationDetails): static
+    public function addIncomeClassification(InvoicesIncomeClassificationDetail $incomeClassification): static
     {
-        return $this->set('invoicesIncomeClassificationDetails', $invoicesIncomeClassificationDetails);
+        return $this->push('invoicesIncomeClassificationDetails', $incomeClassification);
+    }
+
+    /**
+     * @param InvoicesIncomeClassificationDetail[]|null $incomeClassifications Στοιχεία Χαρακτηρισμού Εσόδων
+     */
+    public function setIncomeClassifications(?array $incomeClassifications): static
+    {
+        return $this->set('invoicesIncomeClassificationDetails', $incomeClassifications);
     }
 }
