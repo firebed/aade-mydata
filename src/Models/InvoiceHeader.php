@@ -2,6 +2,7 @@
 
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Enums\CurrencyCode;
 use Firebed\AadeMyData\Enums\InvoiceType;
 use Firebed\AadeMyData\Enums\InvoiceVariationType;
 use Firebed\AadeMyData\Enums\MovePurpose;
@@ -141,10 +142,15 @@ class InvoiceHeader extends Type
     /**
      * Ο κωδικός νομισμάτων προέρχεται από την αντίστοιχη λίστα σύμφωνα με το πρότυπο ISO4217.
      *
-     * @param  string  $currency  Νόμισμα
+     * @param  CurrencyCode|string  $currency  Νόμισμα
+     * @return InvoiceHeader
      */
-    public function setCurrency(string $currency): static
+    public function setCurrency(CurrencyCode|string $currency): static
     {
+        if ($currency instanceof CurrencyCode) {
+            $currency = $currency->value;
+        }
+        
         return $this->set('currency', $currency);
     }
 

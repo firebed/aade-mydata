@@ -2,6 +2,7 @@
 
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Enums\CountryCode;
 use Firebed\AadeMyData\Traits\HasFactory;
 
 class Party extends Type
@@ -51,10 +52,15 @@ class Party extends Type
      * Ο κωδικός της χώρας είναι δύο χαρακτήρες και προέρχεται
      * από την αντίστοιχη λίστα χωρών όπως περιγράφεται στο ISO 3166
      *
-     * @param  string  $country  Ο κωδικός της χώρας
+     * @param  CountryCode|string  $country  Ο κωδικός της χώρας
+     * @return Party
      */
-    public function setCountry(string $country): static
+    public function setCountry(CountryCode|string $country): static
     {
+        if ($country instanceof CountryCode) {
+            $country = $country->value;
+        }
+        
         return $this->set('country', $country);
     }
 
@@ -196,11 +202,16 @@ class Party extends Type
      * το πεδίο αριθμός επίσημου εγγράφου (documentIdNo) και αφορά τον λήπτη του
      * παραστατικού.
      *
-     * @param  string|null  $countryDocumentId  Κωδ. Χώρας Έκδοσης Επίσημου Εγγράφου
+     * @param  CountryCode|string|null  $countryDocumentId  Κωδ. Χώρας Έκδοσης Επίσημου Εγγράφου
+     * @return Party
      * @version 1.0.7
      */
-    public function setCountryDocumentId(?string $countryDocumentId): static
+    public function setCountryDocumentId(CountryCode|string|null $countryDocumentId): static
     {
+        if ($countryDocumentId instanceof CountryCode) {
+            $countryDocumentId = $countryDocumentId->value;
+        }
+        
         return $this->set('countryDocumentId', $countryDocumentId);
     }
 }
