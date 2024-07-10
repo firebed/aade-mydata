@@ -14,7 +14,7 @@ class GenerateUid
         $attributes = [
             $vatNumber,
             $issueDate,
-            $branchId,
+            $branchId ?? 0,
             $invoiceType instanceof InvoiceType ? $invoiceType->value : $invoiceType,
             $this->normalizeSeries($series),
             $number,
