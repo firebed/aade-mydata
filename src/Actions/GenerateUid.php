@@ -9,7 +9,7 @@ class GenerateUid
 {
     private const NORMALIZE_SERIES = true;
 
-    public function handle(string $vatNumber, string $issueDate, int $branchId, InvoiceType|string $invoiceType, string $series, int $number, InvoiceVariationType|int $invoiceVariationType = null): string
+    public function handle(string $vatNumber, string $issueDate, int|null $branchId, InvoiceType|string $invoiceType, string $series, int $number, InvoiceVariationType|int $invoiceVariationType = null): string
     {
         $attributes = [
             $vatNumber,
@@ -17,7 +17,7 @@ class GenerateUid
             $branchId,
             $invoiceType instanceof InvoiceType ? $invoiceType->value : $invoiceType,
             $this->normalizeSeries($series),
-            $number
+            $number,
         ];
         
         if ($invoiceVariationType) {
