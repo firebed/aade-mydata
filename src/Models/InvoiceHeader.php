@@ -500,12 +500,12 @@ class InvoiceHeader extends Type
     /**
      * Αποδεκτό μόνο για παραστατικό τύπου 8.6.
      * Μέγιστο επιτρεπτό μήκος 50
-     * 
-     * @param  string  $tableAA ΑΑ Τραπεζιού
+     *
+     * @param  string|null  $tableAA  ΑΑ Τραπεζιού
      * @return $this
      * @version 1.0.9
      */
-    public function setTableAA(string $tableAA): static
+    public function setTableAA(?string $tableAA): static
     {
         return $this->set('tableAA', $tableAA);
     }
