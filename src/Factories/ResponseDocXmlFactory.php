@@ -36,8 +36,25 @@ class ResponseDocXmlFactory
             $responseDoc->appendChild($responseNode);
 
             foreach ($response->attributes() as $key => $value) {
-                $node = $dom->createElement($key, $value);
-                $responseNode->appendChild($node);
+                if (is_array($value)) {
+                    $parent = $dom->createElement($key);
+                    $responseNode->appendChild($parent);
+                    
+                    foreach ($value as $subKey => $item) {
+                        if (is_numeric($subKey)) {
+                            $node = $dom->createElement($key, $item);
+                            $parent->appendChild($node);
+                        } else {
+                            foreach ($item as $element) {
+                                $node = $dom->createElement($subKey, $element);
+                                $parent->appendChild($node);                                
+                            }
+                        }
+                    }
+                } else {
+                    $node = $dom->createElement($key, $value);
+                    $responseNode->appendChild($node);
+                }
             }
         }
 

@@ -10,6 +10,7 @@ class Response extends Type
 
     protected array $casts = [
         'errors' => Errors::class,
+        'receptionEmails' => ReceptionEmails::class,
     ];
 
     /**
@@ -175,6 +176,11 @@ class Response extends Type
     public function getErrors(): ?Errors
     {
         return $this->get('errors');
+    }
+
+    public function getReceptionEmails(): ?ReceptionEmails
+    {
+        return $this->get('receptionEmails');
     }
 
     public function isSuccessful(): bool

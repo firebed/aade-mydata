@@ -18,7 +18,13 @@ class ResponseFactory extends Factory
             'invoiceMark' => fake()->numerify("900000#########"),
             'paymentMethodMark' => fake()->numerify("900000#########"),
             'qrUrl' => fake()->url(),
-            'statusCode' => 'Success'
+            'statusCode' => 'Success',
+            'receptionEmails' => [
+                'email' => [
+                    fake()->email(),
+                    fake()->email(),
+                ]
+            ],
         ];
     }
 
