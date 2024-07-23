@@ -72,7 +72,7 @@ class SquashInvoiceRowsTest extends TestCase
             ]
         ]));
         $invoice->squashInvoiceRows(['clsLineNumber' => true])->summarizeInvoice();
-        
+
         $rows = $invoice->getInvoiceDetails();
         $this->assertNotNull($rows);
         $this->assertCount(1, $rows);
@@ -94,12 +94,12 @@ class SquashInvoiceRowsTest extends TestCase
         $this->assertEquals(IncomeClassificationType::E3_561_007, $icls[1]->getClassificationType());
         $this->assertEquals(4.02, $rows[0]->getIncomeClassification()[1]->getAmount());
         $this->assertEquals(2, $rows[0]->getIncomeClassification()[1]->getId());
-        
+
         $this->assertEquals(15, $invoice->getInvoiceSummary()->getTotalGrossValue());
         $this->assertEquals(8.07, $invoice->getInvoiceSummary()->getIncomeClassifications()[0]->getAmount());
         $this->assertEquals(4.02, $invoice->getInvoiceSummary()->getIncomeClassifications()[1]->getAmount());
     }
-    
+
     public function test_same_vat_exemption_category_rows_are_squashed()
     {
         $invoice = new Invoice();
@@ -131,7 +131,7 @@ class SquashInvoiceRowsTest extends TestCase
                 ]
             ]
         ]));
-        
+
         $invoice->squashInvoiceRows();
 
         $rows = $invoice->getInvoiceDetails();
@@ -150,7 +150,7 @@ class SquashInvoiceRowsTest extends TestCase
         $this->assertEquals(20, $rows[0]->getIncomeClassification()[0]->getAmount());
     }
 
-    public function test_same_vat_category_with_income_and_expense_classifications()
+    public function test_same_vat_category_with_income_and_expense_classifications_are_squashed()
     {
         $invoice = new Invoice();
 
@@ -179,7 +179,7 @@ class SquashInvoiceRowsTest extends TestCase
                 ]
             ]
         ]));
-        
+
         $invoice->squashInvoiceRows();
 
         $rows = $invoice->getInvoiceDetails();
@@ -449,19 +449,55 @@ class SquashInvoiceRowsTest extends TestCase
         for ($i = 0; $i < 5; $i++) {
             $invoice->addInvoiceDetails(new InvoiceDetails([
                 'vatCategory' => VatCategory::VAT_1,
-                'netAmount' => 10,
+                'netValue' => 10,
                 'recType' => RecType::TYPE_5,
             ]));
         }
 
         $invoice->squashInvoiceRows();
         $rows = $invoice->getInvoiceDetails();
-        
+
         $this->assertIsArray($rows);
         $this->assertCount(6, $rows);
         $this->assertCount(5, array_filter($invoice->getInvoiceDetails(), fn($row) => $row->getRecType() === RecType::TYPE_5));
-        
-        for ($i=0; $i<count($rows); $i++) {
+
+        for ($i = 0; $i < count($rows); $i++) {
+            $this->assertEquals($i + 1, $rows[$i]->getLineNumber());
+        }
+    }
+
+    public function test_not_vat_195_rows_are_squashed()
+    {
+        $invoice = new Invoice();
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_1,
+            'netValue' => 10,
+        ]));
+
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_1,
+            'netValue' => 40,
+        ]));
+
+        for ($i = 0; $i < 5; $i++) {
+            $invoice->addInvoiceDetails(new InvoiceDetails([
+                'vatCategory' => VatCategory::VAT_1,
+                'netValue' => 10,
+                'notVAT195' => true,
+            ]));
+        }
+
+        $invoice->squashInvoiceRows();
+        $rows = $invoice->getInvoiceDetails();
+
+        $notVat195Rows = array_filter($invoice->getInvoiceDetails(), fn($row) => $row->getNotVAT195() === true);
+
+        $this->assertIsArray($rows);
+        $this->assertCount(2, $rows);
+        $this->assertCount(1, $notVat195Rows);
+        $this->assertEquals(50, array_reduce($notVat195Rows, fn($carry, $row) => $carry + $row->getNetValue(), 0));
+
+        for ($i = 0; $i < count($rows); $i++) {
             $this->assertEquals($i + 1, $rows[$i]->getLineNumber());
         }
     }

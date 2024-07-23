@@ -88,7 +88,8 @@ class SquashInvoiceRows
             $row->getWithheldPercentCategory()->value ?? '',
             $row->getFeesPercentCategory()->value ?? '',
             $row->getOtherTaxesPercentCategory()->value ?? '',
-            $row->getStampDutyPercentCategory()->value ?? ''
+            $row->getStampDutyPercentCategory()->value ?? '',
+            $row->getNotVAT195() ? '1' : '',
         ]);
     }
 
@@ -107,6 +108,7 @@ class SquashInvoiceRows
             'feesPercentCategory' => $row->getFeesPercentCategory(),
             'otherTaxesPercentCategory' => $row->getOtherTaxesPercentCategory(),
             'stampDutyPercentCategory' => $row->getStampDutyPercentCategory(),
+            'notVAT195' => $row->getNotVAT195(),
         ];
     }
 
