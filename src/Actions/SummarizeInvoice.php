@@ -18,7 +18,7 @@ class SummarizeInvoice
         $sumInvoiceTaxes = new SummarizeInvoiceTaxes();
         $sumInvoiceTaxes->handle($invoice->getTaxesTotals(), $options);
         $sumInvoiceTaxes->saveTotals($summary);
-
+        
         $classificationsGroup = new GroupClassifications();
         [$icls, $ecls] = $classificationsGroup->handle($invoice->getInvoiceDetails(), $options);
 

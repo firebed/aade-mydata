@@ -3,6 +3,7 @@
 namespace Firebed\AadeMyData\Actions\Traits;
 
 use Firebed\AadeMyData\Enums\TaxType;
+use Firebed\AadeMyData\Enums\WithheldPercentCategory;
 use Firebed\AadeMyData\Models\InvoiceDetails;
 use Firebed\AadeMyData\Models\InvoiceSummary;
 use Firebed\AadeMyData\Models\TaxTotals;
@@ -15,6 +16,12 @@ trait SummarizesInvoiceTaxes
     public float $totalOtherTaxesAmount = 0;
     public float $totalDeductionsAmount = 0;
 
+    /**
+     * @var float Tax amounts that do not affect gross value
+     * and should be excluded from total gross value.
+     */
+    public float $totalInformationTaxAmount = 0;
+
     protected function addTaxesFromInvoiceRow(InvoiceDetails $row): void
     {
         $this->totalWithheldAmount += abs($row->getWithheldAmount() ?? 0);
@@ -22,6 +29,11 @@ trait SummarizesInvoiceTaxes
         $this->totalStampDutyAmount += abs($row->getStampDutyAmount() ?? 0);
         $this->totalOtherTaxesAmount += abs($row->getOtherTaxesAmount() ?? 0);
         $this->totalDeductionsAmount += abs($row->getDeductionsAmount() ?? 0);
+
+        $withheldCategory = $row->getWithheldPercentCategory();
+        if ($withheldCategory !== null && !$withheldCategory->affectsTotalGrossValue()) {
+            $this->totalInformationTaxAmount += abs($row->getWithheldAmount() ?? 0);
+        }
     }
 
     protected function addTaxesFromTaxTotals(TaxTotals $tax): void
@@ -35,8 +47,18 @@ trait SummarizesInvoiceTaxes
             TaxType::TYPE_4 => $this->totalStampDutyAmount += $amount,
             TaxType::TYPE_5 => $this->totalDeductionsAmount += $amount,
         };
+
+        if ($tax->getTaxType() === TaxType::TYPE_1) {
+            $taxCategory = $tax->getTaxCategory() instanceof WithheldPercentCategory
+                ? $tax->getTaxCategory()
+                : WithheldPercentCategory::tryFrom($tax->getTaxCategory());
+
+            if ($taxCategory !== null && !$taxCategory->affectsTotalGrossValue()) {
+                $this->totalInformationTaxAmount += $amount;
+            }
+        }
     }
-    
+
     protected function saveTaxes(InvoiceSummary $summary): void
     {
         $withheldAmount = $this->round($summary->getTotalWithheldAmount() + $this->totalWithheldAmount);
@@ -53,15 +75,19 @@ trait SummarizesInvoiceTaxes
 
         $deductionsAmount = $this->round($summary->getTotalDeductionsAmount() + $this->totalDeductionsAmount);
         $summary->setTotalDeductionsAmount($deductionsAmount);
+        
+        $informationalTaxes = $this->round($summary->getTotalInformationalTaxAmount() + $this->totalInformationTaxAmount);
+        $summary->setTotalInformationTaxAmount($informationalTaxes);
     }
 
     public function getTotalTaxes(): float
     {
-        return - $this->totalWithheldAmount
-               - $this->totalDeductionsAmount
-               + $this->totalFeesAmount
-               + $this->totalStampDutyAmount
-               + $this->totalOtherTaxesAmount;
+        return -$this->totalWithheldAmount
+               -$this->totalDeductionsAmount
+               +$this->totalInformationTaxAmount
+               +$this->totalFeesAmount
+               +$this->totalStampDutyAmount
+               +$this->totalOtherTaxesAmount;
     }
 
     protected function round(float $num, int $precision = 2): float

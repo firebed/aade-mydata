@@ -45,9 +45,9 @@ class TaxTotals extends Type
     }
 
     /**
-     * @return int|null Κατηγορία Φόρου
+     * @return WithheldPercentCategory|FeesPercentCategory|OtherTaxesPercentCategory|StampCategory|int|null Κατηγορία Φόρου
      */
-    public function getTaxCategory(): ?int
+    public function getTaxCategory(): WithheldPercentCategory|FeesPercentCategory|OtherTaxesPercentCategory|StampCategory|int|null
     {
         return $this->get('taxCategory');
     }

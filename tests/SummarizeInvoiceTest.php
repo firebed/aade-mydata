@@ -46,14 +46,13 @@ class SummarizeInvoiceTest extends TestCase
             ->setStampDutyAmount(6.26)
             ->setDeductionsAmount(2.15);
 
-        $invoice = (new Invoice())
+        $summary = (new Invoice())
             ->addInvoiceDetails($row1)
             ->addInvoiceDetails($row2)
             ->addInvoiceDetails($row3)
             ->squashInvoiceRows()
-            ->summarizeInvoice();
-
-        $summary = $invoice->getInvoiceSummary();
+            ->summarizeInvoice()
+            ->getInvoiceSummary();
 
         $this->assertNotNull($summary);
         $this->assertEquals(155.88, $summary->getTotalNetValue());
@@ -64,6 +63,7 @@ class SummarizeInvoiceTest extends TestCase
         $this->assertEquals(14.15, $summary->getTotalFeesAmount());
         $this->assertEquals(6.26, $summary->getTotalStampDutyAmount());
         $this->assertEquals(195.69, $summary->getTotalGrossValue());
+        $this->assertEquals(0, $summary->getTotalInformationalTaxAmount());
     }
 
     public function test_it_summarizes_invoice_row_income_classifications()
@@ -300,6 +300,55 @@ class SummarizeInvoiceTest extends TestCase
         $this->assertEquals(25, $summary->getTotalFeesAmount());
         $this->assertEquals(699.56, $summary->getTotalStampDutyAmount());
         $this->assertEquals(17_955.97, $summary->getTotalGrossValue());
+    }
+
+    public function test_informational_tax_amounts_are_excluded_from_gross_value()
+    {
+        $row = (new InvoiceDetails())
+            ->setNetValue(15_000)
+            ->setVatAmount(3_600);
+
+        $tax1 = (new TaxTotals())
+            ->setTaxAmount(100)
+            ->setTaxType(TaxType::TYPE_1)
+            ->setTaxCategory(WithheldPercentCategory::TAX_8);
+
+        $tax2 = (new TaxTotals())
+            ->setTaxAmount(25)
+            ->setTaxType(TaxType::TYPE_1)
+            ->setTaxCategory(WithheldPercentCategory::TAX_9);
+
+        $tax3 = (new TaxTotals())
+            ->setTaxAmount(36.55)
+            ->setTaxType(TaxType::TYPE_1)
+            ->setTaxCategory(WithheldPercentCategory::TAX_10);
+
+        $tax4 = (new TaxTotals())
+            ->setTaxAmount(3_000)
+            ->setTaxType(TaxType::TYPE_1)
+            ->setTaxCategory(WithheldPercentCategory::TAX_4);
+        
+        $invoice = (new Invoice())
+            ->addInvoiceDetails($row)
+            ->addTaxesTotals($tax1)
+            ->addTaxesTotals($tax2)
+            ->addTaxesTotals($tax3)
+            ->addTaxesTotals($tax4)
+            ->squashInvoiceRows()
+            ->summarizeInvoice();
+
+        $summary = $invoice->getInvoiceSummary();
+
+        $this->assertNotNull($summary);
+        $this->assertEquals(15_000, $summary->getTotalNetValue());
+        $this->assertEquals(3_600, $summary->getTotalVatAmount());
+        $this->assertEquals(3161.55, $summary->getTotalWithheldAmount());
+        $this->assertEquals(0, $summary->getTotalOtherTaxesAmount());
+        $this->assertEquals(0, $summary->getTotalDeductionsAmount());
+        $this->assertEquals(0, $summary->getTotalFeesAmount());
+        $this->assertEquals(0, $summary->getTotalStampDutyAmount());
+        $this->assertEquals(15_600.00, $summary->getTotalGrossValue());
+        $this->assertEquals(161.55, $summary->getTotalInformationalTaxAmount());
     }
 
     private function createEcls($type, $category, float $amount, $vat = null, $vatAmount = null, $exemption = null): ExpensesClassification

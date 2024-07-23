@@ -30,6 +30,8 @@ class InvoiceSummary extends Type
         'expensesClassification' => ExpensesClassification::class,
     ];
 
+    private float $totalInformationalTaxAmount = 0;
+
     /**
      * @return float|null Σύνολο Καθαρής Αξίας
      */
@@ -99,6 +101,24 @@ class InvoiceSummary extends Type
     public function setTotalWithheldAmount(float $totalWithheldAmount): static
     {
         return $this->set('totalWithheldAmount', $totalWithheldAmount);
+    }
+
+    /**
+     * @return float Το σύνολο των προκαταβληθέντων φόρων που δεν επηρεάζουν τη συνολική αξία (πληρωτέο ποσό) του παραστατικού.
+     */
+    public function getTotalInformationalTaxAmount(): float
+    {
+        return $this->totalInformationalTaxAmount;
+    }
+
+    /**
+     * @param  float  $amount  Το σύνολο των προκαταβληθέντων φόρων που δεν επηρεάζουν τη συνολική αξία (πληρωτέο ποσό) του παραστατικού.
+     * @return $this
+     */
+    public function setTotalInformationTaxAmount(float $amount): static
+    {
+        $this->totalInformationalTaxAmount = $amount;
+        return $this;
     }
 
     /**
@@ -260,7 +280,7 @@ class InvoiceSummary extends Type
             $classification->setAmount($classificationAmount);
             $this->addIncomeClassification($classification);
         }
-        
+
         return $this;
     }
 
@@ -299,7 +319,7 @@ class InvoiceSummary extends Type
             $classification->setAmount($classificationAmount);
             $this->addExpensesClassification($classification);
         }
-        
+
         return $this;
     }
 
