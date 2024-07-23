@@ -4,6 +4,8 @@ namespace Firebed\AadeMyData\Enums;
 
 enum TaxType: int
 {
+    use HasLabels;
+    
     /**
      * Παρακρατούμενος Φόρος
      */
@@ -28,4 +30,15 @@ enum TaxType: int
      * Κρατήσεις
      */
     case TYPE_5 = 5;
+
+    public function label(): string
+    {
+        return match($this) {
+            self::TYPE_1 => "Παρακρατούμενος Φόρος",
+            self::TYPE_2 => "Τέλη",
+            self::TYPE_3 => "Λοιποί Φόροι",
+            self::TYPE_4 => "Χαρτόσημο",
+            self::TYPE_5 => "Κρατήσεις",
+        };
+    }
 }

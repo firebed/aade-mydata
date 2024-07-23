@@ -4,6 +4,8 @@ namespace Firebed\AadeMyData\Enums;
 
 enum StampCategory: int
 {
+    use HasLabels;
+    
     /**
      *  Συντελεστής 1,2 % [1,20%]
      */
@@ -26,4 +28,14 @@ enum StampCategory: int
      *  Λοιπές περιπτώσεις Χαρτοσήμου [ποσό]
      */
     case TYPE_4 = 4;
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::TYPE_1 => "Συντελεστής 1.2 %",
+            self::TYPE_2 => "Συντελεστής 2.4 %",
+            self::TYPE_3 => "Συντελεστής 3.6 %",
+            self::TYPE_4 => "Λοιπές περιπτώσεις Χαρτοσήμου",
+        };
+    }
 }

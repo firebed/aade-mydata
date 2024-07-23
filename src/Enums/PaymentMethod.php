@@ -4,6 +4,8 @@ namespace Firebed\AadeMyData\Enums;
 
 enum PaymentMethod: int
 {
+    use HasLabels;
+    
     /**
      *  Επαγ. Λογαριασμός Πληρωμών Ημεδαπής
      */
@@ -48,4 +50,18 @@ enum PaymentMethod: int
      * Άμεσες Πληρωμές IRIS
      */
     case METHOD_8 = 8;
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::METHOD_1 => "Επαγ. Λογαριασμός Πληρωμών Ημεδαπής",
+            self::METHOD_2 => "Επαγ. Λογαριασμός Πληρωμών Αλλοδαπής",
+            self::METHOD_3 => "Μετρητά",
+            self::METHOD_4 => "Επιταγή",
+            self::METHOD_5 => "Επί Πιστώσει",
+            self::METHOD_6 => "Web Banking",
+            self::METHOD_7 => "POS / e-POS",
+            self::METHOD_8 => "Άμεσες Πληρωμές IRIS",
+        };
+    }
 }

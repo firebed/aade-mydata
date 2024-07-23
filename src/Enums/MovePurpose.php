@@ -4,6 +4,8 @@ namespace Firebed\AadeMyData\Enums;
 
 enum MovePurpose: int
 {
+    use HasLabels;
+
     /**
      *  Πώληση
      */
@@ -116,4 +118,29 @@ enum MovePurpose: int
      *  Λοιπές Διακινήσεις
      */
     case TYPE_19 = 19;
+    
+    public function label(): string
+    {
+        return match ($this) {
+            self::TYPE_1  => "Πώληση",
+            self::TYPE_2  => "Πώληση για Λογαριασμό Τρίτων",
+            self::TYPE_3  => "Δειγματισμός",
+            self::TYPE_4  => "Έκθεση",
+            self::TYPE_5  => "Επιστροφή",
+            self::TYPE_6  => "Φύλαξη",
+            self::TYPE_7  => "Επεξεργασία Συναρμολόγηση",
+            self::TYPE_8  => "Μεταξύ Εγκαταστάσεων Οντότητας",
+            self::TYPE_9  => "Αγορά",
+            self::TYPE_10 => "Εφοδιασμός πλοίων και αεροσκαφών",
+            self::TYPE_11 => "Δωρεάν διάθεση",
+            self::TYPE_12 => "Εγγύηση",
+            self::TYPE_13 => "Χρησιδανεισμός",
+            self::TYPE_14 => "Αποθήκευση σε Τρίτους",
+            self::TYPE_15 => "Επιστροφή από Φύλαξη",
+            self::TYPE_16 => "Ανακύκλωση",
+            self::TYPE_17 => "Καταστροφή άχρηστου υλικού",
+            self::TYPE_18 => "Διακίνηση Παγίων (Ενδοδιακίνηση)",
+            self::TYPE_19 => "Λοιπές Διακινήσεις",
+        };
+    }
 }

@@ -4,6 +4,8 @@ namespace Firebed\AadeMyData\Enums;
 
 enum InvoiceVariationType: int
 {
+    use HasLabels;
+    
     /**
      * Διαβίβαση Παράλειψης από Λήπτη Χρησιμοποιείται αυτή η τιμή
      * για Διαβίβαση Δεδομένων από τον Λήπτη λόγω Παράλειψης Διαβίβασης του
@@ -40,4 +42,14 @@ enum InvoiceVariationType: int
      * Επιτρεπτοί τύποι παραστατικών: 11.3, 11.4, 13.1, και 13.31
      */
     case TYPE_4 = 4;
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::TYPE_1 => "Διαβίβαση Παράλειψης από Λήπτη",
+            self::TYPE_2 => "Διαβίβαση Παράλειψης από Εκδότη",
+            self::TYPE_3 => "Διαβίβαση Απόκλισης από Λήπτη",
+            self::TYPE_4 => "Διαβίβαση Απόκλισης από Εκδότη",
+        };
+    }
 }

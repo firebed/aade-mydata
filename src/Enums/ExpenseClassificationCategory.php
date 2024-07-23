@@ -4,6 +4,8 @@ namespace Firebed\AadeMyData\Enums;
 
 enum ExpenseClassificationCategory: string
 {
+    use HasLabels;
+    
     /**
      *  Αγορές Εμπορευμάτων (-) / (+)
      */
@@ -92,4 +94,25 @@ enum ExpenseClassificationCategory: string
      *  Λοιπά Πληροφοριακά Στοιχεία Εξόδων (-) / (+)
      */
     case CATEGORY_2_95 = "category2_95";
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::CATEGORY_2_1  => "Αγορές Εμπορευμάτων (-) / (+)",
+            self::CATEGORY_2_2  => "Αγορές Α'-Β' Υλών (-) / (+)",
+            self::CATEGORY_2_3  => "Λήψη Υπηρεσιών (-) / (+)",
+            self::CATEGORY_2_4  => "Γενικά Έξοδα με δικαίωμα έκπτωσης ΦΠΑ (-) / (+)",
+            self::CATEGORY_2_5  => "Γενικά Έξοδα χωρίς δικαίωμα έκπτωσης ΦΠΑ (-) / (+)",
+            self::CATEGORY_2_6  => "Αμοιβές και Παροχές προσωπικού (-) / (+)",
+            self::CATEGORY_2_7  => "Αγορές Παγίων (-) / (+)",
+            self::CATEGORY_2_8  => "Αποσβέσεις Παγίων (-) / (+)",
+            self::CATEGORY_2_9  => "Έξοδα για λ/σμο τρίτων (-) / (+)",
+            self::CATEGORY_2_10 => "Έξοδα προηγούμενων χρήσεων (-) / (+)",
+            self::CATEGORY_2_11 => "Έξοδα επομένων χρήσεων (-) / (+)",
+            self::CATEGORY_2_12 => "Λοιπές Εγγραφές Τακτοποίησης Εξόδων (-) / (+)",
+            self::CATEGORY_2_13 => "Αποθέματα Έναρξης Περιόδου (-) / (+)",
+            self::CATEGORY_2_14 => "Αποθέματα Λήξης Περιόδου (-) / (+)",
+            self::CATEGORY_2_95 => "Λοιπά Πληροφοριακά Στοιχεία Εξόδων (-) / (+)",
+        };
+    }
 }
