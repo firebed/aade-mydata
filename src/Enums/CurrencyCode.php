@@ -2,6 +2,8 @@
 
 namespace Firebed\AadeMyData\Enums;
 
+use Firebed\AadeMyData\Enums\Traits\HasLabels;
+
 enum CurrencyCode: string
 {
     use HasLabels;
