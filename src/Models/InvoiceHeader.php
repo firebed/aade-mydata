@@ -150,7 +150,7 @@ class InvoiceHeader extends Type
         if ($currency instanceof CurrencyCode) {
             $currency = $currency->value;
         }
-        
+
         return $this->set('currency', $currency);
     }
 
@@ -463,7 +463,7 @@ class InvoiceHeader extends Type
 
     /**
      * @param  int  $multipleConnectedMark  Πολλαπλά Συνδεόμενα MARKs
-     * 
+     *
      * @return $this
      * @version 1.0.9
      */
@@ -476,10 +476,10 @@ class InvoiceHeader extends Type
      * Το πεδίο multipleConnectedMarks είναι λίστα που περιέχει πολλαπλά συνδεόμενα
      * ΜΑΡΚs (π.χ. μπορεί να χρησιμοποιηθεί κατά έκδοση τιμολογίου/απόδειξης για
      * πολλά δελτία παραγγελιών εστίασης).
-     * 
+     *
      * Δεν είναι αποδεκτό για τα παραστατικά των τύπων 1.6, 2.4 και 5.1.
-     * 
-     * @param  array|null  $multipleConnectedMarks Πολλαπλά Συνδεόμενα MARKs
+     *
+     * @param  array|null  $multipleConnectedMarks  Πολλαπλά Συνδεόμενα MARKs
      * @return $this
      * @version 1.0.9
      */
@@ -528,8 +528,8 @@ class InvoiceHeader extends Type
      * εστίασης – τύπου 8.6 – για τα οποία θα γίνει συνολική αναίρεση τους). Στην
      * περίπτωση αυτή το παραστατικό πρέπει να διαβιβάζεται με μια μόνο γραμμή με
      * μηδενικές αξίες και κατηγορία ΦΠΑ την 8 (Εγγραφές χωρίς ΦΠΑ).
-     * 
-     * @param  bool|null  $totalCancelDeliveryOrders Ένδειξη συνολικής αναίρεσης Δελτίων Παραγγελίας
+     *
+     * @param  bool|null  $totalCancelDeliveryOrders  Ένδειξη συνολικής αναίρεσης Δελτίων Παραγγελίας
      * @return $this
      * @version 1.0.9
      */

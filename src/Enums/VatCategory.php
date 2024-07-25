@@ -2,8 +2,6 @@
 
 namespace Firebed\AadeMyData\Enums;
 
-use Firebed\AadeMyData\Enums\Traits\HasLabels;
-
 enum VatCategory: int
 {
     use HasLabels;

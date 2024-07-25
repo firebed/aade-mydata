@@ -105,7 +105,7 @@ abstract class Type
             $cast = $this->getCast($key);
             
             if ($cast === null || !is_subclass_of($cast, Type::class)) {
-                $this->attributes[$key] = $value;
+                $this->set($key, $value);
                 continue;
             }
             

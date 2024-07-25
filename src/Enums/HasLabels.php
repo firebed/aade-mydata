@@ -1,6 +1,6 @@
 <?php
 
-namespace Firebed\AadeMyData\Enums\Traits;
+namespace Firebed\AadeMyData\Enums;
 
 trait HasLabels
 {

@@ -2,7 +2,8 @@
 
 namespace Firebed\AadeMyData\Enums;
 
-use Firebed\AadeMyData\Enums\Traits\HasLabels;
+use Firebed\AadeMyData\Services\CategoryClassificationCollection;
+use Firebed\AadeMyData\Services\Classifications;
 
 enum IncomeClassificationCategory: string
 {
@@ -82,11 +83,11 @@ enum IncomeClassificationCategory: string
     public function label(): string
     {
         return match ($this) {
-            self::CATEGORY_1_1  => "Έσοδα από Πώληση Εμπορευμάτων (+) / (-)",
-            self::CATEGORY_1_2  => "Έσοδα από Πώληση Προϊόντων (+) / (-)",
-            self::CATEGORY_1_3  => "Έσοδα από Παροχή Υπηρεσιών (+) / (-)",
-            self::CATEGORY_1_4  => "Έσοδα από Πώληση Παγίων (+) / (-)",
-            self::CATEGORY_1_5  => "Λοιπά Έσοδα / Κέρδη (+) / (-)",
+            self::CATEGORY_1_1  => "Έσοδα από Πώληση Εμπορευμάτων",
+            self::CATEGORY_1_2  => "Έσοδα από Πώληση Προϊόντων",
+            self::CATEGORY_1_3  => "Έσοδα από Παροχή Υπηρεσιών",
+            self::CATEGORY_1_4  => "Έσοδα από Πώληση Παγίων",
+            self::CATEGORY_1_5  => "Λοιπά Έσοδα / Κέρδη",
             self::CATEGORY_1_6  => "Αυτοπαραδόσεις / Ιδιοχρησιμοποιήσεις",
             self::CATEGORY_1_7  => "Έσοδα για λογαριασμό τρίτων",
             self::CATEGORY_1_8  => "Έσοδα προηγούμενων χρήσεων",
@@ -95,5 +96,10 @@ enum IncomeClassificationCategory: string
             self::CATEGORY_1_95 => "Λοιπά Πληροφοριακά Στοιχεία Εσόδων",
             self::CATEGORY_3    => "Διακίνηση",
         };
+    }
+
+    public function for(InvoiceType $type): CategoryClassificationCollection
+    {
+        return Classifications::incomeClassifications($type, $this);
     }
 }

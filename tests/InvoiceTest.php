@@ -6,7 +6,6 @@ use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
 use Firebed\AadeMyData\Enums\IncomeClassificationType;
 use Firebed\AadeMyData\Enums\RecType;
 use Firebed\AadeMyData\Models\Invoice;
-use Firebed\AadeMyData\Models\InvoiceDetails;
 use PHPUnit\Framework\TestCase;
 use Tests\Traits\HandlesInvoiceXml;
 
@@ -16,21 +15,47 @@ class InvoiceTest extends TestCase
 
     public function test_invoice_xml()
     {
-        new InvoiceDetails([
-            'lineNumber' => 1,
-            'netValue' => 5,
-            'recType' => RecType::TYPE_2,
-            'incomeClassification' => [
+        $invoice = Invoice::factory()->make([
+            'invoiceDetails' => [
                 [
-                    'classificationType' => IncomeClassificationType::E3_561_001,
-                    'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
-                    'amount' => '5'
+                    'lineNumber' => 1,
+                    'netValue' => 5,
+                    'recType' => RecType::TYPE_2,
+                    'incomeClassification' => [
+                        [
+                            'classificationType' => IncomeClassificationType::E3_561_001,
+                            'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
+                            'amount' => 5
+                        ]
+                    ]
                 ]
             ]
         ]);
 
-        $invoice = Invoice::factory()->make();
         $this->assertNotEmpty($invoice->toXml());
+    }
+
+    public function test_invoice_xml_with_category_1_95()
+    {
+        $invoice = new Invoice([
+            'invoiceDetails' => [
+                [
+                    'lineNumber' => 1,
+                    'netValue' => 5,
+                    'recType' => RecType::TYPE_2,
+                    'incomeClassification' => [
+                        [
+                            'classificationType' => '',
+                            'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_95,
+                            'amount' => 5
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+
+        $this->assertNotEmpty($invoice->toXml());
+        $this->assertNull($invoice->getInvoiceDetails()[0]->getIncomeClassification()[0]->getClassificationType());
     }
 
     public function test_it_populates_invoice_auto_filled_attributes()
