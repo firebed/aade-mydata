@@ -27,68 +27,70 @@ class Classifications
         }
     }
 
-    public static function incomeClassifications(InvoiceType $type, IncomeClassificationCategory $category = null): CategoryClassificationCollection|TypeClassificationCollection
+    public static function incomeClassifications(InvoiceType|string $invoiceType, IncomeClassificationCategory|string $classificationCategory = null): CategoryClassificationCollection|TypeClassificationCollection
     {
         self::loadIncomeClassifications();
 
-        $classifications = self::$incomeClassifications[$type->value] ?? [];
-
-        if ($category !== null) {
-            return new TypeClassificationCollection($classifications[$category->value] ?? [], true);
+        if ($invoiceType instanceof InvoiceType) {
+            $invoiceType = $invoiceType->value;
         }
 
-        return new CategoryClassificationCollection($classifications, true);
+        $classifications = self::$incomeClassifications[$invoiceType] ?? [];
+
+        if ($classificationCategory === null) {
+            return new CategoryClassificationCollection($classifications, true);
+        }
+
+        if ($classificationCategory instanceof IncomeClassificationCategory) {
+            $classificationCategory = $classificationCategory->value;
+        }
+
+        return new TypeClassificationCollection($classifications[$classificationCategory] ?? [], true);
     }
 
-    public static function expenseClassifications(InvoiceType $type, ExpenseClassificationCategory $category = null): CategoryClassificationCollection|TypeClassificationCollection
+    public static function expenseClassifications(InvoiceType|string $invoiceType, ExpenseClassificationCategory|string $classificationCategory = null): CategoryClassificationCollection|TypeClassificationCollection
     {
         self::loadExpenseClassifications();
 
-        $classifications = self::$expenseClassifications[$type->value] ?? [];
+        if ($invoiceType instanceof InvoiceType) {
+            $invoiceType = $invoiceType->value;
+        }
+
+        $classifications = self::$expenseClassifications[$invoiceType] ?? [];
+
+        if ($classificationCategory === null) {
+            return new CategoryClassificationCollection($classifications, false);
+        }
+
+        if ($classificationCategory instanceof ExpenseClassificationCategory) {
+            $classificationCategory = $classificationCategory->value;
+        }
+
+        return new TypeClassificationCollection($classifications[$classificationCategory] ?? [], false);
+    }
+
+    public static function incomeClassificationExists(InvoiceType|string $invoiceType, IncomeClassificationCategory|string $category, IncomeClassificationType|string|null $type = null): bool
+    {
+        $classifications = self::incomeClassifications($invoiceType);
+
+        return $classifications->contains($category) && $classifications->get($category)->contains($type);
+    }
+
+    public static function expenseClassificationExists(InvoiceType|string $invoiceType, ExpenseClassificationCategory|string|null $category, ExpenseClassificationType|string|null $type = null): bool
+    {
+        if ($category === null && $type === null) {
+            return false;
+        }
 
         if ($category !== null) {
-            return new TypeClassificationCollection($classifications[$category->value] ?? null, false);
+            $classifications = self::expenseClassifications($invoiceType);
+            return $classifications->contains($category) && $classifications->get($category)->contains($type);
         }
 
-        return new CategoryClassificationCollection($classifications, false);
-    }
-
-    public static function exists(InvoiceType|string $invoiceType, IncomeClassificationCategory|ExpenseClassificationCategory|string $category, IncomeClassificationType|ExpenseClassificationType|string $type = null): bool
-    {
-        $invoiceType = is_string($invoiceType) ? InvoiceType::from($invoiceType) : $invoiceType;
-        $category = self::resolveCategory($category);
-        $type = self::resolveType($type);
-
-        if ($type === null) {
-            if ($category instanceof IncomeClassificationCategory) {
-                return self::incomeClassifications($invoiceType)->contains($category);
-            }
-
-            return self::expenseClassifications($invoiceType)->contains($category);
+        if (is_string($type)) {
+            $type = ExpenseClassificationType::tryFrom($type);
         }
-
-        if ($category instanceof IncomeClassificationCategory) {
-            return self::incomeClassifications($invoiceType, $category)->contains($type);
-        }
-
-        return self::expenseClassifications($invoiceType, $category)->contains($type);
-    }
-
-    private static function resolveCategory(string|IncomeClassificationCategory|ExpenseClassificationCategory $category): IncomeClassificationCategory|ExpenseClassificationCategory
-    {
-        if (!is_string($category)) {
-            return $category;
-        }
-
-        return IncomeClassificationCategory::tryFrom($category) ?? ExpenseClassificationCategory::from($category);
-    }
-
-    private static function resolveType(string|IncomeClassificationType|ExpenseClassificationType|null $type): IncomeClassificationType|ExpenseClassificationType|null
-    {
-        if (!is_string($type)) {
-            return $type;
-        }
-
-        return IncomeClassificationType::tryFrom($type) ?? ExpenseClassificationType::tryFrom($type);
+        
+        return $type->isVatClassification();
     }
 }

@@ -56,7 +56,7 @@ class ClassificationTest extends TestCase
 
         $this->assertTrue($classifications->contains(IncomeClassificationCategory::CATEGORY_1_1));
         $this->assertTrue($classifications->get(IncomeClassificationCategory::CATEGORY_1_1)->contains(IncomeClassificationType::E3_561_001));
-        $this->assertTrue($classifications->get(IncomeClassificationCategory::CATEGORY_1_95)->contains(''));
+        $this->assertTrue($classifications->get(IncomeClassificationCategory::CATEGORY_1_95)->contains(null));
 
         $this->assertFalse($classifications->contains(IncomeClassificationCategory::CATEGORY_1_6));
         $this->assertFalse($classifications->get(IncomeClassificationCategory::CATEGORY_1_1)->contains(IncomeClassificationType::E3_596));
@@ -100,7 +100,7 @@ class ClassificationTest extends TestCase
 
         foreach ($expected as $categoryKey => $categories) {
             foreach ($categories as $typeKey) {
-                if ($typeKey !== '') {
+                if ($typeKey !== null) {
                     $type = IncomeClassificationType::from($typeKey);
                     $this->assertEquals($type->label(), $actual_1[$categoryKey][$typeKey]);
                     $this->assertEquals($type->label(), $actual_2[$categoryKey][$typeKey]);
@@ -116,7 +116,7 @@ class ClassificationTest extends TestCase
         $actual_1 = InvoiceType::TYPE_1_1->expenseClassifications()->toArray();
         $actual_2 = ExpenseClassificationType::for(InvoiceType::TYPE_1_1)->toArray();
         $actual_3 = Classifications::expenseClassifications(InvoiceType::TYPE_1_1)->toArray();
-
+        
         $this->assertEquals($expected, $actual_1);
         $this->assertEquals($expected, $actual_2);
         $this->assertEquals($expected, $actual_3);
@@ -198,12 +198,13 @@ class ClassificationTest extends TestCase
     
     public function test_classification_exists()
     {
-        $this->assertTrue(Classifications::exists('1.1', 'category1_1'));
-        $this->assertTrue(Classifications::exists('1.1', 'category1_1', 'E3_561_001'));
-        $this->assertTrue(Classifications::exists('1.1', 'category1_95', ''));
-
-        $this->assertFalse(Classifications::exists('1.1', 'category1_6'));
-        $this->assertFalse(Classifications::exists('1.1', 'category1_1', 'E3_205'));
-        $this->assertFalse(Classifications::exists('11.1', 'category1_1'));
+        $this->assertTrue(Classifications::incomeClassificationExists('1.1', 'category1_1', 'E3_561_001'));
+        $this->assertTrue(Classifications::incomeClassificationExists('1.1', 'category1_95'));
+        $this->assertFalse(Classifications::incomeClassificationExists('1.1', 'category1_1', 'E3_205'));
+        $this->assertFalse(Classifications::incomeClassificationExists('11.1', 'category1_1'));
+        
+        $this->assertTrue(Classifications::expenseClassificationExists('1.1', 'category2_1', 'E3_102_001'));
+        $this->assertTrue(Classifications::expenseClassificationExists('1.1', 'category2_95'));        
+        $this->assertFalse(Classifications::expenseClassificationExists('1.1', 'category1_1', 'E3_205'));
     }
 }

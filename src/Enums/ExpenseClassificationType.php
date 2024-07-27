@@ -239,7 +239,7 @@ enum ExpenseClassificationType: string
 
 
     /**
-     *  Ζημιές από διάθεση-απόσυρση μη κυκλοφορούντων περιουσιακών στοιχείων
+     *  Ζημιές από διάθεση-απόσυρση μή κυκλοφορούντων περιουσιακών στοιχείων
      */
     case E3_584 = "E3_584";
 
@@ -535,6 +535,12 @@ enum ExpenseClassificationType: string
      */
     case NOT_VAT_295 = "NOT_VAT_295";
 
+    public function isVatClassification(): bool
+    {
+        return in_array($this, self::vatClassifications());
+    }
+
+    /** @noinspection PhpDuplicateMatchArmBodyInspection */
     public function label(): string
     {
         return match ($this) {
@@ -632,5 +638,17 @@ enum ExpenseClassificationType: string
     public static function for(InvoiceType $type, ExpenseClassificationCategory $category = null): CategoryClassificationCollection|TypeClassificationCollection
     {
         return Classifications::expenseClassifications($type, $category);
+    }
+
+    public static function vatClassifications(): array
+    {
+        return [
+            self::VAT_361,
+            self::VAT_362,
+            self::VAT_363,
+            self::VAT_364,
+            self::VAT_365,
+            self::VAT_366,
+        ];
     }
 }

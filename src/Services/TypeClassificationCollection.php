@@ -56,6 +56,10 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
 
     public function contains(mixed $value): bool
     {
+        if ($value === null) {
+            return empty($this->toArray()) || in_array($value, $this->toArray(), true);
+        }
+        
         if ($value instanceof BackedEnum) {
             $value = $value->value;
         }
@@ -83,6 +87,11 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
         return new ArrayIterator($this->classifications);
     }
 
+    public function isEmpty(): bool
+    {
+        return empty($this->toArray());
+    }
+    
     private function toEnum(mixed $value): IncomeClassificationType|ExpenseClassificationType|null
     {
         if ($value === null) {
