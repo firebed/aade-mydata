@@ -72,25 +72,12 @@ class Classifications
     public static function incomeClassificationExists(InvoiceType|string $invoiceType, IncomeClassificationCategory|string $category, IncomeClassificationType|string|null $type = null): bool
     {
         $classifications = self::incomeClassifications($invoiceType);
-
         return $classifications->contains($category) && $classifications->get($category)->contains($type);
     }
 
-    public static function expenseClassificationExists(InvoiceType|string $invoiceType, ExpenseClassificationCategory|string|null $category, ExpenseClassificationType|string|null $type = null): bool
+    public static function expenseClassificationExists(InvoiceType|string $invoiceType, ExpenseClassificationCategory|string $category, ExpenseClassificationType|string|null $type = null): bool
     {
-        if ($category === null && $type === null) {
-            return false;
-        }
-
-        if ($category !== null) {
-            $classifications = self::expenseClassifications($invoiceType);
-            return $classifications->contains($category) && $classifications->get($category)->contains($type);
-        }
-
-        if (is_string($type)) {
-            $type = ExpenseClassificationType::tryFrom($type);
-        }
-        
-        return $type->isVatClassification();
+        $classifications = self::expenseClassifications($invoiceType);
+        return $classifications->contains($category) && $classifications->get($category)->contains($type);
     }
 }
