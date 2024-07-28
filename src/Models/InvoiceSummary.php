@@ -284,6 +284,15 @@ class InvoiceSummary extends Type
         return $this;
     }
 
+    public function getTotalIncomeClassificationAmount(): float
+    {
+        if (empty($this->getIncomeClassifications())) {
+            return 0;
+        }
+        
+        return array_reduce($this->getIncomeClassifications(), fn($c, IncomeClassification $ic) => $c + $ic->getAmount(), 0);
+    }
+
     /**
      * @return ExpensesClassification[]|null Χαρακτηρισμοί Εξόδων
      */
@@ -321,6 +330,15 @@ class InvoiceSummary extends Type
         }
 
         return $this;
+    }
+    
+    public function getTotalExpensesClassificationAmount(): float
+    {
+        if (empty($this->getExpensesClassifications())) {
+            return 0;
+        }
+        
+        return array_reduce($this->getExpensesClassifications(), fn($c, ExpensesClassification $ec) => $c + $ec->getAmount(), 0);
     }
 
     public function set($key, $value): static

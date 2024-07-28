@@ -172,6 +172,11 @@ class Invoice extends Type
         return $this->set('paymentMethods', new PaymentMethods($paymentMethods));
     }
 
+    public function getTotalPaymentAmount(): float
+    {
+        return $this->getPaymentMethods()?->getTotalPaymentAmount() ?? 0;
+    }
+
     /**
      * Προσθήκη τρόπου πληρωμής.
      *

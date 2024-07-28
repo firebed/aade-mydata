@@ -655,6 +655,17 @@ class InvoiceDetails extends Type
         return $this;
     }
 
+    public function getTotalIncomeClassificationAmount(): float
+    {
+        if (empty($this->getIncomeClassification())) {
+            return 0;
+        }
+        
+        return round(array_reduce($this->getIncomeClassification(), function ($carry, IncomeClassification $classification) {
+            return $carry + $classification->getAmount();
+        }, 0), 2);
+    }
+
     /**
      * @return ExpensesClassification[]|null Χαρακτηρισμοί Εξόδων
      */
@@ -696,6 +707,17 @@ class InvoiceDetails extends Type
         }
 
         return $this;
+    }
+    
+    public function getTotalExpensesClassificationAmount(): float
+    {
+        if (empty($this->getExpensesClassification())) {
+            return 0;
+        }
+        
+        return round(array_reduce($this->getExpensesClassification(), function ($carry, ExpensesClassification $classification) {
+            return $carry + $classification->getAmount();
+        }, 0), 2);
     }
 
     /**
@@ -831,13 +853,13 @@ class InvoiceDetails extends Type
     {
         return $this->get('notVAT195');
     }
-    
+
     /**
      * Συμπληρώνοντας την ένδειξη του πεδίου notVAT195 (με την τιμή true) τα ποσά των
      * γραμμών του παραστατικού δε συμμετέχουν στη δήλωση ΦΠΑ (εκροές). Είναι
      * αποδεκτό μόνο για παραστατικά εσόδων των τύπων μεταξύ 1.1 – 11.5.
-     * 
-     * @param  bool|null  $notVAT195 Ένδειξη μη συμμετοχής στο ΦΠΑ (έσοδα – εκροές)
+     *
+     * @param  bool|null  $notVAT195  Ένδειξη μη συμμετοχής στο ΦΠΑ (έσοδα – εκροές)
      * @return $this
      * @version 1.0.9
      */
