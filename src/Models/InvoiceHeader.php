@@ -142,10 +142,10 @@ class InvoiceHeader extends Type
     /**
      * Ο κωδικός νομισμάτων προέρχεται από την αντίστοιχη λίστα σύμφωνα με το πρότυπο ISO4217.
      *
-     * @param  CurrencyCode|string  $currency  Νόμισμα
+     * @param  CurrencyCode|string|null  $currency  Νόμισμα
      * @return InvoiceHeader
      */
-    public function setCurrency(CurrencyCode|string $currency): static
+    public function setCurrency(CurrencyCode|string|null $currency): static
     {
         if ($currency instanceof CurrencyCode) {
             $currency = $currency->value;
