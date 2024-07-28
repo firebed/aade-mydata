@@ -10,7 +10,7 @@ enum TransmissionFailure: int
      * Στην περίπτωση αδυναμίας επικοινωνίας οντότητας με τον πάροχο κατά την
      * έκδοση/διαβίβαση παραστατικού.
      */
-    case ENTITY_CONNECTION_FAILURE = 1;
+    case ERP_CONNECTION_FAILURE = 1;
     
     /**
      * Στην περίπτωση αδυναμίας επικοινωνίας του παρόχου με 
@@ -26,7 +26,7 @@ enum TransmissionFailure: int
     public function label(): string
     {
         return match ($this) {
-            self::ENTITY_CONNECTION_FAILURE => "Στην περίπτωση αδυναμίας επικοινωνίας οντότητας με τον πάροχο κατά την έκδοση/διαβίβαση παραστατικού.",
+            self::ERP_CONNECTION_FAILURE => "Στην περίπτωση αδυναμίας επικοινωνίας οντότητας με τον πάροχο κατά την έκδοση/διαβίβαση παραστατικού.",
             self::MYDATA_CONNECTION_FAILURE => "Στην περίπτωση αδυναμίας επικοινωνίας του παρόχου με το myDATA κατά την έκδοση/διαβίβαση παραστατικού.",
             self::CONNECTION_LOSS => "Απώλεια διασύνδεσης. Είναι επιτρεπτή μόνο για περίπτωση αποστολής από ERP",
         };
