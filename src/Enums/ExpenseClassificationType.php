@@ -649,6 +649,7 @@ enum ExpenseClassificationType: string
             self::VAT_364,
             self::VAT_365,
             self::VAT_366,
+            self::NOT_VAT_295,
         ];
     }
 }
