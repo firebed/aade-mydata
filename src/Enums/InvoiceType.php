@@ -388,13 +388,29 @@ enum InvoiceType: string
 
     public function isRetail(): bool
     {
-        return in_array($this, [
+        return in_array($this, self::retailInvoiceTypes());
+    }
+
+    public static function retailInvoiceTypes(): array
+    {
+        return [
             self::TYPE_11_1,
             self::TYPE_11_2,
             self::TYPE_11_3,
             self::TYPE_11_4,
             self::TYPE_11_5,
-        ]);
+            self::TYPE_13_1,
+            self::TYPE_13_2,
+            self::TYPE_13_3,
+            self::TYPE_13_4,
+            self::TYPE_13_30,
+            self::TYPE_13_31,
+        ];
+    }
+
+    public function hasCounterpart(): bool
+    {
+        return !$this->isRetail();
     }
 
     public function label(): string
