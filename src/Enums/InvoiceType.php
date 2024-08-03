@@ -447,6 +447,20 @@ enum InvoiceType: string
         ]);
     }
 
+    public function allowsSelfPricing(): bool
+    {
+        return in_array($this, [
+            self::TYPE_1_1,
+            self::TYPE_1_4,
+            self::TYPE_1_5,
+            self::TYPE_1_6,
+            self::TYPE_2_1,
+            self::TYPE_2_4,
+            self::TYPE_5_1,
+            self::TYPE_5_2,
+        ]);
+    }
+
     public function label(): string
     {
         return match ($this) {
