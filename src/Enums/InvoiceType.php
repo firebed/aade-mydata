@@ -461,6 +461,15 @@ enum InvoiceType: string
         ]);
     }
 
+    public function supportsTaxFree(): bool
+    {
+        return in_array($this, [
+            self::TYPE_11_1,
+            self::TYPE_11_4,
+            self::TYPE_11_5,
+        ]);
+    }
+
     public function label(): string
     {
         return match ($this) {
