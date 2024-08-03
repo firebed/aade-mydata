@@ -447,7 +447,7 @@ enum InvoiceType: string
         ]);
     }
 
-    public function allowsSelfPricing(): bool
+    public function supportsSelfPricing(): bool
     {
         return in_array($this, [
             self::TYPE_1_1,
