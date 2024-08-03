@@ -413,6 +413,40 @@ enum InvoiceType: string
         return !$this->isRetail();
     }
 
+    public function supportsFuelInvoice(): bool
+    {
+        return in_array($this, [
+            self::TYPE_1_1,
+            self::TYPE_1_2,
+            self::TYPE_1_3,
+            self::TYPE_1_4,
+            self::TYPE_1_5,
+            self::TYPE_1_6,
+            self::TYPE_3_1,
+            self::TYPE_3_2,
+            self::TYPE_5_1,
+            self::TYPE_5_2,
+            self::TYPE_6_1,
+            self::TYPE_11_1,
+            self::TYPE_11_3,
+            self::TYPE_11_4,
+            self::TYPE_11_5,
+        ]);
+    }
+
+    public function supportsDeliveryNote(): bool
+    {
+        return in_array($this, [
+            self::TYPE_1_1,
+            self::TYPE_1_2,
+            self::TYPE_1_3,
+            self::TYPE_1_6,
+            self::TYPE_5_1,
+            self::TYPE_5_2,
+            self::TYPE_11_1,            
+        ]);
+    }
+
     public function label(): string
     {
         return match ($this) {
