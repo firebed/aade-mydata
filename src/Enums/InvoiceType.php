@@ -388,12 +388,18 @@ enum InvoiceType: string
 
     public function isRetail(): bool
     {
-        return in_array($this, self::retailInvoiceTypes());
+        return in_array($this, [
+            self::TYPE_11_1,
+            self::TYPE_11_2,
+            self::TYPE_11_3,
+            self::TYPE_11_4,
+            self::TYPE_11_5,
+        ]);
     }
 
-    public static function retailInvoiceTypes(): array
+    public function hasCounterpart(): bool
     {
-        return [
+        return !in_array($this, [
             self::TYPE_11_1,
             self::TYPE_11_2,
             self::TYPE_11_3,
@@ -405,12 +411,7 @@ enum InvoiceType: string
             self::TYPE_13_4,
             self::TYPE_13_30,
             self::TYPE_13_31,
-        ];
-    }
-
-    public function hasCounterpart(): bool
-    {
-        return !$this->isRetail();
+        ]);
     }
 
     public function supportsFuelInvoice(): bool
@@ -443,7 +444,7 @@ enum InvoiceType: string
             self::TYPE_1_6,
             self::TYPE_5_1,
             self::TYPE_5_2,
-            self::TYPE_11_1,            
+            self::TYPE_11_1,
         ]);
     }
 
