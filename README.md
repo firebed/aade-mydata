@@ -24,38 +24,159 @@ If you are upgrading from a previous version, please see [upgrade guide](docs/up
 
 ## v5 Features
 
-- Ability to "squash" invoice rows `$invoice->squashInvoiceRows()`.
-  > Ο Πάροχος ηλεκτρονικής τιμολόγησης και τα ERP διαβιβάζουν υποχρεωτικά μόνο τη σύνοψη
-  γραμμών και χαρακτηρισμών των παραστατικών και όχι αναλυτικά τις γραμμές. [Δείτε Σύνοψη Γραμμών Παραστατικού](/docs/squashing-invoice-rows) για περισσότερες λεπτομέρειες.
-- Ability to validate invoices against xsd files before sending them to myDATA.
-    - `$invoice->validate()`.
-- Ability to preview invoice xml before sending it to myDATA.
-    - `$invoice->toXml()`.
-- Ability to populate model attributes within constructor by using **<u>mixed</u>** array values as parameter.
-  ```php
-  use Firebed\AadeMyData\Models\InvoiceDetails;
-  use Firebed\AadeMyData\Enums\RecType;
-  use Firebed\AadeMyData\Enums\IncomeClassificationType;
-  use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
-  
-  new InvoiceDetails([
-    'lineNumber' => 1,
-    'netValue' => 5,
-    'recType' => RecType::TYPE_2,
-    'incomeClassification' => [
-        [
-            'classificationType' => IncomeClassificationType::E3_561_001,
-            'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
-            'amount' => '5'
-        ]
-    ]
-  ])
-  ```
-- Model setters are now fluent (chainable).
-    - `$invoice->setIssuer(...)->setCounterpart(...)`.
-- New methods: Invoice::setTaxesTotals, Invoice::setOtherTransportDetails.
-- Implemented `add_` methods to add an amount to InvoiceDetails and Classifications attributes (e.g. `$row->addNetValue(5)`, `$row->addVatAmount(1.2)` etc).
-- Implemented endpoints for electronic invoice providers (Πάροχοι Ηλεκτρονικής Τιμολόγησης).
+### Ability to "squash" invoice rows
+
+> Ο Πάροχος ηλεκτρονικής τιμολόγησης και τα ERP διαβιβάζουν υποχρεωτικά μόνο τη σύνοψη
+γραμμών και χαρακτηρισμών των παραστατικών και όχι αναλυτικά τις γραμμές. [Δείτε Σύνοψη Γραμμών Παραστατικού](/docs/squashing-invoice-rows) για περισσότερες λεπτομέρειες.
+ 
+`$invoice->squashInvoiceRows()`
+
+### Ability to validate invoices
+
+[See Invoice Row Squashing](/docs/squashing-invoice-rows) for more details.
+
+`$invoice->validate()`
+
+### Ability to preview invoice xml
+
+`$invoice->toXml()`
+
+### Classification combinations
+
+[See Classification Combinations](/docs/classifications) for more details.
+
+```php
+use Firebed\AadeMyData\Enums\InvoiceType;
+use Firebed\AadeMyData\Services\Classifications;
+
+dump(Classifications::incomeClassifications(InvoiceType::TYPE_1_1));
+```
+
+### Classification combinations with labels
+
+```php
+use Firebed\AadeMyData\Enums\InvoiceType;
+use Firebed\AadeMyData\Services\Classifications;
+
+dump(Classifications::incomeClassifications(InvoiceType::TYPE_1_1)->toKeyLabel());
+dump(Classifications::incomeClassifications(InvoiceType::TYPE_1_1)->toKeyLabels())
+dump(Classifications::incomeClassifications(InvoiceType::TYPE_1_1, IncomeClassificationCategory::CATEGORY_1_1)->toKeyLabel())
+```
+
+### Classification combination validation
+
+```php
+use Firebed\AadeMyData\Enums\InvoiceType;
+use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
+use Firebed\AadeMyData\Enums\IncomeClassificationType;
+use Firebed\AadeMyData\Services\Classifications;
+
+Classifications::incomeClassificationExists('1.1', 'category1_1', 'E3_561_001');
+// or
+Classifications::incomeClassificationExists(InvoiceType::TYPE_1_1, IncomeClassificationCategory::CATEGORY_1_1, IncomeClassificationType::E3_561_001);
+// Outputs: true
+
+// Same for expense classifications
+Classifications::expenseClassificationExists('1.1', 'category2_1', 'E3_102_001');
+````
+
+### Added labels to all enum types
+
+```php
+use Firebed\AadeMyData\Enums\InvoiceType;
+use Firebed\AadeMyData\Enums\PaymentMethod;
+use Firebed\AadeMyData\Enums\VatCategory;
+use Firebed\AadeMyData\Enums\CountryCode;
+
+echo InvoiceType::TYPE_1_1->label();
+// Outputs: Τιμολόγιο Πώλησης
+
+echo InvoiceType::TYPE_1_2->label();
+// Outputs: Τιμολόγιο Πώλησης / Ενδοκοινοτικές Παραδόσεις
+
+echo PaymentMethod::METHOD_5->label();
+// Outputs: Επί Πιστώσει
+
+echo VatCategory::VAT_1->label();
+// Outputs: ΦΠΑ συντελεστής 24%
+
+echo CountryCode::BE->label();
+// Outputs: Βέλγιο
+````
+
+### Enum helper methods
+
+```php
+use Firebed\AadeMyData\Enums\InvoiceType;
+use Firebed\AadeMyData\Enums\CountryCode;
+use Firebed\AadeMyData\Enums\ExpenseClassificationType;
+
+$invoiceType = InvoiceType::TYPE_1_1;
+$invoiceType->supportsFuelInvoice();
+$invoiceType->hasCounterpart();
+$invoiceType->supportsDeliveryNote();
+$invoiceType->supportsSelfPricing();
+$invoiceType->supportsTaxFree();
+
+var_dump(CountryCode::europeanUnionCountries());
+// Outputs: All countries in the European Union
+
+echo CountryCode::BE->isInEuropeanUnion()
+// Outputs: true
+
+echo CountryCode::US->isInEuropeanUnion()
+// Outputs: false
+
+$type = ExpenseClassificationType::VAT_361;
+echo $type->isVatClassification(); // true
+
+var_dump(ExpenseClassificationType::vatClassifications()); // Array of all vat classifications
+```
+
+### New enum types
+
+- CountryCode
+- CurrencyCode
+
+### Ability to populate model attributes within constructor
+
+```php
+use Firebed\AadeMyData\Models\InvoiceDetails;
+use Firebed\AadeMyData\Enums\RecType;
+use Firebed\AadeMyData\Enums\IncomeClassificationType;
+use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
+
+new InvoiceDetails([
+  'lineNumber' => 1,
+  'netValue' => 5,
+  'recType' => RecType::TYPE_2,
+  'incomeClassification' => [
+      [
+          'classificationType' => IncomeClassificationType::E3_561_001,
+          'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
+          'amount' => '5'
+      ]
+  ]
+])
+```
+
+### Fluent model setters (chainable)
+
+`$invoice->setIssuer(...)->setCounterpart(...)`
+
+### New methods
+
+- Invoice::setTaxesTotals
+- Invoice::setOtherTransportDetails
+
+### `add_` methods to top up an amount to 
+
+```php
+$row->addNetValue(5);
+$row->addVatAmount(1.2);
+```
+
+### Implemented endpoints for electronic invoice providers (Πάροχοι Ηλεκτρονικής Τιμολόγησης).
 
 ## Requirements
 
@@ -81,7 +202,7 @@ composer require firebed/aade-mydata
 
 Official myDATA webpage: [AADE myDATA](https://www.aade.gr/mydata)
 
-Official myDATA documentation: [AADE myDATA REST API v1.0.8](https://www.aade.gr/sites/default/files/2024-02/myDATA%20API%20Documentation%20v1.0.8_official_ERP.pdf)
+Official myDATA documentation: [AADE myDATA REST API v1.0.8](https://www.aade.gr/sites/default/files/2024-07/myDATA%20API%20Documentation%20v1.0.9_official_erp.pdf)
 
 In order to use this package, you will need first a **user id** and a **subscription key**. You can get these credentials by signing up to mydata rest api.
 
