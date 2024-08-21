@@ -202,7 +202,7 @@ composer require firebed/aade-mydata
 
 Official myDATA webpage: [AADE myDATA](https://www.aade.gr/mydata)
 
-Official myDATA documentation: [AADE myDATA REST API v1.0.8](https://www.aade.gr/sites/default/files/2024-07/myDATA%20API%20Documentation%20v1.0.9_official_erp.pdf)
+Official myDATA documentation: [AADE myDATA REST API v1.0.9](https://www.aade.gr/sites/default/files/2024-07/myDATA%20API%20Documentation%20v1.0.9_official_erp.pdf)
 
 In order to use this package, you will need first a **user id** and a **subscription key**. You can get these credentials by signing up to mydata rest api.
 
