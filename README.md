@@ -18,6 +18,10 @@ This package provides an expressive, fluent interface to ΑΑΔΕ myDATA invoici
 
 All documentation is available 👉 [on our documentation site](https://docs.invoicemaker.gr/getting-started)
 
+## Upgrade Guide
+
+If you are upgrading from a previous version, please see [upgrade guide](docs/upgrade-guide.md).
+
 ## v5 Features
 
 - Ability to "squash" invoice rows `$invoice->squashInvoiceRows()`.
@@ -98,25 +102,27 @@ MyDataRequest::setEnvironment($env);
 MyDataRequest::setCredentials($user_id, $subscription_key);
 ```
 
-### Available methods
-
-- [Validate VAT Number](http://docs.invoicemaker.gr/http/search-vat)
-- [SendInvoices](http://docs.invoicemaker.gr/http/send-invoices)
-- [CancelInvoice](http://docs.invoicemaker.gr/http/cancel-invoice)
-- [RequestDocs](http://docs.invoicemaker.gr/http/request-docs)
-- [RequestTransmittedDocs](http://docs.invoicemaker.gr/http/request-transmitted-docs)
-- [RequestMyIncome](http://docs.invoicemaker.gr/http/request-my-income)
-- [RequestMyExpenses](http://docs.invoicemaker.gr/http/request-my-expenses)
-- [RequestVatInfo](http://docs.invoicemaker.gr/http/request-vat-info)
-- [SendPaymentsMethod](http://docs.invoicemaker.gr/http/send-payments-method)
-- [SendIncomeClassification](http://docs.invoicemaker.gr/http/send-income-classification)
-- [SendExpensesClassification](http://docs.invoicemaker.gr/http/send-expenses-classification)
-
 For development, you may need to disable client verification if you are not using https:
 
 ```php
 MyDataRequest::verifyClient(false);
 ```
+
+### Available methods
+
+| Method                                                                                      | Availability       |
+|---------------------------------------------------------------------------------------------|--------------------|
+| [Validate VAT Number](http://docs.invoicemaker.gr/http/search-vat)                          | :white_check_mark: |
+| [SendInvoices](http://docs.invoicemaker.gr/http/send-invoices)                              | :white_check_mark: |
+| [CancelInvoice](http://docs.invoicemaker.gr/http/cancel-invoice)                            | :white_check_mark: |
+| [RequestDocs](http://docs.invoicemaker.gr/http/request-docs)                                | :white_check_mark: |
+| [RequestTransmittedDocs](http://docs.invoicemaker.gr/http/request-transmitted-docs)         | :white_check_mark: |
+| [RequestMyIncome](http://docs.invoicemaker.gr/http/request-my-income)                       | :white_check_mark: |
+| [RequestMyExpenses](http://docs.invoicemaker.gr/http/request-my-expenses)                   | :white_check_mark: |
+| [RequestVatInfo](http://docs.invoicemaker.gr/http/request-vat-info)                         | :white_check_mark: |
+| [SendPaymentsMethod](http://docs.invoicemaker.gr/http/send-payments-method)                 | :white_check_mark: |
+| [SendIncomeClassification](http://docs.invoicemaker.gr/http/send-income-classification)     | Soon               |
+| [SendExpensesClassification](http://docs.invoicemaker.gr/http/send-expenses-classification) | Soon               |
 
 ### Testing
 
