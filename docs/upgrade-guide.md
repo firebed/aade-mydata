@@ -2,6 +2,16 @@
 
 ## Upgrade guide from 4.x to 5.x
 
+### Ενημέρωση composer
+
+```json
+{
+  "require": {
+    "firebed/aade-mydata": "^5.0"
+  }
+}
+```
+
 ### Breaking changes
 - Removed vat-registry dependency from composer. You can include vat-registry by running `composer require firebed/vat-registry`. [See vat-registry](https://github.com/firebed/vat-registry) documentation for more information. If you were not using vat search, you can safely ignore this change.
 - Removed ext-soap dependency from composer.
