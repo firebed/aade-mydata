@@ -76,7 +76,7 @@ dump(Classifications::incomeClassifications(InvoiceType::TYPE_1_1, IncomeClassif
 //]
 ```
 
-### Επαλήθευση συνδυασμού χαρακτηρισμών
+## Επαλήθευση συνδυασμού χαρακτηρισμών
 
 ```php
 use Firebed\AadeMyData\Enums\InvoiceType;

@@ -18,13 +18,13 @@
  
 ### Features
 
-#### Ability to "squash" invoice rows
+### Ability to "squash" invoice rows
 
 `$invoice->squashInvoiceRows()`
 > Ο Πάροχος ηλεκτρονικής τιμολόγησης και τα ERP διαβιβάζουν υποχρεωτικά μόνο τη σύνοψη
 γραμμών και χαρακτηρισμών των παραστατικών και όχι αναλυτικά τις γραμμές. [Δείτε Σύνοψη Γραμμών Παραστατικού](/squashing-invoice-rows) για περισσότερες λεπτομέρειες.
 
-#### Ability to validate invoices
+### Ability to validate invoices
 
 `$invoice->validate()`
 
@@ -32,7 +32,7 @@
 
 `$invoice->toXml()`
 
-#### Classification combinations
+### Classification combinations
 
 [Δείτε Συνδυασμοί Χαρακτηρισμών](/classifications) για περισσότερες λεπτομέρειες.
 
@@ -62,7 +62,7 @@ IncomeClassificationType::for(InvoiceType::TYPE_1_1);
 InvoiceType::TYPE_1_1->incomeClassifications();
 ```
 
-#### Classification combinations with labels
+### Classification combinations with labels
 
 ```php
 use Firebed\AadeMyData\Enums\InvoiceType;
