@@ -27,13 +27,13 @@ If you are upgrading from a previous version, please see [upgrade guide](docs/up
 ### Ability to "squash" invoice rows
 
 > Ο Πάροχος ηλεκτρονικής τιμολόγησης και τα ERP διαβιβάζουν υποχρεωτικά μόνο τη σύνοψη
-γραμμών και χαρακτηρισμών των παραστατικών και όχι αναλυτικά τις γραμμές. [Δείτε Σύνοψη Γραμμών Παραστατικού](/docs/squashing-invoice-rows) για περισσότερες λεπτομέρειες.
+γραμμών και χαρακτηρισμών των παραστατικών και όχι αναλυτικά τις γραμμές.
  
 `$invoice->squashInvoiceRows()`
 
-### Ability to validate invoices
-
 [See Invoice Row Squashing](/docs/squashing-invoice-rows) for more details.
+
+### Ability to validate invoices
 
 `$invoice->validate()`
 
