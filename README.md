@@ -31,7 +31,7 @@ If you are upgrading from a previous version, please see [upgrade guide](docs/up
  
 `$invoice->squashInvoiceRows()`
 
-[See Invoice Row Squashing](/docs/squashing-invoice-rows) for more details.
+[See Invoice Row Squashing](/docs/squashing-invoice-rows.md) for more details.
 
 ### Ability to validate invoices
 
@@ -43,7 +43,7 @@ If you are upgrading from a previous version, please see [upgrade guide](docs/up
 
 ### Classification combinations
 
-[See Classification Combinations](/docs/classifications) for more details.
+[See Classification Combinations](/docs/classifications.md) for more details.
 
 ```php
 use Firebed\AadeMyData\Enums\InvoiceType;
