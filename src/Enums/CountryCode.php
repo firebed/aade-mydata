@@ -312,6 +312,13 @@ enum CountryCode: string
             self::CX => "Νήσος των Χριστουγέννων",
             self::CY => "Κύπρος",
             self::CZ => "Τσεχία",
+            default => $this->label_2(),
+        };
+    }
+
+    private function label_2(): string
+    {
+        return match ($this) {
             self::DE => "Γερμανία",
             self::DJ => "Τζιμπουτί",
             self::DK => "Δανία",
@@ -370,6 +377,13 @@ enum CountryCode: string
             self::JM => "Τζαμάικα",
             self::JO => "Ιορδανία",
             self::JP => "Ιαπωνία",
+            default => $this->label_3(),
+        };
+    }
+
+    private function label_3(): string
+    {
+        return match ($this) {
             self::KE => "Κένυα",
             self::KG => "Κιργιζία",
             self::KH => "Καμπότζη",
@@ -449,6 +463,13 @@ enum CountryCode: string
             self::RS => "Σερβία",
             self::RU => "Ρωσία",
             self::RW => "Ρουάντα",
+            default => $this->label_4(),
+        };
+    }
+
+    private function label_4(): string
+    {
+        return match ($this) {
             self::SA => "Σαουδική Αραβία",
             self::SB => "Νήσοι Σολομώντος",
             self::SC => "Σεϋχέλλες",
@@ -506,7 +527,7 @@ enum CountryCode: string
             self::ZW => "Ζιμπάμπουε",
         };
     }
-
+    
     public function isInEuropeanUnion(): bool
     {
         return in_array($this, self::europeanUnionCountries());
