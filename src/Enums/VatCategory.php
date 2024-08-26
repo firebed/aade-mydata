@@ -80,4 +80,28 @@ enum VatCategory: int
             self::VAT_10 => "ΦΠΑ συντελεστής 4% (αρ.31 ν.5057/2023)",
         };
     }
+
+    public function rate(): float
+    {
+        return match ($this) {
+            self::VAT_1 => 24.0,
+            self::VAT_2 => 13.0,
+            self::VAT_3 => 6.0,
+            self::VAT_4 => 17.0,
+            self::VAT_5 => 9.0,
+            self::VAT_6, self::VAT_10 => 4.0,
+            self::VAT_7, self::VAT_8 => 0.0,
+            self::VAT_9 => 3.0,
+        };
+    }
+
+    public function isZero(): bool
+    {
+        return $this === self::VAT_7 || $this === self::VAT_8;
+    }
+    
+    public function isExemption(): bool
+    {
+        return $this === self::VAT_7;
+    }
 }
