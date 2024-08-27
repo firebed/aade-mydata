@@ -40,7 +40,7 @@ class RequestVatInfo extends MyDataRequest
      * @throws MyDataAuthenticationException
      * @version 1.0.8
      */
-    public function handle(string $dateFrom, string $dateTo, string $entityVatNumber = null, bool $groupedPerDay = true, string $nextPartitionKey = null, string $nextRowKey = null): RequestedVatInfo
+    public function handle(string $dateFrom, string $dateTo, string $entityVatNumber = null, bool $groupedPerDay = false, string $nextPartitionKey = null, string $nextRowKey = null): RequestedVatInfo
     {
         $query = array_filter([
             'dateFrom' => $dateFrom,
