@@ -16,6 +16,7 @@ class Invoice extends Type
     use HasFactory;
 
     protected array $expectedOrder = [
+        'transmissionFailure',
         'issuer',
         'counterpart',
         'invoiceHeader',

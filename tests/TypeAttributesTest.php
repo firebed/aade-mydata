@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Firebed\AadeMyData\Enums\TransmissionFailure;
 use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\InvoiceHeader;
 use PHPUnit\Framework\TestCase;
@@ -55,5 +56,18 @@ class TypeAttributesTest extends TestCase
 
         // Assert that the attributes are sorted
         $this->assertSame($invoiceHeader->getExpectedOrder(), array_keys($invoiceHeader->sortedAttributes()));
+    }
+
+    public function test_transmission_failure_is_sorted()
+    {
+        $invoice = Invoice::factory()->make();
+        $invoice->setTransmissionFailure(TransmissionFailure::ERP_CONNECTION_FAILURE);
+
+        $expectedTransmissionFailureIndex = array_search('transmissionFailure', $invoice->getExpectedOrder());
+        $actualTransmissionFailureIndex = array_search('transmissionFailure', array_keys($invoice->sortedAttributes()));
+        
+        $this->assertNotFalse($expectedTransmissionFailureIndex);
+        $this->assertNotFalse($actualTransmissionFailureIndex);
+        $this->assertSame($expectedTransmissionFailureIndex, $actualTransmissionFailureIndex);
     }
 }
