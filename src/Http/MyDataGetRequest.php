@@ -58,11 +58,13 @@ abstract class MyDataGetRequest extends MyDataRequest
         $invType = $invType instanceof InvoiceType ? $invType->value : $invType;
         
         $params = compact('dateFrom', 'dateTo', 'receiverVatNumber', 'entityVatNumber', 'invType', 'maxMark', 'nextPartitionKey', 'nextRowKey');
-        $query += array_filter($params);
+        
+        // Συγχώνευση ερωτήματος με παραμέτρους
+        $query = array_merge($query, array_filter($params));
 
-        // Get the response XML
-        $response = $this->get($query);
-        $responseXML = $response->getBody()->getContents();
+
+        // Get the response XML / Ανάκτηση του XML απόκρισης
+        $responseXML = $this->get($query)->getBody()->getContents();
 
         // Parse the response XML
         $reader = new RequestedDocReader();
