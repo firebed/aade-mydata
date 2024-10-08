@@ -52,9 +52,11 @@ abstract class RequestBookInfo extends MyDataRequest
         $query = array_filter($query);
 
         // Get the response XML
-        $response = $this->get($query);
-        $responseXML = $response->getBody()->getContents();
+        $responseXML = $this->get($query)->getBody()->getContents();
 
+        if (empty($responseXML)) {
+            throw new MyDataException('Invalid response from MyData API');
+        }
         // Parse the response XML
         $reader = new BookInfoReader();
         $bookInfo = $reader->parseXML($responseXML);
