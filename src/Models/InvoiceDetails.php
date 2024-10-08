@@ -867,10 +867,14 @@ class InvoiceDetails extends Type
     {
         return $this->set('notVAT195', $notVAT195);
     }
+    
 
     public function set($key, $value): static
     {
         if (($key === 'expensesClassification' || $key === 'incomeClassification') && !is_array($value)) {
+            if (!($value instanceof IncomeClassification || $value instanceof ExpensesClassification)) {
+                throw new InvalidArgumentException("Invalid classification type.");
+            }
             return $this->push($key, $value);
         }
 
