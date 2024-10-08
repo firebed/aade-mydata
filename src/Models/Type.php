@@ -9,6 +9,7 @@ abstract class Type
     protected array $attributes    = [];
     protected array $expectedOrder = [];
     protected array $casts         = [];
+    private   array $enumCache     = [];
 
     public function __construct(array $attributes = [])
     {
@@ -134,15 +135,36 @@ abstract class Type
         return $this->expectedOrder;
     }
 
-    /** @noinspection PhpUnhandledExceptionInspection */
-    public function isEnum($name): bool
+    public function isEnum(string $name): bool
     {
         $cast = $this->casts[$name] ?? null;
-        if ($cast) {
-            return (new ReflectionClass($cast))->isEnum();
+
+        if ($cast === null) {
+            return false;
         }
 
-        return false;
+        // Έλεγχος αν το αποτέλεσμα είναι ήδη στην cache
+        if (isset($this->enumCache[$cast])) {
+            return $this->enumCache[$cast];
+        }
+
+        // Έλεγχος αν η κλάση υπάρχει
+        if (!class_exists($cast)) {
+            $this->enumCache[$cast] = false;
+            return false;
+        }
+
+        try {
+            $reflection = new ReflectionClass($cast);
+            $isEnum = $reflection->isEnum();
+            // Αποθήκευση του αποτελέσματος στην cache
+            $this->enumCache[$cast] = $isEnum;
+            return $isEnum;
+        } catch (ReflectionException $e) {
+            // Σε περίπτωση εξαίρεσης, αποθηκεύουμε false στην cache
+            $this->enumCache[$cast] = false;
+            return false;
+        }
     }
 
     /**
