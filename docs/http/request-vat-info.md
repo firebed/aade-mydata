@@ -31,7 +31,7 @@ https://mydataapidev.aade.gr/RequestVatInfo
 
 > [!TIP]
 > Το αποτέλεσμα της κλήσης επιστρέφει έναν πίνακα από αντικείμενα τύπου
-> [**\Firebed\AadeMyData\Models\VatInfo**](../types/vat-info).
+> [**\Firebed\AadeMyData\Models\VatInfo**](../types/vat-info-type).
 > 
 ## Παρατηρήσεις
 - Σε περίπτωση που τα αποτελέσματα αναζήτησης υπερβαίνουν το μέγιστο επιτρεπτό
