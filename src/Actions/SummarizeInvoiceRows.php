@@ -42,12 +42,12 @@ class SummarizeInvoiceRows
 
         $this->saveTaxes($summary);
 
-        $grossValue = $this->round($this->getTotalGrossValue());
+        $grossValue = $this->getTotalGrossValue();
         $summary->setTotalGrossValue($grossValue);
     }
 
     public function getTotalGrossValue(): float
     {
-        return $this->totalNetValue + $this->totalVatAmount + $this->getTotalTaxes();
+        return $this->round($this->totalNetValue + $this->totalVatAmount + $this->getTotalTaxes());
     }
 }
