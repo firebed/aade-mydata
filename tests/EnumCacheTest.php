@@ -13,7 +13,7 @@ class EnumCacheTest extends TestCase
 {
     protected function setUp(): void
     {
-        // Reset the static enum cache after each test
+        // Reset the static enum cache before each test
         $reflection = new ReflectionClass(Type::class);
         $enumCacheProperty = $reflection->getProperty('enumCache');
         $enumCacheProperty->setValue([]);
