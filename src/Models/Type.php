@@ -154,17 +154,12 @@ abstract class Type
             return false;
         }
 
-        try {
-            $reflection = new ReflectionClass($cast);
-            $isEnum = $reflection->isEnum();
-            // Αποθήκευση του αποτελέσματος στην cache
-            $this->enumCache[$cast] = $isEnum;
-            return $isEnum;
-        } catch (ReflectionException $e) {
-            // Σε περίπτωση εξαίρεσης, αποθηκεύουμε false στην cache
-            $this->enumCache[$cast] = false;
-            return false;
-        }
+       
+        $reflection = new ReflectionClass($cast);
+        $isEnum = $reflection->isEnum();
+        // Αποθήκευση του αποτελέσματος στην cache
+        $this->enumCache[$cast] = $isEnum;
+        return $isEnum;
     }
 
     /**
