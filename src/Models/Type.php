@@ -2,13 +2,14 @@
 
 namespace Firebed\AadeMyData\Models;
 
-use ReflectionClass;
+use BackedEnum;
 
 abstract class Type
 {
-    protected array $attributes    = [];
-    protected array $expectedOrder = [];
-    protected array $casts         = [];
+    protected array      $attributes    = [];
+    protected array      $expectedOrder = [];
+    protected array      $casts         = [];
+    private static array $enumCache     = [];
 
     public function __construct(array $attributes = [])
     {
@@ -96,19 +97,19 @@ abstract class Type
     {
         foreach ($attributes as $key => $value) {
             $set = 'set'.str_replace('_', '', ucwords($key, '_'));
-            
+
             if (is_object($value) || !method_exists($this, $set)) {
                 $this->attributes[$key] = $value;
                 continue;
             }
-            
+
             $cast = $this->getCast($key);
-            
+
             if ($cast === null || !is_subclass_of($cast, Type::class)) {
                 $this->set($key, $value);
                 continue;
             }
-            
+
             if (is_subclass_of($cast, TypeArray::class)) {
                 $this->$set(array_shift($value));
                 continue;
@@ -134,15 +135,22 @@ abstract class Type
         return $this->expectedOrder;
     }
 
-    /** @noinspection PhpUnhandledExceptionInspection */
-    public function isEnum($name): bool
+    public function isEnum(string $name): bool
     {
         $cast = $this->casts[$name] ?? null;
-        if ($cast) {
-            return (new ReflectionClass($cast))->isEnum();
+
+        // Return false if $cast is null or directly return the cached value
+        if ($cast === null || isset(self::$enumCache[$cast])) {
+            return self::$enumCache[$cast] ?? false;
         }
 
-        return false;
+        // Check if the class exists and implements BackedEnum
+        if (!class_exists($cast) || !is_subclass_of($cast, BackedEnum::class)) {
+            return self::$enumCache[$cast] = false;
+        }
+
+        // Cache and return the result
+        return self::$enumCache[$cast] = true;
     }
 
     /**
