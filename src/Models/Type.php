@@ -2,7 +2,7 @@
 
 namespace Firebed\AadeMyData\Models;
 
-use ReflectionClass;
+use BackedEnum;
 
 abstract class Type
 {
@@ -139,27 +139,18 @@ abstract class Type
     {
         $cast = $this->casts[$name] ?? null;
 
-        if ($cast === null) {
-            return false;
+        // Return false if $cast is null or directly return the cached value
+        if ($cast === null || isset($this->enumCache[$cast])) {
+            return $this->enumCache[$cast] ?? false;
         }
 
-        // Έλεγχος αν το αποτέλεσμα είναι ήδη στην cache
-        if (isset($this->enumCache[$cast])) {
-            return $this->enumCache[$cast];
+        // Check if the class exists and implements BackedEnum
+        if (!class_exists($cast) || !is_subclass_of($cast, BackedEnum::class)) {
+            return $this->enumCache[$cast] = false;
         }
 
-        // Έλεγχος αν η κλάση υπάρχει
-        if (!class_exists($cast)) {
-            $this->enumCache[$cast] = false;
-            return false;
-        }
-
-       
-        $reflection = new ReflectionClass($cast);
-        $isEnum = $reflection->isEnum();
-        // Αποθήκευση του αποτελέσματος στην cache
-        $this->enumCache[$cast] = $isEnum;
-        return $isEnum;
+        // Cache and return the result
+        return $this->enumCache[$cast] = true;
     }
 
     /**
