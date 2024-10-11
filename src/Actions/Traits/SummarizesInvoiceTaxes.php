@@ -61,23 +61,22 @@ trait SummarizesInvoiceTaxes
 
     protected function saveTaxes(InvoiceSummary $summary): void
     {
-        $withheldAmount = $this->round($summary->getTotalWithheldAmount() + $this->totalWithheldAmount);
-        $summary->setTotalWithheldAmount($withheldAmount);
+        $this->updateTaxAmount($summary, 'TotalWithheldAmount', $this->totalWithheldAmount);
+        $this->updateTaxAmount($summary, 'TotalFeesAmount', $this->totalFeesAmount);
+        $this->updateTaxAmount($summary, 'TotalStampDutyAmount', $this->totalStampDutyAmount);
+        $this->updateTaxAmount($summary, 'TotalOtherTaxesAmount', $this->totalOtherTaxesAmount);
+        $this->updateTaxAmount($summary, 'TotalDeductionsAmount', $this->totalDeductionsAmount);
+        $this->updateTaxAmount($summary, 'TotalInformationalTaxAmount', $this->totalInformationTaxAmount);
+    }
 
-        $feesAmount = $this->round($summary->getTotalFeesAmount() + $this->totalFeesAmount);
-        $summary->setTotalFeesAmount($feesAmount);
-
-        $stampDutyAmount = $this->round($summary->getTotalStampDutyAmount() + $this->totalStampDutyAmount);
-        $summary->setTotalStampDutyAmount($stampDutyAmount);
-
-        $otherTaxesAmount = $this->round($summary->getTotalOtherTaxesAmount() + $this->totalOtherTaxesAmount);
-        $summary->setTotalOtherTaxesAmount($otherTaxesAmount);
-
-        $deductionsAmount = $this->round($summary->getTotalDeductionsAmount() + $this->totalDeductionsAmount);
-        $summary->setTotalDeductionsAmount($deductionsAmount);
+    /**
+     * Ενημέρωση των ποσών φόρων στο τιμολόγιο
+     */
+    private function updateTaxAmount(InvoiceSummary $summary, string $methodName, float $amount): void
+    {
+        $currentValue = $summary->{'get'.$methodName}();
+        $summary->{'set'.$methodName}($this->round($currentValue + $amount));
         
-        $informationalTaxes = $this->round($summary->getTotalInformationalTaxAmount() + $this->totalInformationTaxAmount);
-        $summary->setTotalInformationTaxAmount($informationalTaxes);
     }
 
     public function getTotalTaxes(): float
