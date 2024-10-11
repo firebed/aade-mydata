@@ -873,7 +873,7 @@ class InvoiceDetails extends Type
     {
         if (($key === 'expensesClassification' || $key === 'incomeClassification') && !is_array($value)) {
             if (!($value instanceof IncomeClassification || $value instanceof ExpensesClassification)) {
-                throw new InvalidArgumentException("Invalid classification type.");
+                throw new \InvalidArgumentException("Invalid classification type.");
             }
             return $this->push($key, $value);
         }
