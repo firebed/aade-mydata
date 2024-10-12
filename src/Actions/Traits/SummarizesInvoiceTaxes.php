@@ -10,17 +10,17 @@ use Firebed\AadeMyData\Models\TaxTotals;
 
 trait SummarizesInvoiceTaxes
 {
-    public float $totalWithheldAmount   = 0;
-    public float $totalFeesAmount       = 0;
-    public float $totalStampDutyAmount  = 0;
-    public float $totalOtherTaxesAmount = 0;
-    public float $totalDeductionsAmount = 0;
+    protected float $totalWithheldAmount   = 0;
+    protected float $totalFeesAmount       = 0;
+    protected float $totalStampDutyAmount  = 0;
+    protected float $totalOtherTaxesAmount = 0;
+    protected float $totalDeductionsAmount = 0;
 
     /**
      * @var float Tax amounts that do not affect gross value
      * and should be excluded from total gross value.
      */
-    public float $totalInformationTaxAmount = 0;
+    protected float $totalInformationalTaxAmount = 0;
 
     protected function addTaxesFromInvoiceRow(InvoiceDetails $row): void
     {
@@ -32,7 +32,7 @@ trait SummarizesInvoiceTaxes
 
         $withheldCategory = $row->getWithheldPercentCategory();
         if ($withheldCategory !== null && !$withheldCategory->affectsTotalGrossValue()) {
-            $this->totalInformationTaxAmount += abs($row->getWithheldAmount() ?? 0);
+            $this->totalInformationalTaxAmount += abs($row->getWithheldAmount() ?? 0);
         }
     }
 
@@ -54,7 +54,7 @@ trait SummarizesInvoiceTaxes
                 : WithheldPercentCategory::tryFrom($tax->getTaxCategory());
 
             if ($taxCategory !== null && !$taxCategory->affectsTotalGrossValue()) {
-                $this->totalInformationTaxAmount += $amount;
+                $this->totalInformationalTaxAmount += $amount;
             }
         }
     }
@@ -76,15 +76,15 @@ trait SummarizesInvoiceTaxes
         $deductionsAmount = $this->round($summary->getTotalDeductionsAmount() + $this->totalDeductionsAmount);
         $summary->setTotalDeductionsAmount($deductionsAmount);
         
-        $informationalTaxes = $this->round($summary->getTotalInformationalTaxAmount() + $this->totalInformationTaxAmount);
-        $summary->setTotalInformationTaxAmount($informationalTaxes);
+        $informationalTaxes = $this->round($summary->getTotalInformationalTaxAmount() + $this->totalInformationalTaxAmount);
+        $summary->setTotalInformationalTaxAmount($informationalTaxes);
     }
 
-    public function getTotalTaxes(): float
+    protected function getTotalTaxes(): float
     {
         return -$this->totalWithheldAmount
                -$this->totalDeductionsAmount
-               +$this->totalInformationTaxAmount
+               +$this->totalInformationalTaxAmount
                +$this->totalFeesAmount
                +$this->totalStampDutyAmount
                +$this->totalOtherTaxesAmount;

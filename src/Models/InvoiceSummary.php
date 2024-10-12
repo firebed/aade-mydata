@@ -115,7 +115,7 @@ class InvoiceSummary extends Type
      * @param  float  $amount  Το σύνολο των προκαταβληθέντων φόρων που δεν επηρεάζουν τη συνολική αξία (πληρωτέο ποσό) του παραστατικού.
      * @return $this
      */
-    public function setTotalInformationTaxAmount(float $amount): static
+    public function setTotalInformationalTaxAmount(float $amount): static
     {
         $this->totalInformationalTaxAmount = $amount;
         return $this;
