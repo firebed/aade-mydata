@@ -2,7 +2,7 @@
 
 namespace Firebed\AadeMyData\Actions\Traits;
 
-use Firebed\AadeMyData\Enums\TaxType;
+use Firebed\AadeMyData\Enums\TaxType; 
 use Firebed\AadeMyData\Enums\WithheldPercentCategory;
 use Firebed\AadeMyData\Models\InvoiceDetails;
 use Firebed\AadeMyData\Models\InvoiceSummary;

@@ -149,7 +149,9 @@ abstract class MyDataRequest
 
             $reponse  = $this->client()->get($this->getUrl(), ['query' => $query]);
 
-            if (empty(trim($reponse))) {
+            $responseBody = (string) $response->getBody();             
+
+            if (empty(trim($responseBody))) {
                 throw new InvalidResponseException('Invalid response from MyData API');
         
             }
@@ -181,7 +183,9 @@ abstract class MyDataRequest
 
             $reponse  = $this->client()->post($this->getUrl(), $params);
 
-            if (empty(trim($reponse))) {
+            $responseBody = (string) $response->getBody();             
+
+            if (empty(trim($responseBody))) {
                 throw new InvalidResponseException('Invalid response from MyData API');
         
             }
