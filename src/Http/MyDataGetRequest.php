@@ -66,10 +66,6 @@ abstract class MyDataGetRequest extends MyDataRequest
         // Get the response XML / Ανάκτηση του XML απόκρισης
         $responseXML = $this->get($query)->getBody()->getContents();
         
-        if (empty($responseXML)) {
-            throw new MyDataException('Invalid response from MyData API');
-        }
-
         // Parse the response XML
         $reader = new RequestedDocReader();
         $responseDoc = $reader->parseXML($responseXML);

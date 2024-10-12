@@ -54,10 +54,6 @@ class RequestVatInfo extends MyDataRequest
         // Get the response XML
         $responseXML = $this->get($query)->getBody()->getContents();
         
-        if (empty($responseXML)) {
-            throw new MyDataException('Invalid response from MyData API');
-        }
-
         // Parse the response XML
         $reader = new VatInfoReader();
         $vatInfo = $reader->parseXML($responseXML);

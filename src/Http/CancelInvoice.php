@@ -41,10 +41,6 @@ class CancelInvoice extends MyDataRequest
         // Get the response XML
         $responseXML = $this->post($query)->getBody()->getContents();
 
-        if (empty($responseXML)) {
-            throw new MyDataException('Invalid response from MyData API');
-        }
-
         // Parse the response XML
         $reader = new ResponseDocReader();
         $responseDoc = $reader->parseXML($responseXML);

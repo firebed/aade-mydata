@@ -7,6 +7,7 @@ use Firebed\AadeMyData\Exceptions\MyDataConnectionException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Exceptions\RateLimitExceededException;
 use Firebed\AadeMyData\Exceptions\TransmissionFailedException;
+use Firebed\AadeMyData\Exceptions\InvalidResponseException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Handler\MockHandler;
@@ -145,7 +146,16 @@ abstract class MyDataRequest
         self::validateCredentials();
 
         try {
-            return $this->client()->get($this->getUrl(), ['query' => $query]);
+
+            $reponse  = $this->client()->get($this->getUrl(), ['query' => $query]);
+
+            if (empty(trim($reponse))) {
+                throw new InvalidResponseException('Invalid response from MyData API');
+        
+            }
+
+
+            return $reponse;
         } catch (GuzzleException $e) {
             $this->handleTransmissionException($e);
         }
@@ -168,7 +178,15 @@ abstract class MyDataRequest
         }
 
         try {
-            return $this->client()->post($this->getUrl(), $params);
+
+            $reponse  = $this->client()->post($this->getUrl(), $params);
+
+            if (empty(trim($reponse))) {
+                throw new InvalidResponseException('Invalid response from MyData API');
+        
+            }
+
+            return $reponse ;
         } catch (GuzzleException $e) {
             $this->handleTransmissionException($e);
         }
