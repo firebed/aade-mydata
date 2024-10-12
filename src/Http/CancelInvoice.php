@@ -39,8 +39,7 @@ class CancelInvoice extends MyDataRequest
         }
 
         // Get the response XML
-        $results = $this->post($query);
-        $responseXML = $results->getBody()->getContents();
+        $responseXML = $this->post($query);
 
         // Parse the response XML
         $reader = new ResponseDocReader();

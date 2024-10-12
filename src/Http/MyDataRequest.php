@@ -2,6 +2,7 @@
 
 namespace Firebed\AadeMyData\Http;
 
+use Firebed\AadeMyData\Exceptions\InvalidResponseException;
 use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
 use Firebed\AadeMyData\Exceptions\MyDataConnectionException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -11,7 +12,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
-use Psr\Http\Message\ResponseInterface;
 use ReflectionClass;
 
 abstract class MyDataRequest
@@ -140,12 +140,20 @@ abstract class MyDataRequest
     /**
      * @throws MyDataAuthenticationException|MyDataException
      */
-    protected function get(array $query): ResponseInterface
+    protected function get(array $query): string
     {
         self::validateCredentials();
 
         try {
-            return $this->client()->get($this->getUrl(), ['query' => $query]);
+            $response = $this->client()->get($this->getUrl(), ['query' => $query]);
+            $responseXml = $response->getBody()->getContents();
+            
+            // We always expect a response xml from myDATA
+            if (empty(trim($responseXml))) {
+                throw new InvalidResponseException("Empty response received from AADE MyData API");
+            }
+
+            return $responseXml;
         } catch (GuzzleException $e) {
             $this->handleTransmissionException($e);
         }
@@ -154,7 +162,7 @@ abstract class MyDataRequest
     /**
      * @throws MyDataAuthenticationException|MyDataException
      */
-    protected function post(array $query = null, string $body = null): ResponseInterface
+    protected function post(array $query = null, string $body = null): string
     {
         self::validateCredentials();
 
@@ -168,7 +176,15 @@ abstract class MyDataRequest
         }
 
         try {
-            return $this->client()->post($this->getUrl(), $params);
+            $response = $this->client()->post($this->getUrl(), $params);
+            $responseXml = $response->getBody()->getContents();
+
+            // We always expect a response xml from myDATA
+            if (empty(trim($responseXml))) {
+                throw new InvalidResponseException("Empty response received from AADE MyData API");
+            }
+
+            return $responseXml;
         } catch (GuzzleException $e) {
             $this->handleTransmissionException($e);
         }
@@ -177,7 +193,7 @@ abstract class MyDataRequest
     /**
      * Authorization errors, bad request, communication errors,
      * myDATA server errors, rate limits, connection timeout, etc.
-     * 
+     *
      * @throws MyDataAuthenticationException|MyDataException
      */
     protected function handleTransmissionException(GuzzleException $exception)
@@ -190,7 +206,7 @@ abstract class MyDataRequest
         if ($exception->getCode() === 0) {
             throw new MyDataConnectionException($exception->getCode(), $exception);
         }
-        
+
         // Rate limit exception
         if ($exception->getCode() === 429) {
             throw new RateLimitExceededException($exception->getMessage(), $exception->getCode(), $exception);

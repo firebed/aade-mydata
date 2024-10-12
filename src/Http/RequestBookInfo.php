@@ -52,8 +52,7 @@ abstract class RequestBookInfo extends MyDataRequest
         $query = array_filter($query);
 
         // Get the response XML
-        $response = $this->get($query);
-        $responseXML = $response->getBody()->getContents();
+        $responseXML = $this->get($query);
 
         // Parse the response XML
         $reader = new BookInfoReader();
