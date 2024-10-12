@@ -35,21 +35,44 @@ abstract class MyDataRequest
         self::$handler = HandlerStack::create($handler);
     }
 
+    /**
+     * Initialize the myDATA API with the user_id, subscription_key and environment.
+     * 
+     * @param  string  $user_id The user id provided by AADE
+     * @param  string  $subscription_key The subscription key provided by AADE
+     * @param  string  $env 'dev' or 'prod'
+     * @param  bool  $is_provider Set to true if the request is for the providers
+     * @return void
+     */
     public static function init(string $user_id, string $subscription_key, string $env, bool $is_provider = false): void
     {
         self::setCredentials($user_id, $subscription_key);
         self::setEnvironment($env, $is_provider);
     }
 
+    /**
+     * Set the user_id and subscription_key for the myDATA API.
+     * 
+     * @param  string  $user_id The user id provided by AADE
+     * @param  string  $subscription_key The subscription key provided by AADE
+     * @return void
+     */
     public static function setCredentials(string $user_id, string $subscription_key): void
     {
         self::$user_id = $user_id;
         self::$subscription_key = $subscription_key;
     }
 
+    /**
+     * Set the environment to either 'dev' or 'prod'.
+     * 
+     * @param  string  $env 'dev' or 'prod'
+     * @param  bool  $is_provider Set to true if the request is for the providers
+     * @return void
+     */
     public static function setEnvironment(string $env, bool $is_provider = false): void
     {
-        self::$env = $env;
+        self::$env = strtolower($env);
         self::$is_provider = $is_provider;
     }
 
@@ -246,12 +269,12 @@ abstract class MyDataRequest
 
     private function getUrlForErp(): string
     {
-        return self::isDevelopment() ? self::DEV_ERP_URL : self::PROD_ERP_URL;
+        return self::isProduction() ? self::PROD_ERP_URL : self::DEV_ERP_URL;
     }
 
     private function getUrlForProvider(): string
     {
-        return self::isDevelopment() ? self::DEV_PROVIDER_URL : self::PROD_PROVIDER_URL;
+        return self::isProduction() ? self::PROD_PROVIDER_URL : self::DEV_PROVIDER_URL;
     }
 
     private function getAction(): string
