@@ -147,17 +147,24 @@ abstract class MyDataRequest
 
         try {
 
-            $response  = $this->client()->get($this->getUrl(), ['query' => $query]);
+            // Make the request to the API
+            $response = $this->client()->get($this->getUrl(), ['query' => $query]);
 
-            $responseBody = (string) $response->getBody();             
+            // Get the response body stream
+            $stream = $response->getBody();
 
-            if (empty(trim($responseBody))) {
-                throw new InvalidResponseException('Invalid response from MyData API');
-        
-            }
+            // Store the response body contents once in a variable
+            $responseBody = $stream->getContents(); 
 
+            // Rewind the stream so it can be reused if necessary
+            $stream->rewind();
 
-            return $response;
+        // Check if the response body is empty or null
+        if ($response === null || empty(trim($responseBody))) {
+            throw new InvalidResponseException('Invalid or empty response from MyData API');
+        }
+
+        return $response;
         } catch (GuzzleException $e) {
             $this->handleTransmissionException($e);
         }
@@ -183,12 +190,19 @@ abstract class MyDataRequest
 
             $response  = $this->client()->post($this->getUrl(), $params);
 
-            $responseBody = (string) $response->getBody();             
+             // Get the response body stream
+             $stream = $response->getBody();
 
-            if (empty(trim($responseBody))) {
-                throw new InvalidResponseException('Invalid response from MyData API');
-        
-            }
+             // Store the response body contents once in a variable
+             $responseBody = $stream->getContents(); 
+ 
+             // Rewind the stream so it can be reused if necessary
+             $stream->rewind();
+ 
+         // Check if the response body is empty or null
+         if ($response === null || empty(trim($responseBody))) {
+             throw new InvalidResponseException('Invalid or empty response from MyData API');
+         }
 
             return $response ;
         } catch (GuzzleException $e) {
