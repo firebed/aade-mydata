@@ -66,7 +66,7 @@ trait SummarizesInvoiceTaxes
         $this->updateTaxAmount($summary, 'TotalStampDutyAmount', $this->totalStampDutyAmount);
         $this->updateTaxAmount($summary, 'TotalOtherTaxesAmount', $this->totalOtherTaxesAmount);
         $this->updateTaxAmount($summary, 'TotalDeductionsAmount', $this->totalDeductionsAmount);
-        $this->updateTaxAmount($summary, 'TotalInformationalTaxAmount', $this->totalInformationTaxAmount);
+        $this->updateTaxAmount($summary, 'TotalInformationTaxAmount', $this->totalInformationTaxAmount);
     }
 
     /**
