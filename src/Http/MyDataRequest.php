@@ -147,7 +147,7 @@ abstract class MyDataRequest
 
         try {
 
-            $reponse  = $this->client()->get($this->getUrl(), ['query' => $query]);
+            $response  = $this->client()->get($this->getUrl(), ['query' => $query]);
 
             $responseBody = (string) $response->getBody();             
 
@@ -157,7 +157,7 @@ abstract class MyDataRequest
             }
 
 
-            return $reponse;
+            return $response;
         } catch (GuzzleException $e) {
             $this->handleTransmissionException($e);
         }
@@ -181,7 +181,7 @@ abstract class MyDataRequest
 
         try {
 
-            $reponse  = $this->client()->post($this->getUrl(), $params);
+            $response  = $this->client()->post($this->getUrl(), $params);
 
             $responseBody = (string) $response->getBody();             
 
@@ -190,7 +190,7 @@ abstract class MyDataRequest
         
             }
 
-            return $reponse ;
+            return $response ;
         } catch (GuzzleException $e) {
             $this->handleTransmissionException($e);
         }
