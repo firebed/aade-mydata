@@ -18,7 +18,9 @@ class GroupClassifications
     private array $expensesClassifications = [];
 
     /**
-     * @param InvoiceDetails[] $rows
+     * Handles the grouping of income and expense classifications.
+     *
+     * @param InvoiceDetails[]|null $rows
      * @param array $options
      * @return array
      */
@@ -33,9 +35,18 @@ class GroupClassifications
             $this->groupExpensesClassifications($row);
         }
 
-        return [$this->flattenIncomeClassifications($options), $this->flattenExpensesClassifications($options)];
+        return [
+            $this->flattenIncomeClassifications($options),
+            $this->flattenExpensesClassifications($options)
+        ];
     }
 
+    /**
+     * Flattens the income classifications into an array.
+     *
+     * @param array $options
+     * @return IncomeClassification[]
+     */
     private function flattenIncomeClassifications(array $options = []): array
     {
         $flattenedIncomeClassifications = [];
@@ -50,8 +61,8 @@ class GroupClassifications
                 $icls->setClassificationType($type);
                 $icls->setClassificationCategory($category);
                 $icls->setAmount(round($amount, 2));
-                
-                if (isset($options['enableClassificationIds']) && $options['enableClassificationIds']) {
+
+                if (!empty($options['enableClassificationIds'])) {
                     $id = count($flattenedIncomeClassifications) + 1;
                     $icls->setId($id);
                 }
@@ -63,6 +74,12 @@ class GroupClassifications
         return $flattenedIncomeClassifications;
     }
 
+    /**
+     * Flattens the expense classifications into an array.
+     *
+     * @param array $options
+     * @return ExpensesClassification[]
+     */
     private function flattenExpensesClassifications(array $options = []): array
     {
         $flattenedExpensesClassifications = [];
@@ -78,7 +95,7 @@ class GroupClassifications
 
                     foreach ($eclsVatExemptions as $vatExemption => $amounts) {
                         $exemption = $vatExemption ? VatExemption::from($vatExemption) : null;
-                        
+
                         $ecls = new ExpensesClassification();
                         $ecls->setClassificationType($type);
                         $ecls->setClassificationCategory($category);
@@ -87,7 +104,7 @@ class GroupClassifications
                         $ecls->setVatCategory($vat);
                         $ecls->setVatExemptionCategory($exemption);
 
-                        if (isset($options['enableClassificationIds']) && $options['enableClassificationIds']) {
+                        if (!empty($options['enableClassificationIds'])) {
                             $id = count($flattenedExpensesClassifications) + 1;
                             $ecls->setId($id);
                         }
@@ -150,12 +167,11 @@ class GroupClassifications
         $newAmount = $previousAmount + abs($ecls->getAmount() ?? 0);
         $newVatAmount = $previousVatAmount + abs($ecls->getVatAmount() ?? 0);
 
-        $this->expensesClassifications
-        [$eclsCategory->value ?? '']
-        [$eclsType->value ?? '']
-        [$vatCategory->value ?? '']
-        [$vatExemptionCategory->value ?? '']
-            = ['amount' => $newAmount, 'vatAmount' => $newVatAmount];
+        $this->expensesClassifications[$eclsCategory->value ?? '']									
+                                      [$eclsType->value ?? '']
+                                      [$vatCategory->value ?? '']
+                                      [$vatExemptionCategory->value ?? '']
+                                      = ['amount' => $newAmount, 'vatAmount' => $newVatAmount];
     }
 
     private function getSummarizedExpensesClassification(ExpensesClassification $ecls, string $key): float
@@ -165,6 +181,9 @@ class GroupClassifications
         $vatCategory = $ecls->getVatCategory();
         $vatExemptionCategory = $ecls->getVatExemptionCategory();
 
-        return $this->expensesClassifications[$eclsCategory->value ?? ''][$eclsType->value ?? ''][$vatCategory->value ?? ''][$vatExemptionCategory->value ?? ''][$key] ?? 0;
+        return $this->expensesClassifications[$eclsCategory->value ?? '']
+                                             [$eclsType->value ?? '']
+                                             [$vatCategory->value ?? '']
+                                             [$vatExemptionCategory->value ?? ''][$key] ?? 0;
     }
 }
