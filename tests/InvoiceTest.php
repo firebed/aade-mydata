@@ -77,7 +77,7 @@ class InvoiceTest extends TestCase
     public function test_invoice_validation()
     {
         $invoice = Invoice::factory()->make();
-        $this->assertEmpty($invoice->validate());
+        $this->assertEmpty($invoice->validate(), "Validation failed: ".print_r($invoice->validate(), true));
     }
 
     public function test_invoice_validation_fail()

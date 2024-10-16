@@ -15,7 +15,7 @@ class ExpensesClassificationFactory extends Factory
     public function definition(): array
     {
         return [
-            'classificationType' => fake()->randomElement(ExpenseClassificationType::cases()),
+            'classificationType' => fake()->randomElement(array_filter(ExpenseClassificationType::cases(), fn($c) => $c !== ExpenseClassificationType::E3_585_017)),
             'classificationCategory' => fake()->randomElement(ExpenseClassificationCategory::cases()),
             'amount' => fake()->randomFloat(2, 0, 1000),
             'vatAmount' => fake()->randomFloat(2, 0, 100),
