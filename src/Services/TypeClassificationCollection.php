@@ -16,7 +16,7 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
      * @var array<int|string, IncomeClassificationType|ExpenseClassificationType|string> $classifications
      */
     private array $classifications;
-    private bool  $isIncome;
+    private bool $isIncome;
 
     /**
      * @param array<int|string, IncomeClassificationType|ExpenseClassificationType|string> $classifications
@@ -40,7 +40,7 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
         foreach ($this->classifications as $classification) {
             $enum = $this->toEnum($classification);
 
-           $results[$enum?->value ?? ""] = $enum?->label() ?? "";
+            $results[$enum?->value ?? ""] = $enum?->label() ?? "";
         }
 
         return $results;
@@ -99,11 +99,11 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
         if ($value === null) {
             return empty($this->toArray()) || in_array($value, $this->toArray(), true);
         }
-        
+
         if ($value instanceof BackedEnum) {
             $value = $value->value;
         }
-        
+
         return in_array($value, $this->toArray(), true);
     }
 
@@ -160,7 +160,7 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
     {
         return empty($this->toArray());
     }
-    
+
     /**
      * Converts a value to the appropriate enum type if possible.
      *
@@ -173,7 +173,7 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
             return null;
         }
 
-         if (!is_string($value)) {
+        if (!is_string($value)) {
             return $value;
         }
 
