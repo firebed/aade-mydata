@@ -40,9 +40,7 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
         foreach ($this->classifications as $classification) {
             $enum = $this->toEnum($classification);
 
-            if ($enum !== null) {
-                $results[$enum->value] = $enum->label();
-            }
+           $results[$enum?->value ?? ""] = $enum?->label() ?? "";
         }
 
         return $results;
@@ -55,7 +53,7 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
      */
     public function keys(): array
     {
-        return array_keys($this->classifications);
+        return $this->toArray();
     }
 
     /**
@@ -99,14 +97,14 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
     public function contains(mixed $value): bool
     {
         if ($value === null) {
-            return empty($this->classifications);
+            return empty($this->toArray()) || in_array($value, $this->toArray(), true);
         }
         
         if ($value instanceof BackedEnum) {
             $value = $value->value;
         }
         
-        return in_array($value, $this->classifications, true);
+        return in_array($value, $this->toArray(), true);
     }
 
     /**
@@ -117,7 +115,7 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
      */
     public function get(mixed $offset): IncomeClassificationType|ExpenseClassificationType|null
     {
-        return $this->toEnum($this->classifications[$offset] ?? null);
+        return $this->toEnum($offset);
     }
 
     /**
@@ -160,7 +158,7 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
      */
     public function isEmpty(): bool
     {
-        return empty($this->classifications);
+        return empty($this->toArray());
     }
     
     /**
@@ -175,12 +173,8 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
             return null;
         }
 
-        if ($value instanceof IncomeClassificationType || $value instanceof ExpenseClassificationType) {
+         if (!is_string($value)) {
             return $value;
-        }
-
-        if (!is_string($value)) {
-            return null;
         }
 
         return $this->isIncome
