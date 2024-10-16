@@ -5,6 +5,7 @@ namespace Firebed\AadeMyData\Xml;
 use BackedEnum;
 use DOMDocument;
 use DOMElement;
+use DOMException;
 use DOMNode;
 use Firebed\AadeMyData\Models\Type;
 
@@ -23,6 +24,9 @@ abstract class XMLWriter
         $this->document->formatOutput = true;
     }
 
+    /**
+     * @throws DOMException
+     */
     protected function build(DOMNode $parent, string $nodeName, mixed $nodeValue, $namespace = null): void
     {
         if (is_null($nodeValue) || (is_string($nodeValue) && strlen($nodeValue) === 0)) {
@@ -44,11 +48,17 @@ abstract class XMLWriter
         $parent->appendChild($child);
     }
 
+    /**
+     * @throws DOMException
+     */
     protected function buildType(DOMNode $parent, string $nodeName, Type $nodeValue): DOMNode
     {
         return $this->processAssocArray($parent, $nodeName, $nodeValue->sortedAttributes());
     }
 
+    /**
+     * @throws DOMException
+     */
     protected function buildArray(DOMNode $parent, string $nodeName, array $nodeValue): void
     {
         // If the array is associative
@@ -62,6 +72,9 @@ abstract class XMLWriter
         }
     }
 
+    /**
+     * @throws DOMException
+     */
     protected function processAssocArray(DOMNode $parent, string $nodeName, array $nodeValue): DOMNode
     {
         $namespaceURI = $this->getNamespace($nodeName);
@@ -77,22 +90,22 @@ abstract class XMLWriter
     }
 
 
-    /** @noinspection PhpUnhandledExceptionInspection */
+    /**
+     * @throws DOMException
+     */
     protected function createElement(string $nodeName, mixed $nodeValue = null, string $namespaceURI = null): DOMElement
     {
-        if (is_null($nodeValue)) {
-            if ($namespaceURI) {
-                return $this->document->createElementNS($namespaceURI, $nodeName);
-            }
+        // Create the element (with or without namespace)
+        $newNode = $namespaceURI
+            ? $this->document->createElementNS($namespaceURI, $nodeName)
+            : $this->document->createElement($nodeName);
 
-            return $this->document->createElement($nodeName);
+        // If a node value is provided, handle special characters
+        if (!is_null($nodeValue)) {
+            $newNode->appendChild($this->document->createTextNode($nodeValue));
         }
-
-        if ($namespaceURI) {
-            return $this->document->createElementNS($namespaceURI, $nodeName, $nodeValue);
-        }
-
-        return $this->document->createElement($nodeName, $nodeValue);
+        
+        return $newNode;
     }
 
     protected function toValue($value): ?string
