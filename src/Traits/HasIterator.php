@@ -2,7 +2,10 @@
 
 namespace Firebed\AadeMyData\Traits;
 
+use ArrayAccess;
 use ArrayIterator;
+use Countable;
+use IteratorAggregate;
 use Traversable;
 
 /**
