@@ -80,6 +80,15 @@ class InvoiceTest extends TestCase
         $this->assertEmpty($invoice->validate(), "Validation failed: ".print_r($invoice->validate(), true));
     }
 
+    public function test_invoice_special_characters()
+    {
+        $invoice = Invoice::factory()->make();
+        $invoice->getInvoiceDetails()[0]->setItemDescr("<Πλακάκια> & Είδη Υγιεινής");
+        
+        $xml = $invoice->toXml();
+        $this->assertStringContainsString("<itemDescr>&lt;Πλακάκια&gt; &amp; Είδη Υγιεινής</itemDescr>", $xml);
+    }
+
     public function test_invoice_validation_fail()
     {
         $invoice = Invoice::factory()->make();
