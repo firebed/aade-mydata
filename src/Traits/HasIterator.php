@@ -78,3 +78,4 @@ trait HasIterator
     {
         unset($this->attributes[$offset]);
     }
+}
