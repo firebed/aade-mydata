@@ -4,7 +4,6 @@ namespace Firebed\AadeMyData\Traits;
 
 use ArrayAccess;
 use ArrayIterator;
-use Countable;
 use IteratorAggregate;
 use Traversable;
 
@@ -12,8 +11,8 @@ use Traversable;
  * Trait HasIterator
  * 
  * @template Model
- * @implements \ArrayAccess<int|string, Model>
- * @implements \IteratorAggregate<int|string, Model>
+ * @implements ArrayAccess<int|string, Model>
+ * @implements IteratorAggregate<int|string, Model>
  */
 trait HasIterator
 {
