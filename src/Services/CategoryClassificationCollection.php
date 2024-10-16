@@ -108,7 +108,7 @@ class CategoryClassificationCollection implements ArrayAccess, IteratorAggregate
 
     public function isEmpty(): bool
     {
-        return empty($this->toArray());
+        return empty($this->classifications);
     }
 
     private function toEnum(mixed $value): IncomeClassificationCategory|ExpenseClassificationCategory|null
