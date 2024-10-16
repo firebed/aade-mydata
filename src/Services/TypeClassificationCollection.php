@@ -16,11 +16,11 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
      * @var array<int|string, IncomeClassificationType|ExpenseClassificationType|string> $classifications
      */
     private array $classifications;
-    private bool $isIncome;
+    private bool  $isIncome;
 
     /**
-     * @param array<int|string, IncomeClassificationType|ExpenseClassificationType|string> $classifications
-     * @param bool $isIncome
+     * @param  array<int|string, IncomeClassificationType|ExpenseClassificationType|string>  $classifications
+     * @param  bool  $isIncome
      */
     public function __construct(array $classifications, bool $isIncome)
     {
@@ -53,7 +53,7 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
      */
     public function keys(): array
     {
-        return $this->toArray();
+        return $this->classifications;
     }
 
     /**
@@ -69,7 +69,7 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
     /**
      * Checks if an offset exists in the classifications array.
      *
-     * @param mixed $offset
+     * @param  mixed  $offset
      * @return bool
      */
     public function offsetExists(mixed $offset): bool
@@ -80,10 +80,10 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
     /**
      * Gets the value at the given offset.
      *
-     * @param mixed $offset
-     * @return IncomeClassificationType|ExpenseClassificationType|string|null
+     * @param  mixed  $offset
+     * @return string|IncomeClassificationType|ExpenseClassificationType|null
      */
-    public function offsetGet(mixed $offset): mixed
+    public function offsetGet(mixed $offset): string|null|IncomeClassificationType|ExpenseClassificationType
     {
         return $this->classifications[$offset] ?? null;
     }
@@ -91,26 +91,26 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
     /**
      * Checks if the classifications array contains a specific value.
      *
-     * @param mixed $value
+     * @param  mixed  $value
      * @return bool
      */
     public function contains(mixed $value): bool
     {
         if ($value === null) {
-            return empty($this->toArray()) || in_array($value, $this->toArray(), true);
+            return empty($this->classifications) || in_array($value, $this->classifications, true);
         }
 
         if ($value instanceof BackedEnum) {
             $value = $value->value;
         }
 
-        return in_array($value, $this->toArray(), true);
+        return in_array($value, $this->classifications, true);
     }
 
     /**
      * Gets the classification as an enum if possible.
      *
-     * @param mixed $offset
+     * @param  mixed  $offset
      * @return IncomeClassificationType|ExpenseClassificationType|null
      */
     public function get(mixed $offset): IncomeClassificationType|ExpenseClassificationType|null
@@ -121,8 +121,8 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
     /**
      * Sets the value at the given offset.
      *
-     * @param mixed $offset
-     * @param IncomeClassificationType|ExpenseClassificationType|string $value
+     * @param  mixed  $offset
+     * @param  IncomeClassificationType|ExpenseClassificationType|string  $value
      * @return void
      */
     public function offsetSet(mixed $offset, mixed $value): void
@@ -133,7 +133,7 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
     /**
      * Unsets the value at the given offset.
      *
-     * @param mixed $offset
+     * @param  mixed  $offset
      * @return void
      */
     public function offsetUnset(mixed $offset): void
@@ -158,13 +158,13 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
      */
     public function isEmpty(): bool
     {
-        return empty($this->toArray());
+        return empty($this->classifications);
     }
 
     /**
      * Converts a value to the appropriate enum type if possible.
      *
-     * @param mixed $value
+     * @param  mixed  $value
      * @return IncomeClassificationType|ExpenseClassificationType|null
      */
     private function toEnum(mixed $value): IncomeClassificationType|ExpenseClassificationType|null
