@@ -94,6 +94,7 @@ class ExpensesClassification extends Type
 
     /**
      * @return float|null Ποσό
+     * @version 1.0.7
      */
     public function getAmount(): ?float
     {
@@ -153,6 +154,7 @@ class ExpensesClassification extends Type
       
      * @param float|null $vatAmount Ποσό ΦΠΑ
      * @throws InvalidArgumentException
+     * @version 1.0.7
      */
     public function setVatAmount(?float $vatAmount): static
     {
@@ -186,7 +188,7 @@ class ExpensesClassification extends Type
 
     /**
      * @return VatCategory|null Κατηγορία ΦΠΑ
-                     
+     * @version 1.0.7
      */
     public function getVatCategory(): ?VatCategory
     {
@@ -197,7 +199,7 @@ class ExpensesClassification extends Type
      * Χρησιμοποιείτε μόνο για τους χαρακτηρισμούς εξόδων ΦΠΑ, διαφορετικά αγνοείται.
      *
      * @param  VatCategory|int|null  $vatCategory  Κατηγορία ΦΠΑ
-     * @version 1.0.9
+     * @version 1.0.7
      * @throws InvalidArgumentException
      */
     public function setVatCategory(VatCategory|int|null $vatCategory): static
@@ -215,7 +217,7 @@ class ExpensesClassification extends Type
 
     /**
      * @return VatExemption|null Κατηγορία Εξαίρεσης ΦΠΑ
-     * @version 1.0.9                     
+     * @version 1.0.7                     
      */
     public function getVatExemptionCategory(): ?VatExemption
     {
