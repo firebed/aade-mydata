@@ -34,7 +34,7 @@ class VatInfo extends Type
      */
     public function getIsCancelled(): bool
     {
-        return isCancelled()
+        return isCancelled();
     }    
 
     /**
