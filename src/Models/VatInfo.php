@@ -26,6 +26,18 @@ class VatInfo extends Type
     }
 
     /**
+     * Για να διατηρήσουμε οτι κάθε πεδίο είναι διαθέσιμο 
+     * στο τύπο VatInfo και μπορεί να ανακτηθεί με την αντίστοιχη get μέθοδο.
+     *
+     * @return bool Αν το παραστατικό είναι ακυρωμένο
+     * @version 1.0.8
+     */
+    public function getIsCancelled(): bool
+    {
+        return isCancelled()
+    }    
+
+    /**
      * @return string Ημερομηνία έκδοσης παραστατικού
      * @version 1.0.8
      */

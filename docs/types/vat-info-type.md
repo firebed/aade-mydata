@@ -56,7 +56,7 @@ use Firebed\AadeMyData\Models\VatInfo;
 
 $vatInfo = new VatInfo();
 $mark = $vatInfo->getMark();
-$isCancelled = $vatInfo->isCancelled();
+$isCancelled = $vatInfo->getIsCancelled();
 $issueDate = $vatInfo->getIssueDate();
 $vat422 = $vatInfo->getVat422();
 // ...
