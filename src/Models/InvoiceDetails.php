@@ -872,9 +872,6 @@ class InvoiceDetails extends Type
     public function set($key, $value): static
     {
         if (($key === 'expensesClassification' || $key === 'incomeClassification') && !is_array($value)) {
-            if (!($value instanceof IncomeClassification || $value instanceof ExpensesClassification)) {
-                throw new InvalidArgumentException("Invalid value for key $key.");
-            }
             return $this->push($key, $value);
         }
 

@@ -12,9 +12,6 @@ use Firebed\AadeMyData\Models\ExpensesClassification;
 use Firebed\AadeMyData\Models\IncomeClassification;
 use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\InvoiceDetails;
-use Firebed\AadeMyData\Models\PaymentMethod;
-use Firebed\AadeMyData\Models\Ship;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Tests\Traits\HandlesInvoiceXml;
 
@@ -145,14 +142,5 @@ class InvoiceDetailsTest extends TestCase
         $this->assertEquals(ExpenseClassificationCategory::CATEGORY_2_1, $ecls2->getClassificationCategory());
         $this->assertEquals(1000, $ecls2->getAmount());
         $this->assertEquals(3, $ecls2->getId());
-    }
-
-    public function test_it_catches_invalid_classification_arguments()
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $details = new InvoiceDetails();
-        $details->set('expensesClassification', new PaymentMethod());
-        $details->set('incomeClassification', new Ship());
     }
 }
