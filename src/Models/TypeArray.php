@@ -125,7 +125,7 @@ class TypeArray extends Type implements IteratorAggregate, ArrayAccess, Countabl
 
     public function count(): int
     {
-        return count($this->attributes[$this->childKey]);
+        return count($this->attributes[$this->childKey] ?? []);
     }
 
     /**

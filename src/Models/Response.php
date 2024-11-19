@@ -187,4 +187,13 @@ class Response extends Type
     {
         return $this->getStatusCode() === 'Success';
     }
+
+    public function set($key, $value): static
+    {
+        if ($key === 'receptionEmails' && empty($value)) {
+            return parent::set('receptionEmails', new ReceptionEmails());
+        }
+        
+        return parent::set($key, $value);
+    }
 }
