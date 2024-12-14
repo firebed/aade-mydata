@@ -125,13 +125,15 @@ try {
 | [SendIncomeClassification](http://docs.invoicemaker.gr/http/send-income-classification)     | Soon               |
 | [SendExpensesClassification](http://docs.invoicemaker.gr/http/send-expenses-classification) | Soon               |
 
-| **Digital Client**                                                            |             |
-|-------------------------------------------------------------------------------|-------------|
-| [SendClient](http://docs.invoicemaker.gr/http/dcl/SendClient)                 | In progress |
-| [UpdateClient](http://docs.invoicemaker.gr/http/dcl/UpdateClient)             | In progress |
-| [RequestClients](http://docs.invoicemaker.gr/http/dcl/RequestClient)          | In progress |
-| [CancelClient](http://docs.invoicemaker.gr/http/dcl/CancelClient)             | In progress |
-| [ClientCorrelations](http://docs.invoicemaker.gr/http/dcl/ClientCorrelations) | In progress |
+## Digital Client (Car rental, parking/wash, workshops)
+
+| Method                                                                        | Availability |
+|-------------------------------------------------------------------------------|--------------|
+| [SendClient](http://docs.invoicemaker.gr/http/dcl/SendClient)                 | In progress  |
+| [UpdateClient](http://docs.invoicemaker.gr/http/dcl/UpdateClient)             | In progress  |
+| [RequestClients](http://docs.invoicemaker.gr/http/dcl/RequestClient)          | In progress  |
+| [CancelClient](http://docs.invoicemaker.gr/http/dcl/CancelClient)             | In progress  |
+| [ClientCorrelations](http://docs.invoicemaker.gr/http/dcl/ClientCorrelations) | In progress  |
 
 ## Upgrade Guide
 
