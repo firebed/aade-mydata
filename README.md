@@ -18,166 +18,6 @@ This package provides an expressive, fluent interface to ΑΑΔΕ myDATA invoici
 
 All documentation is available 👉 [on our documentation site](https://docs.invoicemaker.gr/getting-started)
 
-## Upgrade Guide
-
-If you are upgrading from a previous version, please see [upgrade guide](docs/upgrade-guide.md).
-
-## v5 Features
-
-### Ability to "squash" invoice rows
-
-> Ο Πάροχος ηλεκτρονικής τιμολόγησης και τα ERP διαβιβάζουν υποχρεωτικά μόνο τη σύνοψη
-γραμμών και χαρακτηρισμών των παραστατικών και όχι αναλυτικά τις γραμμές.
- 
-`$invoice->squashInvoiceRows()`
-
-[See Invoice Row Squashing](/docs/squashing-invoice-rows.md) for more details.
-
-### Ability to validate invoices
-
-`$invoice->validate()`
-
-### Ability to preview invoice xml
-
-`$invoice->toXml()`
-
-### Classification combinations
-
-[See Classification Combinations](/docs/classifications.md) for more details.
-
-```php
-use Firebed\AadeMyData\Enums\InvoiceType;
-use Firebed\AadeMyData\Services\Classifications;
-
-dump(Classifications::incomeClassifications(InvoiceType::TYPE_1_1));
-```
-
-### Classification combinations with labels
-
-```php
-use Firebed\AadeMyData\Enums\InvoiceType;
-use Firebed\AadeMyData\Services\Classifications;
-
-dump(Classifications::incomeClassifications(InvoiceType::TYPE_1_1)->toKeyLabel());
-dump(Classifications::incomeClassifications(InvoiceType::TYPE_1_1)->toKeyLabels())
-dump(Classifications::incomeClassifications(InvoiceType::TYPE_1_1, IncomeClassificationCategory::CATEGORY_1_1)->toKeyLabel())
-```
-
-### Classification combination validation
-
-```php
-use Firebed\AadeMyData\Enums\InvoiceType;
-use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
-use Firebed\AadeMyData\Enums\IncomeClassificationType;
-use Firebed\AadeMyData\Services\Classifications;
-
-Classifications::incomeClassificationExists('1.1', 'category1_1', 'E3_561_001');
-// or
-Classifications::incomeClassificationExists(InvoiceType::TYPE_1_1, IncomeClassificationCategory::CATEGORY_1_1, IncomeClassificationType::E3_561_001);
-// Outputs: true
-
-// Same for expense classifications
-Classifications::expenseClassificationExists('1.1', 'category2_1', 'E3_102_001');
-````
-
-### Added labels to all enum types
-
-```php
-use Firebed\AadeMyData\Enums\InvoiceType;
-use Firebed\AadeMyData\Enums\PaymentMethod;
-use Firebed\AadeMyData\Enums\VatCategory;
-use Firebed\AadeMyData\Enums\CountryCode;
-
-echo InvoiceType::TYPE_1_1->label();
-// Outputs: Τιμολόγιο Πώλησης
-
-echo InvoiceType::TYPE_1_2->label();
-// Outputs: Τιμολόγιο Πώλησης / Ενδοκοινοτικές Παραδόσεις
-
-echo PaymentMethod::METHOD_5->label();
-// Outputs: Επί Πιστώσει
-
-echo VatCategory::VAT_1->label();
-// Outputs: ΦΠΑ συντελεστής 24%
-
-echo CountryCode::BE->label();
-// Outputs: Βέλγιο
-````
-
-### Enum helper methods
-
-```php
-use Firebed\AadeMyData\Enums\InvoiceType;
-use Firebed\AadeMyData\Enums\CountryCode;
-use Firebed\AadeMyData\Enums\ExpenseClassificationType;
-
-$invoiceType = InvoiceType::TYPE_1_1;
-$invoiceType->supportsFuelInvoice();
-$invoiceType->hasCounterpart();
-$invoiceType->supportsDeliveryNote();
-$invoiceType->supportsSelfPricing();
-$invoiceType->supportsTaxFree();
-
-var_dump(CountryCode::europeanUnionCountries());
-// Outputs: All countries in the European Union
-
-echo CountryCode::BE->isInEuropeanUnion()
-// Outputs: true
-
-echo CountryCode::US->isInEuropeanUnion()
-// Outputs: false
-
-$type = ExpenseClassificationType::VAT_361;
-echo $type->isVatClassification(); // true
-
-var_dump(ExpenseClassificationType::vatClassifications()); // Array of all vat classifications
-```
-
-### New enum types
-
-- CountryCode
-- CurrencyCode
-
-### Ability to populate model attributes within constructor
-
-```php
-use Firebed\AadeMyData\Models\InvoiceDetails;
-use Firebed\AadeMyData\Enums\RecType;
-use Firebed\AadeMyData\Enums\IncomeClassificationType;
-use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
-
-new InvoiceDetails([
-  'lineNumber' => 1,
-  'netValue' => 5,
-  'recType' => RecType::TYPE_2,
-  'incomeClassification' => [
-      [
-          'classificationType' => IncomeClassificationType::E3_561_001,
-          'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
-          'amount' => '5'
-      ]
-  ]
-])
-```
-
-### Fluent model setters (chainable)
-
-`$invoice->setIssuer(...)->setCounterpart(...)`
-
-### New methods
-
-- Invoice::setTaxesTotals
-- Invoice::setOtherTransportDetails
-
-### `add_` methods to top up an amount to 
-
-```php
-$row->addNetValue(5);
-$row->addVatAmount(1.2);
-```
-
-### Implemented endpoints for electronic invoice providers (Πάροχοι Ηλεκτρονικής Τιμολόγησης).
-
 ## Requirements
 
 | Version | PHP | myDATA  | Support |
@@ -210,7 +50,7 @@ Development: [Sign up to mydata development api](https://mydata-dev-register.azu
 
 Production: [Sign up to mydata production api](https://www.aade.gr/mydata)
 
-### Setup
+## Setup
 
 Once you have the user id and the subscription key use the following code to set the environment and the credentials:
 
@@ -229,7 +69,52 @@ For development, you may need to disable client verification if you are not usin
 MyDataRequest::verifyClient(false);
 ```
 
-### Available methods
+## Send invoice example
+
+```php
+use Firebed\AadeMyData\Http\SendInvoices;
+use Firebed\AadeMyData\Models\Invoice;
+use Firebed\AadeMyData\Exceptions\MyDataException;
+
+// Prepare your invoices, for simplicity we will use an array of empty
+// Invoice objects. You should populate these objects with your own data.
+$invoices = [new Invoice(), new Invoice()];
+$sender = new SendInvoices();
+
+try {
+    $responses = $sender->handle($invoices);
+    
+    $errors = [];
+    foreach ($responses as $response) {
+        if ($response->isSuccessful()) { 
+            // This invoice was successfully sent to myDATA.     
+            // Each response has an index value which corresponds
+            // to the index (-1) of the $invoices array.
+            
+            $index = $response->getIndex();
+            $uid = $response->getInvoiceUid();
+            $mark = $response->getInvoiceMark();
+            $cancelledByMark = $response->getCancellationMark();
+            $qrUrl = $response->getQrUrl();
+    
+            // If you need to relate the response to your local invoice
+            // $invoice = $invoices[$index - 1];    
+    
+            print_r(compact('index', 'uid', 'mark', 'cancelledByMark', 'qrUrl'));
+        } else {
+            // There were some errors for a specific invoice. See errors for details.
+            foreach ($response->getErrors() as $error) {
+                $errors[$response->getIndex() - 1][] = $error->getCode() . ': ' . $error->getMessage();
+            }
+        }
+    }
+} catch (MyDataException $e) {
+    // There was a communication error. None of the invoices were sent.
+    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
+}
+```
+
+## Available methods
 
 | Method                                                                                      | Availability       |
 |---------------------------------------------------------------------------------------------|--------------------|
@@ -241,21 +126,34 @@ MyDataRequest::verifyClient(false);
 | [RequestMyIncome](http://docs.invoicemaker.gr/http/request-my-income)                       | :white_check_mark: |
 | [RequestMyExpenses](http://docs.invoicemaker.gr/http/request-my-expenses)                   | :white_check_mark: |
 | [RequestVatInfo](http://docs.invoicemaker.gr/http/request-vat-info)                         | :white_check_mark: |
+| [RequestE3Info](http://docs.invoicemaker.gr/http/request-e3-info)                           | :white_check_mark: |
 | [SendPaymentsMethod](http://docs.invoicemaker.gr/http/send-payments-method)                 | :white_check_mark: |
 | [SendIncomeClassification](http://docs.invoicemaker.gr/http/send-income-classification)     | Soon               |
 | [SendExpensesClassification](http://docs.invoicemaker.gr/http/send-expenses-classification) | Soon               |
 
-### Testing
+| **Digital Client**                                                            |             |
+|-------------------------------------------------------------------------------|-------------|
+| [SendClient](http://docs.invoicemaker.gr/http/dcl/SendClient)                 | In progress |
+| [UpdateClient](http://docs.invoicemaker.gr/http/dcl/UpdateClient)             | In progress |
+| [RequestClients](http://docs.invoicemaker.gr/http/dcl/RequestClient)          | In progress |
+| [CancelClient](http://docs.invoicemaker.gr/http/dcl/CancelClient)             | In progress |
+| [ClientCorrelations](http://docs.invoicemaker.gr/http/dcl/ClientCorrelations) | In progress |
+
+## Upgrade Guide
+
+If you are upgrading from a previous version, please see [upgrade guide](docs/upgrade-guide.md)
+
+## Testing
 
 ```shell
 composer test
 ```
 
-### Contributing
+## Contributing
 
 Please see [CONTRIBUTING](http://docs.invoicemaker.gr/contributing) for details.
 
-### Licence
+## Licence
 
 AADE myDATA is licenced under the [MIT License](LICENSE.md).
 
