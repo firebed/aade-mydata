@@ -243,7 +243,7 @@ abstract class MyDataRequest
         $config = [
             'headers' => [
                 'aade-user-id' => self::$user_id,
-                'Ocp-Apim-Subscription-Key' => self::$subscription_key,
+                'ocp-apim-subscription-key' => self::$subscription_key,
                 'Content-Type' => "text/xml"
             ],
         ];

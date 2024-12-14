@@ -16,9 +16,17 @@ This package provides an expressive, fluent interface to ΑΑΔΕ myDATA invoici
 
 ## Official Documentation
 
-All documentation is available 👉 [on our documentation site](https://docs.invoicemaker.gr/getting-started)
+- Official documentation is available 👉 [on our documentation site](https://docs.invoicemaker.gr/getting-started)
+- myDATA webpage: [AADE myDATA](https://www.aade.gr/mydata)
+- myDATA documentation: [AADE myDATA REST API v1.0.10](https://www.aade.gr/sites/default/files/2024-11/myDATA%20API%20Documentation%20v1.0.10_official_erp.pdf)
 
 ## Requirements
+
+In order to use this package, you will need first a `aade id` and a `Subscription key`. You can get these credentials by signing up to mydata rest api.
+
+- Development: [Sign up to mydata development api](https://mydata-dev-register.azurewebsites.net/)
+- Production: [Sign up to mydata production api](https://www.aade.gr/mydata)
+- guzzlehttp/guzzle >= 7.0
 
 | Version | PHP | myDATA  | Support |
 |---------|-----|---------|---------|
@@ -28,8 +36,6 @@ All documentation is available 👉 [on our documentation site](https://docs.inv
 | ^v2.x   | 8.1 | v1.0.5  | Ended   |
 | ^v1.x   | 8.0 | v1.0.3  | Ended   |
 
-- guzzlehttp/guzzle >= 7.0
-
 ## Installation
 
 To install through Composer, run the following command:
@@ -37,18 +43,6 @@ To install through Composer, run the following command:
 ```
 composer require firebed/aade-mydata
 ```
-
-## Documentation
-
-Official myDATA webpage: [AADE myDATA](https://www.aade.gr/mydata)
-
-Official myDATA documentation: [AADE myDATA REST API v1.0.10](https://www.aade.gr/sites/default/files/2024-11/myDATA%20API%20Documentation%20v1.0.10_official_erp.pdf)
-
-In order to use this package, you will need first a **user id** and a **subscription key**. You can get these credentials by signing up to mydata rest api.
-
-Development: [Sign up to mydata development api](https://mydata-dev-register.azurewebsites.net/)
-
-Production: [Sign up to mydata production api](https://www.aade.gr/mydata)
 
 ## Setup
 
