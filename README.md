@@ -180,13 +180,13 @@ $row->addVatAmount(1.2);
 
 ## Requirements
 
-| Version | PHP | myDATA | Support |
-|---------|-----|--------|---------|
-| ^v5.x   | 8.1 | v1.0.9 | Active  |
-| ^v4.x   | 8.1 | v1.0.8 | Ended   |
-| ^v3.x   | 8.1 | v1.0.7 | Ended   |
-| ^v2.x   | 8.1 | v1.0.5 | Ended   |
-| ^v1.x   | 8.0 | v1.0.3 | Ended   |
+| Version | PHP | myDATA  | Support |
+|---------|-----|---------|---------|
+| ^v5.x   | 8.1 | v1.0.10 | Active  |
+| ^v4.x   | 8.1 | v1.0.8  | Ended   |
+| ^v3.x   | 8.1 | v1.0.7  | Ended   |
+| ^v2.x   | 8.1 | v1.0.5  | Ended   |
+| ^v1.x   | 8.0 | v1.0.3  | Ended   |
 
 - guzzlehttp/guzzle >= 7.0
 
@@ -202,7 +202,7 @@ composer require firebed/aade-mydata
 
 Official myDATA webpage: [AADE myDATA](https://www.aade.gr/mydata)
 
-Official myDATA documentation: [AADE myDATA REST API v1.0.9](https://www.aade.gr/sites/default/files/2024-07/myDATA%20API%20Documentation%20v1.0.9_official_erp.pdf)
+Official myDATA documentation: [AADE myDATA REST API v1.0.10](https://www.aade.gr/sites/default/files/2024-11/myDATA%20API%20Documentation%20v1.0.10_official_erp.pdf)
 
 In order to use this package, you will need first a **user id** and a **subscription key**. You can get these credentials by signing up to mydata rest api.
 

@@ -279,7 +279,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @return bool|null Ένδειξη Παραστατικό καυσίμων
+     * @return bool|null Ένδειξη Παραστατικού καυσίμων
      */
     public function isFuelInvoice(): ?bool
     {
@@ -287,8 +287,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * Το πεδίο fuelInvoice ορίζει αν πρόκειται για παραστατικό πώλησης υγρών καυσίμων και
-     * επιτρέπεται η αποστολή μόνο για την περίπτωση των παρόχων
+     * Το πεδίο fuelInvoice ορίζει αν πρόκειται για παραστατικό πώλησης υγρών καυσίμων
      *
      * @param  bool|null  $fuelInvoice  Ένδειξη Παραστατικό καυσίμων
      */

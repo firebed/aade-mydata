@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.aade.gr/myDATA/invoice/v1.0" targetNamespace="http://www.aade.gr/myDATA/invoice/v1.0" elementFormDefault="qualified">
+	<xs:complexType name="ContinuationTokenType">
+		<xs:sequence>
+			<xs:element name="nextPartitionKey" type="xs:string" minOccurs="0"/>
+			<xs:element name="nextRowKey" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoiceE3DetailType">
+		<xs:sequence>
+			<xs:element name="V_Afm" type="xs:string" minOccurs="0"/>
+			<xs:element name="V_Mark" type="xs:string" minOccurs="0"/>
+			<xs:element name="vBook" type="xs:string" minOccurs="0"/> 
+			<xs:element name="IsCancelled" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="IssueDate" type="xs:dateTime"/>
+			<xs:element name="V_Class_Category" type="xs:string" minOccurs="0"/>
+			<xs:element name="V_Class_Type" type="xs:string" minOccurs="0"/>
+			<xs:element name="V_Class_Value" type="xs:decimal" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RequestedE3InfoType">
+		<xs:sequence>
+			<xs:element name="continuationToken" type="ContinuationTokenType" minOccurs="0"/>
+			<xs:element name="E3Info" type="InvoiceE3DetailType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="RequestedE3Info" type="RequestedE3InfoType"/>
+</xs:schema>
