@@ -14,11 +14,11 @@ If you find this project useful, you can show your appreciation and support by g
 
 This package provides an expressive, fluent interface to ΑΑΔΕ myDATA invoicing REST API. It handles almost all the boilerplate code for sending, cancelling and requesting invoices.
 
-## Official Documentation
+## Documentation
 
 - Official documentation is available 👉 [on our documentation site](https://docs.invoicemaker.gr/getting-started)
 - myDATA webpage: [AADE myDATA](https://www.aade.gr/mydata)
-- myDATA documentation: [AADE myDATA REST API v1.0.10](https://www.aade.gr/sites/default/files/2024-11/myDATA%20API%20Documentation%20v1.0.10_official_erp.pdf)
+- myDATA documentation (PDF): [AADE myDATA REST API v1.0.10](https://www.aade.gr/sites/default/files/2024-12/myDATA%20API%20Documentation%20v1%20.0.10_official_erp.pdf)
 
 ## Requirements
 
@@ -122,8 +122,8 @@ try {
 | [RequestVatInfo](http://docs.invoicemaker.gr/http/request-vat-info)                         | :white_check_mark: |
 | [RequestE3Info](http://docs.invoicemaker.gr/http/request-e3-info)                           | :white_check_mark: |
 | [SendPaymentsMethod](http://docs.invoicemaker.gr/http/send-payments-method)                 | :white_check_mark: |
-| [SendIncomeClassification](http://docs.invoicemaker.gr/http/send-income-classification)     | Soon               |
-| [SendExpensesClassification](http://docs.invoicemaker.gr/http/send-expenses-classification) | Soon               |
+| [SendIncomeClassification](http://docs.invoicemaker.gr/http/send-income-classification)     | In progress        |
+| [SendExpensesClassification](http://docs.invoicemaker.gr/http/send-expenses-classification) | In progress        |
 
 ## Digital Client (Car rental, parking/wash, workshops)
 
