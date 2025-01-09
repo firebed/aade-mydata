@@ -140,7 +140,6 @@ enum WithheldPercentCategory: int
     public function affectsTotalGrossValue(): bool
     {
         return !in_array($this, [
-            self::TAX_8,
             self::TAX_9,
             self::TAX_10,
         ]);
