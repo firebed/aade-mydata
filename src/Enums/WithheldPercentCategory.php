@@ -136,7 +136,10 @@ enum WithheldPercentCategory: int
             self::TAX_18 => "Παρακράτηση Φόρου Μερίσματα 5% [περ.α παρ. 1 αρ. 64 ν. 4172/2013]",
         };
     }
-    
+
+    /**
+     * @deprecated 
+     */
     public function affectsTotalGrossValue(): bool
     {
         return !in_array($this, [

@@ -30,6 +30,9 @@ class InvoiceSummary extends Type
         'expensesClassification' => ExpensesClassification::class,
     ];
 
+    /**
+     * @deprecated 
+     */
     private float $totalInformationalTaxAmount = 0;
 
     /**
@@ -105,6 +108,7 @@ class InvoiceSummary extends Type
 
     /**
      * @return float Το σύνολο των προκαταβληθέντων φόρων που δεν επηρεάζουν τη συνολική αξία (πληρωτέο ποσό) του παραστατικού.
+     * @deprecated 
      */
     public function getTotalInformationalTaxAmount(): float
     {
@@ -114,6 +118,7 @@ class InvoiceSummary extends Type
     /**
      * @param  float  $amount  Το σύνολο των προκαταβληθέντων φόρων που δεν επηρεάζουν τη συνολική αξία (πληρωτέο ποσό) του παραστατικού.
      * @return $this
+     * @deprecated 
      */
     public function setTotalInformationalTaxAmount(float $amount): static
     {

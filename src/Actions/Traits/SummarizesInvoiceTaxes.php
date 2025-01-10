@@ -19,6 +19,7 @@ trait SummarizesInvoiceTaxes
     /**
      * @var float Tax amounts that do not affect gross value
      * and should be excluded from total gross value.
+     * @deprecated 
      */
     protected float $totalInformationalTaxAmount = 0;
 
@@ -84,7 +85,6 @@ trait SummarizesInvoiceTaxes
     {
         return -$this->totalWithheldAmount
                -$this->totalDeductionsAmount
-               +$this->totalInformationalTaxAmount
                +$this->totalFeesAmount
                +$this->totalStampDutyAmount
                +$this->totalOtherTaxesAmount;
