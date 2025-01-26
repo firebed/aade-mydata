@@ -34,12 +34,12 @@ class InvoicesIncomeClassificationDetail extends Type
     /**
      * @return IncomeClassification[]|null Λίστα Χαρακτηρισμών Εσόδων
      */
-    public function getClassificationDetails(): ?array
+    public function getIncomeClassificationDetailData(): ?array
     {
         return $this->get('incomeClassificationDetailData');
     }
 
-    public function addClassificationDetail(IncomeClassification $classification): static
+    public function addIncomeClassificationDetailData(IncomeClassification $classification): static
     {
         return $this->push('incomeClassificationDetailData', $classification);
     }
@@ -47,9 +47,8 @@ class InvoicesIncomeClassificationDetail extends Type
     /**
      * @param IncomeClassification[] $classificationDetails Λίστα Χαρακτηρισμών Εσόδων
      */
-    public function setClassificationDetails(array $classificationDetails): static
+    public function setIncomeClassificationDetailData(array $classificationDetails): static
     {
         return $this->set('incomeClassificationDetailData', $classificationDetails);
     }
-
 }

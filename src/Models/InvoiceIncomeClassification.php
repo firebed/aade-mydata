@@ -3,6 +3,7 @@
 namespace Firebed\AadeMyData\Models;
 
 use Firebed\AadeMyData\Enums\TransactionMode;
+use Firebed\AadeMyData\Xml\IncomeClassificationsDocWriter;
 
 class InvoiceIncomeClassification extends Type
 {
@@ -11,13 +12,14 @@ class InvoiceIncomeClassification extends Type
         'entityVatNumber',
         'transactionMode',
         'invoicesIncomeClassificationDetails',
+        'classificationPostMode',
     ];
-    
+
     protected array $casts = [
-        'transactionMode'                     => TransactionMode::class,
+        'transactionMode' => TransactionMode::class,
         'invoicesIncomeClassificationDetails' => InvoicesIncomeClassificationDetail::class,
     ];
-    
+
     /**
      * @return int|null Μοναδικός Αριθμός Καταχώρησης Παραστατικού
      */
@@ -27,7 +29,7 @@ class InvoiceIncomeClassification extends Type
     }
 
     /**
-     * @param int $invoiceMark Μοναδικός Αριθμός Καταχώρησης Παραστατικού
+     * @param  int  $invoiceMark  Μοναδικός Αριθμός Καταχώρησης Παραστατικού
      */
     public function setInvoiceMark(int $invoiceMark): static
     {
@@ -53,7 +55,7 @@ class InvoiceIncomeClassification extends Type
     }
 
     /**
-     * Για την περίπτωση εκείνη και μόνο που η μέθοδος κληθεί από τρίτο πρόσωπο(όπως εκπρόσωπος Ν.Π. ή λογιστής),
+     * Για την περίπτωση εκείνη και μόνο που η μέθοδος κληθεί από τρίτο πρόσωπο (όπως εκπρόσωπος Ν.Π. ή λογιστής),
      * ο ΑΦΜ της οντότητας που αναφέρεται ο χαρακτηρισμός του παραστατικού αποστέλλεται μέσω του πεδίου entityVatNumber,
      * διαφορετικά το εν λόγω πεδίο παραμένει κενό.
      *
@@ -81,7 +83,6 @@ class InvoiceIncomeClassification extends Type
      * Ο χρήστης μπορεί να συμπεριλάβει είτε το στοιχείο transactionMode ή λίστα στοιχείων invoicesIncomeClassificationDetails.
      *
      * @param  TransactionMode|int|null  $transactionMode  Είδος Συναλλαγής
-     * @return InvoiceIncomeClassification
      */
     public function setTransactionMode(TransactionMode|int|null $transactionMode): static
     {
@@ -91,21 +92,50 @@ class InvoiceIncomeClassification extends Type
     /**
      * @return InvoicesIncomeClassificationDetail[]|null Στοιχεία Χαρακτηρισμού Εσόδων
      */
-    public function getIncomeClassifications(): ?array
+    public function getInvoicesIncomeClassificationDetails(): ?array
     {
         return $this->get('invoicesIncomeClassificationDetails');
     }
 
-    public function addIncomeClassification(InvoicesIncomeClassificationDetail $incomeClassification): static
+    public function addInvoicesIncomeClassificationDetails(InvoicesIncomeClassificationDetail $incomeClassification): static
     {
         return $this->push('invoicesIncomeClassificationDetails', $incomeClassification);
     }
 
     /**
-     * @param InvoicesIncomeClassificationDetail[]|null $incomeClassifications Στοιχεία Χαρακτηρισμού Εσόδων
+     * Κάθε στοιχείο invoicesIncomeClassificationDetails περιέχει ένα lineNumber και
+     * μια λίστα στοιχείων incomeClassificationDetailData.
+     *
+     * @param  InvoicesIncomeClassificationDetail[]|null  $incomeClassifications  Στοιχεία Χαρακτηρισμού Εσόδων
      */
-    public function setIncomeClassifications(?array $incomeClassifications): static
+    public function setInvoicesIncomeClassificationDetails(?array $incomeClassifications): static
     {
         return $this->set('invoicesIncomeClassificationDetails', $incomeClassifications);
+    }
+
+    /**
+     * Περιγράφει με ποιον τρόπο έχει υποβληθεί ο χαρακτηρισμός:
+     *
+     * – `0` παλιός τρόπος (ανά γραμμή),
+     * - `1` νέος τρόπος (ανά παραστατικό).
+     *
+     * @return int|null Μέθοδος Υποβολής Χαρακτηρισμού
+     */
+    public function getClassificationPostMode(): ?int
+    {
+        return $this->get('classificationPostMode');
+    }
+
+    public function toXml(bool $asDoc = false): string
+    {
+        $writer = new IncomeClassificationsDocWriter();
+        $fullXml = $writer->asXML(new IncomeClassificationsDoc($this));
+
+        if ($asDoc) {
+            return $fullXml;
+        }
+
+        $doc = $writer->getDomDocument();
+        return $doc->saveXML($doc->getElementsByTagName('incomeInvoiceClassification')->item(0));
     }
 }

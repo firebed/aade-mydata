@@ -12,14 +12,14 @@ class IncomeClassificationsDoc extends TypeArray
     ];
 
     /**
-     * @param InvoiceIncomeClassification|InvoiceIncomeClassification[] $classifications
+     * @param  InvoiceIncomeClassification|InvoiceIncomeClassification[]  $classifications
      */
     public function __construct(InvoiceIncomeClassification|array $classifications = [])
     {
         parent::__construct('incomeClassificationsDoc', $classifications);
     }
 
-    public function offsetGet($offset): IncomeClassification
+    public function offsetGet($offset): InvoiceIncomeClassification
     {
         return $this->attributes['incomeClassificationsDoc'][$offset];
     }

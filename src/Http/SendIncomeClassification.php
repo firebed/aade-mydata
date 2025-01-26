@@ -8,6 +8,8 @@ use Firebed\AadeMyData\Http\Traits\HasResponseDom;
 use Firebed\AadeMyData\Models\IncomeClassificationsDoc;
 use Firebed\AadeMyData\Models\InvoiceIncomeClassification;
 use Firebed\AadeMyData\Models\ResponseDoc;
+use Firebed\AadeMyData\Xml\IncomeClassificationsDocWriter;
+use Firebed\AadeMyData\Xml\ResponseDocReader;
 
 class SendIncomeClassification extends MyDataRequest
 {
@@ -34,12 +36,27 @@ class SendIncomeClassification extends MyDataRequest
      * @return ResponseDoc
      * @throws MyDataException
      */
-    public function handle(IncomeClassificationsDoc|InvoiceIncomeClassification|array $incomeClassifications): ResponseDoc
+    public function handle(IncomeClassificationsDoc|InvoiceIncomeClassification|array $incomeClassifications, bool $postPerInvoice = false): ResponseDoc
     {
         if (!$incomeClassifications instanceof IncomeClassificationsDoc) {
             $incomeClassifications = new IncomeClassificationsDoc($incomeClassifications);
         }
 
-        throw new MyDataException('Not implemented');
+        $query = [];
+        if ($postPerInvoice) {
+            $query['postPerInvoice'] = 'true';
+        }
+
+        $writer = new IncomeClassificationsDocWriter();
+        $requestXml = $writer->asXML($incomeClassifications);
+        $this->requestDom = $writer->getDomDocument();
+
+        $responseXml = $this->post($query, $requestXml);
+
+        $reader = new ResponseDocReader();
+        $responseDoc = $reader->parseXML($responseXml);
+        $this->requestDom = $reader->getDomDocument();
+
+        return $responseDoc;
     }
 }
