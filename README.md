@@ -122,8 +122,8 @@ try {
 | [RequestVatInfo](http://docs.invoicemaker.gr/http/request-vat-info)                         | :white_check_mark: |
 | [RequestE3Info](http://docs.invoicemaker.gr/http/request-e3-info)                           | :white_check_mark: |
 | [SendPaymentsMethod](http://docs.invoicemaker.gr/http/send-payments-method)                 | :white_check_mark: |
-| [SendIncomeClassification](http://docs.invoicemaker.gr/http/send-income-classification)     | In progress        |
-| [SendExpensesClassification](http://docs.invoicemaker.gr/http/send-expenses-classification) | In progress        |
+| [SendIncomeClassification](http://docs.invoicemaker.gr/http/send-income-classification)     | :white_check_mark: |
+| [SendExpensesClassification](http://docs.invoicemaker.gr/http/send-expenses-classification) | :white_check_mark: |
 
 ## Digital Client (Car rental, parking/wash, workshops)
 
