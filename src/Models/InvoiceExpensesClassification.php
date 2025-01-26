@@ -3,6 +3,7 @@
 namespace Firebed\AadeMyData\Models;
 
 use Firebed\AadeMyData\Enums\TransactionMode;
+use Firebed\AadeMyData\Xml\ExpensesClassificationsDocWriter;
 
 class InvoiceExpensesClassification extends Type
 {
@@ -13,12 +14,12 @@ class InvoiceExpensesClassification extends Type
         'invoicesExpensesClassificationDetails',
         'classificationPostMode',
     ];
-    
+
     protected array $casts = [
-        'transactionMode'                       => TransactionMode::class,
+        'transactionMode' => TransactionMode::class,
         'invoicesExpensesClassificationDetails' => InvoicesExpensesClassificationDetail::class,
     ];
-    
+
     /**
      * @return int|null Μοναδικός Αριθμός Καταχώρησης Παραστατικού
      */
@@ -28,7 +29,7 @@ class InvoiceExpensesClassification extends Type
     }
 
     /**
-     * @param int $invoiceMark Μοναδικός Αριθμός Καταχώρησης Παραστατικού
+     * @param  int  $invoiceMark  Μοναδικός Αριθμός Καταχώρησης Παραστατικού
      */
     public function setInvoiceMark(int $invoiceMark): static
     {
@@ -56,7 +57,7 @@ class InvoiceExpensesClassification extends Type
     /**
      * Για την περίπτωση εκείνη και μόνο που η μέθοδος κληθεί από τρίτο πρόσωπο (όπως εκπρόσωπος Ν.Π. ή λογιστής),
      * ο ΑΦΜ της οντότητας που αναφέρεται ο χαρακτηρισμός του παραστατικού αποστέλλεται μέσω του πεδίου entityVatNumber,
-     * διαφορετικά το εν λόγω πεδίο παραμένει κενό
+     * διαφορετικά το εν λόγω πεδίο παραμένει κενό.
      *
      * @param  string|null  $entityVatNumber  ΑΦΜ Οντότητας Αναφοράς
      */
@@ -79,9 +80,9 @@ class InvoiceExpensesClassification extends Type
      * <li>Deviation (απόκλιση στα ποσά)</li>
      * </ol>
      *
-     * Ο χρήστης μπορεί να συμπεριλάβει είτε το στοιχείο transactionMode ή λίστα στοιχείων invoicesExpensesClassificationDetails<
+     * Ο χρήστης μπορεί να συμπεριλάβει είτε το στοιχείο transactionMode ή λίστα στοιχείων invoicesExpensesClassificationDetails.
      *
-     * @param TransactionMode|int|null $transactionMode Είδος Συναλλαγής
+     * @param  TransactionMode|int|null  $transactionMode  Είδος Συναλλαγής
      */
     public function setTransactionMode(TransactionMode|int|null $transactionMode): static
     {
@@ -96,11 +97,16 @@ class InvoiceExpensesClassification extends Type
         return $this->get('invoicesExpensesClassificationDetails');
     }
 
+    public function addInvoicesExpensesClassificationDetails(InvoicesExpensesClassificationDetail $expensesClassification): static
+    {
+        return $this->push('invoicesExpensesClassificationDetails', $expensesClassification);
+    }
+    
     /**
      * Κάθε στοιχείο invoicesExpensesClassificationDetails περιέχει ένα lineNumber και
      * μια λίστα στοιχείων expensesClassificationDetailData.
      *
-     * @param InvoicesExpensesClassificationDetail[]|null $invoicesExpensesClassificationDetails Λίστα Χαρακτηρισμών Εξόδων
+     * @param  InvoicesExpensesClassificationDetail[]|null  $invoicesExpensesClassificationDetails  Λίστα Χαρακτηρισμών Εξόδων
      */
     public function setInvoicesExpensesClassificationDetails(?array $invoicesExpensesClassificationDetails): static
     {
@@ -108,9 +114,10 @@ class InvoiceExpensesClassification extends Type
     }
 
     /**
-     * Όταν η παράμετρος postPerInvoice καλείται με τιμή true, τότε αυτό σημαίνει ότι οι
-     * χαρακτηρισμοί εξόδων υποβάλλονται σε επίπεδο παραστατικού και όχι ανά
-     * γραμμή. Περισσότερες πληροφορίες στον σύνδεσμο:
+     * Περιγράφει με ποιον τρόπο έχει υποβληθεί ο χαρακτηρισμός:
+     *
+     * – `0` παλιός τρόπος (ανά γραμμή),
+     * - `1` νέος τρόπος (ανά παραστατικό).
      *
      * @return int|null Μέθοδος Υποβολής Χαρακτηρισμού
      */
@@ -119,15 +126,16 @@ class InvoiceExpensesClassification extends Type
         return $this->get('classificationPostMode');
     }
 
-    /**
-     * Όταν η παράμετρος postPerInvoice καλείται με τιμή true, τότε αυτό σημαίνει ότι οι
-     * χαρακτηρισμοί εξόδων υποβάλλονται σε επίπεδο παραστατικού και όχι ανά
-     * γραμμή. Περισσότερες πληροφορίες στον σύνδεσμο:
-     *
-     * @param int $classificationPostMode Μέθοδος Υποβολής Χαρακτηρισμού
-     */
-    public function setClassificationPostMode(int $classificationPostMode): static
+    public function toXml(bool $asDoc = false): string
     {
-        return $this->set('classificationPostMode', $classificationPostMode);
+        $writer = new ExpensesClassificationsDocWriter();
+        $fullXml = $writer->asXML(new ExpensesClassificationsDoc($this));
+
+        if ($asDoc) {
+            return $fullXml;
+        }
+
+        $doc = $writer->getDomDocument();
+        return $doc->saveXML($doc->getElementsByTagName('expensesInvoiceClassification')->item(0));
     }
 }

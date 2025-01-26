@@ -19,7 +19,7 @@ class ExpensesClassificationsDoc extends TypeArray
         parent::__construct('expensesInvoiceClassification', $classifications);
     }
 
-    public function offsetGet($offset): ExpensesClassification
+    public function offsetGet($offset): InvoiceExpensesClassification
     {
         return $this->attributes['expensesInvoiceClassification'][$offset];
     }

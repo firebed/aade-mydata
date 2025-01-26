@@ -3,12 +3,19 @@
 namespace Firebed\AadeMyData\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Http\Traits\HasRequestDom;
+use Firebed\AadeMyData\Http\Traits\HasResponseDom;
 use Firebed\AadeMyData\Models\ExpensesClassificationsDoc;
 use Firebed\AadeMyData\Models\InvoiceExpensesClassification;
 use Firebed\AadeMyData\Models\ResponseDoc;
+use Firebed\AadeMyData\Xml\ExpensesClassificationsDocWriter;
+use Firebed\AadeMyData\Xml\ResponseDocReader;
 
 class SendExpensesClassification extends MyDataRequest
 {
+    use HasRequestDom;
+    use HasResponseDom;
+    
     /**
      * <ul>
      * <li>Το πεδίο transactionMode όταν παίρνει την τιμή 1 υποδηλώνει απόρριψη του
@@ -33,12 +40,27 @@ class SendExpensesClassification extends MyDataRequest
      * @param ExpensesClassificationsDoc|InvoiceExpensesClassification[] $expensesClassifications
      * @throws MyDataException
      */
-    public function handle(ExpensesClassificationsDoc|array $expensesClassifications): ResponseDoc
+    public function handle(ExpensesClassificationsDoc|array $expensesClassifications, bool $postPerInvoice = false): ResponseDoc
     {
         if (!$expensesClassifications instanceof ExpensesClassificationsDoc) {
             $expensesClassifications = new ExpensesClassificationsDoc($expensesClassifications);
         }
         
-        throw new MyDataException('Not implemented');
+        $query = [];
+        if ($postPerInvoice) {
+            $query['postPerInvoice'] = 'true';
+        }
+        
+        $writer = new ExpensesClassificationsDocWriter();
+        $requestXml = $writer->asXML($expensesClassifications);
+        $this->requestDom = $writer->getDomDocument();
+
+        $responseXml = $this->post($query, $requestXml);
+        
+        $reader  = new ResponseDocReader();
+        $responseDoc = $reader->parseXML($responseXml);
+        $this->requestDom = $reader->getDomDocument();
+        
+        return $responseDoc;
     }
 }

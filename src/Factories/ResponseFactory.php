@@ -17,6 +17,7 @@ class ResponseFactory extends Factory
             'authenticationCode' => strtoupper(fake()->sha1()),
             'invoiceMark' => fake()->numerify("900000#########"),
             'paymentMethodMark' => fake()->numerify("900000#########"),
+            'classificationMark' => fake()->numerify("900000#########"),
             'qrUrl' => fake()->url(),
             'statusCode' => 'Success',
             'receptionEmails' => [

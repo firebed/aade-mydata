@@ -39,14 +39,16 @@ class InvoicesExpensesClassificationDetail extends Type
         return $this->get('expensesClassificationDetailData');
     }
 
+    public function addExpensesClassificationDetailData(ExpensesClassification $classification): static
+    {
+        return $this->push('expensesClassificationDetailData', $classification);
+    }
+    
     /**
-     * Κάθε στοιχείο invoicesExpensesClassificationDetails περιέχει ένα lineNumber και
-     * μια λίστα στοιχείων expensesClassificationDetailData.
-     * 
      * @param ExpensesClassification[] $expensesClassificationDetailData
      */
     public function setExpensesClassificationDetailData(array $expensesClassificationDetailData): static
-    {
+    {        
         return $this->set('expensesClassificationDetailData', $expensesClassificationDetailData);
     }
 }
