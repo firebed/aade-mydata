@@ -3,6 +3,7 @@
 namespace Tests\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Exceptions\MyDataTimeoutException;
 use Firebed\AadeMyData\Exceptions\TransmissionFailedException;
 use Firebed\AadeMyData\Factories\ResponseDocXmlFactory;
 use Firebed\AadeMyData\Http\MyDataRequest;
@@ -10,8 +11,11 @@ use Firebed\AadeMyData\Http\SendInvoices;
 use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\InvoicesDoc;
 use Firebed\AadeMyData\Models\Response;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response as HttpResponse;
+use ReflectionClass;
 
 class SendInvoicesTest extends MyDataHttpTestCase
 {
@@ -141,5 +145,48 @@ class SendInvoicesTest extends MyDataHttpTestCase
 
         $sendInvoices = new SendInvoices();
         $sendInvoices->handle(new Invoice());
+    }
+
+    /**
+     * Test operation timeout (error 28)
+     * @throws MyDataException
+     */
+    public function test_operation_timeout_throws_exception()
+    {
+        MyDataRequest::setHandler(new MockHandler([
+            new RequestException(
+                'Operation timed out',
+                new Request('POST', 'test'),
+                null,
+                null,
+                ['errno' => 28]
+            )
+        ]));
+
+        $this->expectException(MyDataTimeoutException::class);
+
+        $sendInvoices = new SendInvoices();
+        $sendInvoices->handle(new Invoice());
+    }
+
+    /**
+     * Test that timeouts are properly configured
+     */
+    public function test_timeout_configuration()
+    {
+        // Reset any previous configuration
+        MyDataRequest::setRequestOptions([]);
+
+        // Configure timeouts
+        MyDataRequest::setConnectionTimeout(5);
+        MyDataRequest::setTimeout(30);
+
+        // Create a reflection class to access private properties
+        $reflection = new ReflectionClass(MyDataRequest::class);
+        $property = $reflection->getProperty('request_options');
+        $options = $property->getValue();
+
+        $this->assertEquals(5, $options['connect_timeout']);
+        $this->assertEquals(30, $options['timeout']);
     }
 }

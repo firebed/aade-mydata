@@ -2,10 +2,6 @@
 
 namespace Tests;
 
-use Firebed\AadeMyData\Enums\InvoiceType;
-use Firebed\AadeMyData\Enums\InvoiceVariationType;
-use Firebed\AadeMyData\Enums\MovePurpose;
-use Firebed\AadeMyData\Enums\SpecialInvoiceCategory;
 use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\InvoiceHeader;
 use PHPUnit\Framework\TestCase;

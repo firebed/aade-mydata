@@ -6,10 +6,12 @@ use Firebed\AadeMyData\Exceptions\InvalidResponseException;
 use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
 use Firebed\AadeMyData\Exceptions\MyDataConnectionException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Exceptions\MyDataTimeoutException;
 use Firebed\AadeMyData\Exceptions\RateLimitExceededException;
 use Firebed\AadeMyData\Exceptions\TransmissionFailedException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use ReflectionClass;
@@ -37,7 +39,7 @@ abstract class MyDataRequest
 
     /**
      * Initialize the myDATA API with the user_id, subscription_key and environment.
-     * 
+     *
      * @param  string  $user_id The user id provided by AADE
      * @param  string  $subscription_key The subscription key provided by AADE
      * @param  string  $env 'dev' or 'prod'
@@ -52,7 +54,7 @@ abstract class MyDataRequest
 
     /**
      * Set the user_id and subscription_key for the myDATA API.
-     * 
+     *
      * @param  string  $user_id The user id provided by AADE
      * @param  string  $subscription_key The subscription key provided by AADE
      * @return void
@@ -65,7 +67,7 @@ abstract class MyDataRequest
 
     /**
      * Set the environment to either 'dev' or 'prod'.
-     * 
+     *
      * @param  string  $env 'dev' or 'prod'
      * @param  bool  $is_provider Set to true if the request is for the providers
      * @return void
@@ -122,6 +124,17 @@ abstract class MyDataRequest
     }
 
     /**
+     * Total time for the request.
+     *
+     * @param  int  $seconds
+     * @return void
+     */
+    public static function setTimeout(int $seconds): void
+    {
+        self::$request_options['timeout'] = $seconds;
+    }
+
+    /**
      * You can customize requests created and transferred by a client using request options.
      * Request options control various aspects of a request including, headers, query string
      * parameters, timeout settings, the body of a request, and much more.
@@ -170,7 +183,7 @@ abstract class MyDataRequest
         try {
             $response = $this->client()->get($this->getUrl(), ['query' => $query]);
             $responseXml = $response->getBody()->getContents();
-            
+
             // We always expect a response xml from myDATA
             if (empty(trim($responseXml))) {
                 throw new InvalidResponseException("Empty response received from AADE MyData API");
@@ -221,13 +234,23 @@ abstract class MyDataRequest
      */
     protected function handleTransmissionException(GuzzleException $exception)
     {
-        if ($exception->getCode() === 401) {
-            throw new MyDataAuthenticationException($exception->getCode(), $exception);
+        // Specific case for timeout exception (HTTP 28 for cURL)
+        // Connection with myDATA was established but the response took too long
+        if ($exception instanceof RequestException) {
+            $errorNo = $exception->getHandlerContext()['errno'] ?? null;
+            if ($errorNo === 28) {
+                throw new MyDataTimeoutException(previous: $exception);
+            }
         }
 
-        // In case the endpoint url is wrong or connection timed out
+        // In case the endpoint url is wrong or connection timed out, myDATA is unreachable
         if ($exception->getCode() === 0) {
             throw new MyDataConnectionException($exception->getCode(), $exception);
+        }
+
+        // Authentication with myDATA failed
+        if ($exception->getCode() === 401) {
+            throw new MyDataAuthenticationException($exception->getCode(), $exception);
         }
 
         // Rate limit exception
