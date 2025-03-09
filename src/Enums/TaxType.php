@@ -46,13 +46,13 @@ enum TaxType: int
      *
      * @example
      * Check if tax category 1 exists for TaxType::TYPE_1
-     * taxCategoryExists(TaxType::TYPE_1, 1); // Returns true if valid, false otherwise
-     * taxCategoryExists(TaxType::TYPE_1, WithheldPercentCategory::TAX_1); // Returns true if valid, false otherwise
+     * taxClassificationExists(TaxType::TYPE_1, 1); // Returns true if valid, false otherwise
+     * taxClassificationExists(TaxType::TYPE_1, WithheldPercentCategory::TAX_1); // Returns true if valid, false otherwise
      *
      * Check if tax category is valid for TaxType::TYPE_5 (which requires no category)
-     * taxCategoryExists(TaxType::TYPE_5, null); // Returns true
+     * taxClassificationExists(TaxType::TYPE_5, null); // Returns true
      */
-    public static function taxCategoryExists(TaxType|int $taxType, BackedEnum|int|null $taxCategory): bool
+    public static function taxClassificationExists(TaxType|int $taxType, BackedEnum|int|null $taxCategory): bool
     {
         if (!$taxType instanceof TaxType) {
             $taxType = TaxType::tryFrom($taxType);
