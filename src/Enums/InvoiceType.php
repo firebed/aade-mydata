@@ -474,12 +474,11 @@ enum InvoiceType: string
     /**
      * Determines whether the given invoice type supports the use of unit of measure.
      *
-     * @param self $invoiceType The invoice type to check.
      * @return bool Returns true if the invoice type supports unit of measure, otherwise false.
      */
-    public static function supportsUnitOfMeasurement(self $invoiceType): bool
+    public function supportsUnitOfMeasurement(): bool
     {
-        return in_array($invoiceType, [
+        return in_array($this, [
             self::TYPE_1_1,
             self::TYPE_1_2,
             self::TYPE_1_3,
