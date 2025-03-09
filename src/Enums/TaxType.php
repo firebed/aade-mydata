@@ -82,7 +82,7 @@ enum TaxType: int
                 self::TYPE_1 => $taxCategory instanceof WithheldPercentCategory, // Παρακρατούμενοι Φόροι
                 self::TYPE_2 => $taxCategory instanceof FeesPercentCategory, // Τέλη
                 self::TYPE_3 => $taxCategory instanceof OtherTaxesPercentCategory, // Άλλοι Φόροι
-                self::TYPE_4 => $taxCategory instanceof StampCategory,
+                self::TYPE_4 => $taxCategory instanceof StampCategory, // Χαρτόσημο
                 default => false,
             };
         }
