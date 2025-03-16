@@ -1,51 +1,42 @@
 <?php
 
-namespace Firebed\AadeMyData\Enums;
+namespace Firebed\AadeMyData\Types;
 
 use BackedEnum;
+use Firebed\AadeMyData\Enums\FeesPercentCategory;
+use Firebed\AadeMyData\Enums\HasLabels;
+use Firebed\AadeMyData\Enums\OtherTaxesPercentCategory;
+use Firebed\AadeMyData\Enums\StampCategory;
+use Firebed\AadeMyData\Enums\WithheldPercentCategory;
 
-/**
- * @deprecated This enum will be removed in the next major version.
- * @see \Firebed\AadeMyData\Types\TaxType
- */
 enum TaxType: int
 {
     use HasLabels;
 
     /**
      * Παρακρατούμενος Φόρος
-     * @deprecated This enum will be removed in the next major version.
-     * @see \Firebed\AadeMyData\Types\TaxType::WITHHELD
      */
-    case TYPE_1 = 1;
+    case WITHHELD = 1;
 
     /**
      * Τέλη
-     * @deprecated This enum will be removed in the next major version.
-     * @see \Firebed\AadeMyData\Types\TaxType::FEES
      */
-    case TYPE_2 = 2;
+    case FEES = 2;
 
     /**
      * Λοιποί Φόροι
-     * @deprecated This enum will be removed in the next major version.
-     * @see \Firebed\AadeMyData\Types\TaxType::OTHER
      */
-    case TYPE_3 = 3;
+    case OTHER = 3;
 
     /**
      * Χαρτόσημο
-     * @deprecated This enum will be removed in the next major version.
-     * @see \Firebed\AadeMyData\Types\TaxType::STAMP
      */
-    case TYPE_4 = 4;
+    case STAMP = 4;
 
     /**
      * Κρατήσεις
-     * @deprecated This enum will be removed in the next major version.
-     * @see \Firebed\AadeMyData\Types\TaxType::DEDUCTIONS
      */
-    case TYPE_5 = 5;
+    case DEDUCTIONS = 5;
 
     /**
      * Checks if a given tax category exists for a specific tax type.
@@ -88,24 +79,24 @@ enum TaxType: int
     {
         // Check for null tax category to avoid tryFrom calls on null values
         if ($taxCategory === null) {
-            return $this === self::TYPE_5;
+            return $this === self::DEDUCTIONS;
         }
 
         if ($taxCategory instanceof BackedEnum) {
             return match ($this) {
-                self::TYPE_1 => $taxCategory instanceof WithheldPercentCategory, // Παρακρατούμενοι Φόροι
-                self::TYPE_2 => $taxCategory instanceof FeesPercentCategory, // Τέλη
-                self::TYPE_3 => $taxCategory instanceof OtherTaxesPercentCategory, // Άλλοι Φόροι
-                self::TYPE_4 => $taxCategory instanceof StampCategory, // Χαρτόσημο
+                self::WITHHELD => $taxCategory instanceof WithheldPercentCategory, // Παρακρατούμενοι Φόροι
+                self::FEES => $taxCategory instanceof FeesPercentCategory, // Τέλη
+                self::OTHER => $taxCategory instanceof OtherTaxesPercentCategory, // Άλλοι Φόροι
+                self::STAMP => $taxCategory instanceof StampCategory, // Χαρτόσημο
                 default => false,
             };
         }
 
         return match ($this) {
-            self::TYPE_1 => WithheldPercentCategory::tryFrom($taxCategory) !== null, // Παρακρατούμενοι Φόροι
-            self::TYPE_2 => FeesPercentCategory::tryFrom($taxCategory) !== null, // Τέλη
-            self::TYPE_3 => OtherTaxesPercentCategory::tryFrom($taxCategory) !== null, // Άλλοι Φόροι
-            self::TYPE_4 => StampCategory::tryFrom($taxCategory) !== null, // Χαρτόσημο
+            self::WITHHELD => WithheldPercentCategory::tryFrom($taxCategory) !== null, // Παρακρατούμενοι Φόροι
+            self::FEES => FeesPercentCategory::tryFrom($taxCategory) !== null, // Τέλη
+            self::OTHER => OtherTaxesPercentCategory::tryFrom($taxCategory) !== null, // Άλλοι Φόροι
+            self::STAMP => StampCategory::tryFrom($taxCategory) !== null, // Χαρτόσημο
             default => false,
         };
     }
@@ -113,11 +104,11 @@ enum TaxType: int
     public function label(): string
     {
         return match ($this) {
-            self::TYPE_1 => "Παρακρατούμενος Φόρος",
-            self::TYPE_2 => "Τέλη",
-            self::TYPE_3 => "Λοιποί Φόροι",
-            self::TYPE_4 => "Χαρτόσημο",
-            self::TYPE_5 => "Κρατήσεις",
+            self::WITHHELD => "Παρακρατούμενος Φόρος",
+            self::FEES => "Τέλη",
+            self::OTHER => "Λοιποί Φόροι",
+            self::STAMP => "Χαρτόσημο",
+            self::DEDUCTIONS => "Κρατήσεις",
         };
     }
 }

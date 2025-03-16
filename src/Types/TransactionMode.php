@@ -1,11 +1,9 @@
 <?php
 
-namespace Firebed\AadeMyData\Enums;
+namespace Firebed\AadeMyData\Types;
 
-/**
- * @deprecated
- * @see \Firebed\AadeMyData\Types\TransactionMode
- */
+use Firebed\AadeMyData\Enums\HasLabels;
+
 enum TransactionMode: int
 {
     use HasLabels;

@@ -1,14 +1,10 @@
 <?php
 
-namespace Firebed\AadeMyData\Enums;
+namespace Firebed\AadeMyData\Types;
 
-use Firebed\AadeMyData\Types\Country;
+use Firebed\AadeMyData\Enums\HasLabels;
 
-/**
- * @deprecated This enum will be removed in the next major version.
- * @see Country
- */
-enum CountryCode: string
+enum Country: string
 {
     use HasLabels;
 

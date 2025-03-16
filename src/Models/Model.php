@@ -4,11 +4,7 @@ namespace Firebed\AadeMyData\Models;
 
 use BackedEnum;
 
-/**
- * @deprecated
- * @see Model
- */
-abstract class Type
+abstract class Model
 {
     protected array      $attributes    = [];
     protected array      $expectedOrder = [];
@@ -109,7 +105,7 @@ abstract class Type
 
             $cast = $this->getCast($key);
 
-            if ($cast === null || !is_subclass_of($cast, Type::class)) {
+            if ($cast === null || !is_subclass_of($cast, Model::class)) {
                 $this->set($key, $value);
                 continue;
             }
@@ -166,10 +162,10 @@ abstract class Type
     {
         $array = [];
         foreach ($this->attributes() as $key => $value) {
-            if ($value instanceof Type) {
+            if ($value instanceof Model) {
                 $array[$key] = $value->toArray();
             } elseif (is_array($value)) {
-                $array[$key] = array_map(fn($v) => $v instanceof Type ? $v->toArray() : $v, $value);
+                $array[$key] = array_map(fn($v) => $v instanceof Model ? $v->toArray() : $v, $value);
             } elseif ($this->isEnum($key) && is_object($value)) {
                 $array[$key] = $value->value;
             } else {

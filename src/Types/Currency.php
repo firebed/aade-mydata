@@ -1,14 +1,10 @@
 <?php
 
-namespace Firebed\AadeMyData\Enums;
+namespace Firebed\AadeMyData\Types;
 
-use Firebed\AadeMyData\Types\Currency;
+use Firebed\AadeMyData\Enums\HasLabels;
 
-/**
- * @deprecated
- * @see Currency
- */
-enum CurrencyCode: string
+enum Currency: string
 {
     use HasLabels;
 
