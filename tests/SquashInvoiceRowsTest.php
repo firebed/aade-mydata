@@ -7,6 +7,7 @@ use Firebed\AadeMyData\Enums\ExpenseClassificationType;
 use Firebed\AadeMyData\Enums\FeesPercentCategory;
 use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
 use Firebed\AadeMyData\Enums\IncomeClassificationType;
+use Firebed\AadeMyData\Enums\InvoiceDetailType;
 use Firebed\AadeMyData\Enums\OtherTaxesPercentCategory;
 use Firebed\AadeMyData\Enums\RecType;
 use Firebed\AadeMyData\Enums\StampCategory;
@@ -500,5 +501,88 @@ class SquashInvoiceRowsTest extends TestCase
         for ($i = 0; $i < count($rows); $i++) {
             $this->assertEquals($i + 1, $rows[$i]->getLineNumber());
         }
+    }
+
+    public function test_similar_invoice_detail_types_are_squashed_separately()
+    {
+        $invoice = new Invoice();
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_1,
+            'netValue' => 10,
+            'invoiceDetailType' => InvoiceDetailType::TYPE_1,
+        ]));
+
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_1,
+            'netValue' => 40,
+            'invoiceDetailType' => InvoiceDetailType::TYPE_1,
+        ]));
+
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_1,
+            'netValue' => 10,
+            'invoiceDetailType' => InvoiceDetailType::TYPE_2,
+        ]));
+
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_1,
+            'netValue' => 40,
+            'invoiceDetailType' => InvoiceDetailType::TYPE_2,
+        ]));
+
+        $invoice->squashInvoiceRows();
+        $rows = $invoice->getInvoiceDetails();
+
+        $type1Rows = array_filter($invoice->getInvoiceDetails(), fn($row) => $row->getInvoiceDetailType() === InvoiceDetailType::TYPE_1);
+        $type2Rows = array_filter($invoice->getInvoiceDetails(), fn($row) => $row->getInvoiceDetailType() === InvoiceDetailType::TYPE_2);
+
+        $this->assertIsArray($rows);
+        $this->assertCount(2, $rows);
+        $this->assertEquals(50, array_reduce($type1Rows, fn($carry, $row) => $carry + $row->getNetValue(), 0));
+        $this->assertEquals(50, array_reduce($type2Rows, fn($carry, $row) => $carry + $row->getNetValue(), 0));
+        $this->assertEquals(50, $rows[0]->getNetValue());
+        $this->assertEquals(50, $rows[1]->getNetValue());
+    }
+
+    public function test_similar_invoice_detail_types_are_not_squashed_when_vat_category_is_different()
+    {
+        $invoice = new Invoice();
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_1,
+            'netValue' => 10,
+            'invoiceDetailType' => InvoiceDetailType::TYPE_1,
+        ]));
+
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_1,
+            'netValue' => 40,
+            'invoiceDetailType' => InvoiceDetailType::TYPE_1,
+        ]));
+
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_1,
+            'netValue' => 10,
+            'invoiceDetailType' => InvoiceDetailType::TYPE_2,
+        ]));
+
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_2,
+            'netValue' => 40,
+            'invoiceDetailType' => InvoiceDetailType::TYPE_2,
+        ]));
+
+        $invoice->squashInvoiceRows();
+        $rows = $invoice->getInvoiceDetails();
+
+        $type1Rows = array_filter($invoice->getInvoiceDetails(), fn($row) => $row->getInvoiceDetailType() === InvoiceDetailType::TYPE_1);
+        $type2Rows = array_filter($invoice->getInvoiceDetails(), fn($row) => $row->getInvoiceDetailType() === InvoiceDetailType::TYPE_2);
+
+        $this->assertIsArray($rows);
+        $this->assertCount(3, $rows);
+        $this->assertEquals(50, array_reduce($type1Rows, fn($carry, $row) => $carry + $row->getNetValue(), 0));
+        $this->assertEquals(50, array_reduce($type2Rows, fn($carry, $row) => $carry + $row->getNetValue(), 0));
+        $this->assertEquals(50, $rows[0]->getNetValue());
+        $this->assertEquals(10, $rows[1]->getNetValue());
+        $this->assertEquals(40, $rows[2]->getNetValue());
     }
 }

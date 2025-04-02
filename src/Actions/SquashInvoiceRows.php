@@ -90,6 +90,7 @@ class SquashInvoiceRows
             $row->getOtherTaxesPercentCategory()->value ?? '',
             $row->getStampDutyPercentCategory()->value ?? '',
             $row->getNotVAT195() ? '1' : '',
+            $row->getInvoiceDetailType()->value ?? '',
         ]);
     }
 
@@ -109,6 +110,7 @@ class SquashInvoiceRows
             'otherTaxesPercentCategory' => $row->getOtherTaxesPercentCategory(),
             'stampDutyPercentCategory' => $row->getStampDutyPercentCategory(),
             'notVAT195' => $row->getNotVAT195(),
+            'invoiceDetailType' => $row->getInvoiceDetailType(),
         ];
     }
 
@@ -199,7 +201,7 @@ class SquashInvoiceRows
     private function mergeAndRoundResults(): array
     {
         $lineNumber = 1;
-        
+
         foreach ($this->squashedRows as $key => $row) {
             $clsLineNumber = 1;
 
@@ -212,12 +214,12 @@ class SquashInvoiceRows
             }
 
             $row->setLineNumber($lineNumber++);
-            
+
             $this->roundRow($row);
             $this->roundClassifications($row);
             $this->adjustClassificationAmount($row);
         }
-        
+
         foreach ($this->rowsWithRecType as $row) {
             $row->setLineNumber($lineNumber++);
         }
