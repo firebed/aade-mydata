@@ -585,4 +585,70 @@ class SquashInvoiceRowsTest extends TestCase
         $this->assertEquals(10, $rows[1]->getNetValue());
         $this->assertEquals(40, $rows[2]->getNetValue());
     }
+
+    public function test_squash_revert(): void
+    {
+        $invoice = new Invoice();
+
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_1,
+            'netValue' => 4.03,
+            'vatAmount' => 0.97,
+            'incomeClassification' => [
+                [
+                    'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
+                    'classificationType' => IncomeClassificationType::E3_561_001,
+                    'amount' => 4.03,
+                ]
+            ]
+        ]));
+
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_1,
+            'netValue' => 4.03,
+            'vatAmount' => 0.97,
+            'incomeClassification' => [
+                [
+                    'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
+                    'classificationType' => IncomeClassificationType::E3_561_001,
+                    'amount' => 2.02,
+                ],
+                [
+                    'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
+                    'classificationType' => IncomeClassificationType::E3_561_007,
+                    'amount' => 2.01,
+                ]
+            ]
+        ]));
+
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_1,
+            'netValue' => 4.03,
+            'vatAmount' => 0.97,
+            'incomeClassification' => [
+                [
+                    'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
+                    'classificationType' => IncomeClassificationType::E3_561_001,
+                    'amount' => 2.02,
+                ],
+                [
+                    'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
+                    'classificationType' => IncomeClassificationType::E3_561_007,
+                    'amount' => 2.01,
+                ]
+            ]
+        ]));
+
+        $invoice->squashInvoiceRows();
+        $rows = $invoice->getInvoiceDetails();
+        $this->assertNotNull($rows);
+        $this->assertCount(1, $rows);
+        $this->assertTrue($invoice->isSquashed());
+
+        $invoice->unSquashInvoiceRows();
+        $rows = $invoice->getInvoiceDetails();
+        $this->assertNotNull($rows);
+        $this->assertCount(3, $rows);
+        $this->assertFalse($invoice->isSquashed());
+    }
 }

@@ -38,6 +38,12 @@ class Invoice extends Type
         'otherTransportDetails' => TransportDetail::class,
     ];
 
+    /**
+     * Property to store the original invoice rows before squashing.
+     * @var array|null
+     */
+    protected ?array $originalInvoiceRows = null;
+
     public static function make(array $attributes = []): self
     {
         return new Invoice($attributes);
@@ -258,9 +264,33 @@ class Invoice extends Type
      */
     public function squashInvoiceRows(array $options = []): static
     {
+        $this->originalInvoiceRows = $this->getInvoiceDetails();
+
         $squash = new SquashInvoiceRows();
         $this->setInvoiceDetails($squash->handle($this->getInvoiceDetails(), $options));
         return $this;
+    }
+
+    /**
+     * Returns the original invoice rows before squashing.
+     *
+     * @return Invoice
+     */
+    public function unSquashInvoiceRows(): static
+    {
+        $this->setInvoiceDetails($this->originalInvoiceRows);
+        $this->originalInvoiceRows = null;
+        return $this;
+    }
+
+    /**
+     * Check if the invoice rows have been squashed.
+     *
+     * @return bool
+     */
+    public function isSquashed(): bool
+    {
+        return !empty($this->originalInvoiceRows);
     }
 
     /**
