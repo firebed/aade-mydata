@@ -5,6 +5,7 @@ namespace Tests;
 use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
 use Firebed\AadeMyData\Enums\IncomeClassificationType;
 use Firebed\AadeMyData\Enums\RecType;
+use Firebed\AadeMyData\Enums\TransmissionFailure;
 use Firebed\AadeMyData\Models\Invoice;
 use PHPUnit\Framework\TestCase;
 use Tests\Traits\HandlesInvoiceXml;
@@ -84,7 +85,7 @@ class InvoiceTest extends TestCase
     {
         $invoice = Invoice::factory()->make();
         $invoice->getInvoiceDetails()[0]->setItemDescr("<Πλακάκια> & Είδη Υγιεινής");
-        
+
         $xml = $invoice->toXml();
         $this->assertStringContainsString("<itemDescr>&lt;Πλακάκια&gt; &amp; Είδη Υγιεινής</itemDescr>", $xml);
     }
@@ -108,5 +109,24 @@ class InvoiceTest extends TestCase
             "field" => "{http://www.aade.gr/myDATA/invoice/v1.0}totalGrossValue",
             "message" => "The value '-10' is less than the minimum value allowed ('0')."
         ], $invoice->validate()[1]);
+    }
+
+    public function test_transmission_failure_is_sorted()
+    {
+        $invoice = Invoice::factory()->make();
+        $invoice->setTransmissionFailure(TransmissionFailure::ERP_CONNECTION_FAILURE);
+        $this->assertStringContainsString("<transmissionFailure>1</transmissionFailure>", $invoice->toXml());
+    }
+
+    public function test_auto_filled_fields()
+    {
+        $invoice = Invoice::factory()->make();
+        $invoice->set('uid', 'test-uid');
+        $invoice->set('mark', 'test-mark');
+        $invoice->set('authenticationCode', 'test-auth-code');
+
+        $this->assertStringContainsString("<uid>test-uid</uid>", $invoice->toXml());
+        $this->assertStringContainsString("<mark>test-mark</mark>", $invoice->toXml());
+        $this->assertStringContainsString("<authenticationCode>test-auth-code</authenticationCode>", $invoice->toXml());
     }
 }
