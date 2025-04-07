@@ -44,11 +44,6 @@ class Invoice extends Type
      */
     protected ?array $originalInvoiceRows = null;
 
-    public static function make(array $attributes = []): self
-    {
-        return new Invoice($attributes);
-    }
-
     /**
      * Συμπληρώνεται από την Υπηρεσία.
      *

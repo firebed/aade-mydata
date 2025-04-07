@@ -16,6 +16,11 @@ abstract class Type
         $this->setAttributes($attributes);
     }
 
+    public static function make(array $attributes = []): static
+    {
+        return new static($attributes);
+    }
+
     public function get($key, $default = null)
     {
         return $this->attributes[$key] ?? $default;
