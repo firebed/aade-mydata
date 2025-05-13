@@ -127,13 +127,7 @@ try {
 
 ## Digital Client (Car rental, parking/wash, workshops)
 
-| Method                                                                        | Availability |
-|-------------------------------------------------------------------------------|--------------|
-| [SendClient](http://docs.invoicemaker.gr/http/dcl/SendClient)                 | In progress  |
-| [UpdateClient](http://docs.invoicemaker.gr/http/dcl/UpdateClient)             | In progress  |
-| [RequestClients](http://docs.invoicemaker.gr/http/dcl/RequestClient)          | In progress  |
-| [CancelClient](http://docs.invoicemaker.gr/http/dcl/CancelClient)             | In progress  |
-| [ClientCorrelations](http://docs.invoicemaker.gr/http/dcl/ClientCorrelations) | In progress  |
+Please check out [ΑΑΔΕ Digital Client](https://github.com/oxygensuite/digital-client-list) developed by [Oxygen Invoicing Provider](https://github.com/oxygensuite/).
 
 ## Upgrade Guide
 
