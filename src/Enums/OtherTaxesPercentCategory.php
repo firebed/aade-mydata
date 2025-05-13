@@ -55,7 +55,7 @@ enum OtherTaxesPercentCategory: int
 
 
     /**
-     *  Ξενοδοχεία 4 αστέρων 4,00 €
+     *  Ξενοδοχεία 5 αστέρων 4,00 €
      */
     case TAX_9 = 9;
 
