@@ -22,7 +22,7 @@ This package provides an expressive, fluent interface to ΑΑΔΕ myDATA invoici
 
 ## Requirements
 
-In order to use this package, you will need first a `aade id` and a `Subscription key`. You can get these credentials by signing up to mydata rest api.
+To use this package, you will need first a `aade id` and a `Subscription key`. You can get these credentials by signing up to mydata rest api.
 
 - Development: [Sign up to mydata development api](https://mydata-dev-register.azurewebsites.net/)
 - Production: [Sign up to mydata production api](https://www.aade.gr/mydata)
@@ -46,7 +46,7 @@ composer require firebed/aade-mydata
 
 ## Setup
 
-Once you have the user id and the subscription key use the following code to set the environment and the credentials:
+Once you have the user id and the subscription key, use the following code to set the environment and the credentials:
 
 ```php
 $env = "dev"; // For production use "prod"
@@ -127,7 +127,10 @@ try {
 
 ## Digital Client (Car rental, parking/wash, workshops)
 
-Please check out [ΑΑΔΕ Digital Client](https://github.com/oxygensuite/digital-client-list) developed by [Oxygen Invoicing Provider](https://github.com/oxygensuite/).
+The **Digital Client** API is specifically designed to serve businesses in industries such as car rentals, parking services, vehicle washing and workshops.
+
+Please refer to the [ΑΑΔΕ Digital Client](https://github.com/oxygensuite/digital-client-list), developed by [Oxygen Invoicing Provider](https://github.com/oxygensuite/).
+It provides a robust, seamless and complete solution for managing customer and vehicle data while enabling smooth and uninterrupted data exchange between ERP systems and Greece's Independent Authority for Public Revenue (Ανεξάρτητη Αρχή Δημοσίων Εσόδων, ΑΑΔΕ).
 
 ## Upgrade Guide
 
