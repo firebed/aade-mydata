@@ -12,7 +12,7 @@ If you find this project useful, you can show your appreciation and support by g
 
 ## Introduction
 
-This package provides an expressive, fluent interface to ΑΑΔΕ myDATA invoicing REST API. It handles almost all the boilerplate code for sending, cancelling and requesting invoices.
+This package provides an expressive, fluent interface to ΑΑΔΕ myDATA invoicing REST API. It handles all the boilerplate code for sending, cancelling and requesting invoices.
 
 ## Documentation
 
