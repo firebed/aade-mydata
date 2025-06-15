@@ -42,17 +42,17 @@ try {
     $request = new SendInvoices();
     $responses = $request->handle($invoice);
         
-    // Ανάκτηση του XML αίτησης
+    // Ανάκτηση του XML αίτησης (προαιρετικό)
     $requestDom = $request->getRequestDom();
     $requestXml = $requestDom->saveXML();
     // ή
     $requestXml = $request->getRequestXml();
         
-    // Ανάκτηση του XML απάντησης
+    // Ανάκτηση του XML απάντησης (προαιρετικό)
     $responseDom = $request->getResponseDom();
     $responseXml = $responseDom->saveXML();
     // ή
-    $requestXml = $request->getResponseXML();
+    $responseXml = $request->getResponseXML();
     
     // Ανάκτηση και εξέταση της πρώτης απάντησης
     $response = $responses->first();    
@@ -98,13 +98,13 @@ try {
     $request = new SendInvoices();
     $responses = $request->handle($invoicesArray);
         
-    // Ανάκτηση του XML αίτησης
+    // Ανάκτηση του XML αίτησης (προαιρετικό)
     $requestDom = $request->getRequestDom();
         
-    // Ανάκτηση του XML απάντησης
-    // Η απάντηση περιέχει τα αποτελέσματα και για τα 3 παραστατικά
-    $responseDom = $request->getRequestDom();
+    // Ανάκτηση του XML απάντησης (προαιρετικό)
+    $responseDom = $request->getResponseDom();
         
+    // Η απάντηση $responses περιέχει τα αποτελέσματα και για τα 3 παραστατικά
     foreach ($responses as $response) {
         $index = $response->getIndex() - 1;
         
