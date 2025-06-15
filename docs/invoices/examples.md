@@ -45,10 +45,14 @@ try {
     // Ανάκτηση του XML αίτησης
     $requestDom = $request->getRequestDom();
     $requestXml = $requestDom->saveXML();
+    // ή
+    $requestXml = $request->getRequestXml();
         
     // Ανάκτηση του XML απάντησης
-    $responseDom = $request->getRequestDom();
+    $responseDom = $request->getResponseDom();
     $responseXml = $responseDom->saveXML();
+    // ή
+    $requestXml = $request->getResponseXML();
     
     // Ανάκτηση και εξέταση της πρώτης απάντησης
     $response = $responses->first();    
