@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:inv="http://www.aade.gr/myDATA/invoice/v1.0" xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" targetNamespace="http://www.aade.gr/myDATA/invoice/v1.0" elementFormDefault="qualified" version="1.0.10">
-	<xs:import namespace="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" schemaLocation="incomeClassification-v1.0.10.xsd"/>
-	<xs:import namespace="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" schemaLocation="expensesClassification-v1.0.10.xsd"/>
-	<xs:include schemaLocation="SimpleTypes-v1.0.10.xsd"/>
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:inv="http://www.aade.gr/myDATA/invoice/v1.0" xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" targetNamespace="http://www.aade.gr/myDATA/invoice/v1.0" elementFormDefault="qualified" version="1.0.11">
+	<xs:import namespace="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" schemaLocation="incomeClassification-v1.0.11.xsd"/>
+	<xs:import namespace="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" schemaLocation="expensesClassification-v1.0.11.xsd"/>
+	<xs:include schemaLocation="SimpleTypes-v1.0.11.xsd"/>
 	<xs:element name="InvoicesDoc">
 		<xs:annotation>
 			<xs:documentation>Παραστατικό ΑΑΔΕ</xs:documentation>
@@ -38,14 +38,14 @@
 			</xs:element>
 			<xs:element name="transmissionFailure" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Αδυναμία Επικοινωνίας Παρόχου ή Αδυναμία διαβίβασης ERP</xs:documentation>
+					<xs:documentation>Αδυναμία Επικοινωνίας Παρόχου ή Αδυναμία διαβίβασης ERP ή διαβίβαση μέσω Παρόχου για τις οντότητες άρθρου 5, 2η παράγραφος της περ. 1γ </xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:byte">
 						<xs:minInclusive value="1"/>
-						<xs:maxInclusive value="3"/>
+						<xs:maxInclusive value="4"/>
 					</xs:restriction>
-				</xs:simpleType>
+				</xs:simpleType>				
 			</xs:element>
 			<xs:element name="issuer" type="inv:PartyType" minOccurs="0">
 				<xs:annotation>
@@ -195,7 +195,7 @@
 				<xs:simpleType>
 					<xs:restriction base="xs:int">
 						<xs:minInclusive value="1"/>
-						<xs:maxInclusive value="19"/>
+						<xs:maxInclusive value="20"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -386,12 +386,12 @@
 			</xs:element>
 			<xs:element name="stampDutyAmount" type="inv:AmountType" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Ποσό Χαρτοσήμου</xs:documentation>
+					<xs:documentation>Ποσό Ψηφιακού Τέλους συναλλαγής</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="stampDutyPercentCategory" type="inv:StampDutyType" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Κατηγορία Συντελεστή  Χαρτοσήμου</xs:documentation>
+					<xs:documentation>Κατηγορία Συντελεστή Ψηφιακού Τέλους συναλλαγής</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="feesAmount" type="inv:AmountType" minOccurs="0">

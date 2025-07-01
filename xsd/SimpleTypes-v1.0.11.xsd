@@ -581,7 +581,7 @@
 <xs:simpleType name="SpecialInvoiceCategoryType">
 	<xs:restriction base="xs:int">
 		<xs:minInclusive value="1"/>
-		<xs:maxInclusive value="12"/>
+		<xs:maxInclusive value="13"/>
 	</xs:restriction>
 </xs:simpleType>
 <xs:simpleType name="InvoiceVariationType">

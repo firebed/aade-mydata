@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" targetNamespace="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0.10">
-<xs:include schemaLocation="SimpleTypes-v1.0.10.xsd"/>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" targetNamespace="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0.11">
+<xs:include schemaLocation="SimpleTypes-v1.0.11.xsd"/>
   <xs:element name="IncomeClassificationsDoc">
     <xs:annotation>
       <xs:documentation>Χαρατηρισμοί Εσόδων Πρότυπων Παραστατικών ΑΑΔΕ</xs:documentation>

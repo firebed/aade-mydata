@@ -5,7 +5,7 @@ namespace Firebed\AadeMyData\Enums;
 enum SpecialInvoiceCategory: int
 {
     use HasLabels;
-    
+
     /**
      *  Επιδοτήσεις – Επιχορηγήσεις
      */
@@ -33,7 +33,7 @@ enum SpecialInvoiceCategory: int
 
     /**
      * Σύνθετες συναλλαγές ημεδαπής – αλλοδαπής
-     * 
+     *
      * @version 1.0.7
      */
     case TYPE_5 = 5;
@@ -41,7 +41,7 @@ enum SpecialInvoiceCategory: int
 
     /**
      * Δικαιούχοι του άρθρου 3 της υπό στοιχεία 139818 ΕΞ2022/28.09.2022 (Β’5083) κοινής υπουργικής απόφασης
-     * 
+     *
      * @version 1.0.7
      */
     case TYPE_6 = 6;
@@ -49,7 +49,7 @@ enum SpecialInvoiceCategory: int
 
     /**
      * Αγορά αγροτικών αγαθών υπηρεσιών Άρθρο 41 του Κώδικα ΦΠΑ
-     * 
+     *
      * @version 1.0.7
      */
     case TYPE_7 = 7;
@@ -58,7 +58,7 @@ enum SpecialInvoiceCategory: int
     /**
      * Έσοδα Λιανικών ΦΗΜ ΑΑΔΕ_1
      * Μόνο για ανάγνωση – μη έγκυρη τιμή για αποστολή μέσω ERP / Πάροχο
-     * 
+     *
      * @version 1.0.7
      */
     case TYPE_8 = 8;
@@ -86,11 +86,20 @@ enum SpecialInvoiceCategory: int
      */
     case TYPE_11 = 11;
 
-    
+
     /**
      *  Συναλλαγές εστίασης
      */
     case TYPE_12 = 12;
+
+
+    /**
+     * Ένδειξη Δυσχέρεια Συσχέτισης
+     * Έγκυρη τιμή μόνο για τύπους παραστατικών 11.4 και 14.30
+     *
+     * @version 1.0.11
+     */
+    case TYPE_13 = 13;
 
     public function label(): string
     {
@@ -107,6 +116,7 @@ enum SpecialInvoiceCategory: int
             self::TYPE_10 => "Έσοδα Λιανικών ΦΗΜ Επιχείρησης Απόκλιση",
             self::TYPE_11 => "Επίδομα Θέρμανσης",
             self::TYPE_12 => "Συναλλαγές εστίασης",
+            self::TYPE_13 => "Ένδειξη Δυσχέρεια Συσχέτισης",
         };
     }
 }
