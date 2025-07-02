@@ -30,7 +30,7 @@ To use this package, you will need first a `aade id` and a `Subscription key`. Y
 
 | Version | PHP | myDATA  | Support |
 |---------|-----|---------|---------|
-| ^v5.x   | 8.1 | v1.0.10 | Active  |
+| ^v5.x   | 8.1 | v1.0.11 | Active  |
 | ^v4.x   | 8.1 | v1.0.8  | Ended   |
 | ^v3.x   | 8.1 | v1.0.7  | Ended   |
 | ^v2.x   | 8.1 | v1.0.5  | Ended   |
@@ -124,6 +124,7 @@ try {
 | [SendPaymentsMethod](http://docs.invoicemaker.gr/http/send-payments-method)                 | :white_check_mark: |
 | [SendIncomeClassification](http://docs.invoicemaker.gr/http/send-income-classification)     | :white_check_mark: |
 | [SendExpensesClassification](http://docs.invoicemaker.gr/http/send-expenses-classification) | :white_check_mark: |
+| [CancelDeliveryNote](http://docs.invoicemaker.gr/http/cancel-delivery-note) (Για παρόχους)  | :white_check_mark: |
 
 ## Digital Client (Car rental, parking/wash, workshops)
 

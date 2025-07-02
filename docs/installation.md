@@ -34,7 +34,7 @@ composer require firebed/aade-mydata
 - [Δοκιμαστικό περιβάλλον](https://www.aade.gr/mydata/dokimastiko-periballon)
 - [Εγγραφή στο δοκιμαστικό περιβάλλον](https://mydata-dev-register.azurewebsites.net/)
 - [Εγγραφή στο παραγωγικό περιβάλλον](https://www.aade.gr/mydata)
-- [Επίσημη τεκμηρίωση ΑΑΔΕ myDATA (PDF v1.0.8)](https://aade.gr/sites/default/files/2024-02/myDATA%20API%20Documentation%20v1.0.8_preofficial_erp_1.pdf)
+- [Επίσημη τεκμηρίωση ΑΑΔΕ myDATA (PDF v1.0.11)](https://www.aade.gr/sites/default/files/2025-06/myDATA%20API%20Documentation%20v1.0.11_official_erp.pdf)
 
 ## Αρχικοποίηση
 
@@ -65,24 +65,29 @@ MyDataRequest::verifyClient(false);
 ```
 
 ## Διαθέσιμες λειτουργίες
-- Διαβίβαση παραστατικών ([SendInvoices](./http/send-invoices))
-- Διαβίβαση χαρακτηρισμών εσόδων ([SendIncomeClassification](./http/send-income-classification))
-- Διαβίβαση χαρακτηρισμών εξόδων ([SendExpensesClassification](./http/send-expenses-classification))
-- Διαβίβαση πληρωμών ([SendPaymentsMethod](./http/send-payments-method))
+- Λήψη Βασικών Στοιχείων Μητρώου ΑΦΜ ([SendInvoices](./http/search-vat))
+- Αποστολή παραστατικών ([SendInvoices](./http/send-invoices))
 - Ακύρωση παραστατικού ([CancelInvoice](./http/cancel-invoice))
 - Λήψη παραστατικών ([RequestDocs](./http/request-docs))
 - Λήψη εκδοθέντων παραστατικών ([RequestTransmittedDocs](./http/request-transmitted-docs))
 - Λήψη εσόδων ([RequestMyIncome](./http/request-my-income))
 - Λήψη εξόδων ([RequestMyExpenses](./http/request-my-expenses))
 - Λήψη αναφορών ΦΠΑ ([RequestVatInfo](./http/request-vat-info))
+- Λήψη αναφορών Ε3 ([RequestE3Info](./http/request-e3-info))
+- Διαβίβαση πληρωμών ([SendPaymentsMethod](./http/send-payments-method))
+- Διαβίβαση χαρακτηρισμών εσόδων ([SendIncomeClassification](./http/send-income-classification))
+- Διαβίβαση χαρακτηρισμών εξόδων ([SendExpensesClassification](./http/send-expenses-classification))
+- Ακύρωση δελτίων αποστολής ([CancelDeliveryNote](./http/cancel-delivery-note))
 
 ## Αρχεία XSD
 
-- [expensesClassification-v1.0.9.xsd](../xsd/expensesClassification-v1.0.9.xsd)
-- [incomeClassification-v1.0.9.xsd](../xsd/incomeClassification-v1.0.9.xsd)
-- [InvoicesDoc-v1.0.9.xsd](../xsd/InvoicesDoc-v1.0.9.xsd)
-- [paymentsMethod-v1.0.9.xsd](../xsd/paymentMethods-v1.0.9.xsd)
-- [requestedInvoicesDoc-v1.0.9.xsd](../xsd/requestedInvoicesDoc-v1.0.9.xsd)
-- [RequestedProviderDoc-v1.0.9.xsd](../xsd/RequestedProviderDoc-v1.0.9.xsd)
-- [RequestVatInfoResponse-v1.0.9.xsd](../xsd/RequestVatInfoResponse-v1.0.9.xsd)
-- [response-v1.0.9.xsd](../xsd/response-v1.0.9.xsd)
+- [expensesClassification-v1.0.11.xsd](../xsd/expensesClassification-v1.0.11.xsd)
+- [incomeClassification-v1.0.11.xsd](../xsd/incomeClassification-v1.0.11.xsd)
+- [InvoicesDoc-v1.0.11.xsd](../xsd/InvoicesDoc-v1.0.11.xsd)
+- [paymentsMethod-v1.0.11.xsd](../xsd/paymentMethods-v1.0.11.xsd)
+- [RequestE3InfoResponse-v1.0.11.xsd](../xsd/RequestE3InfoResponse-v1.0.11.xsd)
+- [requestedInvoicesDoc-v1.0.11.xsd](../xsd/requestedInvoicesDoc-v1.0.11.xsd)
+- [RequestedProviderDoc-v1.0.11.xsd](../xsd/RequestedProviderDoc-v1.0.11.xsd)
+- [RequestVatInfoResponse-v1.0.11.xsd](../xsd/RequestVatInfoResponse-v1.0.11.xsd)
+- [response-v1.0.11.xsd](../xsd/response-v1.0.11.xsd)
+- [SimpleTypes-v1.0.11.xsd](../xsd/SimpleTypes-v1.0.11.xsd)

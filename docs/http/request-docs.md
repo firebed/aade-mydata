@@ -63,7 +63,9 @@ https://mydataapidev.aade.gr/RequestDocs
 ### Παράδειγμα κλήσης χωρίς `continuationToken`
 
 ```php
-use Firebed\AadeMyData\Enums\InvoiceType;use Firebed\AadeMyData\Exceptions\MyDataException;use Firebed\AadeMyData\Http\RequestDocs;
+use Firebed\AadeMyData\Enums\InvoiceType;
+use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Http\RequestDocs;
 
 $request = new RequestDocs();
 
@@ -84,7 +86,8 @@ try {
 ### Παράδειγμα κλήσης με `continuationToken`
 
 ```php
-use Firebed\AadeMyData\Enums\InvoiceType;use Firebed\AadeMyData\Http\RequestDocs;
+use Firebed\AadeMyData\Enums\InvoiceType;
+use Firebed\AadeMyData\Http\RequestDocs;
 
 try {
   // Λήψη πρώτης σελίδας αποτελεσμάτων
