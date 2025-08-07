@@ -4,6 +4,7 @@ namespace Firebed\AadeMyData\Enums;
 
 use Firebed\AadeMyData\Services\CategoryClassificationCollection;
 use Firebed\AadeMyData\Services\Classifications;
+use Firebed\AadeMyData\Services\TypeClassificationCollection;
 
 enum InvoiceType: string
 {
@@ -554,12 +555,12 @@ enum InvoiceType: string
         };
     }
 
-    public function incomeClassifications(IncomeClassificationCategory $category = null): CategoryClassificationCollection
+    public function incomeClassifications(IncomeClassificationCategory $category = null): CategoryClassificationCollection|TypeClassificationCollection
     {
         return Classifications::incomeClassifications($this, $category);
     }
 
-    public function expenseClassifications(ExpenseClassificationCategory $category = null): CategoryClassificationCollection
+    public function expenseClassifications(ExpenseClassificationCategory $category = null): CategoryClassificationCollection|TypeClassificationCollection
     {
         return Classifications::expenseClassifications($this, $category);
     }
