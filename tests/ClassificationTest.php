@@ -71,6 +71,13 @@ class ClassificationTest extends TestCase
         $this->assertFalse($types->contains(IncomeClassificationType::E3_596));
     }
 
+    public function test_income_category_classifications_contain_type()
+    {
+        $categories = IncomeClassificationCategory::CATEGORY_1_1->for(InvoiceType::TYPE_1_1);
+        $this->assertTrue($categories->contains(IncomeClassificationType::E3_561_001));
+        $this->assertFalse($categories->contains(IncomeClassificationType::E3_106));
+    }
+
     public function test_income_classification_types_array()
     {
         $expected = $this->incomeClassifications['1.1']['category1_1'];
@@ -194,7 +201,7 @@ class ClassificationTest extends TestCase
         }
     }
 
-    public function test_expense_classification_contains_type()
+    public function test_expense_type_classification_contains_type()
     {
         $classifications = InvoiceType::TYPE_1_1->expenseClassifications();
 
@@ -203,6 +210,13 @@ class ClassificationTest extends TestCase
 
         $this->assertFalse($classifications->contains(ExpenseClassificationCategory::CATEGORY_2_6));
         $this->assertFalse($classifications->get(ExpenseClassificationCategory::CATEGORY_2_1)->contains(ExpenseClassificationType::E3_586));
+    }
+
+    public function test_expense_category_classification_contains_type()
+    {
+        $categories = ExpenseClassificationCategory::CATEGORY_2_1->for(InvoiceType::TYPE_1_1);
+        $this->assertTrue($categories->contains(ExpenseClassificationType::E3_102_001));
+        $this->assertFalse($categories->contains(ExpenseClassificationType::E3_106));
     }
 
     public function test_expense_type_classifications_contain_type()

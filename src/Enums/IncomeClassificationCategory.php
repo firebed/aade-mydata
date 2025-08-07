@@ -4,11 +4,12 @@ namespace Firebed\AadeMyData\Enums;
 
 use Firebed\AadeMyData\Services\CategoryClassificationCollection;
 use Firebed\AadeMyData\Services\Classifications;
+use Firebed\AadeMyData\Services\TypeClassificationCollection;
 
 enum IncomeClassificationCategory: string
 {
     use HasLabels;
-    
+
     /**
      * Έσοδα από Πώληση Εμπορευμάτων (+) / (-)
      */
@@ -98,7 +99,7 @@ enum IncomeClassificationCategory: string
         };
     }
 
-    public function for(InvoiceType $type): CategoryClassificationCollection
+    public function for(InvoiceType $type): CategoryClassificationCollection|TypeClassificationCollection
     {
         return Classifications::incomeClassifications($type, $this);
     }

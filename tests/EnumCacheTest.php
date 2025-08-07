@@ -16,7 +16,7 @@ class EnumCacheTest extends TestCase
         // Reset the static enum cache after each test
         $reflection = new ReflectionClass(Type::class);
         $enumCacheProperty = $reflection->getProperty('enumCache');
-        $enumCacheProperty->setValue([]);
+        $enumCacheProperty->setValue(null, []);
     }
 
     public function test_enum_cache_is_updated_after_check()
