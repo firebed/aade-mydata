@@ -152,7 +152,7 @@ class InvoiceSummary extends Type
     }
 
     /**
-     * @return float|null Σύνολο Χαρτοσήμου
+     * @return float|null Σύνολο Ψηφιακού Τέλους Συναλλαγής
      */
     public function getTotalStampDutyAmount(): ?float
     {
@@ -160,7 +160,7 @@ class InvoiceSummary extends Type
     }
 
     /**
-     * Το σύνολο χαρτοσήμου ($totalStampDutyAmount) είναι είτε το
+     * Το σύνολο Ψηφιακού Τέλους Συναλλαγής ($totalStampDutyAmount) είναι είτε το
      * άθροισμα των αντίστοιχων φόρων των γραμμών του παραστατικού,
      * είτε των αντίστοιχων φόρων που περιέχονται στο στοιχείο taxesTotals.
      *
@@ -169,7 +169,7 @@ class InvoiceSummary extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param  float  $totalStampDutyAmount  Σύνολο Χαρτοσήμου
+     * @param  float  $totalStampDutyAmount  Σύνολο Ψηφιακού Τέλους συναλλαγής
      */
     public function setTotalStampDutyAmount(float $totalStampDutyAmount): static
     {

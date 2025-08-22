@@ -19,7 +19,7 @@
   - `TaxType::TYPE_1` για τον [Παρακρατούμενο Φόρο](../appendix/withheld-percent-categories)
   - `TaxType::TYPE_2` για τα [Τέλη](../appendix/fees-percent-categories)
   - `TaxType::TYPE_3` για τους [Λοιπούς Φόρους](../appendix/other-taxes-percent-categories)
-  - `TaxType::TYPE_4` για τα [Χαρτόσημα](../appendix/stamp-categories)
+  - `TaxType::TYPE_4` για το [Ψηφιακό Τέλος Συναλλαγής](../appendix/stamp-categories)
   - `TaxType::TYPE_5` για τις Κρατήσεις
 - Το πεδίο `taxCategory` μπορεί να πάρει κάθε φορά οποιαδήποτε τιμή από τον
   αντίστοιχο πίνακα του Παραρτήματος του φόρου που αναφέρεται στο πεδίο

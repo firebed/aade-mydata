@@ -15,7 +15,7 @@
 | vatAmount         | Ποσό ΦΠΑ                        |
 | withheldAmount    | Ποσό Παρακράτησης Φόρου         |
 | otherTaxesAmount  | Ποσό Λοιπών Φόρων               |
-| stampDutyAmount   | Ποσό Χαρτοσήμου                 |
+| stampDutyAmount   | Ποσό Ψηφιακού Τέλους Συναλλαγής |
 | feesAmount        | Ποσό Τελών                      |
 | deductionsAmount  | Ποσό Κρατήσεων                  |
 | thirdPartyAmount  | Ποσό Περί Τρίτων                |
