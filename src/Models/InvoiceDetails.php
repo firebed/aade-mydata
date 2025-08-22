@@ -120,7 +120,7 @@ class InvoiceDetails extends Type
      * <li>Στην περίπτωση αποστολής γραμμών με recType = 2 (γραμμή τέλους με ΦΠΑ)
      * ή/και recType = 3 (Γραμμή Λοιπών Φόρων με Φ.Π.Α.), θα επιτρέπεται παράλληλα,
      * εφόσον είναι επιθυμητό, η αποστολή παρακρατούμενων / τελών / λοιπών φόρων /
-     * χαρτοσήμου / κρατήσεων και σε επίπεδο παραστατικού και όχι υποχρεωτικά ανά
+     * ψηφιακού τέλους συναλλαγής / κρατήσεων και σε επίπεδο παραστατικού και όχι υποχρεωτικά ανά
      * γραμμή σύνοψης παραστατικού.</li>
      *
      * <li>Στις περιπτώσεις αυτών των γραμμών, τα ποσά που αντιστοιχούν στα τέλη με ΦΠΑ
@@ -128,8 +128,8 @@ class InvoiceDetails extends Type
      * στο πεδίο της καθαρής αξίας της γραμμής (netValue), ενώ τα αντίστοιχα πεδία
      * ποσό τέλους (feesAmount) ή ποσό λοιπών φόρων (otherTaxesAmount) δε θα συμπληρώνονται.</li
      * Επίσης στις γραμμές αυτές δεν επιτρέπεται η αποστολή άλλων ειδών
-     * φόρων/τελών/κρατήσεων/χαρτοσήμου (π.χ. σε μια γραμμή με recType = 2 δεν επιτρέπονται
-     * στη γραμμή αυτή η αποστολή λοιπών φόρων/κρατήσεων/παρακρατούμενων/χαρτοσήμου).</li>
+     * φόρων/τελών/κρατήσεων/ψηφιακού τέλους συναλλαγής (π.χ. σε μια γραμμή με recType = 2 δεν επιτρέπονται
+     * στη γραμμή αυτή η αποστολή λοιπών φόρων/κρατήσεων/παρακρατούμενων/ψηφιακού τέλους συναλλαγής).</li>
      *
      * <li>Η αποστολή με recType = 7 (αρνητικό πρόσημο αξιών) επιτρέπεται μόνο στην
      * περίπτωση διαβίβασης παραστατικών 17.3, 17.4, 17.5 και 17.6 και με αυτόν τον
@@ -420,7 +420,7 @@ class InvoiceDetails extends Type
     }
 
     /**
-     * @return float|null Ποσό Χαρτοσήμου
+     * @return float|null Ποσό Ψηφιακού Τέλους Συναλλαγής
      */
     public function getStampDutyAmount(): ?float
     {
@@ -433,7 +433,7 @@ class InvoiceDetails extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param  float|null  $stampDutyAmount  Ποσό Χαρτοσήμου
+     * @param  float|null  $stampDutyAmount  Ποσό Ψηφιακού Τέλους Συναλλαγής
      * @return InvoiceDetails
      */
     public function setStampDutyAmount(?float $stampDutyAmount): static
@@ -451,7 +451,7 @@ class InvoiceDetails extends Type
     }
 
     /**
-     * @return StampCategory|null Κατηγορία Συντελεστή Χαρτοσήμου
+     * @return StampCategory|null Κατηγορία Συντελεστή Ψηφιακού Τέλους Συναλλαγής
      */
     public function getStampDutyPercentCategory(): ?StampCategory
     {
@@ -459,7 +459,7 @@ class InvoiceDetails extends Type
     }
 
     /**
-     * @param  StampCategory|string|null  $stampDutyPercentCategory  Κατηγορία Συντελεστή Χαρτοσήμου
+     * @param  StampCategory|string|null  $stampDutyPercentCategory  Κατηγορία Συντελεστή Ψηφιακού Τέλους Συναλλαγής
      * @return InvoiceDetails
      */
     public function setStampDutyPercentCategory(StampCategory|string|null $stampDutyPercentCategory): static

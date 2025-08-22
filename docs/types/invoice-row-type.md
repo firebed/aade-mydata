@@ -4,39 +4,39 @@
 
 ## Το αντικείμενο αυτό περιέχει τα εξής πεδία:
 
-| Πεδίο                                                                       | Υποχρεωτικό | Περιγραφή                                      |
-|-----------------------------------------------------------------------------|-------------|------------------------------------------------|
-| lineNumber                                                                  | **Ναι**     | ΑΑ γραμμής (ελάχιστη τιμή 1)                   |
-| [**recType**](../appendix/rec-types)                                        | Όχι         | Είδος Γραμμής                                  |
-| [**fuelCode**](../appendix/fuel-types)                                      | Όχι         | Κωδικός Καυσίμου                               |
-| quantity                                                                    | Όχι         | Ποσότητα (ελάχιστη τιμή 0)                     |
-| [**measurementUnit**](../appendix/measurement-units)                        | Όχι         | Είδος Ποσότητας                                |
-| [**invoiceDetailType**](../appendix/invoice-detail-types)                   | Όχι         | Επισήμανση                                     |
-| netValue                                                                    | **Ναι**     | Καθαρή αξία                                    |
-| [**vatCategory**](../appendix/vat-categories)                               | **Ναι**     | Κατηγορία ΦΠΑ                                  |
-| vatCategory                                                                 | **Ναι**     | Ποσό ΦΠΑ                                       |
-| [**vatExemptionCategory**](../appendix/vat-exemption-categories)            | Όχι         | Κατηγορία Αιτίας Εξαίρεσης ΦΠΑ                 |
-| [**dienergia**](ship-type)                                                  | Όχι         | ΠΟΛ 1177/2018 Αρ. 27                           |
-| discountOption                                                              | Όχι         | Δικαίωμα Έκπτωσης (`boolean`)                  |
-| withheldAmount                                                              | Όχι         | Ποσό Παρακράτησης Φόρου                        |
-| [**withheldPercentCategory**](../appendix/withheld-percent-categories)      | Όχι         | Κατηγορία Συντελεστή Παρακράτησης Φόρου        |
-| stampDutyAmount                                                             | Όχι         | Ποσό Χαρτοσήμου                                |
-| [**stampDutyPercentCategory**](../appendix/stamp-categories)                | Όχι         | Κατηγορία Συντελεστή Χαρτοσήμου                |
-| feesAmount                                                                  | Όχι         | Ποσό Τελών                                     |
-| [**feesPercentCategory**](../appendix/fees-percent-categories)              | Όχι         | Κατηγορία Συντελεστή Τελών                     |
-| otherTaxesAmount                                                            | Όχι         | Ποσό Λοιπών Φόρων                              |
-| [**otherTaxesPercentCategory**](../appendix/other-taxes-percent-categories) | Όχι         | Κατηγορία Συντελεστή Λοιπών Φόρων              |
-| deductionsAmount                                                            | Όχι         | Ποσό Κρατήσεων                                 |
-| lineComments                                                                | Όχι         | Σχόλια Γραμμής                                 |
-| [**incomeClassification[]**](income-classification-type)                    | Όχι         | Χαρακτηρισμοί Εσόδων                           |
-| [**expensesClassification[]**](expenses-classification-type)                | Όχι         | Χαρακτηρισμοί Εξόδων                           |
-| quantity15                                                                  | Όχι         | Ποσότητα Θερμοκρασίας 15 βαθμών                |
-| itemDescr                                                                   | Όχι         | Περιγραφή Είδους                               |
-| TaricNo                                                                     | Όχι         | Κωδικός Taric                                  |
-| itemCode                                                                    | Όχι         | Κωδικός Είδους                                 |
-| otherMeasurementUnitQuantity                                                | Όχι         | Πλήθος Μονάδας Μέτρησης Τεμάχια Άλλα           |
-| otherMeasurementUnitTitle                                                   | Όχι         | Τίτλος Μονάδας Μέτρησης Τεμάχια Άλλα           |
-| notVAT195                                                                   | Όχι         | Ένδειξη μη συμμετοχής στο ΦΠΑ (έσοδα – εκροές) |
+| Πεδίο                                                                       | Υποχρεωτικό | Περιγραφή                                       |
+|-----------------------------------------------------------------------------|-------------|-------------------------------------------------|
+| lineNumber                                                                  | **Ναι**     | ΑΑ γραμμής (ελάχιστη τιμή 1)                    |
+| [**recType**](../appendix/rec-types)                                        | Όχι         | Είδος Γραμμής                                   |
+| [**fuelCode**](../appendix/fuel-types)                                      | Όχι         | Κωδικός Καυσίμου                                |
+| quantity                                                                    | Όχι         | Ποσότητα (ελάχιστη τιμή 0)                      |
+| [**measurementUnit**](../appendix/measurement-units)                        | Όχι         | Είδος Ποσότητας                                 |
+| [**invoiceDetailType**](../appendix/invoice-detail-types)                   | Όχι         | Επισήμανση                                      |
+| netValue                                                                    | **Ναι**     | Καθαρή αξία                                     |
+| [**vatCategory**](../appendix/vat-categories)                               | **Ναι**     | Κατηγορία ΦΠΑ                                   |
+| vatCategory                                                                 | **Ναι**     | Ποσό ΦΠΑ                                        |
+| [**vatExemptionCategory**](../appendix/vat-exemption-categories)            | Όχι         | Κατηγορία Αιτίας Εξαίρεσης ΦΠΑ                  |
+| [**dienergia**](ship-type)                                                  | Όχι         | ΠΟΛ 1177/2018 Αρ. 27                            |
+| discountOption                                                              | Όχι         | Δικαίωμα Έκπτωσης (`boolean`)                   |
+| withheldAmount                                                              | Όχι         | Ποσό Παρακράτησης Φόρου                         |
+| [**withheldPercentCategory**](../appendix/withheld-percent-categories)      | Όχι         | Κατηγορία Συντελεστή Παρακράτησης Φόρου         |
+| stampDutyAmount                                                             | Όχι         | Ποσό Ψηφιακού Τέλους Συναλλαγής                 |
+| [**stampDutyPercentCategory**](../appendix/stamp-categories)                | Όχι         | Κατηγορία Συντελεστή Ψηφιακού Τέλους Συναλλαγής |
+| feesAmount                                                                  | Όχι         | Ποσό Τελών                                      |
+| [**feesPercentCategory**](../appendix/fees-percent-categories)              | Όχι         | Κατηγορία Συντελεστή Τελών                      |
+| otherTaxesAmount                                                            | Όχι         | Ποσό Λοιπών Φόρων                               |
+| [**otherTaxesPercentCategory**](../appendix/other-taxes-percent-categories) | Όχι         | Κατηγορία Συντελεστή Λοιπών Φόρων               |
+| deductionsAmount                                                            | Όχι         | Ποσό Κρατήσεων                                  |
+| lineComments                                                                | Όχι         | Σχόλια Γραμμής                                  |
+| [**incomeClassification[]**](income-classification-type)                    | Όχι         | Χαρακτηρισμοί Εσόδων                            |
+| [**expensesClassification[]**](expenses-classification-type)                | Όχι         | Χαρακτηρισμοί Εξόδων                            |
+| quantity15                                                                  | Όχι         | Ποσότητα Θερμοκρασίας 15 βαθμών                 |
+| itemDescr                                                                   | Όχι         | Περιγραφή Είδους                                |
+| TaricNo                                                                     | Όχι         | Κωδικός Taric                                   |
+| itemCode                                                                    | Όχι         | Κωδικός Είδους                                  |
+| otherMeasurementUnitQuantity                                                | Όχι         | Πλήθος Μονάδας Μέτρησης Τεμάχια Άλλα            |
+| otherMeasurementUnitTitle                                                   | Όχι         | Τίτλος Μονάδας Μέτρησης Τεμάχια Άλλα            |
+| notVAT195                                                                   | Όχι         | Ένδειξη μη συμμετοχής στο ΦΠΑ (έσοδα – εκροές)  |
 
 ## Παρατηρήσεις
 
@@ -55,15 +55,15 @@
     - Στην περίπτωση αποστολής γραμμών με `recType = 2` (γραμμή τέλους με ΦΠΑ)
       ή/και `recType = 3` (Γραμμή Λοιπών Φόρων με Φ.Π.Α.), θα επιτρέπεται παράλληλα,
       εφόσον είναι επιθυμητό, η αποστολή παρακρατούμενων / τελών / λοιπών φόρων /
-      χαρτοσήμου / κρατήσεων και σε επίπεδο παραστατικού και όχι υποχρεωτικά ανά
+      ψηφιακού τέλους συναλλαγής / κρατήσεων και σε επίπεδο παραστατικού και όχι υποχρεωτικά ανά
       γραμμή σύνοψης παραστατικού. Στις περιπτώσεις αυτών των γραμμών, τα ποσά
       που αντιστοιχούν στα τέλη με ΦΠΑ (`recType = 2`) ή τους λοιπούς φόρους
       (`recType = 3`) αντίστοιχα, θα αποστέλλονται στο πεδίο της καθαρής αξίας της γραμμής
       (`netValue`), ενώ τα αντίστοιχα πεδία ποσό τέλους (`feesAmount`) ή ποσό λοιπών
       φόρων (`otherTaxesAmount`) δε θα συμπληρώνονται. Επίσης, στις γραμμές αυτές
-      δεν επιτρέπεται η αποστολή άλλων ειδών φόρων/τελών/κρατήσεων/χαρτοσήμου
+      δεν επιτρέπεται η αποστολή άλλων ειδών φόρων/τελών/κρατήσεων/ψηφιακού τέλους συναλλαγής
       (π.χ. σε μια γραμμή με `recType = 2` δεν επιτρέπονται στη γραμμή αυτή η αποστολή
-      λοιπών φόρων/κρατήσεων/παρακρατούμενων/χαρτοσήμου).
+      λοιπών φόρων/κρατήσεων/παρακρατούμενων/ψηφιακού τέλους συναλλαγής).
     - Η αποστολή με `recType = 7` (αρνητικό πρόσημο αξιών) επιτρέπεται μόνο στην
       περίπτωση διαβίβασης παραστατικών `17.3`, `17.4`, `17.5` και `17.6` και με αυτόν τον
       τρόπο υποδηλώνεται ότι οι αξίες της γραμμής είναι αρνητικές (στα αντίστοιχα

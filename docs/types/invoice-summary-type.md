@@ -4,18 +4,18 @@
 
 ## Το αντικείμενο αυτό περιέχει τα εξής πεδία:
 
-| Πεδίο                                                        | Υποχρεωτικό | Περιγραφή                  |
-|--------------------------------------------------------------|-------------|----------------------------|
-| totalNetValue                                                | **Ναι**     | Σύνολο Καθαρής Αξίας       |
-| totalVatAmount                                               | **Ναι**     | Σύνολο ΦΠΑ                 |
-| totalWithheldAmount                                          | **Ναι**     | Σύνολο Παρακρατήσεων Φόρων |
-| totalFeesAmount                                              | **Ναι**     | Σύνολο Τελών               |
-| totalStampDutyAmount                                         | **Ναι**     | Σύνολο Χαρτοσήμου          |
-| totalOtherTaxesAmount                                        | **Ναι**     | Σύνολο Λοιπών Φόρων        |
-| totalDeductionsAmount                                        | **Ναι**     | Σύνολο Κρατήσεων           |
-| totalGrossValue                                              | **Ναι**     | Συνολική Αξία              |
-| [**incomeClassification[]**](income-classification-type)     | Όχι         | Χαρακτηρισμοί Εσόδων       |
-| [**expensesClassification[]**](expenses-classification-type) | Όχι         | Χαρακτηρισμοί Εξόδων       |
+| Πεδίο                                                        | Υποχρεωτικό | Περιγραφή                         |
+|--------------------------------------------------------------|-------------|-----------------------------------|
+| totalNetValue                                                | **Ναι**     | Σύνολο Καθαρής Αξίας              |
+| totalVatAmount                                               | **Ναι**     | Σύνολο ΦΠΑ                        |
+| totalWithheldAmount                                          | **Ναι**     | Σύνολο Παρακρατήσεων Φόρων        |
+| totalFeesAmount                                              | **Ναι**     | Σύνολο Τελών                      |
+| totalStampDutyAmount                                         | **Ναι**     | Σύνολο Ψηφιακού Τέλους Συναλλαγής |
+| totalOtherTaxesAmount                                        | **Ναι**     | Σύνολο Λοιπών Φόρων               |
+| totalDeductionsAmount                                        | **Ναι**     | Σύνολο Κρατήσεων                  |
+| totalGrossValue                                              | **Ναι**     | Συνολική Αξία                     |
+| [**incomeClassification[]**](income-classification-type)     | Όχι         | Χαρακτηρισμοί Εσόδων              |
+| [**expensesClassification[]**](expenses-classification-type) | Όχι         | Χαρακτηρισμοί Εξόδων              |
 
 ## Παρατηρήσεις
 

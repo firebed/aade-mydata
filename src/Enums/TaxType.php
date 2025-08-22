@@ -24,7 +24,7 @@ enum TaxType: int
     case TYPE_3 = 3;
 
     /**
-     * Χαρτόσημο
+     * Ψηφιακό Τέλος Συναλλαγής
      */
     case TYPE_4 = 4;
 
@@ -82,7 +82,7 @@ enum TaxType: int
                 self::TYPE_1 => $taxCategory instanceof WithheldPercentCategory, // Παρακρατούμενοι Φόροι
                 self::TYPE_2 => $taxCategory instanceof FeesPercentCategory, // Τέλη
                 self::TYPE_3 => $taxCategory instanceof OtherTaxesPercentCategory, // Άλλοι Φόροι
-                self::TYPE_4 => $taxCategory instanceof StampCategory, // Χαρτόσημο
+                self::TYPE_4 => $taxCategory instanceof StampCategory, // Ψηφιακό Τέλος Συναλλαγής
                 default => false,
             };
         }
@@ -91,7 +91,7 @@ enum TaxType: int
             self::TYPE_1 => WithheldPercentCategory::tryFrom($taxCategory) !== null, // Παρακρατούμενοι Φόροι
             self::TYPE_2 => FeesPercentCategory::tryFrom($taxCategory) !== null, // Τέλη
             self::TYPE_3 => OtherTaxesPercentCategory::tryFrom($taxCategory) !== null, // Άλλοι Φόροι
-            self::TYPE_4 => StampCategory::tryFrom($taxCategory) !== null, // Χαρτόσημο
+            self::TYPE_4 => StampCategory::tryFrom($taxCategory) !== null, // Ψηφιακό Τέλος Συναλλαγής
             default => false,
         };
     }
@@ -102,7 +102,7 @@ enum TaxType: int
             self::TYPE_1 => "Παρακρατούμενος Φόρος",
             self::TYPE_2 => "Τέλη",
             self::TYPE_3 => "Λοιποί Φόροι",
-            self::TYPE_4 => "Χαρτόσημο",
+            self::TYPE_4 => "Ψηφιακό Τέλος Συναλλαγής",
             self::TYPE_5 => "Κρατήσεις",
         };
     }

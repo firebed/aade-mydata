@@ -106,7 +106,7 @@ class BookInfo extends Type
     }
 
     /**
-     * @return string Ποσό Χαρτοσήμου
+     * @return string Ποσό Ψηφιακού Τέλους Συναλλαγής
      */
     public function getStampDutyAmount(): string
     {
