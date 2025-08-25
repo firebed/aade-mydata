@@ -651,4 +651,44 @@ class SquashInvoiceRowsTest extends TestCase
         $this->assertCount(3, $rows);
         $this->assertFalse($invoice->isSquashed());
     }
+
+
+    public function test_expense_classification_with_vat_classification()
+    {
+        $invoice = new Invoice();
+        $invoice->addInvoiceDetails(new InvoiceDetails([
+            'vatCategory' => VatCategory::VAT_1,
+            'netValue' => 10,
+            'invoiceDetailType' => InvoiceDetailType::TYPE_1,
+            'expensesClassification' => [
+                [
+                    'classificationCategory' => ExpenseClassificationCategory::CATEGORY_2_1,
+                    'classificationType' => ExpenseClassificationType::E3_102_001,
+                    'amount' => 10,
+                ],
+                [
+                    'classificationType' => ExpenseClassificationType::VAT_361,
+                    'amount' => 10,
+                ]
+            ]
+        ]));
+
+        $invoice->squashInvoiceRows();
+        $rows = $invoice->getInvoiceDetails();
+
+        $this->assertIsArray($rows);
+        $this->assertCount(1, $rows);
+        $this->assertEquals(10, $rows[0]->getNetValue());
+
+        $this->assertIsArray($rows[0]->getExpensesClassification());
+        $this->assertCount(2, $rows[0]->getExpensesClassification());
+
+        $this->assertEquals(ExpenseClassificationCategory::CATEGORY_2_1, $rows[0]->getExpensesClassification()[0]->getClassificationCategory());
+        $this->assertEquals(ExpenseClassificationType::E3_102_001, $rows[0]->getExpensesClassification()[0]->getClassificationType());
+        $this->assertEquals(10, $rows[0]->getExpensesClassification()[0]->getAmount());
+
+        $this->assertNull($rows[0]->getExpensesClassification()[1]->getClassificationCategory());
+        $this->assertEquals(ExpenseClassificationType::VAT_361, $rows[0]->getExpensesClassification()[1]->getClassificationType());
+        $this->assertEquals(10, $rows[0]->getExpensesClassification()[1]->getAmount());
+    }
 }

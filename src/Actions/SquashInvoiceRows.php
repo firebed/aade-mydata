@@ -217,7 +217,6 @@ class SquashInvoiceRows
 
             $this->roundRow($row);
             $this->roundClassifications($row);
-            $this->adjustClassificationAmount($row);
         }
 
         foreach ($this->rowsWithRecType as $row) {
@@ -301,25 +300,6 @@ class SquashInvoiceRows
                 if ($classification->getVatAmount() !== null) {
                     $classification->setVatAmount(round($classification->getVatAmount(), 2));
                 }
-            }
-        }
-    }
-
-    private function adjustClassificationAmount(InvoiceDetails $row): void
-    {
-        $incomeClassification = $row->getIncomeClassification() ?? [];
-        $expensesClassification = $row->getExpensesClassification() ?? [];
-
-        $classifications = array_merge($incomeClassification, $expensesClassification);
-
-        $classificationSum = array_sum(array_map(fn($item) => $item->getAmount(), $classifications));
-        $diff = round($row->getNetValue() - $classificationSum, 2);
-
-        if ($diff != 0) {
-            end($classifications);
-            $lastKey = key($classifications);
-            if ($lastKey !== null) {
-                $classifications[$lastKey]->addAmount($diff);
             }
         }
     }
