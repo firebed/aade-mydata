@@ -341,7 +341,7 @@ class InvoiceDetails extends Type
      * @param  string|null  $shipId
      * @return InvoiceDetails
      */
-    public function setDienergia(Ship|string|null $dienergia, string $applicationDate = null, string $doy = null, string $shipId = null): static
+    public function setDienergia(Ship|string|null $dienergia, ?string $applicationDate = null, ?string $doy = null, ?string $shipId = null): static
     {
         if ($dienergia instanceof Ship) {
             return $this->set('dienergia', $dienergia);
@@ -641,7 +641,7 @@ class InvoiceDetails extends Type
      * @param  float|null  $amount
      * @return InvoiceDetails
      */
-    public function addIncomeClassification(IncomeClassification|IncomeClassificationType|string|null $type, IncomeClassificationCategory|string $category = null, float $amount = null): static
+    public function addIncomeClassification(IncomeClassification|IncomeClassificationType|string|null $type, IncomeClassificationCategory|string|null $category = null, ?float $amount = null): static
     {
         if ($type instanceof IncomeClassification) {
             $this->push('incomeClassification', $type);
@@ -661,7 +661,7 @@ class InvoiceDetails extends Type
         if (empty($this->getIncomeClassification())) {
             return 0;
         }
-        
+
         return round(array_reduce($this->getIncomeClassification(), function ($carry, IncomeClassification $classification) {
             return $carry + $classification->getAmount();
         }, 0), 2);
@@ -695,7 +695,7 @@ class InvoiceDetails extends Type
      * @param  float|null  $amount
      * @return InvoiceDetails
      */
-    public function addExpensesClassification(ExpensesClassification|ExpenseClassificationType|string|null $type, ExpenseClassificationCategory|string $category = null, float $amount = null): static
+    public function addExpensesClassification(ExpensesClassification|ExpenseClassificationType|string|null $type, ExpenseClassificationCategory|string|null $category = null, ?float $amount = null): static
     {
         if ($type instanceof ExpensesClassification) {
             $this->push('expensesClassification', $type);
@@ -709,13 +709,13 @@ class InvoiceDetails extends Type
 
         return $this;
     }
-    
+
     public function getTotalExpensesClassificationAmount(): float
     {
         if (empty($this->getExpensesClassification())) {
             return 0;
         }
-        
+
         return round(array_reduce($this->getExpensesClassification(), function ($carry, ExpensesClassification $classification) {
             return $carry + $classification->getAmount();
         }, 0), 2);
