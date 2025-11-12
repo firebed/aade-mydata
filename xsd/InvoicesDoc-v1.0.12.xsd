@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:inv="http://www.aade.gr/myDATA/invoice/v1.0" xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" targetNamespace="http://www.aade.gr/myDATA/invoice/v1.0" elementFormDefault="qualified" version="1.0.11">
-	<xs:import namespace="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" schemaLocation="incomeClassification-v1.0.11.xsd"/>
-	<xs:import namespace="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" schemaLocation="expensesClassification-v1.0.11.xsd"/>
-	<xs:include schemaLocation="SimpleTypes-v1.0.11.xsd"/>
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:inv="http://www.aade.gr/myDATA/invoice/v1.0" xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" targetNamespace="http://www.aade.gr/myDATA/invoice/v1.0" elementFormDefault="qualified" version="1.0.12">
+	<xs:import namespace="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" schemaLocation="incomeClassification-v1.0.12.xsd"/>
+	<xs:import namespace="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" schemaLocation="expensesClassification-v1.0.12.xsd"/>
+	<xs:include schemaLocation="SimpleTypes-v1.0.12.xsd"/>
 	<xs:element name="InvoicesDoc">
 		<xs:annotation>
 			<xs:documentation>Παραστατικό ΑΑΔΕ</xs:documentation>
@@ -104,6 +104,11 @@
 			<xs:element name="otherTransportDetails" type="inv:TransportDetailType" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation>Λοιπές Λεπτομέρειες Διακίνησης (Ορισμός - Αλλαγή Μτφ Μέσων, Μεταφορτώσεις, κλπ)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="downloadingInvoiceUrl" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Url με το οποίο ο λήπτης του παραστατικού θα μπορεί να το λαμβάνει</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
@@ -262,6 +267,16 @@
 			<xs:element name="totalCancelDeliveryOrders" type="xs:boolean" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Ένδειξη συνολικής αναίρεσης Δελτίων Παραγελίας</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="reverseDeliveryNote" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Αντίστροφη Διακίνηση</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="reverseDeliveryNotePurpose" type="inv:ReverseDeliveryNotePurposeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Αιτία Έκδοσης Αντίστροφης Διακίνησης</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
