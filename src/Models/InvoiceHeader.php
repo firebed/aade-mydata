@@ -6,6 +6,7 @@ use Firebed\AadeMyData\Enums\CurrencyCode;
 use Firebed\AadeMyData\Enums\InvoiceType;
 use Firebed\AadeMyData\Enums\InvoiceVariationType;
 use Firebed\AadeMyData\Enums\MovePurpose;
+use Firebed\AadeMyData\Enums\ReverseDeliveryNotePurpose;
 use Firebed\AadeMyData\Enums\SpecialInvoiceCategory;
 use Firebed\AadeMyData\Traits\HasFactory;
 
@@ -38,6 +39,8 @@ class InvoiceHeader extends Type
         'multipleConnectedMarks',
         'tableAA',
         'totalCancelDeliveryOrders',
+        'reverseDeliveryNote',
+        'reverseDeliveryNotePurpose',
     ];
 
     protected array $casts = [
@@ -47,6 +50,7 @@ class InvoiceHeader extends Type
         'invoiceVariationType' => InvoiceVariationType::class,
         'otherCorrelatedEntities' => EntityType::class,
         'otherDeliveryNoteHeader' => OtherDeliveryNoteHeader::class,
+        'ReverseDeliveryNotePurpose' => ReverseDeliveryNotePurpose::class,
     ];
 
     /**
@@ -535,6 +539,50 @@ class InvoiceHeader extends Type
     public function setTotalCancelDeliveryOrders(?bool $totalCancelDeliveryOrders): static
     {
         return $this->set('totalCancelDeliveryOrders', $totalCancelDeliveryOrders);
+    }
+
+    /**
+     * @return bool|null Αντίστροφη Διακίνηση
+     * @version 1.0.12
+     */
+    public function getReverseDeliveryNote(): ?bool
+    {
+        return $this->get('reverseDeliveryNote');
+    }
+
+    /**
+     * Το πεδίο reverseDeliveryNote ορίζει αν πρόκειται για αντίστροφη διακίνηση
+     * στην περίπτωση παραστατικού τύπου 9.3 (Δελτίου Αποστολής)
+     *
+     * @param  bool|null  $reverseDeliveryNote  Αντίστροφη Διακίνηση
+     * @return $this
+     * @version 1.0.12
+     */
+    public function setReverseDeliveryNote(?bool $reverseDeliveryNote): static
+    {
+        return $this->set('reverseDeliveryNote', $reverseDeliveryNote);
+    }
+
+    /**
+     * @return ReverseDeliveryNotePurpose|null Αντίστροφη Διακίνηση
+     * @version 1.0.12
+     */
+    public function getReverseDeliveryNotePurpose(): ?ReverseDeliveryNotePurpose
+    {
+        return $this->get('reverseDeliveryNotePurpose');
+    }
+
+    /**
+     * Το πεδίο reverseDeliveryNotePurpose συμπληρώνεται όταν έχει επιλεγεί ως reverseDeliveryNote = true
+     * (ένδειξη αντίστροφης διακίνησης) και ορίζει την αιτία
+     *
+     * @param  ReverseDeliveryNotePurpose|int|null  $reverseDeliveryNotePurpose  Αιτία Αντίστροφης Διακίνησης
+     * @return $this
+     * @version 1.0.12
+     */
+    public function setReverseDeliveryNotePurpose(ReverseDeliveryNotePurpose|int|null $reverseDeliveryNotePurpose): static
+    {
+        return $this->set('reverseDeliveryNotePurpose', $reverseDeliveryNotePurpose);
     }
 
     public function set($key, $value): static

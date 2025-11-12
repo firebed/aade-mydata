@@ -21,7 +21,7 @@ class InvoiceHeaderTest extends TestCase
         $header = $invoice->getInvoiceHeader();
         $headerXml = $this->toXML($invoice)->InvoicesDoc->invoice->invoiceHeader;
 
-        $this->assertCount(24, $headerXml);
+        $this->assertCount(26, $headerXml);
         $this->assertEquals($header->getSeries(), $headerXml->series);
         $this->assertEquals($header->getAa(), $headerXml->aa);
         $this->assertEquals($header->getIssueDate(), $headerXml->issueDate);
@@ -42,6 +42,8 @@ class InvoiceHeaderTest extends TestCase
         $this->assertEquals($header->getThirdPartyCollection(), filter_var($headerXml->thirdPartyCollection, FILTER_VALIDATE_BOOLEAN));
         $this->assertEquals($header->getTableAA(), $headerXml->tableAA);
         $this->assertEquals($header->getTotalCancelDeliveryOrders(), filter_var($headerXml->totalCancelDeliveryOrders, FILTER_VALIDATE_BOOLEAN));
+        $this->assertEquals($header->getReverseDeliveryNote(), filter_var($headerXml->reverseDeliveryNote, FILTER_VALIDATE_BOOLEAN));
+        $this->assertEquals($header->getReverseDeliveryNotePurpose()->value, $headerXml->reverseDeliveryNotePurpose);
     }
 
     public function test_it_converts_xml_to_invoice_header(): void
