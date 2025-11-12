@@ -65,7 +65,7 @@ MyDataRequest::verifyClient(false);
 ```
 
 ## Διαθέσιμες λειτουργίες
-- Λήψη Βασικών Στοιχείων Μητρώου ΑΦΜ ([SendInvoices](./http/search-vat))
+- Λήψη Βασικών Στοιχείων Μητρώου ΑΦΜ ([SearchVat](./http/search-vat))
 - Αποστολή παραστατικών ([SendInvoices](./http/send-invoices))
 - Ακύρωση παραστατικού ([CancelInvoice](./http/cancel-invoice))
 - Λήψη παραστατικών ([RequestDocs](./http/request-docs))
