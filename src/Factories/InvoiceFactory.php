@@ -29,6 +29,7 @@ class InvoiceFactory extends Factory
             'invoiceSummary'        => InvoiceSummary::factory(),
             'qrCodeUrl'             => fake()->url(),
             'otherTransportDetails' => TransportDetail::factory(),
+            'downloadingInvoiceUrl' => fake()->url(),
         ];
     }
 }
