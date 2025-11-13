@@ -65,7 +65,7 @@ MyDataRequest::verifyClient(false);
 ```
 
 ## Διαθέσιμες λειτουργίες
-- Λήψη Βασικών Στοιχείων Μητρώου ΑΦΜ ([SendInvoices](./http/search-vat))
+- Λήψη Βασικών Στοιχείων Μητρώου ΑΦΜ ([SearchVat](./http/search-vat))
 - Αποστολή παραστατικών ([SendInvoices](./http/send-invoices))
 - Ακύρωση παραστατικού ([CancelInvoice](./http/cancel-invoice))
 - Λήψη παραστατικών ([RequestDocs](./http/request-docs))
@@ -81,13 +81,16 @@ MyDataRequest::verifyClient(false);
 
 ## Αρχεία XSD
 
-- [expensesClassification-v1.0.11.xsd](../xsd/expensesClassification-v1.0.11.xsd)
-- [incomeClassification-v1.0.11.xsd](../xsd/incomeClassification-v1.0.11.xsd)
-- [InvoicesDoc-v1.0.11.xsd](../xsd/InvoicesDoc-v1.0.11.xsd)
-- [paymentsMethod-v1.0.11.xsd](../xsd/paymentMethods-v1.0.11.xsd)
-- [RequestE3InfoResponse-v1.0.11.xsd](../xsd/RequestE3InfoResponse-v1.0.11.xsd)
-- [requestedInvoicesDoc-v1.0.11.xsd](../xsd/requestedInvoicesDoc-v1.0.11.xsd)
-- [RequestedProviderDoc-v1.0.11.xsd](../xsd/RequestedProviderDoc-v1.0.11.xsd)
-- [RequestVatInfoResponse-v1.0.11.xsd](../xsd/RequestVatInfoResponse-v1.0.11.xsd)
-- [response-v1.0.11.xsd](../xsd/response-v1.0.11.xsd)
-- [SimpleTypes-v1.0.11.xsd](../xsd/SimpleTypes-v1.0.11.xsd)
+- [expensesClassification-v1.0.12.xsd](../xsd/expensesClassification-v1.0.12.xsd)
+- [incomeClassification-v1.0.12.xsd](../xsd/incomeClassification-v1.0.12.xsd)
+- [InvoicesDoc-v1.0.12.xsd](../xsd/InvoicesDoc-v1.0.12.xsd)
+- [InvoicesDoc-v1.0.12_detailed.xsd](../xsd/InvoicesDoc-v1.0.12_detailed.xsd)
+- [paymentsMethod-v1.0.12.xsd](../xsd/paymentMethods-v1.0.12.xsd)
+- [RequestE3InfoResponse-v1.0.12.xsd](../xsd/RequestE3InfoResponse-v1.0.12.xsd)
+- [requestedInvoicesDoc-v1.0.12.xsd](../xsd/requestedInvoicesDoc-v1.0.12.xsd)
+- [RequestedProviderDoc-v1.0.12.xsd](../xsd/RequestedProviderDoc-v1.0.12.xsd)
+- [RequestedStatementDoc-v1.0.12.xsd](../xsd/RequestedStatementDoc-v1.0.12.xsd)
+- [RequestVatInfoResponse-v1.0.12.xsd](../xsd/RequestVatInfoResponse-v1.0.12.xsd)
+- [response-v1.0.12.xsd](../xsd/response-v1.0.12.xsd)
+- [SendStatement-v1.0.12.xsd](../xsd/SendStatement-v1.0.12.xsd)
+- [SimpleTypes-v1.0.12.xsd](../xsd/SimpleTypes-v1.0.12.xsd)

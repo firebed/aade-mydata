@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="StatementDoc">
+		<xs:annotation>
+			<xs:documentation>Δήλωση έκδοσης στοιχείων μέσω Παρόχου ή ΙδιοΠαρόχου</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence minOccurs="1" maxOccurs="1">
+				<xs:element name="statement" type="Statement"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="Statement">
+		<xs:sequence>
+			<xs:element name="statementId" type="xs:long" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Μοναδικός Αριθμός Δήλωσης. Συμπληρώνεται από την Υπηρεσία</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="submissionDateTime" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Ημερομηνία υποβολής Δήλωσης. Συμπληρώνεται από την Υπηρεσία</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="entityVatNumber" type="xs:string" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>ΑΦΜ Υπόχρεης Επιχείρησης</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="liableUserCategory" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Κατηγορία Υπόχρεου</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:int">
+						<xs:minInclusive value="1"/>
+						<xs:maxInclusive value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="providerType" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Τύπος Παρόχου</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:int">
+						<xs:minInclusive value="1"/>
+						<xs:maxInclusive value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="isB2BTransactions" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Συναλλαγές B2B</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="isB2CTransactions" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Συναλλαγές B2C</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="isB2GTransactions" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Συναλλαγές B2G</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="providerVatNumber" type="xs:string" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>ΑΦΜ Παρόχου</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="providerLicenceNumber" type="xs:string" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Αριθμός Αδείας Παρόχου</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="providerContractNumber" type="xs:string" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Αριθμός Σύμβασης Παρόχου</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="providerContractConclusionDate" type="xs:dateTime" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Ημερομηνία σύναψης σύμβασης οντότητας με τον Πάροχο</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="providerContractActivationDate" type="xs:dateTime" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Ημερομηνία έναρξης ισχύος της σύμβασης</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="issueStartDate" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Ημερομηνία έναρξης έκδοσης στοιχειών για συναλλαγές</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="issueStopDate" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Ημερομηνία διακοπής έκδοσης στοιχείων για συναλλαγές</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="internetProvider" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Παρόχος Διαδικτύου Οντότητας-Εκδότη</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="internetProviderContractNumber" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Αριθμός Σύμβασης Οντότητας-Εκδότη με Πάροχο Διαδικτύου</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="internetProviderContractDate" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Ημερομηνία Σύμβασης Οντότητας-Εκδότη με Πάροχο Διαδικτύου</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

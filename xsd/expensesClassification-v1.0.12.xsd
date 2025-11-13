@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" xmlns:inv="http://www.aade.gr/myDATA/invoice/v1.0" targetNamespace="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0.11">
-<xs:include schemaLocation="SimpleTypes-v1.0.11.xsd"/>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" xmlns:inv="http://www.aade.gr/myDATA/invoice/v1.0" targetNamespace="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0.12">
+<xs:include schemaLocation="SimpleTypes-v1.0.12.xsd"/>
   <xs:element name="ExpensesClassificationsDoc">
     <xs:annotation>
       <xs:documentation>Χαρατηρισμοί Εξόδων Πρότυπων Παραστατικών ΑΑΔΕ</xs:documentation>

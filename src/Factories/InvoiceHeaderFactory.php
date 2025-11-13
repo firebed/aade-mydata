@@ -5,6 +5,7 @@ namespace Firebed\AadeMyData\Factories;
 use Firebed\AadeMyData\Enums\InvoiceType;
 use Firebed\AadeMyData\Enums\InvoiceVariationType;
 use Firebed\AadeMyData\Enums\MovePurpose;
+use Firebed\AadeMyData\Enums\ReverseDeliveryNotePurpose;
 use Firebed\AadeMyData\Enums\SpecialInvoiceCategory;
 use Firebed\AadeMyData\Models\EntityType;
 use Firebed\AadeMyData\Models\InvoiceHeader;
@@ -42,6 +43,8 @@ class InvoiceHeaderFactory extends Factory
             'multipleConnectedMarks' => fake()->numerify('800000#########'),
             'tableAA' => fake()->word(),
             'totalCancelDeliveryOrders' => fake()->boolean(),
+            'reverseDeliveryNote' => fake()->boolean(),
+            'reverseDeliveryNotePurpose' => fake()->randomElement(ReverseDeliveryNotePurpose::cases()),
         ];
     }
 }

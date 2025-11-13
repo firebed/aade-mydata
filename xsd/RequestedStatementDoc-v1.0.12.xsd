@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0.12">
+	<xs:include schemaLocation="SendStatement-v1.0.12.xsd"/>
+	<xs:element name="RequestedStatementDoc">
+		<xs:annotation>
+			<xs:documentation>Δηλώσεις έκδοσης στοιχείων μέσω Παρόχου ή ΙδιοΠαρόχου</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="requestedStatement" type="RequestedStatement"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="RequestedStatement">
+		<xs:sequence>
+			<xs:element name="statement" type="Statement" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="acceptVatNumber" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>ΑΦΜ αποδοχής δήλωσης (αφορά Υπόχρεη Επιχείρηση)</xs:documentation>
+				</xs:annotation>			
+			</xs:element>
+			<xs:element name="acceptDate" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Ημερομηνία αποδοχής δήλωσης από Υπόχρεη Επιχείρηση. Συμπληρώνεται από την Υπηρεσία</xs:documentation>
+				</xs:annotation>			
+			</xs:element>			
+			<xs:element name="recallStatement" type="RecalledStatementType" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RecalledStatementType">
+		<xs:sequence>
+			<xs:element name="statementID" type="xs:long">
+				<xs:annotation>
+					<xs:documentation>Μοναδικός Κωδικός Αρχικής Δήλωσης που έχει ανακληθεί</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="entityVatNumber" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>ΑΦΜ Υπόχρεης Επιχείρησης</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="recallId" type="xs:long">
+				<xs:annotation>
+					<xs:documentation>Μοναδικός Κωδικός Καταχώρησης της Ανάκλησης</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="recallStatus">
+				<xs:annotation>
+					<xs:documentation>Κατάσταση Ανάκλησης</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:int">
+						<xs:minInclusive value="1"/>
+						<xs:maxInclusive value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="recallDate" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Ημερομηνία Πλήρης Ανάκλησης. Συμπληρώνεται από Πελάτη</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="transactionDate" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>Ημερομηνία Ανάκλησης Συναλλαγής. Συμπληρώνεται από την Υπηρεσία</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="recallVatNumber" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>ΑΦΜ Ανάκλησης Δήλωσης</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

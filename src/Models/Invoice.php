@@ -29,6 +29,7 @@ class Invoice extends Type
         'taxesTotals',
         'invoiceSummary',
         'otherTransportDetails',
+        'downloadingInvoiceUrl',
     ];
 
     protected array $casts = [
@@ -375,6 +376,29 @@ class Invoice extends Type
     }
 
     /**
+     * URL όπου ο λήπτης του παραστατικού με κλήση αυτού και ορισμό παραμέτρου θα μπορεί να λαμβάνει το παραστατικό
+     * Αυτό το url θα πρέπει να χρησιμοποιείται για τη δημιουργία του QR Code που τυπώνεται στα παραστατικά που εκδίδονται μέσω παρόχων
+     * Έγκυρο μόνο στην περίπτωση διαβίβασης μέσω κανάλι παρόχου
+     *
+     * @return string|null
+     * @version 1.0.12
+     */
+    public function getDownloadingInvoiceUrl(): ?string
+    {
+        return $this->get('downloadingInvoiceUrl');
+    }
+
+    /**
+     * @param  string  $downloadingInvoiceUrl
+     * @return $this
+     * @version 1.0.12
+     */
+    public function setDownloadingInvoiceUrl(string $downloadingInvoiceUrl): Invoice
+    {
+        return $this->set('downloadingInvoiceUrl', $downloadingInvoiceUrl);
+    }
+
+    /**
      * @param  TransportDetail[]|null  $transportDetails
      * @return $this
      */
@@ -415,7 +439,7 @@ class Invoice extends Type
 
         $dom = new DOMDocument();
         $dom->loadXML($xml);
-        $dom->schemaValidate(__DIR__.'/../../xsd/InvoicesDoc-v1.0.11.xsd');
+        $dom->schemaValidate(__DIR__.'/../../xsd/InvoicesDoc-v1.0.12.xsd');
 
         return array_map(function ($error) {
             preg_match("/Element '(.+?)':( \[.*?])? (.+)/", $error->message, $matches);
