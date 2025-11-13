@@ -34,7 +34,7 @@ composer require firebed/aade-mydata
 - [Δοκιμαστικό περιβάλλον](https://www.aade.gr/mydata/dokimastiko-periballon)
 - [Εγγραφή στο δοκιμαστικό περιβάλλον](https://mydata-dev-register.azurewebsites.net/)
 - [Εγγραφή στο παραγωγικό περιβάλλον](https://www.aade.gr/mydata)
-- [Επίσημη τεκμηρίωση ΑΑΔΕ myDATA (PDF v1.0.11)](https://www.aade.gr/sites/default/files/2025-06/myDATA%20API%20Documentation%20v1.0.11_official_erp.pdf)
+- [Επίσημη τεκμηρίωση ΑΑΔΕ myDATA (PDF v1.0.12)](https://www.aade.gr/sites/default/files/2025-11/myDATA%20API%20Documentation%20v1.0.12_official_erp.pdf)
 
 ## Αρχικοποίηση
 
