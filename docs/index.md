@@ -67,3 +67,4 @@
 | Παράρτημα                 | Απόκλιση Παραστατικού                 | appendix/invoice-variation-types        |
 | Παράρτημα                 | Ειδική Κατ. Παραστατικού              | appendix/special-invoice-categories     |
 | Παράρτημα                 | Κατηγορία οντότητας                   | appendix/entity-types                   |
+| Παράρτημα                 | Αιτία Έκδοσης Αντίστροφης Διακίνησης  | appendix/reverse-delivery-note-purpose  |
