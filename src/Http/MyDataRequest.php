@@ -267,7 +267,7 @@ abstract class MyDataRequest
             'headers' => [
                 'aade-user-id' => self::$user_id,
                 'ocp-apim-subscription-key' => self::$subscription_key,
-                'Content-Type' => "text/xml"
+                'Content-Type' => "text/xml",
             ],
         ];
 
@@ -303,5 +303,16 @@ abstract class MyDataRequest
     private function getAction(): string
     {
         return $this->action ?? (new ReflectionClass($this))->getShortName();
+    }
+
+    /**
+     * @throws MyDataException
+     */
+    protected function ensureProvider (): void
+    {
+        if (!$this->isProvider()) {
+            $className = (new ReflectionClass($this))->getShortName();
+            throw new MyDataException($className . ' can only be used with the Provider route.');
+        }
     }
 }

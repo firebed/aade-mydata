@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RequestedStatementDoc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <requestedStatement>
+        <statement>
+            <statementId>789</statementId>
+            <submissionDateTime>2025-11-17T21:04:43.028916</submissionDateTime>
+            <entityVatNumber>110250755</entityVatNumber>
+            <liableUserCategory>1</liableUserCategory>
+            <providerType>1</providerType>
+            <isB2BTransactions>true</isB2BTransactions>
+            <isB2CTransactions>true</isB2CTransactions>
+            <isB2GTransactions>true</isB2GTransactions>
+            <providerVatNumber>110286266</providerVatNumber>
+            <providerLicenceNumber>2020_11_106Cloud Services _001_Oxygen-Pelatologio_V1_18112020</providerLicenceNumber>
+            <providerContractNumber>11104</providerContractNumber>
+            <providerContractConclusionDate>2025-07-26T11:16:10</providerContractConclusionDate>
+            <providerContractActivationDate>2025-07-27T11:16:10</providerContractActivationDate>
+            <issueStartDate>2025-07-27</issueStartDate>
+            <internetProvider>VODAFON</internetProvider>
+            <internetProviderContractNumber>123dasdcad</internetProviderContractNumber>
+            <internetProviderContractDate>2007-04-12T18:27:03</internetProviderContractDate>
+        </statement>
+    </requestedStatement>
+    <requestedStatement>
+        <statement>
+            <statementId>727</statementId>
+            <submissionDateTime>2025-11-15T13:07:52.330648</submissionDateTime>
+            <entityVatNumber>110250755</entityVatNumber>
+            <liableUserCategory>1</liableUserCategory>
+            <providerType>1</providerType>
+            <isB2BTransactions>true</isB2BTransactions>
+            <isB2CTransactions>true</isB2CTransactions>
+            <isB2GTransactions>false</isB2GTransactions>
+            <providerVatNumber>110286266</providerVatNumber>
+            <providerLicenceNumber>2020_11_106Cloud Services _001_Oxygen-Pelatologio_V1_18112020</providerLicenceNumber>
+            <providerContractNumber>111041</providerContractNumber>
+            <providerContractConclusionDate>2025-07-26T11:16:10</providerContractConclusionDate>
+            <providerContractActivationDate>2025-07-27T11:16:10</providerContractActivationDate>
+            <issueStartDate>2025-07-27</issueStartDate>
+            <internetProvider>VODAFONE</internetProvider>
+            <internetProviderContractNumber>RANDOMNUMBER</internetProviderContractNumber>
+            <internetProviderContractDate>2007-04-12T18:27:03</internetProviderContractDate>
+        </statement>
+        <recallStatement>
+            <recalledStatement>
+                <statementID>727</statementID>
+                <recallId>728</recallId>
+                <recallStatus>2</recallStatus>
+                <transactionDate>2025-11-15</transactionDate>
+                <recallVatNumber>110286266</recallVatNumber>
+            </recalledStatement>
+        </recallStatement>
+    </requestedStatement>
+</RequestedStatementDoc>

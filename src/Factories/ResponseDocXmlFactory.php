@@ -4,12 +4,13 @@ namespace Firebed\AadeMyData\Factories;
 
 use DOMDocument;
 use Firebed\AadeMyData\Models\Response;
+use Firebed\AadeMyData\Models\Statements\ResponseStatement;
 
 class ResponseDocXmlFactory
 {
     private array $responses = [];
 
-    public function addResponse(Response|Factory $response): void
+    public function addResponse(Response|ResponseStatement|Factory $response): void
     {
         if ($response instanceof Factory) {
             $response = $response->make();
