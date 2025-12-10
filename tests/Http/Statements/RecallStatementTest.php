@@ -1,6 +1,6 @@
 <?php
 
-namespace Http\Statements;
+namespace Tests\Http\Statements;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Http\MyDataRequest;
