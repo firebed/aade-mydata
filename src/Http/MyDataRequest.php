@@ -308,7 +308,7 @@ abstract class MyDataRequest
     /**
      * @throws MyDataException
      */
-    protected function ensureProvider (): void
+    protected function ensureProvider(): void
     {
         if (!$this->isProvider()) {
             $className = (new ReflectionClass($this))->getShortName();
