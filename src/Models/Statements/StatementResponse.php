@@ -9,7 +9,7 @@ use Firebed\AadeMyData\Traits\HasFactory;
 /**
  * @version 1.0.12
  */
-class ResponseStatement extends Type
+class StatementResponse extends Type
 {
     use HasFactory;
 

@@ -6,7 +6,7 @@ use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Http\Traits\HasRequestDom;
 use Firebed\AadeMyData\Http\Traits\HasResponseDom;
 use Firebed\AadeMyData\Models\ResponseDoc;
-use Firebed\AadeMyData\Models\Statements\ResponseStatementDoc;
+use Firebed\AadeMyData\Models\Statements\StatementResponseDoc;
 use Firebed\AadeMyData\Xml\XMLReader;
 use Firebed\AadeMyData\Xml\XMLWriter;
 
@@ -18,7 +18,7 @@ abstract class MyDataXmlRequest extends MyDataRequest
     /**
      * @throws MyDataException
      */
-    protected function request(XMLWriter $writer, XMLReader $reader, mixed $data): ResponseDoc|ResponseStatementDoc
+    protected function request(XMLWriter $writer, XMLReader $reader, mixed $data): ResponseDoc|StatementResponseDoc
     {
         // Create the request XML
         $requestXML = $writer->asXML($data);

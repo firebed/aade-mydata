@@ -7,8 +7,8 @@ use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Http\MyDataRequest;
 use Firebed\AadeMyData\Http\Traits\HasResponseDom;
-use Firebed\AadeMyData\Models\Statements\ResponseStatementDoc;
-use Firebed\AadeMyData\Xml\Statements\ResponseStatementDocReader;
+use Firebed\AadeMyData\Models\Statements\StatementResponseDoc;
+use Firebed\AadeMyData\Xml\Statements\StatementResponseDocReader;
 
 class RecallStatement extends MyDataRequest
 {
@@ -21,13 +21,13 @@ class RecallStatement extends MyDataRequest
      * @param  string  $entityVatNumber  ΑΦΜ Υπόχρεης Οντότητας για την οποία θα γίνει η ανάκληση
      * @param  RecallStatus|int  $recallStatus  Κατάσταση Ανάκλησης
      * @param  string|null  $recallDate  Ημερομηνία Ανάκλησης
-     * @return ResponseStatementDoc
+     * @return StatementResponseDoc
      * @throws MyDataAuthenticationException
      * @throws MyDataException
      *
      * @version 1.0.12
      */
-    public function handle(string $statementId, string $entityVatNumber, RecallStatus|int $recallStatus, string $recallDate = null): ResponseStatementDoc
+    public function handle(string $statementId, string $entityVatNumber, RecallStatus|int $recallStatus, string $recallDate = null): StatementResponseDoc
     {
         $this->ensureProvider();
 
@@ -45,7 +45,7 @@ class RecallStatement extends MyDataRequest
         $responseXML = $this->post($query);
 
         // Parse the response XML
-        $reader = new ResponseStatementDocReader();
+        $reader = new StatementResponseDocReader();
         $responseDoc = $reader->parseXML($responseXML);
 
         $this->responseDom = $reader->getDomDocument();

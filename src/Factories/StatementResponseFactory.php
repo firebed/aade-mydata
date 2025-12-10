@@ -2,12 +2,12 @@
 
 namespace Firebed\AadeMyData\Factories;
 
-use Firebed\AadeMyData\Models\Statements\ResponseStatement;
+use Firebed\AadeMyData\Models\Statements\StatementResponse;
 
 /**
- * @extends Factory<ResponseStatement>
+ * @extends Factory<StatementResponse>
  */
-class ResponseStatementFactory extends Factory
+class StatementResponseFactory extends Factory
 {
     public function definition(): array
     {

@@ -5,14 +5,14 @@ namespace Firebed\AadeMyData\Models\Statements;
 use Firebed\AadeMyData\Models\TypeArray;
 
 /**
- * @extends TypeArray<ResponseStatement>
+ * @extends TypeArray<StatementResponse>
  *
  * @version 1.0.12
  */
-class ResponseStatementDoc extends TypeArray
+class StatementResponseDoc extends TypeArray
 {
     protected array $casts = [
-        'response' => ResponseStatement::class,
+        'response' => StatementResponse::class,
     ];
 
     public function __construct()
@@ -20,7 +20,7 @@ class ResponseStatementDoc extends TypeArray
         parent::__construct('response');
     }
 
-    public function offsetGet(mixed $offset): ResponseStatement
+    public function offsetGet(mixed $offset): StatementResponse
     {
         return $this->attributes['response'][$offset];
     }

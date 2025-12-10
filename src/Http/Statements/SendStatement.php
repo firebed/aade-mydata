@@ -4,10 +4,10 @@ namespace Firebed\AadeMyData\Http\Statements;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Http\MyDataXmlRequest;
-use Firebed\AadeMyData\Models\Statements\ResponseStatementDoc;
+use Firebed\AadeMyData\Models\Statements\StatementResponseDoc;
 use Firebed\AadeMyData\Models\Statements\Statement;
 use Firebed\AadeMyData\Models\Statements\StatementDoc;
-use Firebed\AadeMyData\Xml\Statements\ResponseStatementDocReader;
+use Firebed\AadeMyData\Xml\Statements\StatementResponseDocReader;
 use Firebed\AadeMyData\Xml\Statements\StatementDocWriter;
 
 class SendStatement extends MyDataXmlRequest
@@ -17,12 +17,12 @@ class SendStatement extends MyDataXmlRequest
      * μια νέα δήλωση.
      *
      * @param  StatementDoc|Statement  $statement
-     * @return ResponseStatementDoc
+     * @return StatementResponseDoc
      * @throws MyDataException
      *
      * @version 1.0.12
      */
-    public function handle(StatementDoc|Statement $statement): ResponseStatementDoc
+    public function handle(StatementDoc|Statement $statement): StatementResponseDoc
     {
         $this->ensureProvider();
 
@@ -32,6 +32,6 @@ class SendStatement extends MyDataXmlRequest
             $statement = $doc;
         }
 
-        return $this->request(new StatementDocWriter(), new ResponseStatementDocReader(), $statement);
+        return $this->request(new StatementDocWriter(), new StatementResponseDocReader(), $statement);
     }
 }

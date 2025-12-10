@@ -47,7 +47,7 @@ class RequestStatementsTest extends MyDataHttpTestCase
         MyDataRequest::init('test_user_id', 'test_user_secret', 'dev', true);
 
         MyDataRequest::setHandler(new MockHandler([
-            new Response(200, body: $this->getStub('Statements/request-statements-response')),
+            new Response(200, body: $this->getStub('statements/request-statements-response')),
         ]));
 
         $request = new RequestStatements();
