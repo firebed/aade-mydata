@@ -50,7 +50,22 @@ class RequestedStatement extends Type
 
     public function isRecalled(): bool
     {
-        return !is_null($this->getRecallStatement()) && count($this->getRecallStatement()) > 0;
+        return ! empty($this->getRecallStatement());
+    }
+
+    public function isNotRecalled(): bool
+    {
+        return empty($this->getRecallStatement());
+    }
+
+    public function isAccepted(): bool
+    {
+        return ! empty($this->getAcceptDate());
+    }
+
+    public function isNotAccepted(): bool
+    {
+        return empty($this->getAcceptDate());
     }
 
     /**
