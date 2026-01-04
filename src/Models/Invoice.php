@@ -15,6 +15,8 @@ class Invoice extends Type
 {
     use HasFactory;
 
+    const VERSION = 'v2.0.0';
+
     protected array $expectedOrder = [
         'uid',
         'mark',
@@ -439,7 +441,7 @@ class Invoice extends Type
 
         $dom = new DOMDocument();
         $dom->loadXML($xml);
-        $dom->schemaValidate(__DIR__.'/../../xsd/InvoicesDoc-v1.0.12.xsd');
+        $dom->schemaValidate(__DIR__.'/../../xsd/InvoicesDoc-' . self::VERSION . '.xsd');
 
         return array_map(function ($error) {
             preg_match("/Element '(.+?)':( \[.*?])? (.+)/", $error->message, $matches);
