@@ -4,6 +4,7 @@ namespace Firebed\AadeMyData\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Models\PaymentMethod;
+use Firebed\AadeMyData\Models\PaymentMethodsDoc;
 use Firebed\AadeMyData\Models\ResponseDoc;
 use Firebed\AadeMyData\Xml\PaymentMethodsDocWriter;
 use Firebed\AadeMyData\Xml\ResponseDocReader;
@@ -26,9 +27,11 @@ class SendPaymentsMethod extends MyDataXmlRequest
      * @return ResponseDoc
      * @throws MyDataException
      */
-    public function handle(PaymentMethod|array $paymentMethods): ResponseDoc
+    public function handle(PaymentMethodsDoc|PaymentMethod|array $paymentMethods): ResponseDoc
     {
-        $paymentMethods = is_array($paymentMethods) ? $paymentMethods : [$paymentMethods];
+        if (!$paymentMethods instanceof PaymentMethodsDoc) {
+            $paymentMethods = new PaymentMethodsDoc($paymentMethods);
+        }
 
         return $this->request(new PaymentMethodsDocWriter(), new ResponseDocReader(), $paymentMethods);
     }

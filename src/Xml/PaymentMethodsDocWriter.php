@@ -2,8 +2,10 @@
 
 namespace Firebed\AadeMyData\Xml;
 
+use Firebed\AadeMyData\Models\PaymentMethodsDoc;
+
 /**
- * @extends XMLWriter<array>
+ * @extends XMLWriter<PaymentMethodsDoc>
  */
 class PaymentMethodsDocWriter extends XMLWriter
 {
@@ -32,7 +34,7 @@ class PaymentMethodsDocWriter extends XMLWriter
         $rootNode->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xsi', self::XSI);
         $rootNode->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:inv', self::INV);
 
-        $this->buildArray($rootNode, 'paymentMethods', $data);
+        $this->buildArray($rootNode, 'paymentMethods', iterator_to_array($data));
 
         return $this->document->saveXML();
     }

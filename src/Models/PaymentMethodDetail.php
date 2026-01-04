@@ -119,7 +119,9 @@ class PaymentMethodDetail extends Type
     }
 
     /**
-     * Το πεδίο transactionId διαβιβάζεται στην περίπτωση πληρωμών με type = 7
+     * Το πεδίο transactionId διαβιβάζεται στην περίπτωση πληρωμών με type = 7 (POS)
+     * ή type = 8 (IRIS) και περιέχει τη μοναδική ταυτότητα πληρωμής. Στην περίπτωση
+     * πληρωμών με type = 8 (IRIS) το πεδίο transactionId συμπληρώνεται με το authorizationRequestID.
      *
      * @param  string|null  $transactionId  Μοναδική Ταυτότητα Πληρωμής
      * @version 1.0.8

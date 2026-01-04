@@ -9,15 +9,17 @@ class ProvidersSignature extends Type
 {
     protected array $expectedOrder = [
         'SigningAuthor',
-        'Signature'
+        'Signature',
+        'EndToΕndReferenceID',
     ];
     
-    public function __construct(string $signingAuthor = null, string $signature = null)
+    public function __construct(string $signingAuthor = null, string $signature = null, ?string $endToEndReferenceID = null)
     {
-        if ($signingAuthor !== null || $signature !== null) {
+        if ($signingAuthor !== null || $signature !== null || $endToEndReferenceID !== null) {
             parent::__construct([
                 'SigningAuthor' => $signingAuthor,
-                'Signature'     => $signature
+                'Signature'     => $signature,
+                'EndToΕndReferenceID' => $endToEndReferenceID,
             ]);
         }
     }
@@ -65,5 +67,25 @@ class ProvidersSignature extends Type
     public function setSignature(string $signature): static
     {
         return $this->set('Signature', $signature);
+    }
+
+    /**
+     * Το μοναδικό αναγνωριστικό αιτήματος πληρωμής(για πληρωμές IRIS - payment type = 8)
+     *
+     * @version 2.0.0
+     */
+    public function getEndToEndReferenceID(): ?string
+    {
+        return $this->get('EndToΕndReferenceID');
+    }
+
+    /**
+     * Το μοναδικό αναγνωριστικό αιτήματος πληρωμής (για πληρωμές IRIS - payment type = 8)
+     *
+     * @version 2.0.0
+     */
+    public function setEndToEndReferenceID(?string $endToEndReferenceID): static
+    {
+        return $this->set('EndToΕndReferenceID', $endToEndReferenceID);
     }
 }

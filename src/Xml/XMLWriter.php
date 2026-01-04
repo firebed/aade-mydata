@@ -62,7 +62,7 @@ abstract class XMLWriter
     protected function buildArray(DOMNode $parent, string $nodeName, array $nodeValue): void
     {
         // If the array is associative
-        if (is_string(array_key_first($nodeValue))) {
+        if (! array_is_list($nodeValue)) {
             $this->processAssocArray($parent, $nodeName, $nodeValue);
             return;
         }

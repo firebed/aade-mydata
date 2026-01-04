@@ -14,9 +14,9 @@ class PaymentMethodsDoc extends TypeArray
         'paymentMethods' => PaymentMethod::class,
     ];
 
-    public function __construct()
+    public function __construct(PaymentMethod|array $paymentMethods = [])
     {
-        parent::__construct('paymentMethods');
+        parent::__construct('paymentMethods', $paymentMethods);
     }
 
     public function offsetGet($offset): PaymentMethod

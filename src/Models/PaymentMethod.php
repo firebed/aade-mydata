@@ -2,7 +2,10 @@
 
 namespace Firebed\AadeMyData\Models;
 
+use DOMDocument;
 use Firebed\AadeMyData\Traits\HasFactory;
+use Firebed\AadeMyData\Xml\InvoicesDocWriter;
+use Firebed\AadeMyData\Xml\PaymentMethodsDocWriter;
 
 /**
  * @version 1.0.8
@@ -122,5 +125,39 @@ class PaymentMethod extends Type
         }
 
         return parent::set($key, $value);
+    }
+
+    public function toXml(bool $asDoc = false): string
+    {
+        $writer = new PaymentMethodsDocWriter();
+        $fullXml = $writer->asXML(new PaymentMethodsDoc($this));
+
+        if ($asDoc) {
+            return $fullXml;
+        }
+
+        $doc = $writer->getDomDocument();
+        return $doc->saveXML($doc->getElementsByTagName('invoice')->item(0));
+    }
+
+    public function validate(): array
+    {
+        libxml_use_internal_errors(true);
+        libxml_clear_errors();
+
+        $writer = new PaymentMethodsDocWriter();
+        $xml = $writer->asXML(new PaymentMethodsDoc($this));
+
+        $dom = new DOMDocument();
+        $dom->loadXML($xml);
+        $dom->schemaValidate(__DIR__.'/../../xsd/paymentMethods-' . Invoice::VERSION . '.xsd');
+
+        return array_map(function ($error) {
+            preg_match("/Element '(.+?)':( \[.*?])? (.+)/", $error->message, $matches);
+            return [
+                'field' => $matches[1] ?? null,
+                'message' => $matches[3] ?? null,
+            ];
+        }, libxml_get_errors());
     }
 }
