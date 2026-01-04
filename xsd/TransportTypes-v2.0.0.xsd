@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.0.0">
+	<xs:include schemaLocation="SimpleTypes-v2.0.0.xsd"/>
+	<xs:complexType name="DeliveryEventType">
+		<xs:annotation>
+			<xs:documentation>Ένα γεγονός (σταθμός) στον κύκλο ζωής (lifecycle) παράδοσης του δελτίου διακίνησης</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="eventType" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Ο τύπος του Συμβάντος (e.g., "RegisterTransfer", "ConfirmOutcome", "Rejection").</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="eventTimestamp" type="xs:dateTime">
+				<xs:annotation>
+					<xs:documentation>Χρονοσφραγίδα συμβάντος</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="actorVat" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>ΑΦΜ Χρήστη που δημιούργησε το συμβάν.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="mark" type="xs:long" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Μοναδικός Αριθμός Καταχώρησης Συμβάντος (παράγεται από το myDATA)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice minOccurs="0">
+				<xs:element name="transportDetails" type="TransportDetailType">
+					<xs:annotation>
+						<xs:documentation>Λεπτομέρειες Εκκίνησης Διακίνησης - Μεταφορτώσεις Διακίνησης</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="outcomeDetails" type="OutcomeDetailsType">
+					<xs:annotation>
+						<xs:documentation>Λεπτομέρειες της παράδοσης/παραλαβής των αγαθών (από μεταφορέας ή παραλήπτη)</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="rejectionDetails" type="RejectionDetailsType">
+					<xs:annotation>
+						<xs:documentation>Ένδειξη απόρριψης του παραστατικού διακίνησης από τον παραλήπτη του</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TransportDetailType">
+		<xs:sequence>
+			<xs:element name="vehicleNumber">
+				<xs:annotation>
+					<xs:documentation>Αριθμός Μεταφορικού Μέσου (Αριθμός κυκλοφορίας/Όνομα πλωτού μέσου/Κωδικός Δρομολογίου ή πτήσης/Διακίνηση άνευ Μεταφορικού Μέσου)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="transportType">
+				<xs:annotation>
+					<xs:documentation>Είδος Μεταφορικού Μέσου</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:int">
+						<xs:minInclusive value="1"/>
+						<xs:maxInclusive value="6"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="timeStamp" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Χρονοσφραγίδα</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="carrierVatNumber">
+				<xs:annotation>
+					<xs:documentation>ΑΦΜ Μεταφορικής Εταιρείας</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="pNumber" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Αριθμός κυκλοφορίας "Ρ" (αριθμός κυκλοφορίας του επικαθήμενου/ρυμουλκούμενου οχήματος)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="location" type="LocationType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Τοποθεσία Μεταφόρτωσης</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="LocationType">
+		<xs:annotation>
+			<xs:documentation>Τοποθεσία</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="longitude" type="xs:decimal">
+				<xs:annotation>
+					<xs:documentation>Γεωγραφικό Μήκος</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="latitude" type="xs:decimal">
+				<xs:annotation>
+					<xs:documentation>Γεωγραφικό Πλάτος</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="PackagingDetailType">
+		<xs:annotation>
+			<xs:documentation>Πληροφορίες Συσκευασίας</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="packagingType">
+				<xs:annotation>
+					<xs:documentation>Είδος Συσκευασίας</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:int">
+						<xs:minInclusive value="1"/>
+						<xs:maxInclusive value="6"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="quantity" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>Πλήθος</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="otherPackagingTypeTitle" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Τίτλος για Λοιπά Είδη Συσκευασίας</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="150"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PackingsDeclaration">
+		<xs:annotation>
+			<xs:documentation>Δήλωση Συσκευασιών</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Packages" type="PackagingDetailType" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Συσκευασίες</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OutcomeDetailsType">
+		<xs:annotation>
+			<xs:documentation>Λεπτομέρειες της παράδοσης/παραλαβής των αγαθών (από μεταφορέας ή παραλήπτη)</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="outcome" type="DeliveryOutcomeType">
+				<xs:annotation>
+					<xs:documentation>Αποτέλεσμα Παράδοσης</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="deliveredWithoutRecipient" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="deliveredPackaging" type="PackagingDetailType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RejectionDetailsType">
+		<xs:annotation>
+			<xs:documentation>Ένδειξη απόρριψης του παραστατικού διακίνησης από τον παραλήπτη του</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:annotation>
+				<xs:documentation>Περιγραφή αιτιολογίας απόρριψης</xs:documentation>
+			</xs:annotation>
+			<xs:element name="reason" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
