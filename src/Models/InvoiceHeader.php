@@ -219,7 +219,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @return string|null Ημερομηνία Έναρξης Αποστολής
+     * @return string|null Ημερομηνία Έναρξης Αποστολής (Προγραμματισμένη - Σχεδιασμένη - Εκτιμώμενη)
      */
     public function getDispatchDate(): ?string
     {
@@ -227,7 +227,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param  string|null  $dispatchDate  Ημερομηνία Έναρξης Αποστολής
+     * @param  string|null  $dispatchDate  Ημερομηνία Έναρξης Αποστολής (Προγραμματισμένη - Σχεδιασμένη - Εκτιμώμενη) Y-m-d
      */
     public function setDispatchDate(?string $dispatchDate): static
     {
@@ -235,7 +235,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @return string|null Ώρα Έναρξης Αποστολής
+     * @return string|null Ώρα Έναρξης Αποστολής (Προγραμματισμένη - Σχεδιασμένη - Εκτιμώμενη)
      */
     public function getDispatchTime(): ?string
     {
@@ -251,15 +251,15 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @return string|null Αριθμός Μεταφορικού Μέσου
-     */
+     * @return string|null Αριθμός Μεταφορικού Μέσου (Προγραμματισμένο - Σχεδιασμένο)
+ */
     public function getVehicleNumber(): ?string
     {
         return $this->get('vehicleNumber');
     }
 
     /**
-     * @param  string|null  $vehicleNumber  Αριθμός Μεταφορικού Μέσου
+     * @param  string|null  $vehicleNumber  Αριθμός Μεταφορικού Μέσου (Προγραμματισμένο - Σχεδιασμένο)
      */
     public function setVehicleNumber(?string $vehicleNumber): static
     {
