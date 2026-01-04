@@ -30,7 +30,6 @@ class Invoice extends Type
         'invoiceDetails',
         'taxesTotals',
         'invoiceSummary',
-        'otherTransportDetails',
         'downloadingInvoiceUrl',
     ];
 
@@ -42,7 +41,6 @@ class Invoice extends Type
         'invoiceDetails' => InvoiceDetails::class,
         'taxesTotals' => TaxesTotals::class,
         'invoiceSummary' => InvoiceSummary::class,
-        'otherTransportDetails' => TransportDetail::class,
     ];
 
     /**
@@ -359,6 +357,8 @@ class Invoice extends Type
      * @return TransportDetail[]|null Λοιπές Λεπτομέρειες Διακίνησης (Ορισμός - Αλλαγή Μτφ Μέσων)
      *
      * @version 1.0.7
+     *
+     * @deprecated Since version v2.0.0 of myDATA. Do not use.
      */
     public function getOtherTransportDetails(): ?array
     {
@@ -371,6 +371,8 @@ class Invoice extends Type
      * @param  TransportDetail  $transportDetailType  Λεπτομέρειες Διακίνησης
      *
      * @version 1.0.7
+     *
+     * @deprecated Since version v2.0.0 of myDATA. Do not use.
      */
     public function addOtherTransportDetail(TransportDetail $transportDetailType): static
     {
@@ -403,6 +405,8 @@ class Invoice extends Type
     /**
      * @param  TransportDetail[]|null  $transportDetails
      * @return $this
+     *
+     * @deprecated Since version v2.0.0 of myDATA. Do not use.
      */
     public function setOtherTransportDetails(?array $transportDetails): static
     {

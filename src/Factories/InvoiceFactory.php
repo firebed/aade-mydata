@@ -10,7 +10,6 @@ use Firebed\AadeMyData\Models\InvoiceSummary;
 use Firebed\AadeMyData\Models\Issuer;
 use Firebed\AadeMyData\Models\PaymentMethods;
 use Firebed\AadeMyData\Models\TaxesTotals;
-use Firebed\AadeMyData\Models\TransportDetail;
 
 /**
  * @extends Factory<Invoice>
@@ -28,7 +27,6 @@ class InvoiceFactory extends Factory
             'taxesTotals'           => TaxesTotals::factory(),
             'invoiceSummary'        => InvoiceSummary::factory(),
             'qrCodeUrl'             => fake()->url(),
-            'otherTransportDetails' => TransportDetail::factory(),
             'downloadingInvoiceUrl' => fake()->url(),
         ];
     }

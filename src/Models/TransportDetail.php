@@ -6,6 +6,8 @@ use Firebed\AadeMyData\Traits\HasFactory;
 
 /**
  * @version 1.0.7
+ *
+ * @deprecated Since version v2.0.0 of myDATA. Do not use.
  */
 class TransportDetail extends Type
 {

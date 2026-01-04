@@ -2,6 +2,7 @@
 
 namespace Firebed\AadeMyData\Xml;
 
+use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\InvoicesDoc;
 
 /**
@@ -9,11 +10,9 @@ use Firebed\AadeMyData\Models\InvoicesDoc;
  */
 class InvoicesDocWriter extends XMLWriter
 {
-    private const DOC_VERSION     = 'v1.0.12';
-
     private const XMLNS           = 'http://www.aade.gr/myDATA/invoice/v1.0';
     private const XSI             = 'http://www.w3.org/2001/XMLSchema-instance';
-    private const SCHEMA_LOCATION = "http://www.aade.gr/myDATA/invoice/v1.0/InvoicesDoc-" . self::DOC_VERSION.".xsd";
+    private const SCHEMA_LOCATION = "http://www.aade.gr/myDATA/invoice/v1.0/InvoicesDoc-" . Invoice::VERSION . ".xsd";
     private const ICLS            = 'https://www.aade.gr/myDATA/incomeClassificaton/v1.0';
     private const ECLS            = 'https://www.aade.gr/myDATA/expensesClassificaton/v1.0';
 

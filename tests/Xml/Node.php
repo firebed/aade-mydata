@@ -26,6 +26,10 @@ class Node implements Countable, ArrayAccess
 
     public function get(string $name): mixed
     {
+        if (!isset($this->xml[$name])) {
+            return null;
+        }
+
         $value = $this->xml[$name];
 
         if (!is_array($value)) {
