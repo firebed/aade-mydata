@@ -5,14 +5,14 @@ namespace Firebed\AadeMyData\Enums;
 enum TransactionMode: int
 {
     use HasLabels;
-    
+
     /**
      * Αποδοχή του παραστατικού
      */
     case ACCEPT = 0;
-    
+
     /**
-     * Απόρριψη του παραστατικού λόγω διαφωνίας 
+     * Απόρριψη του παραστατικού λόγω διαφωνίας
      */
     case REJECT = 1;
 
@@ -21,7 +21,7 @@ enum TransactionMode: int
      * Απόρριψη του παραστατικού λόγω απόκλισης στα ποσά
      */
     case DEVIATION = 2;
-    
+
     public function label(): string
     {
         return match ($this) {

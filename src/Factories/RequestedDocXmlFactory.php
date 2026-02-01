@@ -14,7 +14,7 @@ class RequestedDocXmlFactory
 
     public function addInvoice(Invoice $invoice): void
     {
-        $this->invoices[] = $invoice;;
+        $this->invoices[] = $invoice;
     }
 
     public function toRequestedDoc(): RequestedDoc

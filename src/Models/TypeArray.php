@@ -25,7 +25,7 @@ class TypeArray extends Type implements IteratorAggregate, ArrayAccess, Countabl
     public function __construct(string $childKey, mixed $items = null)
     {
         parent::__construct();
-        
+
         $this->childKey = $childKey;
 
         if ($items !== null) {
@@ -34,8 +34,8 @@ class TypeArray extends Type implements IteratorAggregate, ArrayAccess, Countabl
     }
 
     /**
-     * @param  int  $key
-     * @param  TType|TType[]  $value
+     * @param int $key
+     * @param TType|TType[] $value
      * @return static
      */
     public function set($key, $value): static
@@ -47,11 +47,11 @@ class TypeArray extends Type implements IteratorAggregate, ArrayAccess, Countabl
 
     /**
      * @param TType $value
-     * @return void
+     * @return static
      */
-    public function add($value): void
+    public function add($value): static
     {
-        $this->push($this->childKey, $value);
+        return $this->push($this->childKey, $value);
     }
 
     /**
@@ -63,18 +63,18 @@ class TypeArray extends Type implements IteratorAggregate, ArrayAccess, Countabl
     }
 
     /**
-     * @param  int  $key
-     * @param  null  $value
+     * @param int $key
+     * @param null $value
      * @return TypeArray
      */
     public function push($key, $value = null): static
     {
         if (is_array($value)) {
-            $this->attributes[$this->childKey] = array_merge($this->attributes[$this->childKey], $value);
+            $this->attributes[$this->childKey] = array_merge($this->attributes[$this->childKey] ?? [], $value);
         } else {
             $this->attributes[$this->childKey][] = $value;
         }
-        
+
         return $this;
     }
 
@@ -134,5 +134,15 @@ class TypeArray extends Type implements IteratorAggregate, ArrayAccess, Countabl
     public function all(): array
     {
         return $this->attributes[$this->childKey] ?? [];
+    }
+
+    public function isEmpty(): bool
+    {
+        return empty($this->attributes[$this->childKey]);
+    }
+
+    public function isNotEmpty(): bool
+    {
+        return ! $this->isEmpty();
     }
 }

@@ -69,7 +69,7 @@ class Statement extends Type
     }
 
     /**
-     * @param  string  $entityVatNumber  ΑΦΜ Υπόχρεης Οντότητας
+     * @param string $entityVatNumber ΑΦΜ Υπόχρεης Οντότητας
      * @return static
      */
     public function setEntityVatNumber(string $entityVatNumber): static
@@ -86,7 +86,7 @@ class Statement extends Type
     }
 
     /**
-     * @param  LiableUserCategory|int  $liableUserCategory  Κατηγορία Υπόχρεου
+     * @param LiableUserCategory|int $liableUserCategory Κατηγορία Υπόχρεου
      * @return static
      */
     public function setLiableUserCategory(LiableUserCategory|int $liableUserCategory): static
@@ -103,7 +103,7 @@ class Statement extends Type
     }
 
     /**
-     * @param  ProviderType|int  $providerType  Τύπος Παρόχου
+     * @param ProviderType|int $providerType Τύπος Παρόχου
      * @return static
      */
     public function setProviderType(ProviderType|int $providerType): static
@@ -120,7 +120,7 @@ class Statement extends Type
     }
 
     /**
-     * @param  bool|null  $isB2BTransactions  Συναλλαγές B2B
+     * @param bool|null $isB2BTransactions Συναλλαγές B2B
      * @return static
      */
     public function setIsB2BTransactions(?bool $isB2BTransactions): static
@@ -137,7 +137,7 @@ class Statement extends Type
     }
 
     /**
-     * @param  bool|null  $isB2CTransactions  Συναλλαγές B2C
+     * @param bool|null $isB2CTransactions Συναλλαγές B2C
      * @return static
      */
     public function setIsB2CTransactions(?bool $isB2CTransactions): static
@@ -154,7 +154,7 @@ class Statement extends Type
     }
 
     /**
-     * @param  bool|null  $isB2GTransactions  Συναλλαγές B2G
+     * @param bool|null $isB2GTransactions Συναλλαγές B2G
      * @return static
      */
     public function setIsB2GTransactions(?bool $isB2GTransactions): static
@@ -171,7 +171,7 @@ class Statement extends Type
     }
 
     /**
-     * @param  string  $providerVatNumber  ΑΦΜ Παρόχου
+     * @param string $providerVatNumber ΑΦΜ Παρόχου
      * @return static
      */
     public function setProviderVatNumber(string $providerVatNumber): static
@@ -188,7 +188,7 @@ class Statement extends Type
     }
 
     /**
-     * @param  string  $providerLicenceNumber  Αριθμός Αδείας Παρόχου
+     * @param string $providerLicenceNumber Αριθμός Αδείας Παρόχου
      * @return static
      */
     public function setProviderLicenceNumber(string $providerLicenceNumber): static
@@ -205,7 +205,7 @@ class Statement extends Type
     }
 
     /**
-     * @param  string  $providerContractNumber  Αριθμός Σύμβασης Παρόχου
+     * @param string $providerContractNumber Αριθμός Σύμβασης Παρόχου
      * @return static
      */
     public function setProviderContractNumber(string $providerContractNumber): static
@@ -225,7 +225,7 @@ class Statement extends Type
      * Ημερομηνία σύναψης σύμβασης οντότητας με τον Πάροχο
      * Το πεδίο πρέπει να είναι σε UTC μορφή. Για παράδειγμα, : yyyy-MM-ddTHH:mm:ssZ
      *
-     * @param  string  $providerContractConclusionDate  Ημερομηνία σύναψης σύμβασης οντότητας με τον Πάροχο
+     * @param string $providerContractConclusionDate Ημερομηνία σύναψης σύμβασης οντότητας με τον Πάροχο
      * @return static
      */
     public function setProviderContractConclusionDate(string $providerContractConclusionDate): static
@@ -245,7 +245,7 @@ class Statement extends Type
      * Ημερομηνία έναρξης ισχύος της σύμβασης
      * Το πεδίο πρέπει να είναι σε UTC μορφή. Για παράδειγμα, : yyyy-MM-ddTHH:mm:ssZ
      *
-     * @param  string  $providerContractActivationDate  Ημερομηνία έναρξης ισχύος σύμβασης
+     * @param string $providerContractActivationDate Ημερομηνία έναρξης ισχύος σύμβασης
      * @return static
      */
     public function setProviderContractActivationDate(string $providerContractActivationDate): static
@@ -265,7 +265,7 @@ class Statement extends Type
      * Ημερομηνία έναρξης έκδοσης στοιχείων για συναλλαγές
      * Το πεδίο πρέπει να έχει την ακόλουθη μορφή : YYYY-MM-DD
      *
-     * @param  string|null  $issueStartDate  Ημερομηνία έναρξης έκδοσης
+     * @param string|null $issueStartDate Ημερομηνία έναρξης έκδοσης
      * @return static
      */
     public function setIssueStartDate(?string $issueStartDate): static
@@ -285,7 +285,7 @@ class Statement extends Type
      * Ημερομηνία διακοπής έκδοσης στοιχείων για συναλλαγές
      * Το πεδίο πρέπει να έχει την ακόλουθη μορφή : YYYY-MM-DD
      *
-     * @param  string|null  $issueStopDate  Ημερομηνία διακοπής έκδοσης
+     * @param string|null $issueStopDate Ημερομηνία διακοπής έκδοσης
      * @return static
      */
     public function setIssueStopDate(?string $issueStopDate): static
@@ -302,7 +302,7 @@ class Statement extends Type
     }
 
     /**
-     * @param  string|null  $internetProvider  Πάροχος Διαδικτύου Οντότητας-Εκδότη
+     * @param string|null $internetProvider Πάροχος Διαδικτύου Οντότητας-Εκδότη
      * @return static
      */
     public function setInternetProvider(?string $internetProvider): static
@@ -319,7 +319,7 @@ class Statement extends Type
     }
 
     /**
-     * @param  string|null  $internetProviderContractNumber  Αριθμός Σύμβασης με Πάροχο Διαδικτύου
+     * @param string|null $internetProviderContractNumber Αριθμός Σύμβασης με Πάροχο Διαδικτύου
      * @return static
      */
     public function setInternetProviderContractNumber(?string $internetProviderContractNumber): static
@@ -339,7 +339,7 @@ class Statement extends Type
      * Ημερομηνία Σύμβασης Οντότητας-Εκδότη με Πάροχο Διαδικτύου
      * Το πεδίο πρέπει να είναι σε UTC μορφή. Για παράδειγμα, : yyyy-MM-ddTHH:mm:ssZ
      *
-     * @param  string|null  $internetProviderContractDate  Ημερομηνία Σύμβασης με Πάροχο Διαδικτύου
+     * @param string|null $internetProviderContractDate Ημερομηνία Σύμβασης με Πάροχο Διαδικτύου
      * @return static
      */
     public function setInternetProviderContractDate(?string $internetProviderContractDate): static
@@ -350,7 +350,7 @@ class Statement extends Type
     /**
      * Converts the statement into its XML representation.
      *
-     * @param  bool  $asStatementDoc  If true, returns the full XML document. Otherwise, returns only the XML of the root statement node.
+     * @param bool $asStatementDoc If true, returns the full XML document. Otherwise, returns only the XML of the root statement node.
      * @return string The XML representation of the statement.
      */
     public function toXml(bool $asStatementDoc = false): string

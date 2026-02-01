@@ -19,9 +19,4 @@ class StatementResponseDoc extends TypeArray
     {
         parent::__construct('response');
     }
-
-    public function offsetGet(mixed $offset): StatementResponse
-    {
-        return $this->attributes['response'][$offset];
-    }
 }

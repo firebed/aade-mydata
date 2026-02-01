@@ -42,6 +42,6 @@ class ProviderSignatureTest extends TestCase
         $this->assertEmpty($payment->validate());
         $this->assertStringContainsString('<inv:SigningAuthor>01234567</inv:SigningAuthor>', $xml);
         $this->assertStringContainsString('<inv:Signature>SIGNATUREDATA</inv:Signature>', $xml);
-        $this->assertStringContainsString('<inv:EndToΕndReferenceID>REF12345</inv:EndToΕndReferenceID>', $xml);
+        $this->assertStringContainsString('<inv:EndToEndReferenceID>REF12345</inv:EndToEndReferenceID>', $xml);
     }
 }

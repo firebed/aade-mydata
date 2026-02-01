@@ -32,13 +32,13 @@ class SendIncomeClassification extends MyDataRequest
      * entityVatNumber, διαφορετικά το εν λόγω πεδίο παραμένει κενό</li>
      * </ul>
      *
-     * @param  IncomeClassificationsDoc|InvoiceIncomeClassification|array  $incomeClassifications
+     * @param IncomeClassificationsDoc|InvoiceIncomeClassification|array $incomeClassifications
      * @return ResponseDoc
      * @throws MyDataException
      */
     public function handle(IncomeClassificationsDoc|InvoiceIncomeClassification|array $incomeClassifications, bool $postPerInvoice = false): ResponseDoc
     {
-        if (!$incomeClassifications instanceof IncomeClassificationsDoc) {
+        if (! $incomeClassifications instanceof IncomeClassificationsDoc) {
             $incomeClassifications = new IncomeClassificationsDoc($incomeClassifications);
         }
 

@@ -27,7 +27,7 @@ class RequestStatementsTest extends MyDataHttpTestCase
 
     public function test_handle_requires_provider_route()
     {
-        MyDataRequest::init('test_user_id', 'test_user_secret', 'dev', false);
+        MyDataRequest::init('test_user_id', 'test_user_secret', 'dev');
 
         MyDataRequest::setHandler(new MockHandler([
             new Response(200)
@@ -60,14 +60,14 @@ class RequestStatementsTest extends MyDataHttpTestCase
 
         $this->assertEquals('727', $statement->getStatementId());
         $this->assertEquals('2025-11-15T13:07:52.330648', $statement->getSubmissionDateTime());
-        $this->assertEquals('110250755', $statement->getEntityVatNumber());
+        $this->assertEquals('888888888', $statement->getEntityVatNumber());
         $this->assertEquals(1, $statement->getLiableUserCategory()->value);
         $this->assertEquals(1, $statement->getProviderType()->value);
         $this->assertTrue($statement->getIsB2BTransactions());
         $this->assertTrue($statement->getIsB2CTransactions());
         $this->assertFalse($statement->getIsB2GTransactions());
-        $this->assertEquals('110286266', $statement->getProviderVatNumber());
-        $this->assertEquals('2020_11_106Cloud Services _001_Oxygen-Pelatologio_V1_18112020', $statement->getProviderLicenceNumber());
+        $this->assertEquals('999999999', $statement->getProviderVatNumber());
+        $this->assertEquals('Provider-License-Number', $statement->getProviderLicenceNumber());
         $this->assertEquals('111041', $statement->getProviderContractNumber());
         $this->assertEquals('2025-07-26T11:16:10', $statement->getProviderContractConclusionDate());
         $this->assertEquals('2025-07-27T11:16:10', $statement->getProviderContractActivationDate());
@@ -80,6 +80,6 @@ class RequestStatementsTest extends MyDataHttpTestCase
         $this->assertEquals(728, $recallStatement->getRecallId());
         $this->assertEquals(2, $recallStatement->getRecallStatus()->value);
         $this->assertEquals('2025-11-15', $recallStatement->getTransactionDate());
-        $this->assertEquals('110286266', $recallStatement->getRecallVatNumber());
+        $this->assertEquals('777777777', $recallStatement->getRecallVatNumber());
     }
 }

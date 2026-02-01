@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RequestGroupQRDetailsResponse xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <groupId>9946C6AA9DB3658C85CC3BF43DB726FE25BBC555</groupId>
+    <qrUrls>
+        <qrUrl>https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url_1</qrUrl>
+        <qrUrl>https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url_2</qrUrl>
+    </qrUrls>
+    <qrUrlsCount>2</qrUrlsCount>
+    <groupQrCreatorVatNumber>123456789</groupQrCreatorVatNumber>
+    <createdAt>2025-02-07T10:00:00</createdAt>
+    <expiresAt>2025-02-08T12:00:00</expiresAt>
+    <statusCode>Success</statusCode>
+</RequestGroupQRDetailsResponse>

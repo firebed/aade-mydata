@@ -7,7 +7,7 @@ use Firebed\AadeMyData\Models\RequestedVatInfo;
 
 /**
  * @extends XMLReader<RequestedVatInfo>
- *     
+ *
  * @version 1.0.10
  */
 class E3InfoReader extends XMLReader

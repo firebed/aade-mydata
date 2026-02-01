@@ -4,7 +4,6 @@ namespace Firebed\AadeMyData\Models;
 
 use DOMDocument;
 use Firebed\AadeMyData\Traits\HasFactory;
-use Firebed\AadeMyData\Xml\InvoicesDocWriter;
 use Firebed\AadeMyData\Xml\PaymentMethodsDocWriter;
 
 /**
@@ -36,7 +35,7 @@ class PaymentMethod extends Type
     }
 
     /**
-     * @param  int  $invoiceMark
+     * @param int $invoiceMark
      *
      * @return PaymentMethod
      * @version 1.0.8
@@ -73,7 +72,7 @@ class PaymentMethod extends Type
      * αποστέλλεται μέσω του πεδίου entityVatNumber, διαφορετικά το εν λόγω πεδίο
      * παραμένει κενό.
      *
-     * @param  string|null  $entityVatNumber  ΑΦΜ Οντότητας Αναφοράς
+     * @param string|null $entityVatNumber ΑΦΜ Οντότητας Αναφοράς
      *
      * @version 1.0.8
      */
@@ -96,7 +95,7 @@ class PaymentMethod extends Type
      * Το σύνολο των ποσών amount ανά αντικείμενο PaymentMethodType πρέπει να
      * ισούται με το totalValue του παραστατικού στο οποίο αντιστοιχεί το invoiceMark.
      *
-     * @param  PaymentMethodDetail  $paymentMethodDetails  Τρόπος Πληρωμής
+     * @param PaymentMethodDetail $paymentMethodDetails Τρόπος Πληρωμής
      *
      * @version 1.0.8
      */
@@ -109,7 +108,7 @@ class PaymentMethod extends Type
      * Το σύνολο των ποσών amount ανά αντικείμενο PaymentMethodType πρέπει να
      * ισούται με το totalValue του παραστατικού στο οποίο αντιστοιχεί το invoiceMark.
      *
-     * @param  PaymentMethodDetail[]  $paymentMethodDetails  Τρόποι Πληρωμής
+     * @param PaymentMethodDetail[] $paymentMethodDetails Τρόποι Πληρωμής
      *
      * @version 1.0.8
      */
@@ -120,7 +119,7 @@ class PaymentMethod extends Type
 
     public function set($key, $value): static
     {
-        if ($key === 'paymentMethodDetails' && !is_array($value)) {
+        if ($key === 'paymentMethodDetails' && ! is_array($value)) {
             return $this->addPaymentMethodDetails($value);
         }
 
@@ -150,7 +149,7 @@ class PaymentMethod extends Type
 
         $dom = new DOMDocument();
         $dom->loadXML($xml);
-        $dom->schemaValidate(__DIR__.'/../../xsd/paymentMethods-' . Invoice::VERSION . '.xsd');
+        $dom->schemaValidate(__DIR__ . '/../../xsd/paymentMethods-' . Invoice::VERSION . '.xsd');
 
         return array_map(function ($error) {
             preg_match("/Element '(.+?)':( \[.*?])? (.+)/", $error->message, $matches);

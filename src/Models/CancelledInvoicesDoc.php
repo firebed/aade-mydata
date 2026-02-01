@@ -15,9 +15,4 @@ class CancelledInvoicesDoc extends TypeArray
     {
         parent::__construct('cancelledInvoice');
     }
-
-    public function offsetGet(mixed $offset): CancelledInvoice
-    {
-        return $this->attributes['cancelledInvoice'][$offset];
-    }
 }

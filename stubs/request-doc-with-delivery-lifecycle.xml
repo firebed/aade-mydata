@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RequestedDoc xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" xmlns:pm="https://www.aade.gr/myDATA/paymentMethod/v1.0" xmlns="http://www.aade.gr/myDATA/invoice/v1.0">
+    <invoicesDoc>
+        <invoice>
+            <uid>999A854DBC6FCFAEB2DBC32CBF82322540456F56</uid>
+            <mark>111111111111111</mark>
+            <authenticationCode>DEC42AAEFD57277D9F6E0B128C55A9C30FD0EE98</authenticationCode>
+            <issuer>
+                <vatNumber>888888888</vatNumber>
+                <country>GR</country>
+                <branch>0</branch>
+                <name>Test Company</name>
+                <address>
+                    <street>Main Street</street>
+                    <number>123</number>
+                    <postalCode>12345</postalCode>
+                    <city>Athens</city>
+                </address>
+            </issuer>
+            <counterpart>
+                <vatNumber>999999999</vatNumber>
+                <country>GR</country>
+                <branch>0</branch>
+                <name>Test Company</name>
+                <address>
+                    <street>Second Street</street>
+                    <number>456</number>
+                    <postalCode>54321</postalCode>
+                    <city>Thessaloniki</city>
+                </address>
+            </counterpart>
+            <invoiceHeader>
+                <series>0</series>
+                <aa>24</aa>
+                <issueDate>2026-02-07</issueDate>
+                <invoiceType>9.3</invoiceType>
+                <vatPaymentSuspension>false</vatPaymentSuspension>
+                <movePurpose>1</movePurpose>
+                <otherCorrelatedEntities>
+                    <type>3</type>
+                    <entityData>
+                        <vatNumber>777777777</vatNumber>
+                        <country>GR</country>
+                        <branch>0</branch>
+                    </entityData>
+                </otherCorrelatedEntities>
+                <otherDeliveryNoteHeader>
+                    <loadingAddress>
+                        <street>Loading Street</street>
+                        <number>321</number>
+                        <postalCode>98765</postalCode>
+                        <city>Heraklion</city>
+                    </loadingAddress>
+                    <deliveryAddress>
+                        <street>Delivery Street</street>
+                        <number>789</number>
+                        <postalCode>67890</postalCode>
+                        <city>Patras</city>
+                    </deliveryAddress>
+                    <startShippingBranch>0</startShippingBranch>
+                    <completeShippingBranch>0</completeShippingBranch>
+                </otherDeliveryNoteHeader>
+            </invoiceHeader>
+            <invoiceDetails>
+                <lineNumber>1</lineNumber>
+                <itemDescr>Test Item</itemDescr>
+                <quantity>1</quantity>
+                <measurementUnit>1</measurementUnit>
+                <netValue>0</netValue>
+                <vatCategory>8</vatCategory>
+                <vatAmount>0</vatAmount>
+                <incomeClassification>
+                    <icls:classificationCategory>category3</icls:classificationCategory>
+                    <icls:amount>0</icls:amount>
+                </incomeClassification>
+            </invoiceDetails>
+            <invoiceSummary>
+                <totalNetValue>0</totalNetValue>
+                <totalVatAmount>0</totalVatAmount>
+                <totalWithheldAmount>0</totalWithheldAmount>
+                <totalFeesAmount>0</totalFeesAmount>
+                <totalStampDutyAmount>0</totalStampDutyAmount>
+                <totalOtherTaxesAmount>0</totalOtherTaxesAmount>
+                <totalDeductionsAmount>0</totalDeductionsAmount>
+                <totalGrossValue>0</totalGrossValue>
+                <incomeClassification>
+                    <icls:classificationCategory>category3</icls:classificationCategory>
+                    <icls:amount>0</icls:amount>
+                </incomeClassification>
+            </invoiceSummary>
+            <qrCodeUrl>https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url</qrCodeUrl>
+            <invoiceDeliveryStatus>3</invoiceDeliveryStatus>
+            <deliveryLifecycle>
+                <deliveryEvents>
+                    <eventType>RegisterTransfer</eventType>
+                    <eventTimestamp>2026-02-07T20:51:06Z</eventTimestamp>
+                    <actorVat>777777777</actorVat>
+                    <mark>222222222222222</mark>
+                    <transportDetails>
+                        <vehicleNumber>AHN0011</vehicleNumber>
+                        <transportType>2</transportType>
+                        <timeStamp>2026-02-07T20:51:06Z</timeStamp>
+                        <carrierVatNumber>777777777</carrierVatNumber>
+                        <pNumber>P22345</pNumber>
+                        <location>
+                            <longitude>41.303921</longitude>
+                            <latitude>-81.901693</latitude>
+                        </location>
+                    </transportDetails>
+                </deliveryEvents>
+            </deliveryLifecycle>
+        </invoice>
+    </invoicesDoc>
+</RequestedDoc>

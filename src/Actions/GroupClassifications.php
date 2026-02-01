@@ -14,7 +14,7 @@ use Firebed\AadeMyData\Models\InvoiceDetails;
 
 class GroupClassifications
 {
-    private array $incomeClassifications   = [];
+    private array $incomeClassifications = [];
     private array $expensesClassifications = [];
 
     /**
@@ -62,7 +62,7 @@ class GroupClassifications
                 $icls->setClassificationCategory($category);
                 $icls->setAmount(round($amount, 2));
 
-                if (!empty($options['enableClassificationIds'])) {
+                if (! empty($options['enableClassificationIds'])) {
                     $id = count($flattenedIncomeClassifications) + 1;
                     $icls->setId($id);
                 }
@@ -104,7 +104,7 @@ class GroupClassifications
                         $ecls->setVatCategory($vat);
                         $ecls->setVatExemptionCategory($exemption);
 
-                        if (!empty($options['enableClassificationIds'])) {
+                        if (! empty($options['enableClassificationIds'])) {
                             $id = count($flattenedExpensesClassifications) + 1;
                             $ecls->setId($id);
                         }
@@ -167,11 +167,11 @@ class GroupClassifications
         $newAmount = $previousAmount + abs($ecls->getAmount() ?? 0);
         $newVatAmount = $previousVatAmount + abs($ecls->getVatAmount() ?? 0);
 
-        $this->expensesClassifications[$eclsCategory->value ?? '']									
-                                      [$eclsType->value ?? '']
-                                      [$vatCategory->value ?? '']
-                                      [$vatExemptionCategory->value ?? '']
-                                      = ['amount' => $newAmount, 'vatAmount' => $newVatAmount];
+        $this->expensesClassifications[$eclsCategory->value ?? '']
+        [$eclsType->value ?? '']
+        [$vatCategory->value ?? '']
+        [$vatExemptionCategory->value ?? '']
+            = ['amount' => $newAmount, 'vatAmount' => $newVatAmount];
     }
 
     private function getSummarizedExpensesClassification(ExpensesClassification $ecls, string $key): float
@@ -182,8 +182,8 @@ class GroupClassifications
         $vatExemptionCategory = $ecls->getVatExemptionCategory();
 
         return $this->expensesClassifications[$eclsCategory->value ?? '']
-                                             [$eclsType->value ?? '']
-                                             [$vatCategory->value ?? '']
-                                             [$vatExemptionCategory->value ?? ''][$key] ?? 0;
+        [$eclsType->value ?? '']
+        [$vatCategory->value ?? '']
+        [$vatExemptionCategory->value ?? ''][$key] ?? 0;
     }
 }

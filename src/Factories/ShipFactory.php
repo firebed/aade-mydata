@@ -12,10 +12,10 @@ class ShipFactory extends Factory
     public function definition(): array
     {
         return [
-            'applicationId'   => fake()->sha1(),
+            'applicationId' => fake()->sha1(),
             'applicationDate' => fake()->dateTimeThisMonth()->format('Y-m-d'),
-            'doy'             => fake()->city(),
-            'shipId'          => fake()->bothify('#??##??'),
+            'doy' => fake()->city(),
+            'shipId' => fake()->bothify('#??##??'),
         ];
     }
 }

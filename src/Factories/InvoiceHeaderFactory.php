@@ -45,6 +45,7 @@ class InvoiceHeaderFactory extends Factory
             'totalCancelDeliveryOrders' => fake()->boolean(),
             'reverseDeliveryNote' => fake()->boolean(),
             'reverseDeliveryNotePurpose' => fake()->randomElement(ReverseDeliveryNotePurpose::cases()),
+            'toWeigh' => fake()->boolean(),
         ];
     }
 }

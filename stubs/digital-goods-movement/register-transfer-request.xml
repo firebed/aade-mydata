@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Transport>
+    <qrUrl>https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_qr_url</qrUrl>
+    <transportDetail>
+        <vehicleNumber>AHN0011</vehicleNumber>
+        <transportType>2</transportType>
+        <carrierVatNumber>777777777</carrierVatNumber>
+        <pNumber>P22345</pNumber>
+        <location>
+            <longitude>41.303921</longitude>
+            <latitude>-81.901693</latitude>
+        </location>
+    </transportDetail>
+</Transport>

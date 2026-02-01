@@ -2,10 +2,6 @@
 
 namespace Firebed\AadeMyData\Traits;
 
-use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
-use Firebed\AadeMyData\Enums\IncomeClassificationType;
-use Firebed\AadeMyData\Enums\InvoiceType;
-
 trait CombinesClassifications
 {
 //    public function getClassifications(IncomeClassificationCategory $category, bool $income): array

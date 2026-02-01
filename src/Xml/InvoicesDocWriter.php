@@ -10,14 +10,14 @@ use Firebed\AadeMyData\Models\InvoicesDoc;
  */
 class InvoicesDocWriter extends XMLWriter
 {
-    private const XMLNS           = 'http://www.aade.gr/myDATA/invoice/v1.0';
-    private const XSI             = 'http://www.w3.org/2001/XMLSchema-instance';
+    private const XMLNS = 'http://www.aade.gr/myDATA/invoice/v1.0';
+    private const XSI = 'http://www.w3.org/2001/XMLSchema-instance';
     private const SCHEMA_LOCATION = "http://www.aade.gr/myDATA/invoice/v1.0/InvoicesDoc-" . Invoice::VERSION . ".xsd";
-    private const ICLS            = 'https://www.aade.gr/myDATA/incomeClassificaton/v1.0';
-    private const ECLS            = 'https://www.aade.gr/myDATA/expensesClassificaton/v1.0';
+    private const ICLS = 'https://www.aade.gr/myDATA/incomeClassificaton/v1.0';
+    private const ECLS = 'https://www.aade.gr/myDATA/expensesClassificaton/v1.0';
 
     protected array $namespaces = [
-        'incomeClassification'   => ['*' => self::ICLS],
+        'incomeClassification' => ['*' => self::ICLS],
         'expensesClassification' => ['*' => self::ECLS],
     ];
 

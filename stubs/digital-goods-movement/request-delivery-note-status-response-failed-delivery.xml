@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GetDeliveryNoteStatusResponse xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <invoiceMark>111111111111111</invoiceMark>
+    <status>FAILED_DELIVERY</status>
+    <dispatchTimestamp>2026-02-07T10:00:00Z</dispatchTimestamp>
+    <lifecycleHistory>
+        <eventType>RegisterTransfer</eventType>
+        <eventTimestamp>2026-02-07T10:00:00Z</eventTimestamp>
+        <actorVat>777777777</actorVat>
+        <mark>222222222222222</mark>
+        <transportDetails>
+            <vehicleNumber>AHN0011</vehicleNumber>
+            <transportType>2</transportType>
+            <timeStamp>2026-02-07T10:00:00Z</timeStamp>
+            <carrierVatNumber>777777777</carrierVatNumber>
+            <pNumber>P22345</pNumber>
+            <location>
+                <longitude>41.303921</longitude>
+                <latitude>-81.901693</latitude>
+            </location>
+        </transportDetails>
+    </lifecycleHistory>
+    <lifecycleHistory>
+        <eventType>ConfirmOutcome</eventType>
+        <eventTimestamp>2026-02-07T11:00:00Z</eventTimestamp>
+        <actorVat>777777777</actorVat>
+        <mark>333333333333333</mark>
+        <outcomeDetails>
+            <outcome>NONE</outcome>
+            <deliveredWithoutRecipient>false</deliveredWithoutRecipient>
+        </outcomeDetails>
+    </lifecycleHistory>
+</GetDeliveryNoteStatusResponse>

@@ -24,7 +24,7 @@ trait HasResponseDom
         if ($this->responseDom === null) {
             return null;
         }
-        
+
         $element = $this->responseDom->getElementsByTagName($localName)->item($index);
         return $this->responseDom->saveXML($element);
     }

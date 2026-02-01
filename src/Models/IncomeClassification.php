@@ -27,7 +27,7 @@ class IncomeClassification extends Type
     ];
 
     protected array $casts = [
-        'classificationType'     => IncomeClassificationType::class,
+        'classificationType' => IncomeClassificationType::class,
         'classificationCategory' => IncomeClassificationCategory::class,
     ];
 
@@ -43,7 +43,7 @@ class IncomeClassification extends Type
      * @param IncomeClassificationType|string|null $classificationType Κωδικός Χαρακτηρισμού
      */
     public function setClassificationType(IncomeClassificationType|string|null $classificationType): static
-    {        
+    {
         return $this->set('classificationType', $classificationType);
     }
 
@@ -85,7 +85,7 @@ class IncomeClassification extends Type
     }
 
     public function addAmount(float $amount): static
-    {        
+    {
         return $this->set('amount', $this->getAmount() + $amount);
     }
 

@@ -10,12 +10,12 @@ class SummarizeInvoiceRows
 {
     use SummarizesInvoiceTaxes;
 
-    public float $totalNetValue  = 0;
+    public float $totalNetValue = 0;
     public float $totalVatAmount = 0;
 
     /**
-     * @param  InvoiceDetails[]|null  $rows
-     * @param  array  $options
+     * @param InvoiceDetails[]|null $rows
+     * @param array $options
      * @return void
      */
     public function handle(?array $rows, array $options = []): void

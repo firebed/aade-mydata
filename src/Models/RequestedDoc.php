@@ -20,12 +20,12 @@ namespace Firebed\AadeMyData\Models;
 class RequestedDoc extends Type
 {
     protected array $casts = [
-        'continuationToken'          => ContinuationToken::class,
-        'invoicesDoc'                => InvoicesDoc::class,
-        'cancelledInvoicesDoc'       => CancelledInvoicesDoc::class,
-        'incomeClassificationsDoc'   => IncomeClassificationsDoc::class,
+        'continuationToken' => ContinuationToken::class,
+        'invoicesDoc' => InvoicesDoc::class,
+        'cancelledInvoicesDoc' => CancelledInvoicesDoc::class,
+        'incomeClassificationsDoc' => IncomeClassificationsDoc::class,
         'expensesClassificationsDoc' => ExpensesClassificationsDoc::class,
-        'paymentMethodsDoc'          => PaymentMethodsDoc::class,
+        'paymentMethodsDoc' => PaymentMethodsDoc::class,
     ];
 
     /**

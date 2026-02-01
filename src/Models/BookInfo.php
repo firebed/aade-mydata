@@ -29,7 +29,7 @@ use Firebed\AadeMyData\Enums\InvoiceType;
 class BookInfo extends Type
 {
     protected array $casts = [
-        'invType'           => InvoiceType::class,
+        'invType' => InvoiceType::class,
         'invoiceDetailType' => InvoiceDetailType::class,
     ];
 

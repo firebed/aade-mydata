@@ -15,7 +15,7 @@ class ResponseDocXmlFactory
         if ($response instanceof Factory) {
             $response = $response->make();
         }
-        
+
         $response->set('index', count($this->responses) + 1);
         $this->responses[] = $response;
     }
@@ -40,7 +40,7 @@ class ResponseDocXmlFactory
                 if (is_array($value)) {
                     $parent = $dom->createElement($key);
                     $responseNode->appendChild($parent);
-                    
+
                     foreach ($value as $subKey => $item) {
                         if (is_numeric($subKey)) {
                             $node = $dom->createElement($key, $item);
@@ -48,7 +48,7 @@ class ResponseDocXmlFactory
                         } else {
                             foreach ($item as $element) {
                                 $node = $dom->createElement($subKey, $element);
-                                $parent->appendChild($node);                                
+                                $parent->appendChild($node);
                             }
                         }
                     }

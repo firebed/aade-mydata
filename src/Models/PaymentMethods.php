@@ -19,20 +19,15 @@ class PaymentMethods extends TypeArray
     ];
 
     /**
-     * @param  PaymentMethodDetail|PaymentMethodDetail[]  $paymentMethods
+     * @param PaymentMethodDetail|PaymentMethodDetail[] $paymentMethods
      */
     public function __construct(PaymentMethodDetail|array $paymentMethods = [])
     {
         parent::__construct('paymentMethodDetails', $paymentMethods);
     }
 
-    public function offsetGet(mixed $offset): PaymentMethodDetail
-    {
-        return $this->attributes['paymentMethodDetails'][$offset];
-    }
-
     public function getTotalPaymentAmount(): float
     {
-        return round(array_reduce($this->all(), fn($c, PaymentMethodDetail $pm) => $c + $pm->getAmount(), 0), 2);
+        return round(array_reduce($this->all(), fn ($c, PaymentMethodDetail $pm) => $c + $pm->getAmount(), 0), 2);
     }
 }

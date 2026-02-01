@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GetDeliveryNoteStatusResponse xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <invoiceMark>111111111111111</invoiceMark>
+    <status>REJECTED</status>
+    <dispatchTimestamp>2026-02-07T10:00:00Z</dispatchTimestamp>
+    <lifecycleHistory>
+        <eventType>RegisterTransfer</eventType>
+        <eventTimestamp>2026-02-07T10:00:00Z</eventTimestamp>
+        <actorVat>777777777</actorVat>
+        <mark>222222222222222</mark>
+        <transportDetails>
+            <vehicleNumber>AHN0011</vehicleNumber>
+            <transportType>2</transportType>
+            <timeStamp>2026-02-07T10:00:00Z</timeStamp>
+            <carrierVatNumber>777777777</carrierVatNumber>
+            <pNumber>P22345</pNumber>
+            <location>
+                <longitude>41.303921</longitude>
+                <latitude>-81.901693</latitude>
+            </location>
+        </transportDetails>
+    </lifecycleHistory>
+    <lifecycleHistory>
+        <eventType>ConfirmOutcome</eventType>
+        <eventTimestamp>2026-02-07T11:00:00Z</eventTimestamp>
+        <actorVat>777777777</actorVat>
+        <mark>333333333333333</mark>
+        <outcomeDetails>
+            <outcome>PARTIAL</outcome>
+            <deliveredWithoutRecipient>false</deliveredWithoutRecipient>
+            <deliveredPackaging>
+                <packagingType>3</packagingType>
+                <quantity>10</quantity>
+            </deliveredPackaging>
+            <deliveredPackaging>
+                <packagingType>2</packagingType>
+                <quantity>2</quantity>
+            </deliveredPackaging>
+        </outcomeDetails>
+    </lifecycleHistory>
+    <lifecycleHistory>
+        <eventType>Rejection</eventType>
+        <eventTimestamp>2026-02-07T12:00:00Z</eventTimestamp>
+        <actorVat>888888888</actorVat>
+        <mark>444444444444444</mark>
+    </lifecycleHistory>
+</GetDeliveryNoteStatusResponse>

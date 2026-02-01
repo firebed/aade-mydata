@@ -6,10 +6,10 @@ use BackedEnum;
 
 abstract class Type
 {
-    protected array      $attributes    = [];
-    protected array      $expectedOrder = [];
-    protected array      $casts         = [];
-    private static array $enumCache     = [];
+    protected array $attributes = [];
+    protected array $expectedOrder = [];
+    protected array $casts = [];
+    private static array $enumCache = [];
 
     public function __construct(array $attributes = [])
     {
@@ -59,7 +59,7 @@ abstract class Type
         // Cast value to enum if it is not already an enum
         // If the value doesn't correspond to an enum, it
         // will return null.
-        if ($this->isEnum($key) && !is_object($value)) {
+        if ($this->isEnum($key) && ! is_object($value)) {
             return $cast::tryFrom($value);
         }
 
@@ -68,6 +68,10 @@ abstract class Type
 
     public function push($key, $value = null): static
     {
+        if ($value === null) {
+            return $this;
+        }
+
         $this->attributes[$key][] = $value;
         return $this;
     }
@@ -101,16 +105,16 @@ abstract class Type
     public function setAttributes(array $attributes): static
     {
         foreach ($attributes as $key => $value) {
-            $set = 'set'.str_replace('_', '', ucwords($key, '_'));
+            $set = 'set' . str_replace('_', '', ucwords($key, '_'));
 
-            if (is_object($value) || !method_exists($this, $set)) {
+            if (is_object($value) || ! method_exists($this, $set)) {
                 $this->attributes[$key] = $value;
                 continue;
             }
 
             $cast = $this->getCast($key);
 
-            if ($cast === null || !is_subclass_of($cast, Type::class)) {
+            if ($cast === null || ! is_subclass_of($cast, Type::class)) {
                 $this->set($key, $value);
                 continue;
             }
@@ -122,7 +126,7 @@ abstract class Type
 
             $this->$set(
                 is_array($value) && isset($value[0])
-                    ? array_map(fn($v) => is_object($v) ? $v : new $cast($v), $value)
+                    ? array_map(fn ($v) => is_object($v) ? $v : new $cast($v), $value)
                     : new $cast($value)
             );
         }
@@ -150,7 +154,7 @@ abstract class Type
         }
 
         // Check if the class exists and implements BackedEnum
-        if (!class_exists($cast) || !is_subclass_of($cast, BackedEnum::class)) {
+        if (! class_exists($cast) || ! is_subclass_of($cast, BackedEnum::class)) {
             return self::$enumCache[$cast] = false;
         }
 
@@ -170,7 +174,7 @@ abstract class Type
             if ($value instanceof Type) {
                 $array[$key] = $value->toArray();
             } elseif (is_array($value)) {
-                $array[$key] = array_map(fn($v) => $v instanceof Type ? $v->toArray() : $v, $value);
+                $array[$key] = array_map(fn ($v) => $v instanceof Type ? $v->toArray() : $v, $value);
             } elseif ($this->isEnum($key) && is_object($value)) {
                 $array[$key] = $value->value;
             } else {

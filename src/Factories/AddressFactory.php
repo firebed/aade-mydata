@@ -12,9 +12,10 @@ class AddressFactory extends Factory
     public function definition(): array
     {
         return [
-            'street'     => fake()->streetName,
-            'number'     => fake()->buildingNumber,
+            'street' => fake()->streetName,
+            'number' => fake()->buildingNumber,
             'postalCode' => fake()->postcode,
-            'city'       => fake()->city,
+            'city' => fake()->city,
         ];
-    }}
+    }
+}

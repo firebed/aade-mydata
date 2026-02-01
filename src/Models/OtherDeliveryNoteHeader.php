@@ -19,7 +19,7 @@ class OtherDeliveryNoteHeader extends Type
     ];
 
     protected array $casts = [
-        'loadingAddress'  => Address::class,
+        'loadingAddress' => Address::class,
         'deliveryAddress' => Address::class
     ];
 

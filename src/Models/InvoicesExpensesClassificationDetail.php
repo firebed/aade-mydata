@@ -8,11 +8,11 @@ class InvoicesExpensesClassificationDetail extends Type
         'lineNumber',
         'expensesClassificationDetailData',
     ];
-    
+
     protected array $casts = [
         'expensesClassificationDetailData' => ExpensesClassification::class,
     ];
-    
+
     /**
      * @return int|null Αριθμός Γραμμής
      */
@@ -43,12 +43,12 @@ class InvoicesExpensesClassificationDetail extends Type
     {
         return $this->push('expensesClassificationDetailData', $classification);
     }
-    
+
     /**
      * @param ExpensesClassification[] $expensesClassificationDetailData
      */
     public function setExpensesClassificationDetailData(array $expensesClassificationDetailData): static
-    {        
+    {
         return $this->set('expensesClassificationDetailData', $expensesClassificationDetailData);
     }
 }

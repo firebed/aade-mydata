@@ -2,6 +2,8 @@
 
 namespace Firebed\AadeMyData\Http;
 
+use Firebed\AadeMyData\Models\ResponseDoc;
+
 /**
  * <p>Αυτή η POST μέθοδος, που είναι διαθέσιμη μόνο για πιστοποιημένους παρόχους,
  * χρησιμοποιείται για την ακύρωση ενός δελτίου αποστολής χωρίς επαναϋποβολή
@@ -19,4 +21,10 @@ namespace Firebed\AadeMyData\Http;
  */
 class CancelDeliveryNote extends CancelInvoice
 {
+    public function handle(string $mark, string $entityVatNumber = null): ResponseDoc
+    {
+        $this->ensureProvider();
+
+        return parent::handle($mark, $entityVatNumber);
+    }
 }

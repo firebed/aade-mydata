@@ -19,9 +19,4 @@ class RecallStatementDoc extends TypeArray
     {
         parent::__construct('recalledStatement');
     }
-
-    public function offsetGet($offset): RecalledStatementType
-    {
-        return $this->attributes['recalledStatement'][$offset];
-    }
 }

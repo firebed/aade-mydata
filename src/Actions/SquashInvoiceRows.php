@@ -33,8 +33,8 @@ class SquashInvoiceRows
     /**
      * Groups similar rows and returns a new array with the rows summed.
      *
-     * @param  InvoiceDetails[]|null  $invoiceRows  An array of invoice rows.
-     * @param  array  $options  Additional options.
+     * @param InvoiceDetails[]|null $invoiceRows An array of invoice rows.
+     * @param array $options Additional options.
      * @return array|null An array of squashed invoice rows.
      */
     public function handle(?array $invoiceRows, array $options = []): ?array
@@ -52,7 +52,7 @@ class SquashInvoiceRows
      * Squashes invoice rows by combining rows with identical categories
      * and summing their values.
      *
-     * @param  InvoiceDetails[]  $invoiceRows
+     * @param InvoiceDetails[] $invoiceRows
      * @return array
      */
     private function squashInvoiceRows(array $invoiceRows): array
@@ -77,7 +77,7 @@ class SquashInvoiceRows
     /**
      * Generates a unique key for each row based on its categories.
      *
-     * @param  InvoiceDetails  $row
+     * @param InvoiceDetails $row
      * @return string
      */
     private function generateRowKey(InvoiceDetails $row): string
@@ -97,7 +97,7 @@ class SquashInvoiceRows
     /**
      * Extracts data from the row for initializing a new squashed row.
      *
-     * @param  InvoiceDetails  $row
+     * @param InvoiceDetails $row
      * @return array
      */
     private function extractConcreteData(InvoiceDetails $row): array
@@ -117,8 +117,8 @@ class SquashInvoiceRows
     /**
      * Aggregates data from one row into another.
      *
-     * @param  InvoiceDetails  $target
-     * @param  InvoiceDetails  $source
+     * @param InvoiceDetails $target
+     * @param InvoiceDetails $source
      * @return void
      */
     private function aggregateRowData(InvoiceDetails $target, InvoiceDetails $source): void
@@ -135,8 +135,8 @@ class SquashInvoiceRows
     /**
      * Aggregates income classifications for a given row key.
      *
-     * @param  string  $rowKey
-     * @param  IncomeClassification[]|null  $classifications
+     * @param string $rowKey
+     * @param IncomeClassification[]|null $classifications
      * @return void
      */
     private function aggregateIncomeClassifications(string $rowKey, ?array $classifications): void
@@ -163,8 +163,8 @@ class SquashInvoiceRows
     /**
      * Aggregates expense classifications for a given row key.
      *
-     * @param  string  $rowKey
-     * @param  ExpensesClassification[]|null  $classifications
+     * @param string $rowKey
+     * @param ExpensesClassification[]|null $classifications
      * @return void
      */
     private function aggregateExpenseClassifications(string $rowKey, ?array $classifications): void
@@ -227,8 +227,8 @@ class SquashInvoiceRows
     }
 
     /**
-     * @param  ExpensesClassification[]|IncomeClassification[]  $classifications
-     * @param  int  $lineNumber
+     * @param ExpensesClassification[]|IncomeClassification[] $classifications
+     * @param int $lineNumber
      * @return array
      */
     private function mapClassifications(array $classifications, int &$lineNumber = 1): array
@@ -247,7 +247,7 @@ class SquashInvoiceRows
     /**
      * Rounds the values of a row.
      *
-     * @param  InvoiceDetails  $row
+     * @param InvoiceDetails $row
      * @return void
      */
     private function roundRow(InvoiceDetails $row): void

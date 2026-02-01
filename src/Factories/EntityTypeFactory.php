@@ -14,7 +14,7 @@ class EntityTypeFactory extends Factory
     public function definition(): array
     {
         return [
-            'type'       => fake()->randomElement(EntityTypes::cases()),
+            'type' => fake()->randomElement(EntityTypes::cases()),
             'entityData' => Party::factory(),
         ];
     }

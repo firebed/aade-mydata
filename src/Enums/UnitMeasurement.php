@@ -5,7 +5,7 @@ namespace Firebed\AadeMyData\Enums;
 enum UnitMeasurement: int
 {
     use HasLabels;
-    
+
     /**
      *  Τεμάχια
      */
@@ -27,25 +27,25 @@ enum UnitMeasurement: int
      * Μέτρα
      */
     case UNIT_4 = 4;
-    
-    
+
+
     /**
      * Τετραγωνικά Μέτρα
      */
     case UNIT_5 = 5;
-    
-    
+
+
     /**
      * Κυβικά Μέτρα
      */
     case UNIT_6 = 6;
-    
-    
+
+
     /**
      * Τεμάχια_Λοιπές Περιπτώσεις
      */
     case UNIT_7 = 7;
-    
+
     public function label(): string
     {
         return match ($this) {

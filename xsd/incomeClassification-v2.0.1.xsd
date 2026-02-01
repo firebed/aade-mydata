@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" targetNamespace="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.0.1">
+<xs:include schemaLocation="SimpleTypes-v2.0.1.xsd"/>
+  <xs:element name="IncomeClassificationsDoc">
+    <xs:annotation>
+      <xs:documentation>Χαρατηρισμοί Εσόδων Πρότυπων Παραστατικών ΑΑΔΕ</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence maxOccurs="unbounded">
+        <xs:element name="incomeInvoiceClassification" type="icls:InvoiceIncomeClassificationType"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="InvoiceIncomeClassificationType">
+    <xs:sequence>
+      <xs:element name="invoiceMark" type="xs:long">
+        <xs:annotation>
+          <xs:documentation>Μοναδικός Αριθμός Καταχώρησης Παραστατικού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="classificationMark" type="xs:long" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Αποδεικτικό Λήψης Χαρακτηρισμού Εσόδων. Συμπληρώνεται από την Υπηρεσία</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="entityVatNumber" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>ΑΦΜ Οντότητας Αναφοράς</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice>
+        <xs:element name="transactionMode">
+          <xs:annotation>
+            <xs:documentation>Αιτιολογία Συναλλαγής</xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:int">
+              <xs:minInclusive value="1"/>
+              <xs:maxInclusive value="2"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="invoicesIncomeClassificationDetails" type="icls:InvoicesIncomeClassificationDetailType" maxOccurs="unbounded"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="InvoicesIncomeClassificationDetailType">
+    <xs:sequence>
+      <xs:element name="lineNumber" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>Γραμμή Παραστατικού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="incomeClassificationDetailData" type="icls:IncomeClassificationType" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Λίστα Χαρακτηρισμών Εσόδων</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="IncomeClassificationType">
+    <xs:sequence>
+      <xs:element name="classificationType" type="icls:IncomeClassificationValueType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Κωδικός Χαρακτηρισμού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="classificationCategory" type="icls:IncomeClassificationCategoryType">
+        <xs:annotation>
+          <xs:documentation>Κατηγορία Χαρακτηρισμού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="amount" type="icls:AmountType">
+        <xs:annotation>
+          <xs:documentation>Ποσό Χαρακτηρισμού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="id" type="xs:byte" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Μοναδικός Αριθμός Χαρακτηρισμού</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>    
+</xs:schema>

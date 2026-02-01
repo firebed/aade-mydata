@@ -16,19 +16,10 @@ class RequestedStatementDoc extends TypeArray
     ];
 
     /**
-     * @param  RequestedStatement|RequestedStatement[]  $items  Λίστα ζητούμενων δηλώσεων
+     * @param RequestedStatement|RequestedStatement[] $items Λίστα ζητούμενων δηλώσεων
      */
     public function __construct(RequestedStatement|array $items = [])
     {
         parent::__construct('requestedStatement', $items);
-    }
-
-    /**
-     * @param  mixed  $offset
-     * @return RequestedStatement Αντικείμενο ζητούμενης δήλωσης
-     */
-    public function offsetGet(mixed $offset): RequestedStatement
-    {
-        return $this->attributes[$this->childKey][$offset];
     }
 }

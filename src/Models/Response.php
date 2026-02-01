@@ -146,7 +146,7 @@ class Response extends Type
 
     public function hasErrors(): bool
     {
-        return !is_null($this->getErrors()) && count($this->getErrors()) > 0;
+        return ! is_null($this->getErrors()) && count($this->getErrors()) > 0;
     }
 
     /**
@@ -193,7 +193,7 @@ class Response extends Type
         if ($key === 'receptionEmails' && empty($value)) {
             return parent::set('receptionEmails', new ReceptionEmails());
         }
-        
+
         return parent::set($key, $value);
     }
 }

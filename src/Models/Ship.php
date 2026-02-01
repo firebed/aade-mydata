@@ -7,14 +7,14 @@ use Firebed\AadeMyData\Traits\HasFactory;
 class Ship extends Type
 {
     use HasFactory;
-    
+
     protected array $expectedOrder = [
         'applicationId',
         'applicationDate',
         'doy',
         'shipId'
     ];
-    
+
     /**
      * @return string|null Αριθμός Δήλωσης Διενέργειας Δραστηριότητας
      */
@@ -56,7 +56,7 @@ class Ship extends Type
     }
 
     /**
-     * @param  string|null  $doy  Ημερομηνία ΔΟΥ Δήλωσης
+     * @param string|null $doy Ημερομηνία ΔΟΥ Δήλωσης
      */
     public function setDoy(?string $doy): static
     {

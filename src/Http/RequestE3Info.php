@@ -15,7 +15,7 @@ use Firebed\AadeMyData\Xml\E3InfoReader;
  * (E3Info) για τον ΑΦΜ που εισήχθη ως παράμετρο, καθώς και το στοιχείο continuationToken,
  * σε περίπτωση που ο όγκος των δεδομένων υπερβαίνει το επιτρεπτό όριο και η λήψη τους
  * γίνει τμηματικά.
- * 
+ *
  * @version 1.0.10
  */
 class RequestE3Info extends MyDataRequest
@@ -29,12 +29,12 @@ class RequestE3Info extends MyDataRequest
      * εγγραφές Ε3 ενός προσώπου ή επιχείρησης, είτε ανά τιμολόγιο είτε ανά ημέρα, ανάλογα με
      * τις παραμέτρους που έχουν δοθεί.
      *
-     * @param  string  $dateFrom  Αρχή χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης (μορφή dd/MM/yyyy)
-     * @param  string  $dateTo  Τέλος χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης (μορφή dd/MM/yyyy)
-     * @param  string|null  $entityVatNumber  ΑΦΜ οντότητας
-     * @param  bool  $groupedPerDay  Παράμετρος που δηλώνει εάν τα αποτελέσματα πρέπει να ομαδοποιηθούν ανά ημέρα.
-     * @param  string|null  $nextPartitionKey  Παράμετρος για την τμηματική λήψη των αποτελεσμάτων <code>($groupedPerDay = false)</code>
-     * @param  string|null  $nextRowKey  Παράμετρος για την τμηματική λήψη των αποτελεσμάτων <code>($groupedPerDay = false)</code>
+     * @param string $dateFrom Αρχή χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης (μορφή dd/MM/yyyy)
+     * @param string $dateTo Τέλος χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης (μορφή dd/MM/yyyy)
+     * @param string|null $entityVatNumber ΑΦΜ οντότητας
+     * @param bool $groupedPerDay Παράμετρος που δηλώνει εάν τα αποτελέσματα πρέπει να ομαδοποιηθούν ανά ημέρα.
+     * @param string|null $nextPartitionKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων <code>($groupedPerDay = false)</code>
+     * @param string|null $nextRowKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων <code>($groupedPerDay = false)</code>
      * @return RequestedE3Info
      * @throws MyDataException
      * @throws MyDataAuthenticationException
@@ -49,11 +49,11 @@ class RequestE3Info extends MyDataRequest
             'GroupedPerDay' => $groupedPerDay ? "true" : "false",
             'nextPartitionKey' => $nextPartitionKey,
             'nextRowKey' => $nextRowKey
-        ], fn($value) => $value !== null);
+        ], fn ($value) => $value !== null);
 
         // Get the response XML
         $responseXML = $this->get($query);
-        
+
         // Parse the response XML
         $reader = new E3InfoReader();
         $e3Info = $reader->parseXML($responseXML);

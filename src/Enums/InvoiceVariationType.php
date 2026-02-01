@@ -5,7 +5,7 @@ namespace Firebed\AadeMyData\Enums;
 enum InvoiceVariationType: int
 {
     use HasLabels;
-    
+
     /**
      * Διαβίβαση Παράλειψης από Λήπτη Χρησιμοποιείται αυτή η τιμή
      * για Διαβίβαση Δεδομένων από τον Λήπτη λόγω Παράλειψης Διαβίβασης του

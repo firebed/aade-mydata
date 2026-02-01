@@ -33,7 +33,7 @@ class Party extends Type
     }
 
     /**
-     * @param  string  $vatNumber  Οποιοσδήποτε έγκυρος ΑΦΜ
+     * @param string $vatNumber Οποιοσδήποτε έγκυρος ΑΦΜ
      */
     public function setVatNumber(string $vatNumber): static
     {
@@ -52,7 +52,7 @@ class Party extends Type
      * Ο κωδικός της χώρας είναι δύο χαρακτήρες και προέρχεται
      * από την αντίστοιχη λίστα χωρών όπως περιγράφεται στο ISO 3166
      *
-     * @param  CountryCode|string  $country  Ο κωδικός της χώρας
+     * @param CountryCode|string $country Ο κωδικός της χώρας
      * @return Party
      */
     public function setCountry(CountryCode|string $country): static
@@ -60,7 +60,7 @@ class Party extends Type
         if ($country instanceof CountryCode) {
             $country = $country->value;
         }
-        
+
         return $this->set('country', $country);
     }
 
@@ -77,7 +77,7 @@ class Party extends Type
      * <p>Σε περίπτωση που η εγκατάσταση του εκδότη είναι η έδρα ή δεν υφίσταται,
      * το πεδίο branch πρέπει να έχει την τιμή 0</p>
      *
-     * @param  int  $branch  Ελάχιστη τιμή = 0
+     * @param int $branch Ελάχιστη τιμή = 0
      */
     public function setBranch(int $branch): static
     {
@@ -100,7 +100,7 @@ class Party extends Type
      * το παραστατικό αφορά οντότητα εντός Ελλάδας (GR)</li>
      * </ul>
      *
-     * @param  string|null  $name  Επωνυμία
+     * @param string|null $name Επωνυμία
      */
     public function setName(?string $name): static
     {
@@ -123,7 +123,7 @@ class Party extends Type
      * το παραστατικό αφορά οντότητα εντός Ελλάδας (GR)</li>
      * </ul>
      *
-     * @param  Address|null  $address  Διεύθυνση
+     * @param Address|null $address Διεύθυνση
      */
     public function setAddress(?Address $address): static
     {
@@ -150,7 +150,7 @@ class Party extends Type
      * (specialInvoiceCategory = 4)</li>
      * </ul>
      *
-     * @param  string|null  $documentIdNo
+     * @param string|null $documentIdNo
      * @return Party
      */
     public function setDocumentIdNo(?string $documentIdNo): static
@@ -175,7 +175,7 @@ class Party extends Type
      * <li>Μέγιστο επιτρεπτό μήκος 100. Έγκυρο μόνο στην περίπτωση παραστατικών καυσίμων.</li>
      * </ul>
      *
-     * @param  string|null  $supplyAccountNo
+     * @param string|null $supplyAccountNo
      * @return Party
      */
     public function setSupplyAccountNo(?string $supplyAccountNo): static
@@ -200,7 +200,7 @@ class Party extends Type
      * το πεδίο αριθμός επίσημου εγγράφου (documentIdNo) και αφορά τον λήπτη του
      * παραστατικού.
      *
-     * @param  CountryCode|string|null  $countryDocumentId  Κωδ. Χώρας Έκδοσης Επίσημου Εγγράφου
+     * @param CountryCode|string|null $countryDocumentId Κωδ. Χώρας Έκδοσης Επίσημου Εγγράφου
      * @return Party
      * @version 1.0.7
      */
@@ -209,7 +209,7 @@ class Party extends Type
         if ($countryDocumentId instanceof CountryCode) {
             $countryDocumentId = $countryDocumentId->value;
         }
-        
+
         return $this->set('countryDocumentId', $countryDocumentId);
     }
 }

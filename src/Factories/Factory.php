@@ -13,9 +13,9 @@ abstract class Factory
     private static Generator $faker;
 
     protected string $modelName;
-    protected array  $state  = [];
-    protected array  $except = [];
-    protected int    $count  = 1;
+    protected array $state = [];
+    protected array $except = [];
+    protected int $count = 1;
 
     /**
      * @param string $modelName
@@ -25,8 +25,8 @@ abstract class Factory
     public static function factoryForModel(string $modelName, int $count = 1): Factory
     {
         $factoryModelName = substr($modelName, strrpos($modelName, '\\') + 1);
-        
-        $factoryName = __NAMESPACE__.'\\'.$factoryModelName.'Factory';
+
+        $factoryName = __NAMESPACE__ . '\\' . $factoryModelName . 'Factory';
 
         $factory = self::newFactory($factoryName);
         $factory->modelName = $modelName;
@@ -48,7 +48,7 @@ abstract class Factory
         for ($i = 0; $i < $this->count; $i++) {
             $attributes = array_merge($this->definition(), $attributes, $this->state);
 
-            if (!empty($this->except)) {
+            if (! empty($this->except)) {
                 $attributes = array_diff_key($attributes, array_flip($this->except));
             }
 
@@ -90,7 +90,7 @@ abstract class Factory
     abstract public function definition(): array;
 }
 
-if (!function_exists('fake')) {
+if (! function_exists('fake')) {
     function fake(): Generator
     {
         return Factory::fake();

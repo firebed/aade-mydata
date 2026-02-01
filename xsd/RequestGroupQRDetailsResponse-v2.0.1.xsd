@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.aade.gr/myDATA/invoice/v1.0" targetNamespace="http://www.aade.gr/myDATA/invoice/v1.0" elementFormDefault="qualified">
+  <xs:element name="RequestGroupQRDetailsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="groupId" type="xs:string" minOccurs="0" />
+        <xs:element name="qrUrls" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="qrUrl" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="qrUrlsCount" type="xs:int" minOccurs="0" />
+        <xs:element name="groupQrCreatorVatNumber" type="xs:string" minOccurs="0" />
+        <xs:element name="createdAt" type="xs:dateTime" minOccurs="0" />
+        <xs:element name="expiresAt" type="xs:dateTime" minOccurs="0" />
+        <xs:element name="statusCode" type="xs:string" minOccurs="0" />
+        <xs:element name="message" type="xs:string" minOccurs="0" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

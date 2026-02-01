@@ -10,7 +10,7 @@ use Firebed\AadeMyData\Models\InvoicesDoc;
 class IncomeClassificationsDocWriter extends XMLWriter
 {
     private const XMLNS = 'https://www.aade.gr/myDATA/incomeClassificaton/v1.0';
-    private const XSI   = 'http://www.w3.org/2001/XMLSchema-instance';
+    private const XSI = 'http://www.w3.org/2001/XMLSchema-instance';
 //    private const ICLS            = 'https://www.aade.gr/myDATA/incomeClassificaton/v1.0';
 //    private const ECLS            = 'https://www.aade.gr/myDATA/expensesClassificaton/v1.0';
 

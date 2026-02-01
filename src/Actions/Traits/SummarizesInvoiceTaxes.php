@@ -10,16 +10,16 @@ use Firebed\AadeMyData\Models\TaxTotals;
 
 trait SummarizesInvoiceTaxes
 {
-    protected float $totalWithheldAmount   = 0;
-    protected float $totalFeesAmount       = 0;
-    protected float $totalStampDutyAmount  = 0;
+    protected float $totalWithheldAmount = 0;
+    protected float $totalFeesAmount = 0;
+    protected float $totalStampDutyAmount = 0;
     protected float $totalOtherTaxesAmount = 0;
     protected float $totalDeductionsAmount = 0;
 
     /**
      * @var float Tax amounts that do not affect gross value
      * and should be excluded from total gross value.
-     * @deprecated 
+     * @deprecated
      */
     protected float $totalInformationalTaxAmount = 0;
 
@@ -32,7 +32,7 @@ trait SummarizesInvoiceTaxes
         $this->totalDeductionsAmount += abs($row->getDeductionsAmount() ?? 0);
 
         $withheldCategory = $row->getWithheldPercentCategory();
-        if ($withheldCategory !== null && !$withheldCategory->affectsTotalGrossValue()) {
+        if ($withheldCategory !== null && ! $withheldCategory->affectsTotalGrossValue()) {
             $this->totalInformationalTaxAmount += abs($row->getWithheldAmount() ?? 0);
         }
     }
@@ -54,7 +54,7 @@ trait SummarizesInvoiceTaxes
                 ? $tax->getTaxCategory()
                 : WithheldPercentCategory::tryFrom($tax->getTaxCategory());
 
-            if ($taxCategory !== null && !$taxCategory->affectsTotalGrossValue()) {
+            if ($taxCategory !== null && ! $taxCategory->affectsTotalGrossValue()) {
                 $this->totalInformationalTaxAmount += $amount;
             }
         }
@@ -76,7 +76,7 @@ trait SummarizesInvoiceTaxes
 
         $deductionsAmount = $this->round($summary->getTotalDeductionsAmount() + $this->totalDeductionsAmount);
         $summary->setTotalDeductionsAmount($deductionsAmount);
-        
+
         $informationalTaxes = $this->round($summary->getTotalInformationalTaxAmount() + $this->totalInformationalTaxAmount);
         $summary->setTotalInformationalTaxAmount($informationalTaxes);
     }
@@ -84,10 +84,10 @@ trait SummarizesInvoiceTaxes
     protected function getTotalTaxes(): float
     {
         return -$this->totalWithheldAmount
-               -$this->totalDeductionsAmount
-               +$this->totalFeesAmount
-               +$this->totalStampDutyAmount
-               +$this->totalOtherTaxesAmount;
+            - $this->totalDeductionsAmount
+            + $this->totalFeesAmount
+            + $this->totalStampDutyAmount
+            + $this->totalOtherTaxesAmount;
     }
 
     protected function round(float $num, int $precision = 2): float

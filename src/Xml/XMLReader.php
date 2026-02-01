@@ -49,13 +49,14 @@ abstract class XMLReader
     {
         $name = $element->localName;
 
-        if (!$element->childElementCount) {
+        if (! $element->childElementCount) {
             $parent->set($name, $element->nodeValue);
             return;
         }
 
         $type = $this->createType($parent, $name);
         $this->parseDOMElement($element->childNodes, $type);
+
         if ($parent instanceof IteratorAggregate) {
             $parent->push($name, $type);
         } else {
@@ -75,7 +76,7 @@ abstract class XMLReader
     }
 
     /**
-     * @param  string  $xmlString
+     * @param string $xmlString
      * @return T
      */
     public abstract function parseXml(string $xmlString): mixed;

@@ -12,7 +12,7 @@ class ExpensesClassificationsDoc extends TypeArray
     ];
 
     /**
-     * @param  InvoiceExpensesClassification|InvoiceExpensesClassification[]  $classifications
+     * @param InvoiceExpensesClassification|InvoiceExpensesClassification[] $classifications
      */
     public function __construct(InvoiceExpensesClassification|array $classifications = [])
     {

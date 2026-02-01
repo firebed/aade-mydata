@@ -5,7 +5,7 @@ namespace Firebed\AadeMyData\Enums;
 enum StampCategory: int
 {
     use HasLabels;
-    
+
     /**
      *  Συντελεστής 1,2 % [1,20%]
      */

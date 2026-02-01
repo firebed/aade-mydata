@@ -5,7 +5,7 @@ namespace Firebed\AadeMyData\Enums;
 enum RecType: int
 {
     use HasLabels;
-    
+
     /**
      *  Ειδική Γραμμή Παρακρατούμενων Φόρων Ανενεργός - για μελλοντική χρήση
      */
@@ -51,7 +51,7 @@ enum RecType: int
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::TYPE_1 => "Ειδική Γραμμή Παρακρατούμενων Φόρων Ανενεργός - για μελλοντική χρήση",
             self::TYPE_2 => "Γραμμή Τέλους με Φ.Π.Α.",
             self::TYPE_3 => "Γραμμή Λοιπών Φόρων με Φ.Π.Α.",

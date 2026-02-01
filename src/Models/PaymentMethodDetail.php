@@ -35,7 +35,7 @@ class PaymentMethodDetail extends Type
     }
 
     /**
-     * @param  PaymentMethod|int  $type  Τύπος Πληρωμής
+     * @param PaymentMethod|int $type Τύπος Πληρωμής
      * @return PaymentMethodDetail
      */
     public function setType(PaymentMethod|int $type): static
@@ -60,7 +60,7 @@ class PaymentMethodDetail extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param  float  $amount  Ποσό Πληρωμής
+     * @param float $amount Ποσό Πληρωμής
      */
     public function setAmount(float $amount): static
     {
@@ -79,7 +79,7 @@ class PaymentMethodDetail extends Type
      * Το πεδίο Πληροφορίες μπορεί να περιέχει επιπλέον πληροφορίες σχετικά με
      * τον συγκεκριμένο τύπο (πχ Αρ. Λογαριασμού Τραπέζης)
      *
-     * @param  string|null  $paymentMethodInfo  Πληροφορίες γραμμής
+     * @param string|null $paymentMethodInfo Πληροφορίες γραμμής
      */
     public function setPaymentMethodInfo(?string $paymentMethodInfo): static
     {
@@ -101,7 +101,7 @@ class PaymentMethodDetail extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param  float|null  $tipAmount  Ποσό φιλοδωρήματος
+     * @param float|null $tipAmount Ποσό φιλοδωρήματος
      * @version 1.0.8
      */
     public function setTipAmount(?float $tipAmount): static
@@ -123,7 +123,7 @@ class PaymentMethodDetail extends Type
      * ή type = 8 (IRIS) και περιέχει τη μοναδική ταυτότητα πληρωμής. Στην περίπτωση
      * πληρωμών με type = 8 (IRIS) το πεδίο transactionId συμπληρώνεται με το authorizationRequestID.
      *
-     * @param  string|null  $transactionId  Μοναδική Ταυτότητα Πληρωμής
+     * @param string|null $transactionId Μοναδική Ταυτότητα Πληρωμής
      * @version 1.0.8
      */
     public function setTransactionId(?string $transactionId): static
@@ -144,8 +144,8 @@ class PaymentMethodDetail extends Type
      * Το πεδίο tid, είναι το tid του POS και διαβιβάζεται υποχρεωτικά στην περίπτωση
      * πληρωμών με type = 7 (POS) και έχει διαβιβαστεί είτε το ProvidersSignature είτε το
      * ECRToken (ανάλογα την περίπτωση)
-     * 
-     * @param  string|null  $tid  Κωδικός tid POS (Μέγιστο επιτρεπτό μήκος 200)
+     *
+     * @param string|null $tid Κωδικός tid POS (Μέγιστο επιτρεπτό μήκος 200)
      * @return $this
      * @version 1.0.9
      */
@@ -158,13 +158,13 @@ class PaymentMethodDetail extends Type
      * Το πεδίο ProvidersSignature διαβιβάζεται στην περίπτωση
      * πληρωμών με type = 7 και όταν η διαβίβαση γίνεται από το κανάλι του παρόχου
      *
-     * @param  ProvidersSignature|string|null  $providersSignature  Υπογραφή Πληρωμής Παρόχου
-     * @param  string|null  $signature
+     * @param ProvidersSignature|string|null $providersSignature Υπογραφή Πληρωμής Παρόχου
+     * @param string|null $signature
      * @version 1.0.8
      */
     public function setProvidersSignature(ProvidersSignature|string|null $providersSignature, string $signature = null): static
     {
-        if (!($providersSignature instanceof ProvidersSignature) && $signature !== null) {
+        if (! ($providersSignature instanceof ProvidersSignature) && $signature !== null) {
             $providersSignature = new ProvidersSignature($providersSignature, $signature);
         }
 
@@ -184,13 +184,13 @@ class PaymentMethodDetail extends Type
      * Το πεδίο ECRToken διαβιβάζεται στην περίπτωση πληρωμών με type = 7 και
      * όταν η διαβίβαση γίνεται από ERP.
      *
-     * @param  ECRToken|string|null  $ecrToken  Υπογραφή Πληρωμής ΦΗΜ με σύστημα λογισμικού (ERP)
-     * @param  string|null  $sessionNumber
+     * @param ECRToken|string|null $ecrToken Υπογραφή Πληρωμής ΦΗΜ με σύστημα λογισμικού (ERP)
+     * @param string|null $sessionNumber
      * @version 1.0.8
      */
     public function setECRToken(ECRToken|string|null $ecrToken, string $sessionNumber = null): static
     {
-        if (!($ecrToken instanceof ECRToken) && $sessionNumber !== null) {
+        if (! ($ecrToken instanceof ECRToken) && $sessionNumber !== null) {
             $ecrToken = new ECRToken($ecrToken, $sessionNumber);
         }
 

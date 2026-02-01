@@ -3,7 +3,9 @@
 namespace Tests\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Exceptions\UnsupportedChannelException;
 use Firebed\AadeMyData\Http\CancelDeliveryNote;
+use Firebed\AadeMyData\Http\DigitalGoodsMovement\RequestDeliveryNoteStatus;
 use Firebed\AadeMyData\Http\MyDataRequest;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response;
@@ -27,8 +29,36 @@ class CancelDeliveryNoteTest extends MyDataHttpTestCase
     /**
      * @throws MyDataException
      */
+    public function test_dev_erp_url_is_not_supported()
+    {
+        $this->initErpDev();
+
+        $this->expectException(UnsupportedChannelException::class);
+
+        $request = new CancelDeliveryNote();
+        $request->handle(123);
+    }
+
+    /**
+     * @throws MyDataException
+     */
+    public function test_prod_erp_url_is_correct()
+    {
+        $this->initErpProd();
+
+        $this->expectException(UnsupportedChannelException::class);
+
+        $request = new CancelDeliveryNote();
+        $request->handle(123);
+    }
+
+    /**
+     * @throws MyDataException
+     */
     public function test_delivery_note_is_cancelled()
     {
+        $this->initProviderDev();
+
         MyDataRequest::setHandler(new MockHandler([
             new Response(200, body: $this->getStub('cancel-delivery-note-response')),
         ]));

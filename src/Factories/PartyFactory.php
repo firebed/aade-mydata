@@ -13,14 +13,14 @@ class PartyFactory extends Factory
     public function definition(): array
     {
         return [
-            'vatNumber'         => fake()->numerify("#########"),
-            'country'           => fake()->randomElement(['GR', 'CY', 'IT', 'DE', 'BG']),
-            'branch'            => fake()->randomDigitNotNull(),
-            'name'              => fake()->company(),
-            'documentIdNo'      => fake()->bothify(),
-            'supplyAccountNo'   => fake()->numerify("#########"),
+            'vatNumber' => fake()->numerify("#########"),
+            'country' => fake()->randomElement(['GR', 'CY', 'IT', 'DE', 'BG']),
+            'branch' => fake()->randomDigitNotNull(),
+            'name' => fake()->company(),
+            'documentIdNo' => fake()->bothify(),
+            'supplyAccountNo' => fake()->numerify("#########"),
             'countryDocumentId' => fake()->randomElement(['GR', 'CY', 'IT', 'DE', 'BG']),
-            'address'           => Address::factory(),
+            'address' => Address::factory(),
         ];
     }
 }

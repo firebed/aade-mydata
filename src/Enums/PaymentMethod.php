@@ -5,7 +5,7 @@ namespace Firebed\AadeMyData\Enums;
 enum PaymentMethod: int
 {
     use HasLabels;
-    
+
     /**
      *  Επαγ. Λογαριασμός Πληρωμών Ημεδαπής
      */

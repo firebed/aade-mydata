@@ -527,7 +527,7 @@ enum CountryCode: string
             self::ZW => "Ζιμπάμπουε",
         };
     }
-    
+
     public function isInEuropeanUnion(): bool
     {
         return in_array($this, self::europeanUnionCountries());

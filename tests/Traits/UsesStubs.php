@@ -4,8 +4,13 @@ namespace Tests\Traits;
 
 trait UsesStubs
 {
-    public function getStub(string $name): string
+    protected function stubsPath($path): string
     {
-        return file_get_contents(__DIR__."/../../stubs/$name.xml");
+        return __DIR__ . "/../../stubs" . ($path ? "/$path" : '');
+    }
+
+    protected function getStub(string $name): string
+    {
+        return file_get_contents($this->stubsPath($name.(str_ends_with($name, '.xml') ? '' : '.xml')));
     }
 }

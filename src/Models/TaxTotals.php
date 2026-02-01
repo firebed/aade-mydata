@@ -57,7 +57,7 @@ class TaxTotals extends Type
      * από τον αντίστοιχο πίνακα του Παραρτήματος του φόρου που
      * αναφέρεται στο πεδίο taxType.
      *
-     * @param  WithheldPercentCategory|FeesPercentCategory|OtherTaxesPercentCategory|StampCategory|int|null  $taxCategory  Κατηγορία Φόρου
+     * @param WithheldPercentCategory|FeesPercentCategory|OtherTaxesPercentCategory|StampCategory|int|null $taxCategory Κατηγορία Φόρου
      */
     public function setTaxCategory(WithheldPercentCategory|FeesPercentCategory|OtherTaxesPercentCategory|StampCategory|int|null $taxCategory): static
     {
@@ -78,7 +78,7 @@ class TaxTotals extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param  float|null  $underlyingValue  Υποκείμενη Αξία
+     * @param float|null $underlyingValue Υποκείμενη Αξία
      */
     public function setUnderlyingValue(?float $underlyingValue): static
     {
@@ -115,7 +115,7 @@ class TaxTotals extends Type
     }
 
     /**
-     * @param  int|null  $id  Αύξων αριθμός γραμμής
+     * @param int|null $id Αύξων αριθμός γραμμής
      */
     public function setId(?int $id): static
     {

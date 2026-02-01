@@ -12,9 +12,9 @@ class StatementResponseFactory extends Factory
     public function definition(): array
     {
         return [
-            'index'       => 1,
+            'index' => 1,
             'statementId' => (string) fake()->randomNumber(3),
-            'statusCode'  => 'Success',
+            'statusCode' => 'Success',
         ];
     }
 }

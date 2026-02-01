@@ -3,19 +3,23 @@
 namespace Firebed\AadeMyData\Models;
 
 
-use DOMDocument;
 use Firebed\AadeMyData\Actions\GenerateUid;
 use Firebed\AadeMyData\Actions\SquashInvoiceRows;
 use Firebed\AadeMyData\Actions\SummarizeInvoice;
+use Firebed\AadeMyData\Enums\DigitalGoodsMovement\DeliveryStatus;
 use Firebed\AadeMyData\Enums\TransmissionFailure;
+use Firebed\AadeMyData\Models\DigitalGoodsMovement\DeliveryEvent;
+use Firebed\AadeMyData\Models\DigitalGoodsMovement\DeliveryLifecycle;
+use Firebed\AadeMyData\Models\DigitalGoodsMovement\PackagingDetail;
 use Firebed\AadeMyData\Traits\HasFactory;
 use Firebed\AadeMyData\Xml\InvoicesDocWriter;
 
 class Invoice extends Type
 {
     use HasFactory;
+    use HasSchemaValidation;
 
-    const VERSION = 'v2.0.0';
+    const VERSION = 'v2.0.1';
 
     protected array $expectedOrder = [
         'uid',
@@ -30,7 +34,11 @@ class Invoice extends Type
         'invoiceDetails',
         'taxesTotals',
         'invoiceSummary',
+        'qrCodeUrl',
         'downloadingInvoiceUrl',
+        'packingsDeclarations',
+        'invoiceDeliveryStatus',
+        'deliveryLifecycle',
     ];
 
     protected array $casts = [
@@ -41,6 +49,9 @@ class Invoice extends Type
         'invoiceDetails' => InvoiceDetails::class,
         'taxesTotals' => TaxesTotals::class,
         'invoiceSummary' => InvoiceSummary::class,
+        'packingsDeclarations' => PackagingDetail::class,
+        'invoiceDeliveryStatus' => DeliveryStatus::class,
+        'deliveryLifecycle' => DeliveryLifecycle::class,
     ];
 
     /**
@@ -119,7 +130,7 @@ class Invoice extends Type
      * <li>Στην περίπτωση αδυναμίας επικοινωνίας του ERP με το myDATA κατά την έκδοση / διαβίβαση παραστατικού</li>
      * </ol>
      *
-     * @param  TransmissionFailure|int|null  $transmissionFailure  Κωδικός αδυναμίας επικοινωνίας παρόχου
+     * @param TransmissionFailure|int|null $transmissionFailure Κωδικός αδυναμίας επικοινωνίας παρόχου
      * @return Invoice
      */
     public function setTransmissionFailure(TransmissionFailure|int|null $transmissionFailure): static
@@ -136,7 +147,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param  Issuer  $issuer  Εκδότης Παραστατικού
+     * @param Issuer $issuer Εκδότης Παραστατικού
      */
     public function setIssuer(Issuer $issuer): static
     {
@@ -152,7 +163,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param  Counterpart|null  $counterpart  Λήπτης Παραστατικού
+     * @param Counterpart|null $counterpart Λήπτης Παραστατικού
      */
     public function setCounterpart(Counterpart|null $counterpart): static
     {
@@ -168,7 +179,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param  PaymentMethods|PaymentMethodDetail[]  $paymentMethods
+     * @param PaymentMethods|PaymentMethodDetail[] $paymentMethods
      */
     public function setPaymentMethods(PaymentMethods|array|null $paymentMethods): static
     {
@@ -187,7 +198,7 @@ class Invoice extends Type
     /**
      * Προσθήκη τρόπου πληρωμής.
      *
-     * @param  PaymentMethodDetail  $paymentMethodDetail  Τρόπος Πληρωμής
+     * @param PaymentMethodDetail $paymentMethodDetail Τρόπος Πληρωμής
      */
     public function addPaymentMethod(PaymentMethodDetail $paymentMethodDetail): static
     {
@@ -205,7 +216,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param  InvoiceHeader  $invoiceHeader  Επικεφαλίδα Παραστατικού
+     * @param InvoiceHeader $invoiceHeader Επικεφαλίδα Παραστατικού
      */
     public function setInvoiceHeader(InvoiceHeader $invoiceHeader): static
     {
@@ -223,7 +234,7 @@ class Invoice extends Type
     /**
      * Προσθήκη γραμμής παραστατικού.
      *
-     * @param  InvoiceDetails  $invoiceDetails  Γραμμή Παραστατικού
+     * @param InvoiceDetails $invoiceDetails Γραμμή Παραστατικού
      */
     public function addInvoiceDetails(InvoiceDetails $invoiceDetails): static
     {
@@ -231,7 +242,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param  InvoiceDetails[]  $invoiceDetails  Γραμμές Παραστατικού
+     * @param InvoiceDetails[] $invoiceDetails Γραμμές Παραστατικού
      */
     public function setInvoiceDetails(array $invoiceDetails): static
     {
@@ -247,7 +258,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param  InvoiceSummary  $invoiceSummary  Περίληψη Παραστατικού
+     * @param InvoiceSummary $invoiceSummary Περίληψη Παραστατικού
      */
     public function setInvoiceSummary(InvoiceSummary $invoiceSummary): static
     {
@@ -257,7 +268,7 @@ class Invoice extends Type
     /**
      * "Squashes" similar invoice lines and sums up their values.
      *
-     * @param  array{clsLineNumber: bool}  $options  Squashing options.
+     * @param array{clsLineNumber: bool} $options Squashing options.
      * If 'clsLineNumber' == true the process will add line numbers to classifications.
      *
      * @return $this
@@ -290,11 +301,11 @@ class Invoice extends Type
      */
     public function isSquashed(): bool
     {
-        return !empty($this->originalInvoiceRows);
+        return ! empty($this->originalInvoiceRows);
     }
 
     /**
-     * @param  array{enableClassificationIds: bool}  $options
+     * @param array{enableClassificationIds: bool} $options
      * @return static
      */
     public function summarizeInvoice(array $options = []): static
@@ -329,7 +340,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param  TaxTotals[]|null  $taxTotals
+     * @param TaxTotals[]|null $taxTotals
      */
     public function setTaxesTotals(TaxesTotals|array|null $taxTotals): static
     {
@@ -358,7 +369,7 @@ class Invoice extends Type
      *
      * @version 1.0.7
      *
-     * @deprecated Since version v2.0.0 of myDATA. Do not use.
+     * @deprecated Since version v2.0.1 of myDATA. Do not use.
      */
     public function getOtherTransportDetails(): ?array
     {
@@ -368,15 +379,26 @@ class Invoice extends Type
     /**
      * Προσθήκη Λεπτομέρειες Διακίνησης (Ορισμός - Αλλαγή Μτφ Μέσων).
      *
-     * @param  TransportDetail  $transportDetailType  Λεπτομέρειες Διακίνησης
+     * @param TransportDetail $transportDetailType Λεπτομέρειες Διακίνησης
      *
      * @version 1.0.7
      *
-     * @deprecated Since version v2.0.0 of myDATA. Do not use.
+     * @deprecated Since version v2.0.1 of myDATA. Do not use.
      */
     public function addOtherTransportDetail(TransportDetail $transportDetailType): static
     {
         return $this->push('otherTransportDetails', $transportDetailType);
+    }
+
+    /**
+     * @param TransportDetail[]|null $transportDetails
+     * @return $this
+     *
+     * @deprecated Since version v2.0.1 of myDATA. Do not use.
+     */
+    public function setOtherTransportDetails(?array $transportDetails): static
+    {
+        return $this->set('otherTransportDetails', $transportDetails);
     }
 
     /**
@@ -393,7 +415,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param  string  $downloadingInvoiceUrl
+     * @param string $downloadingInvoiceUrl
      * @return $this
      * @version 1.0.12
      */
@@ -403,19 +425,62 @@ class Invoice extends Type
     }
 
     /**
-     * @param  TransportDetail[]|null  $transportDetails
+     * @return PackagingDetail[]|null Δηλώσεις Συσκευασιών Διακίνησης
+     *
+     * @version 2.0.1
+     */
+    public function getPackingsDeclarations(): ?array
+    {
+        return $this->get('packingsDeclarations');
+    }
+
+    /**
+     * Έγκυρο μόνο για παραστατικά διακίνησης.
+     *
+     * @param PackagingDetail[]|null $packingsDeclarations Δηλώσεις Συσκευασιών Διακίνησης
      * @return $this
      *
-     * @deprecated Since version v2.0.0 of myDATA. Do not use.
+     * @version 2.0.1
      */
-    public function setOtherTransportDetails(?array $transportDetails): static
+    public function setPackingsDeclarations(?array $packingsDeclarations): static
     {
-        return $this->set('otherTransportDetails', $transportDetails);
+        return $this->set('packingsDeclarations', null);
+    }
+
+    /**
+     * Προσθήκη Δήλωση Συσκευασίας Διακίνησης.
+     * @param PackagingDetail $packagingDetailType Δήλωση Συσκευασίας Διακίνησης
+     * @return $this
+     */
+    public function addPackagingDeclaration(PackagingDetail $packagingDetailType): static
+    {
+        return $this->push('packingsDeclarations', $packagingDetailType);
+    }
+
+    /**
+     * Είναι read-only - παρέχεται από το myDATA κατά την ανάκτηση του.
+     *
+     * @return DeliveryStatus|null Κατάσταση Παραστατικού Δελτίου Διακίνησης
+     * @version 2.0.1
+     */
+    public function getInvoiceDeliveryStatus(): ?DeliveryStatus
+    {
+        return $this->get('invoiceDeliveryStatus');
+    }
+
+    /**
+     * Είναι read-only - παρέχεται από το myDATA κατά την ανάκτηση του.
+     * @return DeliveryEvent[]|null Το σύνολο των γεγονότων του κύκλου ζωής (lifecycle) του παραστατικού διακίνησης.
+     * @version 2.0.1
+     */
+    public function getDeliveryLifecycle(): ?DeliveryLifecycle
+    {
+        return $this->get('deliveryLifecycle');
     }
 
     public function set($key, $value): static
     {
-        if (($key === 'invoiceDetails' || $key === 'otherTransportDetails') && !is_array($value)) {
+        if (($key === 'invoiceDetails' || $key === 'otherTransportDetails') && ! is_array($value)) {
             return $this->push($key, $value);
         }
 
@@ -437,22 +502,8 @@ class Invoice extends Type
 
     public function validate(): array
     {
-        libxml_use_internal_errors(true);
-        libxml_clear_errors();
+        $xml = (new InvoicesDocWriter())->asXML(new InvoicesDoc($this));
 
-        $writer = new InvoicesDocWriter();
-        $xml = $writer->asXML(new InvoicesDoc($this));
-
-        $dom = new DOMDocument();
-        $dom->loadXML($xml);
-        $dom->schemaValidate(__DIR__.'/../../xsd/InvoicesDoc-' . self::VERSION . '.xsd');
-
-        return array_map(function ($error) {
-            preg_match("/Element '(.+?)':( \[.*?])? (.+)/", $error->message, $matches);
-            return [
-                'field' => $matches[1] ?? null,
-                'message' => $matches[3] ?? null,
-            ];
-        }, libxml_get_errors());
+        return $this->validateSchema($xml, 'InvoicesDoc-' . self::VERSION . '.xsd');
     }
 }

@@ -6,7 +6,7 @@ class RequestedVatInfo extends Type
 {
     protected array $casts = [
         'continuationToken' => ContinuationToken::class,
-        'VatInfo'           => VatInfo::class,
+        'VatInfo' => VatInfo::class,
     ];
 
     /**
@@ -27,7 +27,7 @@ class RequestedVatInfo extends Type
 
     public function set($key, $value): static
     {
-        if ($key === 'VatInfo' && !is_array($value)) {
+        if ($key === 'VatInfo' && ! is_array($value)) {
             return $this->push($key, $value);
         }
 

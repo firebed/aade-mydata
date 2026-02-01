@@ -10,23 +10,23 @@ class ProvidersSignature extends Type
     protected array $expectedOrder = [
         'SigningAuthor',
         'Signature',
-        'EndToΕndReferenceID',
+        'EndToEndReferenceID',
     ];
-    
+
     public function __construct(string $signingAuthor = null, string $signature = null, ?string $endToEndReferenceID = null)
     {
         if ($signingAuthor !== null || $signature !== null || $endToEndReferenceID !== null) {
             parent::__construct([
                 'SigningAuthor' => $signingAuthor,
-                'Signature'     => $signature,
-                'EndToΕndReferenceID' => $endToEndReferenceID,
+                'Signature' => $signature,
+                'EndToEndReferenceID' => $endToEndReferenceID,
             ]);
         }
     }
 
     /**
      * @return string|null Αριθμός Απόφασης έγκρισης ΥΠΑΗΕΣ Παρόχου
-     * 
+     *
      * @version 1.0.8
      */
     public function getSigningAuthor(): ?string
@@ -36,9 +36,9 @@ class ProvidersSignature extends Type
 
     /**
      * Μέγιστο επιτρεπτό μήκος 20
-     * 
+     *
      * @param string $signingAuthor Αριθμός Απόφασης έγκρισης ΥΠΑΗΕΣ Παρόχου
-     * 
+     *
      * @version 1.0.8
      */
     public function setSigningAuthor(string $signingAuthor): static
@@ -48,7 +48,7 @@ class ProvidersSignature extends Type
 
     /**
      * @return string|null Υπογραφή
-     * 
+     *
      * @version 1.0.8
      */
     public function getSignature(): ?string
@@ -59,9 +59,9 @@ class ProvidersSignature extends Type
     /**
      * Λεπτομέρειες στην υπ’ αριθμ. Α. 1155/09-10-* 2023 απόφαση
      * (ΦΕΚ 5992 myDATA REST API 30 Β΄/13.10.2023)
-     * 
+     *
      * @param string $signature Υπογραφή
-     * 
+     *
      * @version 1.0.8
      */
     public function setSignature(string $signature): static
@@ -72,20 +72,20 @@ class ProvidersSignature extends Type
     /**
      * Το μοναδικό αναγνωριστικό αιτήματος πληρωμής(για πληρωμές IRIS - payment type = 8)
      *
-     * @version 2.0.0
+     * @version 2.0.1
      */
     public function getEndToEndReferenceID(): ?string
     {
-        return $this->get('EndToΕndReferenceID');
+        return $this->get('EndToEndReferenceID');
     }
 
     /**
      * Το μοναδικό αναγνωριστικό αιτήματος πληρωμής (για πληρωμές IRIS - payment type = 8)
      *
-     * @version 2.0.0
+     * @version 2.0.1
      */
     public function setEndToEndReferenceID(?string $endToEndReferenceID): static
     {
-        return $this->set('EndToΕndReferenceID', $endToEndReferenceID);
+        return $this->set('EndToEndReferenceID', $endToEndReferenceID);
     }
 }

@@ -15,9 +15,4 @@ class Errors extends TypeArray
     {
         parent::__construct('error');
     }
-
-    public function offsetGet(mixed $offset): Error
-    {
-        return $this->attributes['error'][$offset];
-    }
 }

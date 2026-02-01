@@ -29,7 +29,7 @@ class SendPaymentsMethod extends MyDataXmlRequest
      */
     public function handle(PaymentMethodsDoc|PaymentMethod|array $paymentMethods): ResponseDoc
     {
-        if (!$paymentMethods instanceof PaymentMethodsDoc) {
+        if (! $paymentMethods instanceof PaymentMethodsDoc) {
             $paymentMethods = new PaymentMethodsDoc($paymentMethods);
         }
 

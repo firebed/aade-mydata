@@ -5,13 +5,13 @@ namespace Firebed\AadeMyData\Enums;
 enum InvoiceDetailType: int
 {
     use HasLabels;
-    
+
     /**
      *  Εκκαθάριση Πωλήσεων Τρίτων
      */
     case TYPE_1 = 1;
 
-    
+
     /**
      *  Αμοιβή από Πωλήσεις Τρίτων
      */

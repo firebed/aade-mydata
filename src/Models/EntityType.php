@@ -18,7 +18,7 @@ class EntityType extends Type
     ];
 
     protected array $casts = [
-        'type'       => EntityTypes::class,
+        'type' => EntityTypes::class,
         'entityData' => Party::class,
     ];
 
@@ -55,7 +55,7 @@ class EntityType extends Type
     }
 
     /**
-     * @param  Party  $entityData
+     * @param Party $entityData
      *
      * @return EntityType
      * @version 1.0.7

@@ -13,9 +13,9 @@ class OtherDeliveryNoteHeaderFactory extends Factory
     public function definition(): array
     {
         return [
-            'loadingAddress'         => Address::factory(),
-            'deliveryAddress'        => Address::factory(),
-            'startShippingBranch'    => fake()->randomDigitNotNull(),
+            'loadingAddress' => Address::factory(),
+            'deliveryAddress' => Address::factory(),
+            'startShippingBranch' => fake()->randomDigitNotNull(),
             'completeShippingBranch' => fake()->randomDigitNotNull(),
         ];
     }

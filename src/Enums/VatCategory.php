@@ -99,7 +99,7 @@ enum VatCategory: int
     {
         return $this === self::VAT_7 || $this === self::VAT_8;
     }
-    
+
     public function isExemption(): bool
     {
         return $this === self::VAT_7;

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ConfirmDeliveryOutcomeRequest>
+    <qrUrl>https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url</qrUrl>
+    <outcome>FULL</outcome>
+    <deliveredPackaging>
+        <packagingType>3</packagingType>
+        <quantity>10</quantity>
+    </deliveredPackaging>
+    <deliveredPackaging>
+        <packagingType>2</packagingType>
+        <quantity>2</quantity>
+    </deliveredPackaging>
+</ConfirmDeliveryOutcomeRequest>

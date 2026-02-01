@@ -18,9 +18,4 @@ class InvoicesDoc extends TypeArray
     {
         parent::__construct('invoice', $invoices);
     }
-    
-    public function offsetGet(mixed $offset): Invoice
-    {
-        return $this->attributes[$this->childKey][$offset];
-    }
 }

@@ -56,21 +56,21 @@ abstract class MyDataGetRequest extends MyDataRequest
         $query = compact('mark');
 
         $invType = $invType instanceof InvoiceType ? $invType->value : $invType;
-        
+
         $params = compact('dateFrom', 'dateTo', 'receiverVatNumber', 'entityVatNumber', 'invType', 'maxMark', 'nextPartitionKey', 'nextRowKey');
-        
+
         // Merge query with params
         $query = array_merge($query, array_filter($params));
-        
+
         // Get the response XML
         $responseXML = $this->get($query);
 
         // Parse the response XML
         $reader = new RequestedDocReader();
         $responseDoc = $reader->parseXML($responseXML);
-        
+
         $this->responseDom = $reader->getDomDocument();
-        
+
         return $responseDoc;
     }
 }

@@ -10,7 +10,7 @@ use Firebed\AadeMyData\Xml\XMLWriter;
  */
 class StatementDocWriter extends XMLWriter
 {
-    private const XSI             = 'http://www.w3.org/2001/XMLSchema-instance';
+    private const XSI = 'http://www.w3.org/2001/XMLSchema-instance';
 
     /** @noinspection PhpUnhandledExceptionInspection */
     public function asXML($data): string

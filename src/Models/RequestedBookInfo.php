@@ -18,7 +18,7 @@ class RequestedBookInfo extends Type
 
     protected array $casts = [
         'continuationToken' => ContinuationToken::class,
-        'bookInfo'          => BookInfo::class,
+        'bookInfo' => BookInfo::class,
     ];
 
     /**
@@ -39,7 +39,7 @@ class RequestedBookInfo extends Type
 
     public function set($key, $value): static
     {
-        if ($key === 'bookInfo' && !is_array($value)) {
+        if ($key === 'bookInfo' && ! is_array($value)) {
             return $this->push($key, $value);
         }
 

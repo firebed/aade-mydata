@@ -34,7 +34,7 @@ class CancelInvoice extends MyDataRequest
     {
         $query = ['mark' => $mark];
 
-        if (!empty($entityVatNumber)) {
+        if (! empty($entityVatNumber)) {
             $query['entityVatNumber'] = $entityVatNumber;
         }
 
@@ -44,9 +44,9 @@ class CancelInvoice extends MyDataRequest
         // Parse the response XML
         $reader = new ResponseDocReader();
         $responseDoc = $reader->parseXML($responseXML);
-        
+
         $this->responseDom = $reader->getDomDocument();
-        
+
         return $responseDoc;
     }
 }

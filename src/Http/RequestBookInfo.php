@@ -47,7 +47,7 @@ abstract class RequestBookInfo extends MyDataRequest
     public function handle(string $dateFrom, string $dateTo, string $counterVatNumber = null, string $entityVatNumber = null, InvoiceType|string $invType = null, string $nextPartitionKey = null, string $nextRowKey = null): RequestedBookInfo
     {
         $invType = $invType instanceof InvoiceType ? $invType->value : $invType;
-        
+
         $query = compact('dateFrom', 'dateTo', 'counterVatNumber', 'entityVatNumber', 'invType', 'nextPartitionKey', 'nextRowKey');
         $query = array_filter($query);
 
@@ -57,9 +57,9 @@ abstract class RequestBookInfo extends MyDataRequest
         // Parse the response XML
         $reader = new BookInfoReader();
         $bookInfo = $reader->parseXML($responseXML);
-        
+
         $this->responseDom = $reader->getDomDocument();
-        
+
         return $bookInfo;
     }
 }

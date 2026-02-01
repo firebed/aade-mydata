@@ -5,7 +5,7 @@ namespace Firebed\AadeMyData\Models;
 /**
  * This class is used to store payment methods and is part of
  * <code>RequestedDoc</code> class.
- * 
+ *
  * @extends TypeArray<PaymentMethod>
  */
 class PaymentMethodsDoc extends TypeArray
@@ -17,10 +17,5 @@ class PaymentMethodsDoc extends TypeArray
     public function __construct(PaymentMethod|array $paymentMethods = [])
     {
         parent::__construct('paymentMethods', $paymentMethods);
-    }
-
-    public function offsetGet($offset): PaymentMethod
-    {
-        return $this->attributes['paymentMethods'][$offset];
     }
 }

@@ -21,7 +21,7 @@ class SendInvoices extends MyDataXmlRequest
      */
     public function handle(InvoicesDoc|Invoice|array $invoices): ResponseDoc
     {
-        if (!$invoices instanceof InvoicesDoc) {
+        if (! $invoices instanceof InvoicesDoc) {
             $invoices = new InvoicesDoc($invoices);
         }
 

@@ -13,7 +13,7 @@ class BookInfoReader extends XMLReader
     {
         $doc = new RequestedBookInfo();
         $this->loadXML($xmlString, $doc);
-        
+
         return $doc;
     }
 }

@@ -15,7 +15,7 @@ class SendExpensesClassification extends MyDataRequest
 {
     use HasRequestDom;
     use HasResponseDom;
-    
+
     /**
      * <ul>
      * <li>Το πεδίο transactionMode όταν παίρνει την τιμή 1 υποδηλώνει απόρριψη του
@@ -42,25 +42,25 @@ class SendExpensesClassification extends MyDataRequest
      */
     public function handle(ExpensesClassificationsDoc|array $expensesClassifications, bool $postPerInvoice = false): ResponseDoc
     {
-        if (!$expensesClassifications instanceof ExpensesClassificationsDoc) {
+        if (! $expensesClassifications instanceof ExpensesClassificationsDoc) {
             $expensesClassifications = new ExpensesClassificationsDoc($expensesClassifications);
         }
-        
+
         $query = [];
         if ($postPerInvoice) {
             $query['postPerInvoice'] = 'true';
         }
-        
+
         $writer = new ExpensesClassificationsDocWriter();
         $requestXml = $writer->asXML($expensesClassifications);
         $this->requestDom = $writer->getDomDocument();
 
         $responseXml = $this->post($query, $requestXml);
-        
-        $reader  = new ResponseDocReader();
+
+        $reader = new ResponseDocReader();
         $responseDoc = $reader->parseXML($responseXml);
         $this->requestDom = $reader->getDomDocument();
-        
+
         return $responseDoc;
     }
 }

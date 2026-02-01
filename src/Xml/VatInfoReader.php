@@ -13,7 +13,7 @@ class VatInfoReader extends XMLReader
     {
         $doc = new RequestedVatInfo();
         $this->loadXML($xmlString, $doc);
-        
+
         return $doc;
     }
 }

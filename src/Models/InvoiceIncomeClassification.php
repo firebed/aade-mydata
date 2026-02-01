@@ -29,7 +29,7 @@ class InvoiceIncomeClassification extends Type
     }
 
     /**
-     * @param  int  $invoiceMark  Μοναδικός Αριθμός Καταχώρησης Παραστατικού
+     * @param int $invoiceMark Μοναδικός Αριθμός Καταχώρησης Παραστατικού
      */
     public function setInvoiceMark(int $invoiceMark): static
     {
@@ -59,7 +59,7 @@ class InvoiceIncomeClassification extends Type
      * ο ΑΦΜ της οντότητας που αναφέρεται ο χαρακτηρισμός του παραστατικού αποστέλλεται μέσω του πεδίου entityVatNumber,
      * διαφορετικά το εν λόγω πεδίο παραμένει κενό.
      *
-     * @param  string|null  $entityVatNumber  ΑΦΜ Οντότητας Αναφοράς
+     * @param string|null $entityVatNumber ΑΦΜ Οντότητας Αναφοράς
      */
     public function setEntityVatNumber(?string $entityVatNumber): static
     {
@@ -82,7 +82,7 @@ class InvoiceIncomeClassification extends Type
      *
      * Ο χρήστης μπορεί να συμπεριλάβει είτε το στοιχείο transactionMode ή λίστα στοιχείων invoicesIncomeClassificationDetails.
      *
-     * @param  TransactionMode|int|null  $transactionMode  Είδος Συναλλαγής
+     * @param TransactionMode|int|null $transactionMode Είδος Συναλλαγής
      */
     public function setTransactionMode(TransactionMode|int|null $transactionMode): static
     {
@@ -106,7 +106,7 @@ class InvoiceIncomeClassification extends Type
      * Κάθε στοιχείο invoicesIncomeClassificationDetails περιέχει ένα lineNumber και
      * μια λίστα στοιχείων incomeClassificationDetailData.
      *
-     * @param  InvoicesIncomeClassificationDetail[]|null  $incomeClassifications  Στοιχεία Χαρακτηρισμού Εσόδων
+     * @param InvoicesIncomeClassificationDetail[]|null $incomeClassifications Στοιχεία Χαρακτηρισμού Εσόδων
      */
     public function setInvoicesIncomeClassificationDetails(?array $incomeClassifications): static
     {

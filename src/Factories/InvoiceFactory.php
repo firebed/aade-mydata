@@ -19,14 +19,14 @@ class InvoiceFactory extends Factory
     public function definition(): array
     {
         return [
-            'issuer'                => Issuer::factory(),
-            'counterpart'           => Counterpart::factory(),
-            'invoiceHeader'         => InvoiceHeader::factory(),
-            'paymentMethods'        => PaymentMethods::factory(),
-            'invoiceDetails'        => InvoiceDetails::factory(),
-            'taxesTotals'           => TaxesTotals::factory(),
-            'invoiceSummary'        => InvoiceSummary::factory(),
-            'qrCodeUrl'             => fake()->url(),
+            'issuer' => Issuer::factory(),
+            'counterpart' => Counterpart::factory(),
+            'invoiceHeader' => InvoiceHeader::factory(),
+            'paymentMethods' => PaymentMethods::factory(),
+            'invoiceDetails' => InvoiceDetails::factory(),
+            'taxesTotals' => TaxesTotals::factory(),
+            'invoiceSummary' => InvoiceSummary::factory(),
+            'qrCodeUrl' => fake()->url(),
             'downloadingInvoiceUrl' => fake()->url(),
         ];
     }

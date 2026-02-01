@@ -7,14 +7,14 @@ use Firebed\AadeMyData\Traits\HasFactory;
 class Address extends Type
 {
     use HasFactory;
-    
+
     protected array $expectedOrder = [
         'street',
         'number',
         'postalCode',
         'city'
     ];
-    
+
     /**
      * @return string|null Οδός
      */
@@ -24,7 +24,7 @@ class Address extends Type
     }
 
     /**
-     * @param  string|null  $street  Οδός
+     * @param string|null $street Οδός
      */
     public function setStreet(?string $street): static
     {
@@ -40,7 +40,7 @@ class Address extends Type
     }
 
     /**
-     * @param  string|null  $number  Αριθμός Οδού
+     * @param string|null $number Αριθμός Οδού
      */
     public function setNumber(?string $number): static
     {

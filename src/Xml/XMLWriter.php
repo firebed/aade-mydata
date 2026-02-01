@@ -32,7 +32,7 @@ abstract class XMLWriter
         if (is_null($nodeValue) || (is_string($nodeValue) && strlen($nodeValue) === 0)) {
             return;
         }
-        
+
         if ($nodeValue instanceof Type) {
             $this->buildType($parent, $nodeName, $nodeValue);
             return;
@@ -83,7 +83,7 @@ abstract class XMLWriter
         $parent->appendChild($child);
 
         foreach ($nodeValue as $key => $value) {
-            $this->build($child, $key, $value, $nodeName.'.'.$key);
+            $this->build($child, $key, $value, $nodeName . '.' . $key);
         }
 
         return $child;
@@ -101,10 +101,10 @@ abstract class XMLWriter
             : $this->document->createElement($nodeName);
 
         // If a node value is provided, handle special characters
-        if (!is_null($nodeValue)) {
+        if (! is_null($nodeValue)) {
             $newNode->appendChild($this->document->createTextNode($nodeValue));
         }
-        
+
         return $newNode;
     }
 
@@ -112,13 +112,13 @@ abstract class XMLWriter
     {
         if (is_bool($value)) {
             return $value ? 'true' : 'false';
-        } 
-        
+        }
+
         if ($value instanceof BackedEnum) {
             return $value->value;
         }
-        
-        return (string)$value;
+
+        return (string) $value;
     }
 
     protected function getNamespace(?string $key): ?string

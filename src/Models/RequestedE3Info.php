@@ -32,7 +32,7 @@ class RequestedE3Info extends Type
 
     public function set($key, $value): static
     {
-        if ($key === 'E3Info' && !is_array($value)) {
+        if ($key === 'E3Info' && ! is_array($value)) {
             return $this->push($key, $value);
         }
 

@@ -9,7 +9,7 @@ use Traversable;
 
 /**
  * Trait HasIterator
- * 
+ *
  * @template Model
  * @implements ArrayAccess<int|string, Model>
  * @implements IteratorAggregate<int|string, Model>
@@ -25,7 +25,7 @@ trait HasIterator
     {
         return new ArrayIterator($this->attributes);
     }
-    
+
     /**
      * Returns the count of attributes.
      *
@@ -35,7 +35,7 @@ trait HasIterator
     {
         return count($this->attributes);
     }
-    
+
     /**
      * Checks if the given offset exists in the attributes.
      *

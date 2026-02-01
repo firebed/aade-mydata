@@ -17,9 +17,9 @@ class RequestStatements extends MyDataRequest
      * Με αυτή τη μέθοδο ο πιστοποιημένος πάροχος χρήστης λαμβάνει πληροφορίες
      * τις δηλώσεις έκδοσης στοιχείων μέσω Παρόχου ή ΙδιοΠαρόχου που έχει διαβιβάσει.
      *
-     * @param  string  $stmtId
-     * @param  string|null  $maxstmtId
-     * @param  string|null  $entityVatNumber
+     * @param string $stmtId
+     * @param string|null $maxstmtId
+     * @param string|null $entityVatNumber
      * @return RequestedStatementDoc
      * @throws MyDataException
      * @throws MyDataAuthenticationException

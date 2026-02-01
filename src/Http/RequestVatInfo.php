@@ -29,12 +29,12 @@ class RequestVatInfo extends MyDataRequest
      * εγγραφές ΦΠΑ ενός προσώπου ή επιχείρησης, είτε ανά τιμολόγιο είτε ανά ημέρα, ανάλογα
      * με τις παραμέτρους που έχουν δοθεί.
      *
-     * @param  string  $dateFrom  Αρχή χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης (μορφή dd/MM/yyyy)
-     * @param  string  $dateTo  Τέλος χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης (μορφή dd/MM/yyyy)
-     * @param  string|null  $entityVatNumber  ΑΦΜ οντότητας
-     * @param  bool  $groupedPerDay  Παράμετρος που δηλώνει εάν τα αποτελέσματα πρέπει να ομαδοποιηθούν ανά ημέρα.
-     * @param  string|null  $nextPartitionKey  Παράμετρος για την τμηματική λήψη των αποτελεσμάτων <code>($groupedPerDay = false)</code>
-     * @param  string|null  $nextRowKey  Παράμετρος για την τμηματική λήψη των αποτελεσμάτων <code>($groupedPerDay = false)</code>
+     * @param string $dateFrom Αρχή χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης (μορφή dd/MM/yyyy)
+     * @param string $dateTo Τέλος χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης (μορφή dd/MM/yyyy)
+     * @param string|null $entityVatNumber ΑΦΜ οντότητας
+     * @param bool $groupedPerDay Παράμετρος που δηλώνει εάν τα αποτελέσματα πρέπει να ομαδοποιηθούν ανά ημέρα.
+     * @param string|null $nextPartitionKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων <code>($groupedPerDay = false)</code>
+     * @param string|null $nextRowKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων <code>($groupedPerDay = false)</code>
      * @return RequestedVatInfo
      * @throws MyDataException
      * @throws MyDataAuthenticationException
@@ -49,7 +49,7 @@ class RequestVatInfo extends MyDataRequest
             'GroupedPerDay' => $groupedPerDay ? "true" : "false",
             'nextPartitionKey' => $nextPartitionKey,
             'nextRowKey' => $nextRowKey
-        ], fn($value) => $value !== null);
+        ], fn ($value) => $value !== null);
 
         // Get the response XML
         $responseXML = $this->get($query);

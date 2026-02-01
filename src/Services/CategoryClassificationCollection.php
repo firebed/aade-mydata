@@ -13,7 +13,7 @@ use Traversable;
 class CategoryClassificationCollection implements ArrayAccess, IteratorAggregate
 {
     private array $classifications;
-    private bool  $isIncome;
+    private bool $isIncome;
 
     public function __construct(array $classifications, bool $isIncome)
     {

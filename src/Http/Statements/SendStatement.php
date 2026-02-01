@@ -4,11 +4,11 @@ namespace Firebed\AadeMyData\Http\Statements;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Http\MyDataXmlRequest;
-use Firebed\AadeMyData\Models\Statements\StatementResponseDoc;
 use Firebed\AadeMyData\Models\Statements\Statement;
 use Firebed\AadeMyData\Models\Statements\StatementDoc;
-use Firebed\AadeMyData\Xml\Statements\StatementResponseDocReader;
+use Firebed\AadeMyData\Models\Statements\StatementResponseDoc;
 use Firebed\AadeMyData\Xml\Statements\StatementDocWriter;
+use Firebed\AadeMyData\Xml\Statements\StatementResponseDocReader;
 
 class SendStatement extends MyDataXmlRequest
 {
@@ -16,7 +16,7 @@ class SendStatement extends MyDataXmlRequest
      * Η κλήση της μεθόδου SendStatement είναι διαθέσιμη μόνο για πιστοποιημένους παρόχους και αποστέλει
      * μια νέα δήλωση.
      *
-     * @param  StatementDoc|Statement  $statement
+     * @param StatementDoc|Statement $statement
      * @return StatementResponseDoc
      * @throws MyDataException
      *

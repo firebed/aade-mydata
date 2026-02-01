@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GenerateGroupQRCodeResponse xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <groupQrUrl>https://mydataapidev.aade.gr/TimologioQR/GroupQRInfo?groupId=9946C6AA9DB3658C85CC3BF43DB726FE25BBC555</groupQrUrl>
+    <qrUrlsCount>2</qrUrlsCount>
+    <expiresAt>2025-02-08T12:00:00</expiresAt>
+    <statusCode>Success</statusCode>
+</GenerateGroupQRCodeResponse>

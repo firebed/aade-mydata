@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GenerateGroupQRCodeRequest>
+    <qrUrls>
+        <qrUrl>https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url_1</qrUrl>
+        <qrUrl>https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url_2</qrUrl>
+    </qrUrls>
+</GenerateGroupQRCodeRequest>

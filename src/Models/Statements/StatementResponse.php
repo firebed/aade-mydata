@@ -68,7 +68,7 @@ class StatementResponse extends Type
 
     public function hasErrors(): bool
     {
-        return !is_null($this->getErrors()) && count($this->getErrors()) > 0;
+        return ! is_null($this->getErrors()) && count($this->getErrors()) > 0;
     }
 
     /**

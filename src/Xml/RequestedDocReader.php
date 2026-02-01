@@ -13,7 +13,7 @@ class RequestedDocReader extends XMLReader
     {
         $doc = new RequestedDoc();
         $this->loadXML($xmlString, $doc);
-        
+
         return $doc;
     }
 }

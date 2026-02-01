@@ -19,11 +19,11 @@ class GenerateUid
             $this->normalizeSeries($series),
             $number,
         ];
-        
+
         if ($invoiceVariationType) {
             $attributes[] = $invoiceVariationType instanceof InvoiceVariationType ? $invoiceVariationType->value : $invoiceVariationType;
         }
-        
+
         return strtoupper(sha1(implode('-', $attributes)));
     }
 

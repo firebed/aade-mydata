@@ -8,11 +8,11 @@ class InvoicesIncomeClassificationDetail extends Type
         'lineNumber',
         'incomeClassificationDetailData',
     ];
-    
+
     protected array $casts = [
         'incomeClassificationDetailData' => IncomeClassification::class,
     ];
-    
+
     /**
      * @return int|null Αριθμός Γραμμής
      */
@@ -23,7 +23,7 @@ class InvoicesIncomeClassificationDetail extends Type
 
     /**
      * Αναφέρεται στον αντίστοιχο αριθμό γραμμής του αρχικού παραστατικού με Μοναδικός Αριθμός Καταχώρησης αυτό του πεδίου mark.
-     * 
+     *
      * @param int $lineNumber Αριθμός Γραμμής
      */
     public function setLineNumber(int $lineNumber): static

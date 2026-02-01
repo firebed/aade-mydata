@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RejectDeliveryNoteRequest>
+    <invoiceMark>111111111111111</invoiceMark>
+    <rejectionReason>Damaged goods</rejectionReason>
+</RejectDeliveryNoteRequest>

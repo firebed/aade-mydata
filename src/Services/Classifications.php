@@ -15,15 +15,15 @@ class Classifications
 
     private static function loadIncomeClassifications(): void
     {
-        if (!isset(self::$incomeClassifications)) {
-            self::$incomeClassifications = require __DIR__.'/../../config/income-classifications.php';
+        if (! isset(self::$incomeClassifications)) {
+            self::$incomeClassifications = require __DIR__ . '/../../config/income-classifications.php';
         }
     }
 
     private static function loadExpenseClassifications(): void
     {
-        if (!isset(self::$expenseClassifications)) {
-            self::$expenseClassifications = require __DIR__.'/../../config/expense-classifications.php';
+        if (! isset(self::$expenseClassifications)) {
+            self::$expenseClassifications = require __DIR__ . '/../../config/expense-classifications.php';
         }
     }
 

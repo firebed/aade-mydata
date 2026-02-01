@@ -14,11 +14,11 @@ class TaxTotalsFactory extends Factory
     public function definition(): array
     {
         return [
-            'taxType'         => fake()->randomElement(TaxType::cases())->value,
-            'taxCategory'     => fake()->randomElement(WithheldPercentCategory::cases())->value,
+            'taxType' => fake()->randomElement(TaxType::cases())->value,
+            'taxCategory' => fake()->randomElement(WithheldPercentCategory::cases())->value,
             'underlyingValue' => fake()->randomFloat(2, 0, 100),
-            'taxAmount'       => fake()->randomFloat(2, 0, 20),
-            'id'              => fake()->randomDigitNotZero(),
+            'taxAmount' => fake()->randomFloat(2, 0, 20),
+            'id' => fake()->randomDigitNotZero(),
         ];
     }
 }

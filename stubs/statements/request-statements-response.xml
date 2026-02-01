@@ -4,14 +4,14 @@
         <statement>
             <statementId>789</statementId>
             <submissionDateTime>2025-11-17T21:04:43.028916</submissionDateTime>
-            <entityVatNumber>110250755</entityVatNumber>
+            <entityVatNumber>888888888</entityVatNumber>
             <liableUserCategory>1</liableUserCategory>
             <providerType>1</providerType>
             <isB2BTransactions>true</isB2BTransactions>
             <isB2CTransactions>true</isB2CTransactions>
             <isB2GTransactions>true</isB2GTransactions>
-            <providerVatNumber>110286266</providerVatNumber>
-            <providerLicenceNumber>2020_11_106Cloud Services _001_Oxygen-Pelatologio_V1_18112020</providerLicenceNumber>
+            <providerVatNumber>999999999</providerVatNumber>
+            <providerLicenceNumber>Provider-License-Number</providerLicenceNumber>
             <providerContractNumber>11104</providerContractNumber>
             <providerContractConclusionDate>2025-07-26T11:16:10</providerContractConclusionDate>
             <providerContractActivationDate>2025-07-27T11:16:10</providerContractActivationDate>
@@ -25,14 +25,14 @@
         <statement>
             <statementId>727</statementId>
             <submissionDateTime>2025-11-15T13:07:52.330648</submissionDateTime>
-            <entityVatNumber>110250755</entityVatNumber>
+            <entityVatNumber>888888888</entityVatNumber>
             <liableUserCategory>1</liableUserCategory>
             <providerType>1</providerType>
             <isB2BTransactions>true</isB2BTransactions>
             <isB2CTransactions>true</isB2CTransactions>
             <isB2GTransactions>false</isB2GTransactions>
-            <providerVatNumber>110286266</providerVatNumber>
-            <providerLicenceNumber>2020_11_106Cloud Services _001_Oxygen-Pelatologio_V1_18112020</providerLicenceNumber>
+            <providerVatNumber>999999999</providerVatNumber>
+            <providerLicenceNumber>Provider-License-Number</providerLicenceNumber>
             <providerContractNumber>111041</providerContractNumber>
             <providerContractConclusionDate>2025-07-26T11:16:10</providerContractConclusionDate>
             <providerContractActivationDate>2025-07-27T11:16:10</providerContractActivationDate>
@@ -47,7 +47,7 @@
                 <recallId>728</recallId>
                 <recallStatus>2</recallStatus>
                 <transactionDate>2025-11-15</transactionDate>
-                <recallVatNumber>110286266</recallVatNumber>
+                <recallVatNumber>777777777</recallVatNumber>
             </recalledStatement>
         </recallStatement>
     </requestedStatement>

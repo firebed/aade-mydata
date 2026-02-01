@@ -9,6 +9,7 @@ use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Exceptions\MyDataTimeoutException;
 use Firebed\AadeMyData\Exceptions\RateLimitExceededException;
 use Firebed\AadeMyData\Exceptions\TransmissionFailedException;
+use Firebed\AadeMyData\Exceptions\UnsupportedChannelException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
@@ -18,17 +19,17 @@ use ReflectionClass;
 
 abstract class MyDataRequest
 {
-    private const DEV_ERP_URL  = 'https://mydataapidev.aade.gr/';
+    private const DEV_ERP_URL = 'https://mydataapidev.aade.gr/';
     private const PROD_ERP_URL = 'https://mydatapi.aade.gr/myDATA/';
 
-    private const DEV_PROVIDER_URL  = 'https://mydataapidev.aade.gr/myDataProvider/';
+    private const DEV_PROVIDER_URL = 'https://mydataapidev.aade.gr/myDataProvider/';
     private const PROD_PROVIDER_URL = 'https://mydatapi.aade.gr/myDataProvider/';
 
-    private static ?string $user_id          = null;
+    private static ?string $user_id = null;
     private static ?string $subscription_key = null;
-    private static ?string $env              = null;
-    private static ?bool   $is_provider      = false;
-    private static array   $request_options;
+    private static ?string $env = null;
+    private static ?bool $is_provider = false;
+    private static array $request_options;
 
     private static ?HandlerStack $handler;
 
@@ -38,12 +39,12 @@ abstract class MyDataRequest
     }
 
     /**
-     * Initialize the myDATA API with the user_id, subscription_key and environment.
+     * Initialize the myDATA API with the user_id, subscription_key, and environment.
      *
-     * @param  string  $user_id The user id provided by AADE
-     * @param  string  $subscription_key The subscription key provided by AADE
-     * @param  string  $env 'dev' or 'prod'
-     * @param  bool  $is_provider Set to true if the request is for the providers
+     * @param string $user_id The user id provided by AADE
+     * @param string $subscription_key The subscription key provided by AADE
+     * @param string $env 'dev' or 'prod'
+     * @param bool $is_provider Set to true if the request is for the providers
      * @return void
      */
     public static function init(string $user_id, string $subscription_key, string $env, bool $is_provider = false): void
@@ -55,8 +56,8 @@ abstract class MyDataRequest
     /**
      * Set the user_id and subscription_key for the myDATA API.
      *
-     * @param  string  $user_id The user id provided by AADE
-     * @param  string  $subscription_key The subscription key provided by AADE
+     * @param string $user_id The user id provided by AADE
+     * @param string $subscription_key The subscription key provided by AADE
      * @return void
      */
     public static function setCredentials(string $user_id, string $subscription_key): void
@@ -68,8 +69,8 @@ abstract class MyDataRequest
     /**
      * Set the environment to either 'dev' or 'prod'.
      *
-     * @param  string  $env 'dev' or 'prod'
-     * @param  bool  $is_provider Set to true if the request is for the providers
+     * @param string $env 'dev' or 'prod'
+     * @param bool $is_provider Set to true if the request is for the providers
      * @return void
      */
     public static function setEnvironment(string $env, bool $is_provider = false): void
@@ -84,6 +85,7 @@ abstract class MyDataRequest
      * <li>Set to <code>true</code> to enable SSL certificate verification and use the default CA bundle provided by operating system.</li>
      * <li>Set to <code>false</code> to disable certificate verification (this is insecure!).</li>
      * <li>Set to a string to provide the path to a CA bundle to enable verification using a custom certificate.</li>
+     *
      * </ul>
      *
      * <pre>
@@ -103,7 +105,7 @@ abstract class MyDataRequest
      * setting to point to the path to the file, allowing you to omit the "verify" request option.
      * Much more detail on SSL certificates can be found on the <a href="http://curl.haxx.se/docs/sslcerts.html">cURL website</a>.</p>
      *
-     * @param  bool|string  $verify
+     * @param bool|string $verify
      * @return void
      */
     public static function verifyClient(bool|string $verify = true): void
@@ -115,7 +117,7 @@ abstract class MyDataRequest
      * The number of seconds to wait while trying to connect to myDATA server.
      * Use 0 to wait indefinitely (the default behavior).
      *
-     * @param  int  $seconds
+     * @param int $seconds
      * @return void
      */
     public static function setConnectionTimeout(int $seconds): void
@@ -126,7 +128,7 @@ abstract class MyDataRequest
     /**
      * Total time for the request.
      *
-     * @param  int  $seconds
+     * @param int $seconds
      * @return void
      */
     public static function setTimeout(int $seconds): void
@@ -139,7 +141,7 @@ abstract class MyDataRequest
      * Request options control various aspects of a request including, headers, query string
      * parameters, timeout settings, the body of a request, and much more.
      *
-     * @param  array  $requestOptions
+     * @param array $requestOptions
      * @return void
      * @see https://docs.guzzlephp.org/en/stable/request-options.html
      */
@@ -184,7 +186,7 @@ abstract class MyDataRequest
             $response = $this->client()->get($this->getUrl(), ['query' => $query]);
             $responseXml = $response->getBody()->getContents();
 
-            // We always expect a response xml from myDATA
+            // We always expect a response XML from myDATA
             if (empty(trim($responseXml))) {
                 throw new InvalidResponseException("Empty response received from AADE MyData API");
             }
@@ -203,11 +205,11 @@ abstract class MyDataRequest
         self::validateCredentials();
 
         $params = [];
-        if (!empty($query)) {
+        if (! empty($query)) {
             $params['query'] = $query;
         }
 
-        if (!empty($body)) {
+        if (! empty($body)) {
             $params['body'] = $body;
         }
 
@@ -215,7 +217,7 @@ abstract class MyDataRequest
             $response = $this->client()->post($this->getUrl(), $params);
             $responseXml = $response->getBody()->getContents();
 
-            // We always expect a response xml from myDATA
+            // We always expect a response XML from myDATA
             if (empty(trim($responseXml))) {
                 throw new InvalidResponseException("Empty response received from AADE MyData API");
             }
@@ -235,7 +237,7 @@ abstract class MyDataRequest
     protected function handleTransmissionException(GuzzleException $exception)
     {
         // Specific case for timeout exception (HTTP 28 for cURL)
-        // Connection with myDATA was established but the response took too long
+        // Connection with myDATA was established, but the response took too long
         if ($exception instanceof RequestException) {
             $errorNo = $exception->getHandlerContext()['errno'] ?? null;
             if ($errorNo === 28) {
@@ -243,7 +245,7 @@ abstract class MyDataRequest
             }
         }
 
-        // In case the endpoint url is wrong or connection timed out, myDATA is unreachable
+        // In case the endpoint url is wrong or the connection timed out, myDATA is unreachable
         if ($exception->getCode() === 0) {
             throw new MyDataConnectionException($exception->getCode(), $exception);
         }
@@ -258,7 +260,13 @@ abstract class MyDataRequest
             throw new RateLimitExceededException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
-        throw new TransmissionFailedException($exception->getMessage(), $exception->getCode(), $exception);
+        $message = $exception->getResponse()->getBody()->getContents() ?: $exception->getMessage();
+        throw new TransmissionFailedException($message, $exception->getCode(), $exception);
+    }
+
+    protected function filterArray(array $array): array
+    {
+        return array_filter($array, fn ($value) => ! is_null($value) && $value !== '');
     }
 
     private function client(): Client
@@ -287,7 +295,7 @@ abstract class MyDataRequest
         $action = $this->getAction();
         $url = self::$is_provider ? $this->getUrlForProvider() : $this->getUrlForErp();
 
-        return $url.$action;
+        return $url . $action;
     }
 
     private function getUrlForErp(): string
@@ -306,13 +314,24 @@ abstract class MyDataRequest
     }
 
     /**
-     * @throws MyDataException
+     * @throws UnsupportedChannelException
      */
     protected function ensureProvider(): void
     {
-        if (!$this->isProvider()) {
+        if (! $this->isProvider()) {
             $className = (new ReflectionClass($this))->getShortName();
-            throw new MyDataException($className . ' can only be used with the Provider route.');
+            throw new UnsupportedChannelException($className . ' can only be used with the Provider route.');
+        }
+    }
+
+    /**
+     * @throws UnsupportedChannelException
+     */
+    protected function ensureERP(): void
+    {
+        if ($this->isProvider()) {
+            $className = (new ReflectionClass($this))->getShortName();
+            throw new UnsupportedChannelException($className . ' can only be used with the ERP route.');
         }
     }
 }

@@ -2,6 +2,9 @@
 
 namespace Tests;
 
+use Firebed\AadeMyData\Enums\DigitalGoodsMovement\DeliveryEventType;
+use Firebed\AadeMyData\Enums\DigitalGoodsMovement\DeliveryStatus;
+use Firebed\AadeMyData\Enums\DigitalGoodsMovement\TransportType;
 use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
 use Firebed\AadeMyData\Enums\IncomeClassificationType;
 use Firebed\AadeMyData\Enums\RecType;
@@ -73,6 +76,42 @@ class InvoiceTest extends TestCase
         $this->assertEquals('54AS56DS65VF4S65DF', $invoice->getAuthenticationCode());
         $this->assertEquals(3, $invoice->getTransmissionFailure());
         $this->assertEquals('https://www.akjjasd.com/asdkasdkasdkas?asasd=asdasd', $invoice->getQrCodeUrl());
+    }
+
+    public function test_it_hydrates_invoice_with_lifecycle_data()
+    {
+        $doc = $this->getRequestedDocFromXml('request-doc-with-delivery-lifecycle');
+
+        $this->assertCount(1, $doc->getInvoices());
+
+        $invoice = $doc->getInvoices()->first();
+
+        $this->assertEquals('999A854DBC6FCFAEB2DBC32CBF82322540456F56', $invoice->getUid());
+        $this->assertEquals(111111111111111, $invoice->getMark());
+        $this->assertEquals('DEC42AAEFD57277D9F6E0B128C55A9C30FD0EE98', $invoice->getAuthenticationCode());
+        $this->assertEquals(DeliveryStatus::IN_TRANSIT, $invoice->getInvoiceDeliveryStatus());
+
+        $this->assertCount(1, $invoice->getDeliveryLifecycle());
+        $lifecycle = $invoice->getDeliveryLifecycle()->first();
+
+        $this->assertNotNull($lifecycle);
+        $this->assertEquals(DeliveryEventType::REGISTER_TRANSFER, $lifecycle->getEventType());
+        $this->assertEquals('2026-02-07T20:51:06Z', $lifecycle->getEventTimestamp());
+        $this->assertEquals('777777777', $lifecycle->getActorVat());
+        $this->assertEquals('222222222222222', $lifecycle->getMark());
+
+        $details = $lifecycle->getTransportDetails();
+        $this->assertNotNull($details);
+        $this->assertEquals('AHN0011', $details->getVehicleNumber());
+        $this->assertEquals(TransportType::PRIVATE_USE_TRUCK, $details->getTransportType());
+        $this->assertEquals('2026-02-07T20:51:06Z', $details->getTimestamp());
+        $this->assertEquals(777777777, $details->getCarrierVatNumber());
+        $this->assertEquals('P22345', $details->getTrailorNumber());
+
+        $location = $details->getLocation();
+        $this->assertNotNull($location);
+        $this->assertEquals(-81.901693, $location->getLatitude());
+        $this->assertEquals(41.303921, $location->getLongitude());
     }
 
     public function test_invoice_validation()

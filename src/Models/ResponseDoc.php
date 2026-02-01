@@ -21,9 +21,4 @@ class ResponseDoc extends TypeArray
     {
         parent::__construct('response');
     }
-
-    public function offsetGet(mixed $offset): Response
-    {
-        return $this->attributes['response'][$offset];
-    }
 }
