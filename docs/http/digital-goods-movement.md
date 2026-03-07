@@ -1,6 +1,6 @@
 # Ψηφιακή Διακίνηση Αγαθών - Digital Goods Movement
 
-Το σύστημα Digital Goods Movement του ΑΑΔΕ myDATA επιτρέπει την παρακολούθηση και διαχείριση της διακίνησης αγαθών σε πραγματικό χρόνο. Οι λειτουργίες αυτές είναι διαθέσιμες **μόνο για τον εκδότη** των παραστατικών (ERP channel) και **δεν** υποστηρίζονται από παρόχους ηλεκτρονικής τιμολόγησης.
+Το σύστημα Digital Goods Movement του ΑΑΔΕ myDATA επιτρέπει την παρακολούθηση και διαχείριση της διακίνησης αγαθών σε πραγματικό χρόνο. Οι λειτουργίες αυτές είναι διαθέσιμες **μόνο για το ERP channel** και **δεν** υποστηρίζονται από παρόχους ηλεκτρονικής τιμολόγησης.
 
 > [!WARNING]
 > Όλες οι λειτουργίες Digital Goods Movement υποστηρίζονται μόνο για τον εκδότη (ERP channel).
@@ -33,7 +33,7 @@ $details->setVehicleNumber('AHN0011');
 $details->setTransportType(TransportType::PRIVATE_USE_TRUCK);
 $details->setCarrierVatNumber('777777777');
 $details->setTrailorNumber('P22345'); // Αριθμός κυκλοφορίας "P" (προαιρετικό)
-$details->setLocation(new Location(41.303921, -81.901693)); // longitude, latitude
+$details->setLocation(new Location(41.303921, -81.901693)); // latitude, longitude
 
 $transport = new Transport();
 $transport->setQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_qr_url');
@@ -46,7 +46,7 @@ try {
 
     if ($response->first()->isSuccessful()) {
         echo "Η μεταφορά καταχωρήθηκε με επιτυχία." . PHP_EOL;
-        echo "Transfer Mark: " . $response->first()->getMark();
+        echo "Transfer Mark: " . $response->first()->getTransferMark();
     }
 } catch (MyDataException $e) {
     echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
@@ -55,13 +55,13 @@ try {
 
 ### Πεδία TransportDetails
 
-| Πεδίο | Τύπος | Υποχρεωτικό | Περιγραφή |
-|-------|-------|-------------|-----------|
-| `vehicleNumber` | string | Ναι | Αριθμός Μεταφορικού Μέσου (max 50 χαρακτήρες) |
-| `transportType` | TransportType | Ναι | Είδος Μεταφορικού Μέσου (1-7) |
-| `carrierVatNumber` | string | Ναι | ΑΦΜ Μεταφορικής Εταιρείας (max 20 χαρακτήρες) |
-| `pNumber` | string | Όχι | Αριθμός κυκλοφορίας "P" ρυμουλκούμενου (max 50 χαρακτήρες) |
-| `location` | Location | Όχι | Τοποθεσία Μεταφόρτωσης (longitude, latitude) |
+| Πεδίο              | Τύπος         | Υποχρεωτικό | Περιγραφή                                                  |
+|--------------------|---------------|-------------|------------------------------------------------------------|
+| `vehicleNumber`    | string        | Ναι         | Αριθμός Μεταφορικού Μέσου (max 50 χαρακτήρες)              |
+| `transportType`    | TransportType | Ναι         | Είδος Μεταφορικού Μέσου (1-7)                              |
+| `carrierVatNumber` | string        | Ναι         | ΑΦΜ Μεταφορικής Εταιρείας (max 20 χαρακτήρες)              |
+| `pNumber`          | string        | Όχι         | Αριθμός κυκλοφορίας "P" ρυμουλκούμενου (max 50 χαρακτήρες) |
+| `location`         | Location      | Όχι         | Τοποθεσία Μεταφόρτωσης (longitude, latitude)               |
 
 ### Τύποι Μεταφορικού Μέσου (TransportType)
 
@@ -165,7 +165,7 @@ try {
 
     if ($response->first()->isSuccessful()) {
         echo "Η παράδοση επιβεβαιώθηκε με επιτυχία." . PHP_EOL;
-        echo "Outcome Mark: " . $response->first()->getMark();
+        echo "Delivery Outcome Mark: " . $response->first()->getDeliveryOutcomeMark();
     }
 } catch (MyDataException $e) {
     echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
@@ -174,12 +174,12 @@ try {
 
 ### Πεδία DeliveryOutcome
 
-| Πεδίο | Τύπος | Υποχρεωτικό | Περιγραφή |
-|-------|-------|-------------|-----------|
-| `qrUrl` | string | Ναι | Το URL του QR code του Δελτίου |
-| `outcome` | DeliveryOutcomeType | Ναι | Αποτέλεσμα παράδοσης (FULL/PARTIAL/NONE) |
-| `deliveredWithoutRecipient` | boolean | Όχι | Παράδοση χωρίς φυσική παρουσία παραλήπτη |
-| `deliveredPackaging` | PackagingDetail[] | Όχι | Λίστα με συσκευασίες που παραδόθηκαν |
+| Πεδίο                       | Τύπος               | Υποχρεωτικό | Περιγραφή                                |
+|-----------------------------|---------------------|-------------|------------------------------------------|
+| `qrUrl`                     | string              | Ναι         | Το URL του QR code του Δελτίου           |
+| `outcome`                   | DeliveryOutcomeType | Ναι         | Αποτέλεσμα παράδοσης (FULL/PARTIAL/NONE) |
+| `deliveredWithoutRecipient` | boolean             | Όχι         | Παράδοση χωρίς φυσική παρουσία παραλήπτη |
+| `deliveredPackaging`        | PackagingDetail[]   | Όχι         | Λίστα με συσκευασίες που παραδόθηκαν     |
 
 ### Τύποι Αποτελέσματος Παράδοσης (DeliveryOutcomeType)
 
@@ -260,10 +260,10 @@ $response = $reject->rejectUsingQrUrl(
 
 ### Πεδία DeliveryRejection
 
-| Πεδίο | Τύπος | Υποχρεωτικό | Περιγραφή |
-|-------|-------|-------------|-----------|
-| `qrUrl` ή `invoiceMark` | string ή int | Ναι | Το URL του QR ή το MARK του δελτίου |
-| `rejectionReason` | string | Όχι | Λόγος απόρριψης (max 150 χαρακτήρες) |
+| Πεδίο                   | Τύπος        | Υποχρεωτικό | Περιγραφή                            |
+|-------------------------|--------------|-------------|--------------------------------------|
+| `qrUrl` ή `invoiceMark` | string ή int | Ναι         | Το URL του QR ή το MARK του δελτίου  |
+| `rejectionReason`       | string       | Όχι         | Λόγος απόρριψης (max 150 χαρακτήρες) |
 
 ## RequestDeliveryNoteStatus - Αναζήτηση Κατάστασης Δελτίου
 
@@ -391,13 +391,25 @@ try {
 
 ### Response Objects
 
-Οι μέθοδοι `RegisterTransfer`, `ConfirmDeliveryOutcome`, και `RejectDeliveryNote` επιστρέφουν συλλογή από αντικείμενα `ResponseDoc` που περιέχουν:
+Οι μέθοδοι `RegisterTransfer`, `ConfirmDeliveryOutcome`, και `RejectDeliveryNote` επιστρέφουν `ResponseDoc` (συλλογή από αντικείμενα `Response` - `Firebed\AadeMyData\Models\DigitalGoodsMovement\Response`).
+
+Κάθε `Response` περιέχει:
+- `index`: Αριθμός Σειράς Οντότητας
+- `statusCode`: Κωδικός Αποτελέσματος (`Success` ή άλλο)
+- `transferMark`: Μοναδικός Αριθμός Εκκίνησης/Μεταφόρτωσης (μόνο για `RegisterTransfer`)
+- `rejectMark`: Μοναδικός Αριθμός Απόρριψης (μόνο για `RejectDeliveryNote`)
+- `deliveryOutcomeMark`: Μοναδικός Αριθμός Καταχώρησης (μόνο για `ConfirmDeliveryOutcome`)
+- `errors`: Λίστα Σφαλμάτων (αν υπάρχουν)
 
 ```php
 // Έλεγχος επιτυχίας
 if ($response->first()->isSuccessful()) {
-    echo "Success!";
-    echo "Mark: " . $response->first()->getMark();
+    echo "Success!" . PHP_EOL;
+
+    // Ανάλογα με τη μέθοδο που καλέσατε:
+    echo "Transfer Mark: " . $response->first()->getTransferMark() . PHP_EOL;          // RegisterTransfer
+    echo "Reject Mark: " . $response->first()->getRejectMark() . PHP_EOL;              // RejectDeliveryNote
+    echo "Outcome Mark: " . $response->first()->getDeliveryOutcomeMark() . PHP_EOL;    // ConfirmDeliveryOutcome
 }
 
 // Έλεγχος αποτυχίας
@@ -405,6 +417,13 @@ if ($response->first()->isFailed()) {
     echo "Errors: " . PHP_EOL;
     foreach ($response->first()->getErrors() as $error) {
         echo "- " . $error->getMessage() . PHP_EOL;
+    }
+}
+
+// Διατρέχοντας όλα τα αποτελέσματα
+foreach ($response as $item) {
+    if ($item->isSuccessful()) {
+        echo "Item {$item->getIndex()}: Success";
     }
 }
 ```

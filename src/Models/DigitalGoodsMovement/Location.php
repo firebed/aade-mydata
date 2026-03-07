@@ -14,12 +14,12 @@ class Location extends Type
         'latitude',
     ];
 
-    public function __construct(?float $longitude = null, ?float $latitude = null)
+    public function __construct(?float $latitude = null, ?float $longitude = null)
     {
-        if ($longitude !== null || $latitude !== null) {
+        if ($latitude !== null || $longitude !== null) {
             parent::__construct([
-                'longitude' => $longitude,
                 'latitude' => $latitude,
+                'longitude' => $longitude,
             ]);
         }
     }

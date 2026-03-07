@@ -7,8 +7,8 @@
         <carrierVatNumber>777777777</carrierVatNumber>
         <pNumber>P22345</pNumber>
         <location>
-            <longitude>41.303921</longitude>
-            <latitude>-81.901693</latitude>
+            <longitude>-81.901693</longitude>
+            <latitude>41.303921</latitude>
         </location>
     </transportDetail>
 </Transport>
