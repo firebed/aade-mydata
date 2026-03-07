@@ -6,6 +6,12 @@
 [![PHP Version Require](https://poser.pugx.org/firebed/aade-mydata/require/php)](https://packagist.org/packages/firebed/aade-mydata)
 [![License](https://poser.pugx.org/firebed/aade-mydata/license)](LICENSE.md)
 
+## Upcoming Changes
+- Support for myDATA v2.0.1 (planned in early February 2026)
+- Separate documentation to a dedicated repository
+- Integration with Invoice Service Providers (OxygenSuite / Cloud Services IKE) as for Greek e-invoicing regulations
+- v6.x release with an improved architecture and new features
+
 ## Support This Project
 
 If you find this project useful, you can show your appreciation and support by giving it a ⭐. Your support motivates us to work harder and make even better and more useful tools!
