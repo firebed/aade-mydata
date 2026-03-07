@@ -574,12 +574,12 @@ enum InvoiceType: string
         };
     }
 
-    public function incomeClassifications(IncomeClassificationCategory $category = null): CategoryClassificationCollection|TypeClassificationCollection
+    public function incomeClassifications(?IncomeClassificationCategory $category = null): CategoryClassificationCollection|TypeClassificationCollection
     {
         return Classifications::incomeClassifications($this, $category);
     }
 
-    public function expenseClassifications(ExpenseClassificationCategory $category = null): CategoryClassificationCollection|TypeClassificationCollection
+    public function expenseClassifications(?ExpenseClassificationCategory $category = null): CategoryClassificationCollection|TypeClassificationCollection
     {
         return Classifications::expenseClassifications($this, $category);
     }
