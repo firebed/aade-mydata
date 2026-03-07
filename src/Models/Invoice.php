@@ -444,7 +444,7 @@ class Invoice extends Type
      */
     public function setPackingsDeclarations(?array $packingsDeclarations): static
     {
-        return $this->set('packingsDeclarations', null);
+        return $this->set('packingsDeclarations', $packingsDeclarations);
     }
 
     /**
