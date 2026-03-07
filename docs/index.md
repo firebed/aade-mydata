@@ -19,6 +19,7 @@
 | Περιγραφή λειτουργιών     | SendIncomeClassification              | http/send-income-classification         |
 | Περιγραφή λειτουργιών     | SendExpensesClassification            | http/send-expenses-classification       |
 | Περιγραφή λειτουργιών     | CancelDeliveryNote                    | http/cancel-delivery-note               |
+| Περιγραφή λειτουργιών     | DigitalGoodsMovement                  | http/digital-goods-movement             |
 | Παραδείγματα παραστατικών | Παραδείγματα                          | invoices/examples                       |
 | Παραδείγματα παραστατικών | Τιμολόγιο Πώλησης                     | invoices/sale-invoice                   |
 | Παραδείγματα παραστατικών | Τιμολόγιο Παροχής                     | invoices/service-invoice                |
