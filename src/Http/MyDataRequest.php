@@ -260,7 +260,7 @@ abstract class MyDataRequest
             throw new RateLimitExceededException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
-        $message = $exception->getResponse()->getBody()->getContents() ?: $exception->getMessage();
+        $message = $exception->getResponse()?->getBody()->getContents() ?: $exception->getMessage();
         throw new TransmissionFailedException($message, $exception->getCode(), $exception);
     }
 

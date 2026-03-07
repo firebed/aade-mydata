@@ -183,7 +183,7 @@ class Invoice extends Type
      */
     public function setPaymentMethods(PaymentMethods|array|null $paymentMethods): static
     {
-        if ($paymentMethods == null || $paymentMethods instanceof PaymentMethods) {
+        if ($paymentMethods === null || $paymentMethods instanceof PaymentMethods) {
             return $this->set('paymentMethods', $paymentMethods);
         }
 

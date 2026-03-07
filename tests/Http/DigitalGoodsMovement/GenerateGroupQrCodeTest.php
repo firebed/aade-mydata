@@ -11,7 +11,7 @@ use Firebed\AadeMyData\Models\DigitalGoodsMovement\GroupQrCode;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response;
 
-class GenerateGroupQrCodeTestCase extends DigitalGoodsMovementTestCase
+class GenerateGroupQrCodeTest extends DigitalGoodsMovementTestCase
 {
     public function test_dev_erp_url_is_correct()
     {

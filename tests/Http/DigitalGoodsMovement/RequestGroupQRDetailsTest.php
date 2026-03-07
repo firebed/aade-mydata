@@ -9,7 +9,7 @@ use Firebed\AadeMyData\Http\MyDataRequest;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response;
 
-class RequestGroupQRDetailsTestCase extends DigitalGoodsMovementTestCase
+class RequestGroupQRDetailsTest extends DigitalGoodsMovementTestCase
 {
     public function test_dev_erp_url_is_correct()
     {

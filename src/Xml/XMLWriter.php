@@ -27,7 +27,7 @@ abstract class XMLWriter
     /**
      * @throws DOMException
      */
-    protected function build(DOMNode $parent, string $nodeName, mixed $nodeValue, $namespace = null): void
+    protected function build(DOMNode $parent, string $nodeName, mixed $nodeValue, ?string $namespace = null): void
     {
         if (is_null($nodeValue) || (is_string($nodeValue) && strlen($nodeValue) === 0)) {
             return;

@@ -21,7 +21,7 @@ class TransportDetail extends Type
     {
         if (is_array($vehicleNumber)) {
             parent::__construct($vehicleNumber);
-        } else if ($vehicleNumber !== null) {
+        } elseif ($vehicleNumber !== null) {
             parent::__construct(['vehicleNumber' => $vehicleNumber]);
         }
     }
