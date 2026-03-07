@@ -10,7 +10,7 @@ use Firebed\AadeMyData\Models\DigitalGoodsMovement\DeliveryRejection;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response;
 
-class RejectDeliveryNoteTest extends DigitalGoodsMovementTest
+class RejectDeliveryNoteTestCase extends DigitalGoodsMovementTestCase
 {
     public function test_dev_erp_url_is_correct()
     {

@@ -635,7 +635,7 @@ enum ExpenseClassificationType: string
         };
     }
 
-    public static function for(InvoiceType $type, ExpenseClassificationCategory $category = null): CategoryClassificationCollection|TypeClassificationCollection
+    public static function for(InvoiceType $type, ?ExpenseClassificationCategory $category = null): CategoryClassificationCollection|TypeClassificationCollection
     {
         return Classifications::expenseClassifications($type, $category);
     }

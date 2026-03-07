@@ -13,7 +13,7 @@ class ProvidersSignature extends Type
         'EndToEndReferenceID',
     ];
 
-    public function __construct(string $signingAuthor = null, string $signature = null, ?string $endToEndReferenceID = null)
+    public function __construct(?string $signingAuthor = null, ?string $signature = null, ?string $endToEndReferenceID = null)
     {
         if ($signingAuthor !== null || $signature !== null || $endToEndReferenceID !== null) {
             parent::__construct([

@@ -27,7 +27,7 @@ abstract class XMLReader
     /**
      * Parse the XML node and return the corresponding Type object.
      */
-    protected function parseDOMElement(IteratorAggregate $elements, Type $parent = null): void
+    protected function parseDOMElement(IteratorAggregate $elements, ?Type $parent = null): void
     {
         // Since we have no control over the XML returned by myDATA,
         // it is possible to encounter node names within the XML that

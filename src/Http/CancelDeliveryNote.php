@@ -21,7 +21,7 @@ use Firebed\AadeMyData\Models\ResponseDoc;
  */
 class CancelDeliveryNote extends CancelInvoice
 {
-    public function handle(string $mark, string $entityVatNumber = null): ResponseDoc
+    public function handle(string $mark, ?string $entityVatNumber = null): ResponseDoc
     {
         $this->ensureProvider();
 

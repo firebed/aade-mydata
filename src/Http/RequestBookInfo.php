@@ -44,7 +44,7 @@ abstract class RequestBookInfo extends MyDataRequest
      * @return RequestedBookInfo
      * @throws MyDataException
      */
-    public function handle(string $dateFrom, string $dateTo, string $counterVatNumber = null, string $entityVatNumber = null, InvoiceType|string $invType = null, string $nextPartitionKey = null, string $nextRowKey = null): RequestedBookInfo
+    public function handle(string $dateFrom, string $dateTo, ?string $counterVatNumber = null, ?string $entityVatNumber = null, InvoiceType|string|null $invType = null, ?string $nextPartitionKey = null, ?string $nextRowKey = null): RequestedBookInfo
     {
         $invType = $invType instanceof InvoiceType ? $invType->value : $invType;
 

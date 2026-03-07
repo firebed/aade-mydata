@@ -200,7 +200,7 @@ abstract class MyDataRequest
     /**
      * @throws MyDataAuthenticationException|MyDataException
      */
-    protected function post(array $query = null, string $body = null): string
+    protected function post(?array $query = null, ?string $body = null): string
     {
         self::validateCredentials();
 

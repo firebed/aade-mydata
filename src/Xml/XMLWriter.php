@@ -93,7 +93,7 @@ abstract class XMLWriter
     /**
      * @throws DOMException
      */
-    protected function createElement(string $nodeName, mixed $nodeValue = null, string $namespaceURI = null): DOMElement
+    protected function createElement(string $nodeName, mixed $nodeValue = null, ?string $namespaceURI = null): DOMElement
     {
         // Create the element (with or without namespace)
         $newNode = $namespaceURI

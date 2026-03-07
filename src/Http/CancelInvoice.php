@@ -30,7 +30,7 @@ class CancelInvoice extends MyDataRequest
      * @return ResponseDoc
      * @throws MyDataException
      */
-    public function handle(string $mark, string $entityVatNumber = null): ResponseDoc
+    public function handle(string $mark, ?string $entityVatNumber = null): ResponseDoc
     {
         $query = ['mark' => $mark];
 

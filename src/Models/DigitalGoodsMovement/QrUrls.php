@@ -13,7 +13,7 @@ class QrUrls extends TypeArray
     /**
      * @param array<string>|null $items Λίστα με τα URL των QR code προς ομαδοποίηση.
      */
-    public function __construct(array $items = null)
+    public function __construct(?array $items = null)
     {
         parent::__construct('qrUrl', $items);
     }

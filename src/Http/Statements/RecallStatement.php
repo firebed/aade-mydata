@@ -27,7 +27,7 @@ class RecallStatement extends MyDataRequest
      *
      * @version 1.0.12
      */
-    public function handle(string $statementId, string $entityVatNumber, RecallStatus|int $recallStatus, string $recallDate = null): StatementResponseDoc
+    public function handle(string $statementId, string $entityVatNumber, RecallStatus|int $recallStatus, ?string $recallDate = null): StatementResponseDoc
     {
         $this->ensureProvider();
 

@@ -162,7 +162,7 @@ class PaymentMethodDetail extends Type
      * @param string|null $signature
      * @version 1.0.8
      */
-    public function setProvidersSignature(ProvidersSignature|string|null $providersSignature, string $signature = null): static
+    public function setProvidersSignature(ProvidersSignature|string|null $providersSignature, ?string $signature = null): static
     {
         if (! ($providersSignature instanceof ProvidersSignature) && $signature !== null) {
             $providersSignature = new ProvidersSignature($providersSignature, $signature);
@@ -188,7 +188,7 @@ class PaymentMethodDetail extends Type
      * @param string|null $sessionNumber
      * @version 1.0.8
      */
-    public function setECRToken(ECRToken|string|null $ecrToken, string $sessionNumber = null): static
+    public function setECRToken(ECRToken|string|null $ecrToken, ?string $sessionNumber = null): static
     {
         if (! ($ecrToken instanceof ECRToken) && $sessionNumber !== null) {
             $ecrToken = new ECRToken($ecrToken, $sessionNumber);

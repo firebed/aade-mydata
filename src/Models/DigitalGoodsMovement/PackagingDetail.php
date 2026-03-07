@@ -23,7 +23,7 @@ class PackagingDetail extends Type
         'packagingType' => PackagingType::class,
     ];
 
-    public function __construct(PackagingType $packagingType = null, int $quantity = null)
+    public function __construct(?PackagingType $packagingType = null, ?int $quantity = null)
     {
         parent::__construct();
 

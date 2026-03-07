@@ -13,7 +13,7 @@ use Firebed\AadeMyData\Models\DigitalGoodsMovement\TransportDetails;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response;
 
-class RegisterTransferTest extends DigitalGoodsMovementTest
+class RegisterTransferTestCase extends DigitalGoodsMovementTestCase
 {
     public function test_dev_erp_url_is_correct()
     {

@@ -12,7 +12,7 @@ class ECRToken extends Type
         'SessionNumber',
     ];
 
-    public function __construct(string $signingAuthor = null, string $sessionNumber = null)
+    public function __construct(?string $signingAuthor = null, ?string $sessionNumber = null)
     {
         if ($signingAuthor !== null || $sessionNumber !== null) {
             parent::__construct([

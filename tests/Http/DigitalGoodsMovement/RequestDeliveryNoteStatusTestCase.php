@@ -14,7 +14,7 @@ use Firebed\AadeMyData\Http\MyDataRequest;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response;
 
-class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTest
+class RequestDeliveryNoteStatusTestCase extends DigitalGoodsMovementTestCase
 {
     private function assertRegisterTransferEvent($event): void
     {

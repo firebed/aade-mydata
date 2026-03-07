@@ -4,7 +4,7 @@ namespace Tests\Http\DigitalGoodsMovement;
 
 use Tests\Http\MyDataHttpTestCase;
 
-class DigitalGoodsMovementTest extends MyDataHttpTestCase
+class DigitalGoodsMovementTestCase extends MyDataHttpTestCase
 {
     protected function stubsPath($path): string
     {

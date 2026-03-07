@@ -250,7 +250,7 @@ enum IncomeClassificationType: string
         };
     }
 
-    public static function for(InvoiceType $type, IncomeClassificationCategory $category = null): CategoryClassificationCollection|TypeClassificationCollection
+    public static function for(InvoiceType $type, ?IncomeClassificationCategory $category = null): CategoryClassificationCollection|TypeClassificationCollection
     {
         return Classifications::incomeClassifications($type, $category);
     }

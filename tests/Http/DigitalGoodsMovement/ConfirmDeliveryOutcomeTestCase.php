@@ -13,7 +13,7 @@ use Firebed\AadeMyData\Models\DigitalGoodsMovement\PackagingDetail;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response;
 
-class ConfirmDeliveryOutcomeTest extends DigitalGoodsMovementTest
+class ConfirmDeliveryOutcomeTestCase extends DigitalGoodsMovementTestCase
 {
     public function test_dev_erp_url_is_correct()
     {

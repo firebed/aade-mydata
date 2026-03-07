@@ -26,7 +26,7 @@ class RequestStatements extends MyDataRequest
      *
      * @version 1.0.12
      */
-    public function handle(string $stmtId = '', string $maxstmtId = null, string $entityVatNumber = null): RequestedStatementDoc
+    public function handle(string $stmtId = '', ?string $maxstmtId = null, ?string $entityVatNumber = null): RequestedStatementDoc
     {
         $this->ensureProvider();
 

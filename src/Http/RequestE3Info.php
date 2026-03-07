@@ -40,7 +40,7 @@ class RequestE3Info extends MyDataRequest
      * @throws MyDataAuthenticationException
      * @version 1.0.10
      */
-    public function handle(string $dateFrom, string $dateTo, string $entityVatNumber = null, bool $groupedPerDay = false, string $nextPartitionKey = null, string $nextRowKey = null): RequestedE3Info
+    public function handle(string $dateFrom, string $dateTo, ?string $entityVatNumber = null, bool $groupedPerDay = false, ?string $nextPartitionKey = null, ?string $nextRowKey = null): RequestedE3Info
     {
         $query = array_filter([
             'dateFrom' => $dateFrom,

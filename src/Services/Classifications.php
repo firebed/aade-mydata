@@ -27,7 +27,7 @@ class Classifications
         }
     }
 
-    public static function incomeClassifications(InvoiceType|string $invoiceType, IncomeClassificationCategory|string $classificationCategory = null): CategoryClassificationCollection|TypeClassificationCollection
+    public static function incomeClassifications(InvoiceType|string $invoiceType, IncomeClassificationCategory|string|null $classificationCategory = null): CategoryClassificationCollection|TypeClassificationCollection
     {
         self::loadIncomeClassifications();
 
@@ -48,7 +48,7 @@ class Classifications
         return new TypeClassificationCollection($classifications[$classificationCategory] ?? [], true);
     }
 
-    public static function expenseClassifications(InvoiceType|string $invoiceType, ExpenseClassificationCategory|string $classificationCategory = null): CategoryClassificationCollection|TypeClassificationCollection
+    public static function expenseClassifications(InvoiceType|string $invoiceType, ExpenseClassificationCategory|string|null $classificationCategory = null): CategoryClassificationCollection|TypeClassificationCollection
     {
         self::loadExpenseClassifications();
 

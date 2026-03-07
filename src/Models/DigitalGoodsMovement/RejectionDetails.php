@@ -13,7 +13,7 @@ class RejectionDetails extends Type
         'reason',
     ];
 
-    public function __construct(string $reason = null)
+    public function __construct(?string $reason = null)
     {
         if ($reason !== null) {
             parent::__construct([
