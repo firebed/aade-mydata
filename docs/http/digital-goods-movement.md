@@ -468,4 +468,4 @@ $qrUrlsCount = $response->getQrUrlsCount();
 > Όλες οι μέθοδοι που επιστρέφουν `Response` αντικείμενα υποστηρίζουν τις μεθόδους `isSuccessful()` και `isFailed()` για εύκολο έλεγχο κατάστασης.
 
 > [!NOTE]
-> Η σειρά των παραμέτρων στον constructor του `Location` είναι: `longitude` (γεωγραφικό μήκος), `latitude` (γεωγραφικό πλάτος).
+> Η σειρά των παραμέτρων στον constructor του `Location` είναι: `latitude` (γεωγραφικό πλάτος), `longitude` (γεωγραφικό μήκος).
