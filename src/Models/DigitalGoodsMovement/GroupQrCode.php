@@ -68,6 +68,6 @@ class GroupQrCode extends Type implements ValidatesSchema
     {
         $xml = (new GroupQrCodeWriter())->asXml($this);
 
-        return $this->validateSchema($xml, 'GenerateGroupQrCode-' . Invoice::VERSION . '.xsd');
+        return $this->validateSchema($xml, 'GenerateGroupQRCode-' . Invoice::VERSION . '.xsd');
     }
 }
