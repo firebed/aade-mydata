@@ -7,7 +7,6 @@
 [![License](https://poser.pugx.org/firebed/aade-mydata/license)](LICENSE.md)
 
 ## Upcoming Changes
-- Support for myDATA v2.0.1 (planned in early February 2026)
 - Separate documentation to a dedicated repository
 - Integration with Invoice Service Providers (OxygenSuite / Cloud Services IKE) as for Greek e-invoicing regulations
 - v6.x release with an improved architecture and new features
@@ -37,7 +36,8 @@ To use this package, you will need first a `aade id` and a `Subscription key`. Y
 
 | Version | PHP | myDATA  | Support |
 |---------|-----|---------|---------|
-| ^v5.x   | 8.1 | v1.0.12 | Active  |
+| ^v5.x   | 8.1 | v2.0.1  | Active  |
+| ^v5.x   | 8.1 | v1.0.12 | Ended   |
 | ^v4.x   | 8.1 | v1.0.8  | Ended   |
 | ^v3.x   | 8.1 | v1.0.7  | Ended   |
 | ^v2.x   | 8.1 | v1.0.5  | Ended   |
@@ -132,6 +132,44 @@ try {
 | [SendIncomeClassification](http://docs.invoicemaker.gr/http/send-income-classification)     | :white_check_mark: |
 | [SendExpensesClassification](http://docs.invoicemaker.gr/http/send-expenses-classification) | :white_check_mark: |
 | [CancelDeliveryNote](http://docs.invoicemaker.gr/http/cancel-delivery-note) (Για παρόχους)  | :white_check_mark: |
+
+## Digital Goods Movement (Ψηφιακή Διακίνηση Αγαθών)
+
+Digital Goods Movement methods allow real-time tracking and management of goods in transit. These methods are available **only for the ERP channel** and are **not** supported by invoice service providers.
+
+| Method                                                                                                         | Description                  |
+|----------------------------------------------------------------------------------------------------------------|------------------------------|
+| [RegisterTransfer](http://docs.invoicemaker.gr/http/digital-goods-movement#registertransfer)                   | Register a transfer          |
+| [ConfirmDeliveryOutcome](http://docs.invoicemaker.gr/http/digital-goods-movement#confirmdeliveryoutcome)       | Confirm delivery outcome     |
+| [RejectDeliveryNote](http://docs.invoicemaker.gr/http/digital-goods-movement#rejectdeliverynote)               | Reject a delivery note       |
+| [RequestDeliveryNoteStatus](http://docs.invoicemaker.gr/http/digital-goods-movement#requestdeliverynotestatus) | Request delivery note status |
+| [GenerateGroupQrCode](http://docs.invoicemaker.gr/http/digital-goods-movement#generategroupqrcode)             | Generate group QR code       |
+| [RequestGroupQrDetails](http://docs.invoicemaker.gr/http/digital-goods-movement#requestgroupqrdetails)         | Request group QR details     |
+
+### Quick example
+
+```php
+use Firebed\AadeMyData\Http\DigitalGoodsMovement\RegisterTransfer;
+use Firebed\AadeMyData\Models\DigitalGoodsMovement\Transport;
+use Firebed\AadeMyData\Models\DigitalGoodsMovement\TransportDetails;
+use Firebed\AadeMyData\Models\DigitalGoodsMovement\Location;
+use Firebed\AadeMyData\Enums\DigitalGoodsMovement\TransportType;
+
+$details = new TransportDetails();
+$details->setVehicleNumber('AHN0011');
+$details->setTransportType(TransportType::PRIVATE_USE_TRUCK);
+$details->setCarrierVatNumber('777777777');
+$details->setLocation(new Location(41.303921, -81.901693));
+
+$transport = new Transport();
+$transport->setMark(900001234567890);
+$transport->setTransportDetails($details);
+
+$request = new RegisterTransfer();
+$response = $request->handle($transport);
+```
+
+For detailed documentation and examples of all methods, see the [Digital Goods Movement documentation](http://docs.invoicemaker.gr/http/digital-goods-movement).
 
 ## Digital Client (Car rental, parking/wash, workshops)
 
