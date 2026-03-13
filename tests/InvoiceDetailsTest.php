@@ -6,6 +6,7 @@ use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
 use Firebed\AadeMyData\Enums\ExpenseClassificationType;
 use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
 use Firebed\AadeMyData\Enums\IncomeClassificationType;
+use Firebed\AadeMyData\Enums\MovePurpose;
 use Firebed\AadeMyData\Enums\VatCategory;
 use Firebed\AadeMyData\Enums\VatExemption;
 use Firebed\AadeMyData\Models\ExpensesClassification;
@@ -142,5 +143,29 @@ class InvoiceDetailsTest extends TestCase
         $this->assertEquals(ExpenseClassificationCategory::CATEGORY_2_1, $ecls2->getClassificationCategory());
         $this->assertEquals(1000, $ecls2->getAmount());
         $this->assertEquals(3, $ecls2->getId());
+    }
+
+    public function test_it_sets_move_purpose_line_with_enum(): void
+    {
+        $row = new InvoiceDetails();
+        $row->setMovePurposeLine(MovePurpose::TYPE_1);
+
+        $this->assertEquals(MovePurpose::TYPE_1, $row->getMovePurposeLine());
+    }
+
+    public function test_it_sets_move_purpose_line_with_int(): void
+    {
+        $row = new InvoiceDetails();
+        $row->setMovePurposeLine(1);
+
+        $this->assertEquals(MovePurpose::TYPE_1, $row->getMovePurposeLine());
+    }
+
+    public function test_it_sets_move_purpose_line_with_null(): void
+    {
+        $row = new InvoiceDetails();
+        $row->setMovePurposeLine(null);
+
+        $this->assertNull($row->getMovePurposeLine());
     }
 }

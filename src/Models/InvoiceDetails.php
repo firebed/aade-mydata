@@ -89,6 +89,7 @@ class InvoiceDetails extends Type
         'dienergia' => Ship::class,
         'incomeClassification' => IncomeClassification::class,
         'expensesClassification' => ExpensesClassification::class,
+        'movePurposeLine' => MovePurpose::class,
     ];
 
     /**
@@ -885,11 +886,11 @@ class InvoiceDetails extends Type
      * από αυτόν που έχει δηλωθεί σε επίπεδο παραστατικού (`movePurpose`) για τη
      * συγκεκριμένη γραμμή του παραστατικού
      *
-     * @param MovePurpose|null $movePurpose Σκοπός Διακίνησης Γραμμής
+     * @param MovePurpose|int|null $movePurpose Σκοπός Διακίνησης Γραμμής
      * @return $this
      * @version 2.0.1
      */
-    public function setMovePurposeLine(?MovePurpose $movePurpose): static
+    public function setMovePurposeLine(MovePurpose|int|null $movePurpose): static
     {
         return $this->set('movePurposeLine', $movePurpose);
     }
