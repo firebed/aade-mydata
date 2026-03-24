@@ -28,6 +28,8 @@
 | Παραδείγματα παραστατικών | Δελτίο Αποστολής                      | invoices/delivery-invoice               |
 | Παραδείγματα παραστατικών | Πιστωτικό Τιμολόγιο                   | invoices/credit-invoice                 |
 | Παραδείγματα παραστατικών | Απόδειξη Λιανικής                     | invoices/retail-invoice                 |
+| Παραδείγματα παραστατικών | Απόδειξη Παροχής Υπηρεσιών            | invoices/retail-service-invoice         |
+| Παραδείγματα παραστατικών | Πιστωτικό Στοιχείο Λιανικής           | invoices/credit-retail-invoice          |
 | Παραδείγματα παραστατικών | Ενδοκοινοτικό Τιμολόγιο               | invoices/foreign-invoice                |
 | Παραδείγματα παραστατικών | Ολοκληρωμένο Παράδειγμα               | invoices/complete-example               |
 | Τύποι δεδομένων           | Invoice                               | types/invoice-type                      |
