@@ -70,8 +70,8 @@ try {
 
 ```php
 $doc = new InvoicesDoc([new Invoice(), new Invoice(), new Invoice()]);
-$doc->add(new Invoice())
-$doc->add(new Invoice())
+$doc->add(new Invoice());
+$doc->add(new Invoice());
 
 $request = new SendInvoices();
 $response = $request->handle($doc);

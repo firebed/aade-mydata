@@ -5,6 +5,7 @@ namespace Firebed\AadeMyData\Factories;
 use Firebed\AadeMyData\Enums\InvoiceType;
 use Firebed\AadeMyData\Enums\InvoiceVariationType;
 use Firebed\AadeMyData\Enums\MovePurpose;
+use Firebed\AadeMyData\Enums\ReceivingNotePurpose;
 use Firebed\AadeMyData\Enums\ReverseDeliveryNotePurpose;
 use Firebed\AadeMyData\Enums\SpecialInvoiceCategory;
 use Firebed\AadeMyData\Models\EntityType;
@@ -46,6 +47,11 @@ class InvoiceHeaderFactory extends Factory
             'reverseDeliveryNote' => fake()->boolean(),
             'reverseDeliveryNotePurpose' => fake()->randomElement(ReverseDeliveryNotePurpose::cases()),
             'toWeigh' => fake()->boolean(),
+            // Non-OTHER_CASES so the otherReceivingNotePurposeTitle rule is not triggered;
+            // required for invoice types 10.1 / 10.2 to be valid.
+            'receivingNotePurpose' => fake()->randomElement(
+                array_filter(ReceivingNotePurpose::cases(), fn ($c) => $c !== ReceivingNotePurpose::OTHER_CASES)
+            ),
         ];
     }
 }
