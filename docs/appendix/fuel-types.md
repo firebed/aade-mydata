@@ -10,8 +10,8 @@
 | 15      | Ειδικό καύσιμο αεριωθουμένων                                           |
 | 20      | Diesel                                                                 |
 | 21      | Diesel premium                                                         |
-| 30      | Diesel Heatnn                                                          |
-| 31      | Diesel Heat premium                                                    |
+| 30      | Diesel Heating                                                         |
+| 31      | Diesel Heating premium                                                 |
 | 32      | Diesel Light                                                           |
 | 33      | Diesel άλλων χρήσεων                                                   |
 | 34      | Diesel ναυτιλίας                                                       |

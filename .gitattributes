@@ -1,0 +1,23 @@
+# Auto-detect text files and normalize line endings to LF on checkout.
+# Keeps the repository consistent across operating systems (no CRLF on Windows).
+* text=auto eol=lf
+
+# Treat these as binary so Git never alters their contents.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.pdf  binary
+
+# Exclude development-only paths from the distributed (Composer) package.
+# These are not needed at runtime, so `composer require firebed/aade-mydata`
+# installs a leaner package. Note: xsd/ and config/ are used at runtime and
+# are intentionally kept.
+/.github        export-ignore
+/docs           export-ignore
+/tests          export-ignore
+/stubs          export-ignore
+.gitattributes  export-ignore
+.gitignore      export-ignore
+phpunit.xml     export-ignore

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:inv="http://www.aade.gr/myDATA/invoice/v1.0" xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" targetNamespace="http://www.aade.gr/myDATA/invoice/v1.0" elementFormDefault="qualified" version="2.0.1">
-	<xs:import namespace="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" schemaLocation="incomeClassification-v2.0.1.xsd"/>
-	<xs:import namespace="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" schemaLocation="expensesClassification-v2.0.1.xsd"/>
-	<xs:include schemaLocation="TransportTypes-v2.0.1.xsd"/>
-	<xs:include schemaLocation="SimpleTypes-v2.0.1.xsd"/>
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:inv="http://www.aade.gr/myDATA/invoice/v1.0" xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" targetNamespace="http://www.aade.gr/myDATA/invoice/v1.0" elementFormDefault="qualified" version="2.0.2">
+	<xs:import namespace="https://www.aade.gr/myDATA/incomeClassificaton/v1.0" schemaLocation="incomeClassification-v2.0.2.xsd"/>
+	<xs:import namespace="https://www.aade.gr/myDATA/expensesClassificaton/v1.0" schemaLocation="expensesClassification-v2.0.2.xsd"/>
+	<xs:include schemaLocation="TransportTypes-v2.0.2.xsd"/>
+	<xs:include schemaLocation="SimpleTypes-v2.0.2.xsd"/>
 	<xs:element name="InvoicesDoc">
 		<xs:annotation>
 			<xs:documentation>Παραστατικό ΑΑΔΕ</xs:documentation>
@@ -124,7 +124,7 @@
 				<xs:simpleType>
 					<xs:restriction base="xs:byte">
 						<xs:minInclusive value="1"/>
-						<xs:maxInclusive value="7"/>
+						<xs:maxInclusive value="9"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>			
@@ -309,6 +309,31 @@
 			<xs:element name="toWeigh" type="xs:boolean" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Ένδειξη Προς Ζύγιση</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="receivingNotePurpose" type="inv:ReceivingNotePurposeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Αιτία Έκδοσης Δελτίου Ποσοτικής Παραλαβής</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="otherReceivingNotePurposeTitle" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Τίτλος της Λοιπής Περίπτωσης της Αιτίας Έκδοσης Δελτίου Ποσοτικής Παραλαβής </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="150"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="nonObligatedRecipient" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Μη Υπόχρεος Λήπτης (Αφορά Παραστατικό Διακίνησης)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="withoutDigitalTransportTracking" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Χωρίς Ψηφιακή Παρακολούθηση Διακίνησης</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>

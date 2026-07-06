@@ -41,7 +41,7 @@ $header->setAa(101);
 $header->setIssueDate('2020-04-08');
 $header->setInvoiceType(InvoiceType::TYPE_5_1);
 $header->setCurrency('EUR');
-$header->addCorrelatedInvoice('400000017716190');
+$header->addCorrelatedInvoice(400000017716190);
 ```
 
 > [!CAUTION]

@@ -60,6 +60,15 @@ class Response extends Type
     }
 
     /**
+     * @return int|null Μοναδικός Αριθμός Δήλωσης Επιστροφής Διακίνησης
+     * @version 2.0.2
+     */
+    public function getDeliveryReturnMark(): ?int
+    {
+        return $this->get('deliveryReturnMark');
+    }
+
+    /**
      * @return Errors|null Λίστα Σφαλμάτων
      * @version 2.0.1
      */

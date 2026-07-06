@@ -72,8 +72,8 @@ $request = new RequestDocs();
 try {
   $response = $request->handle(
       mark: "1234567890",
-      dateFrom: "2021-01-01",
-      dateTo: "2021-12-31",
+      dateFrom: "01/01/2021",
+      dateTo: "31/12/2021",
       receiverVatNumber: "123456789",
       entityVatNumber: "123456789",
       invType: InvoiceType::TYPE_1_1,
@@ -98,10 +98,10 @@ try {
   
   // Λήψη δεύτερης σελίδας αποτελεσμάτων
   $request2 = new RequestDocs();
-  $response2 = $request->handle(
+  $response2 = $request2->handle(
       mark: "1234567890",
-      dateFrom: "2021-01-01",
-      dateTo: "2021-12-31",
+      dateFrom: "01/01/2021",
+      dateTo: "31/12/2021",
       receiverVatNumber: "123456789",
       entityVatNumber: "123456789",
       invType: InvoiceType::TYPE_1_1,

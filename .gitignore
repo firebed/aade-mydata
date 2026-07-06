@@ -6,3 +6,5 @@ kernel.php
 .phpunit.result.cache
 requested-doc.xml
 /.phpunit.cache/test-results
+/.claude/settings.local.json
+.env

@@ -33,6 +33,10 @@
 | reverseDeliveryNote                                                  | Όχι         | Αντίστροφη Διακίνηση (bool) <sub><sup>v1.0.12</sup></sub>            |
 | reverseDeliveryNotePurpose                                           | Όχι         | Αιτία Αντίστροφης Διακίνησης <sub><sup>v1.0.12</sup></sub>           |
 | toWeigh                                                              | Όχι         | Ένδειξη Προς Ζύγιση (bool) <sub><sup>v2.0.1</sup></sub>              |
+| [**receivingNotePurpose**](../appendix/receiving-note-purpose)       | Όχι         | Αιτία Έκδοσης Δελτίου Ποσοτικής Παραλαβής <sub><sup>v2.0.2</sup></sub> |
+| otherReceivingNotePurposeTitle                                       | Όχι         | Τίτλος Λοιπής Περίπτωσης (max 150) <sub><sup>v2.0.2</sup></sub>      |
+| nonObligatedRecipient                                                | Όχι         | Μη Υπόχρεος Λήπτης (bool) <sub><sup>v2.0.2</sup></sub>               |
+| withoutDigitalTransportTracking                                      | Όχι         | Χωρίς Ψηφιακή Παρακολούθηση Διακίνησης (bool) <sub><sup>v2.0.2</sup></sub> |
 
 ## Παρατηρήσεις
 
@@ -80,6 +84,12 @@
 - Το πεδίο `reverseDeliveryNotePurpose` συμπληρώνεται όταν έχει επιλεγεί ως
   `reverseDeliveryNote = true` και ορίζει την αιτία της αντίστροφης διακίνησης.
 - Το πεδίο `toWeigh` είναι ένδειξη προς ζύγιση για παραστατικά διακίνησης <sub><sup>v2.0.1</sup></sub>.
+- Το πεδίο `receivingNotePurpose` ορίζει την αιτία έκδοσης Δελτίου Ποσοτικής
+  Παραλαβής και είναι **υποχρεωτικό** για παραστατικά τύπου `10.1` και `10.2` <sub><sup>v2.0.2</sup></sub>.
+- Το πεδίο `otherReceivingNotePurposeTitle` συμπληρώνεται μόνο όταν
+  `receivingNotePurpose = 7` (ΛΟΙΠΕΣ ΠΕΡΙΠΤΩΣΕΙΣ) <sub><sup>v2.0.2</sup></sub>.
+- Τα πεδία `nonObligatedRecipient` και `withoutDigitalTransportTracking` αφορούν
+  παραστατικά διακίνησης και δεν επιτρέπεται να είναι ταυτόχρονα `true` (σφάλμα 290) <sub><sup>v2.0.2</sup></sub>.
 
 ## Απλό παράδειγμα δόμησης τύπου `InvoiceHeader`
 

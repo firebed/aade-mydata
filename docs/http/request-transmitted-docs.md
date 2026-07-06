@@ -97,7 +97,7 @@ try {
   
   // Λήψη δεύτερης σελίδας αποτελεσμάτων
   $request2 = new RequestTransmittedDocs();
-  $response2 = $request->handle(
+  $response2 = $request2->handle(
       mark: "1234567890",
       dateFrom: "01/01/2021",
       dateTo: "31/12/2021",

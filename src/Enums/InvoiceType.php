@@ -94,6 +94,12 @@ enum InvoiceType: string
     case TYPE_3_2 = "3.2";
 
 
+    /**
+     * Υπάρχει στο XSD (InvoiceType) αλλά δεν τεκμηριώνεται - δεν χρησιμοποιείται
+     */
+    //    case TYPE_4 = "4";
+
+
     /*
     |--------------------------------------------------------------------------
     | Αντικριζόμενα Παραστατικά Εκδότη ημεδαπής / αλλοδαπής
@@ -461,10 +467,14 @@ enum InvoiceType: string
             self::TYPE_1_1,
             self::TYPE_1_2,
             self::TYPE_1_3,
+            self::TYPE_1_4,
             self::TYPE_1_6,
+            self::TYPE_3_1,
+            self::TYPE_3_2,
             self::TYPE_5_1,
             self::TYPE_5_2,
             self::TYPE_11_1,
+            self::TYPE_11_5,
         ]);
     }
 

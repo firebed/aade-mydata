@@ -14,7 +14,7 @@
 | [**invoiceDetailType**](../appendix/invoice-detail-types)                   | Όχι         | Επισήμανση                                      |
 | netValue                                                                    | **Ναι**     | Καθαρή αξία                                     |
 | [**vatCategory**](../appendix/vat-categories)                               | **Ναι**     | Κατηγορία ΦΠΑ                                   |
-| vatCategory                                                                 | **Ναι**     | Ποσό ΦΠΑ                                        |
+| vatAmount                                                                   | **Ναι**     | Ποσό ΦΠΑ                                        |
 | [**vatExemptionCategory**](../appendix/vat-exemption-categories)            | Όχι         | Κατηγορία Αιτίας Εξαίρεσης ΦΠΑ                  |
 | [**dienergia**](ship-type)                                                  | Όχι         | ΠΟΛ 1177/2018 Αρ. 27                            |
 | discountOption                                                              | Όχι         | Δικαίωμα Έκπτωσης (`boolean`)                   |
@@ -37,6 +37,8 @@
 | otherMeasurementUnitQuantity                                                | Όχι         | Πλήθος Μονάδας Μέτρησης Τεμάχια Άλλα            |
 | otherMeasurementUnitTitle                                                   | Όχι         | Τίτλος Μονάδας Μέτρησης Τεμάχια Άλλα            |
 | notVAT195                                                                   | Όχι         | Ένδειξη μη συμμετοχής στο ΦΠΑ (έσοδα – εκροές)  |
+| [**movePurposeLine**](../appendix/move-purpose)                             | Όχι         | Σκοπός Διακίνησης ανά Γραμμή                     |
+| otherMovePurposeLineTitle                                                   | Όχι         | Τίτλος Λοιπής Αιτίας Διακίνησης ανά Γραμμή       |
 
 ## Παρατηρήσεις
 

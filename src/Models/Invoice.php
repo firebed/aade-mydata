@@ -19,7 +19,7 @@ class Invoice extends Type
     use HasFactory;
     use HasSchemaValidation;
 
-    const VERSION = 'v2.0.1';
+    const VERSION = 'v2.0.2';
 
     protected array $expectedOrder = [
         'uid',
