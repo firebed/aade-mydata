@@ -39,3 +39,39 @@
 Κάθε μέθοδος είναι πλήρως τεκμηριωμένη κατά τις οδηγίες του myDATA, παρέχοντας πλήρη κατανόηση της λειτουργίας της.
 
 <img src="/images/code-completion.webp" alt="invoicemaker.gr code completion example">
+
+## Custom gateway
+
+Every request is carried to the remote system by a `Firebed\AadeMyData\Http\Gateway`.
+The default `GuzzleGateway` talks to the AADE myDATA REST API. Register your own
+to route requests elsewhere (for example through an e-invoicing provider) without
+touching the code that builds them:
+
+```php
+use Firebed\AadeMyData\Http\MyDataRequest;
+
+MyDataRequest::setGateway(new MyGateway()); // implements Gateway
+MyDataRequest::setGateway(null);            // back to the default
+```
+
+`setGateway()` is process-global and stays in place until it is replaced, so in a
+long-running worker (Octane, queue daemon) a gateway registered for one flow keeps
+carrying every later request in that process. When the gateway is chosen per tenant
+or per flow, override a single request instead and leave the global one alone:
+
+```php
+$response = (new SendInvoices())->usingGateway(new MyGateway())->handle($invoice);
+```
+
+A gateway receives the request object and the XML body. For `SendInvoices` and
+`SendPaymentsMethod` the models are also available through `SendInvoices::getInvoicesDoc()`
+and `SendPaymentsMethod::getPaymentMethodsDoc()`, so a provider gateway can read
+attributes that never reach the myDATA XML. myDATA carries only the issue date and the
+line's net value, while a provider needs more, so these stay on the models and off the XML:
+
+- `InvoiceHeader::setIssueTime('hh:mm:ss')` — the issue time;
+- `InvoiceDetails::setUnitPrice(3.333333)` — the price per unit;
+- `InvoiceDetails::setDiscount(DiscountType::PERCENTAGE, 10.0)` (or `DiscountType::AMOUNT`) —
+  the line discount, read back with `getDiscountType()` and `getDiscountValue()`;
+- `setExtraFields(['key' => 'value'])` / `addExtraField('key', 'value')` on `Invoice`,
+  `InvoiceDetails` and `PaymentMethodDetail` — free key/value pairs for the provider.

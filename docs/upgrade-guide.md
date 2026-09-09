@@ -1,5 +1,13 @@
 # Οδηγός Αναβάθμισης
 
+## Upgrade guide within 5.x (Gateway)
+
+### Breaking changes
+- `MyDataRequest::handleTransmissionException()` (`protected`) has moved to `GuzzleGateway`.
+Requests no longer map Guzzle exceptions themselves; the gateway that carried the request does.
+If you subclassed a request to override it, move that logic into a `Gateway` implementation
+(extending `GuzzleGateway` is enough) and register it with `MyDataRequest::setGateway()`.
+
 ## Upgrade guide from 4.x to 5.x
 
 ### Ενημέρωση composer

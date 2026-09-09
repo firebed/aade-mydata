@@ -7,6 +7,7 @@ use Firebed\AadeMyData\Traits\HasFactory;
 
 class PaymentMethodDetail extends Type
 {
+    use HasExtraFields;
     use HasFactory;
 
     protected array $expectedOrder = [

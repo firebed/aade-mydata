@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Firebed\AadeMyData\Enums\DiscountType;
 use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
 use Firebed\AadeMyData\Enums\ExpenseClassificationType;
 use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
@@ -19,6 +20,48 @@ use Tests\Traits\HandlesInvoiceXml;
 class InvoiceDetailsTest extends TestCase
 {
     use HandlesInvoiceXml;
+
+    public function test_unit_price_stays_on_the_model_but_is_never_sent_to_mydata(): void
+    {
+        $invoice = Invoice::factory()->make();
+        $line = $invoice->getInvoiceDetails()[0]->setUnitPrice(3.333333);
+
+        $this->assertSame(3.333333, $line->getUnitPrice());
+        $this->assertSame(3.333333, $line->toArray()['unitPrice']);
+        $this->assertSame(3.333333, InvoiceDetails::make(['netValue' => 10.0, 'unitPrice' => 3.333333])->getUnitPrice());
+        $this->assertArrayNotHasKey('unitPrice', $line->sortedAttributes());
+        $this->assertNull($this->toXML($invoice)->InvoicesDoc->invoice->invoiceDetails->unitPrice);
+    }
+
+    public function test_discount_stays_on_the_model_but_is_never_sent_to_mydata(): void
+    {
+        $invoice = Invoice::factory()->make();
+        $line = $invoice->getInvoiceDetails()[0]->setDiscount(DiscountType::PERCENTAGE, 10.0);
+
+        $this->assertSame(DiscountType::PERCENTAGE, $line->getDiscountType());
+        $this->assertSame(10.0, $line->getDiscountValue());
+        $this->assertSame(1, $line->toArray()['discountType']);
+        $this->assertSame(10.0, $line->toArray()['discountValue']);
+        $made = InvoiceDetails::make(['netValue' => 10.0, 'discountType' => 2, 'discountValue' => 1.5]);
+        $this->assertSame(DiscountType::AMOUNT, $made->getDiscountType());
+        $this->assertSame(1.5, $made->getDiscountValue());
+        $this->assertArrayNotHasKey('discountType', $line->sortedAttributes());
+        $this->assertArrayNotHasKey('discountValue', $line->sortedAttributes());
+        $this->assertNull($this->toXML($invoice)->InvoicesDoc->invoice->invoiceDetails->discountType);
+        $this->assertNull($this->toXML($invoice)->InvoicesDoc->invoice->invoiceDetails->discountValue);
+    }
+
+    public function test_extra_fields_stay_on_the_line_but_are_never_sent_to_mydata(): void
+    {
+        $invoice = Invoice::factory()->make();
+        $line = $invoice->getInvoiceDetails()[0]->setExtraFields(['warehouse' => 'A1'])->addExtraField('lot', 42);
+
+        $this->assertSame(['warehouse' => 'A1', 'lot' => 42], $line->getExtraFields());
+        $this->assertSame(['warehouse' => 'A1', 'lot' => 42], $line->toArray()['extraFields']);
+        $this->assertSame(['lot' => 42], InvoiceDetails::make(['netValue' => 10.0, 'extraFields' => ['lot' => 42]])->getExtraFields());
+        $this->assertArrayNotHasKey('extraFields', $line->sortedAttributes());
+        $this->assertNull($this->toXML($invoice)->InvoicesDoc->invoice->invoiceDetails->extraFields);
+    }
 
     public function test_it_converts_single_invoice_row_to_xml(): void
     {

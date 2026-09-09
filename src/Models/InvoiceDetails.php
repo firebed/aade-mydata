@@ -2,6 +2,7 @@
 
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Enums\DiscountType;
 use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
 use Firebed\AadeMyData\Enums\ExpenseClassificationType;
 use Firebed\AadeMyData\Enums\FeesPercentCategory;
@@ -37,6 +38,7 @@ use Firebed\AadeMyData\Traits\HasFactory;
  */
 class InvoiceDetails extends Type
 {
+    use HasExtraFields;
     use HasFactory;
 
     protected array $expectedOrder = [
@@ -90,6 +92,7 @@ class InvoiceDetails extends Type
         'incomeClassification' => IncomeClassification::class,
         'expensesClassification' => ExpensesClassification::class,
         'movePurposeLine' => MovePurpose::class,
+        'discountType' => DiscountType::class,
     ];
 
     /**
@@ -194,6 +197,28 @@ class InvoiceDetails extends Type
     public function setQuantity(?float $quantity): static
     {
         return $this->set('quantity', $quantity);
+    }
+
+    /**
+     * @return float|null Τιμή Μονάδας
+     */
+    public function getUnitPrice(): ?float
+    {
+        return $this->get('unitPrice');
+    }
+
+    /**
+     * Not part of myDATA: the attribute is deliberately absent from $expectedOrder, so it is
+     * never written to the InvoicesDoc XML, yet it stays on the model (toArray(), make()).
+     * myDATA carries only the line's netValue, so gateways that transmit through an
+     * e-invoicing provider read the price per unit here.
+     *
+     * @param float|null $unitPrice Τιμή Μονάδας
+     * @return InvoiceDetails
+     */
+    public function setUnitPrice(?float $unitPrice): static
+    {
+        return $this->set('unitPrice', $unitPrice);
     }
 
     /**
@@ -372,6 +397,54 @@ class InvoiceDetails extends Type
     public function setDiscountOption(?bool $discountOption): static
     {
         return $this->set('discountOption', $discountOption);
+    }
+
+    /**
+     * @return DiscountType|null Είδος Έκπτωσης (ποσοστό ή ποσό)
+     */
+    public function getDiscountType(): ?DiscountType
+    {
+        return $this->get('discountType');
+    }
+
+    /**
+     * @param DiscountType|int|null $discountType Είδος Έκπτωσης; prefer setDiscount(), which states both halves
+     */
+    public function setDiscountType(DiscountType|int|null $discountType): static
+    {
+        return $this->set('discountType', $discountType);
+    }
+
+    /**
+     * @return float|null Έκπτωση γραμμής — a percentage or an amount, per getDiscountType()
+     */
+    public function getDiscountValue(): ?float
+    {
+        return $this->get('discountValue');
+    }
+
+    /**
+     * @param float|null $discountValue Έκπτωση γραμμής; prefer setDiscount(), which states both halves
+     */
+    public function setDiscountValue(?float $discountValue): static
+    {
+        return $this->set('discountValue', $discountValue);
+    }
+
+    /**
+     * The line discount. Not part of myDATA: both attributes are deliberately absent from
+     * $expectedOrder, so they are never written to the InvoicesDoc XML, yet they stay on the
+     * model (toArray(), make()). myDATA carries only the line's netValue; gateways that
+     * transmit through an e-invoicing provider read the discount here. The value is a
+     * percentage of the line or an absolute amount, as the type says, so the two are set
+     * together.
+     *
+     * @param DiscountType|int $discountType Είδος Έκπτωσης
+     * @param float $discountValue Έκπτωση γραμμής
+     */
+    public function setDiscount(DiscountType|int $discountType, float $discountValue): static
+    {
+        return $this->setDiscountType($discountType)->setDiscountValue($discountValue);
     }
 
     /**

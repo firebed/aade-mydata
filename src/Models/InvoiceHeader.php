@@ -105,6 +105,26 @@ class InvoiceHeader extends Type
     }
 
     /**
+     * @return string|null Ώρα Έκδοσης Παραστατικού (H:i:s)
+     */
+    public function getIssueTime(): ?string
+    {
+        return $this->get('issueTime');
+    }
+
+    /**
+     * Not part of myDATA: the attribute is deliberately absent from $expectedOrder, so it is
+     * never written to the InvoicesDoc XML, yet it stays on the model (toArray(), make()).
+     * Gateways that transmit through an e-invoicing provider read it to build the issue datetime.
+     *
+     * @param string|null $issueTime Ώρα Έκδοσης Παραστατικού hh:mm:ss
+     */
+    public function setIssueTime(?string $issueTime): static
+    {
+        return $this->set('issueTime', $issueTime);
+    }
+
+    /**
      * @return InvoiceType|null Είδος Παραστατικού
      */
     public function getInvoiceType(): ?InvoiceType
