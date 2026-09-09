@@ -8,7 +8,7 @@
 
 ## Upcoming Changes
 - Separate documentation to a dedicated repository
-- Integration with Invoice Service Providers (OxygenSuite / Cloud Services IKE) as for Greek e-invoicing regulations
+- Provider integration through the `Gateway` seam (see [Custom gateway](docs/getting-started.md#custom-gateway)); the Oxygen bridge lives in `oxygensuite/aade-mydata-oxygen`
 - v6.x release with an improved architecture and new features
 
 ## Support This Project

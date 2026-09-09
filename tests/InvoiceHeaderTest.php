@@ -17,6 +17,18 @@ class InvoiceHeaderTest extends TestCase
 {
     use HandlesInvoiceXml;
 
+    public function test_issue_time_stays_on_the_model_but_is_never_sent_to_mydata(): void
+    {
+        $invoice = Invoice::factory()->make();
+        $header = $invoice->getInvoiceHeader()->setIssueTime('10:15:00');
+
+        $this->assertSame('10:15:00', $header->getIssueTime());
+        $this->assertSame('10:15:00', $header->toArray()['issueTime']);
+        $this->assertSame('10:15:00', InvoiceHeader::make(['issueDate' => '2026-08-27', 'issueTime' => '10:15:00'])->getIssueTime());
+        $this->assertArrayNotHasKey('issueTime', $header->sortedAttributes());
+        $this->assertNull($this->toXML($invoice)->InvoicesDoc->invoice->invoiceHeader->issueTime);
+    }
+
     public function test_it_converts_invoice_header_to_xml(): void
     {
         $invoice = Invoice::factory()->make();

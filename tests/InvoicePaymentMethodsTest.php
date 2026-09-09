@@ -13,6 +13,18 @@ class InvoicePaymentMethodsTest extends TestCase
 {
     use HandlesInvoiceXml;
 
+    public function test_extra_fields_stay_on_the_payment_method_but_are_never_sent_to_mydata(): void
+    {
+        $invoice = Invoice::factory()->make();
+        $payment = $invoice->getPaymentMethods()[0]->setExtraFields(['terminal' => 'T1'])->addExtraField('batch', 7);
+
+        $this->assertSame(['terminal' => 'T1', 'batch' => 7], $payment->getExtraFields());
+        $this->assertSame(['terminal' => 'T1', 'batch' => 7], $payment->toArray()['extraFields']);
+        $this->assertSame(['batch' => 7], PaymentMethodDetail::make(['type' => 3, 'amount' => 1.0, 'extraFields' => ['batch' => 7]])->getExtraFields());
+        $this->assertArrayNotHasKey('extraFields', $payment->sortedAttributes());
+        $this->assertNull($this->toXML($invoice)->InvoicesDoc->invoice->paymentMethods->paymentMethodDetails->extraFields);
+    }
+
     public function test_it_converts_single_invoice_payment_method_to_xml(): void
     {
         $invoice = Invoice::factory()->make();

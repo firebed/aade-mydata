@@ -24,11 +24,14 @@ optional and backwards compatible.
 - `RequestDeliveryNoteStatus::handleUsingQrUrl()` to look up a delivery note status by `qrUrl` as an alternative to `mark`.
 - `FuelCode` — fuel codes that were in the XSD but missing from the enum: `14`, `15` and `33`–`38`. The enum now covers all 29 codes from myDATA section 8.17 (previously such values were dropped when reading invoices).
 - `ExpenseClassificationType` — codes `E3_881_001`–`E3_881_004` (Πωλήσεις για λογαριασμό Τρίτων), previously missing from the enum.
+- `Http\Gateway` seam: a `Gateway` carries a request's XML to its destination. `GuzzleGateway` (the default) talks to AADE as before; `MyDataRequest::setGateway()` installs another one globally and `usingGateway()` per request, so a request can be routed through an e-invoicing provider without changing the code that builds and sends invoices. `SendInvoices::getInvoicesDoc()` and `SendPaymentsMethod::getPaymentMethodsDoc()` expose the models to a gateway.
+- Attributes a provider gateway reads that are never written to the myDATA XML (absent from `$expectedOrder`, kept by `toArray()` / `make()`): `InvoiceHeader::setIssueTime()`, `InvoiceDetails::setUnitPrice()`, `InvoiceDetails::setDiscount(DiscountType, float)` with the `DiscountType` enum (1 percentage, 2 amount), and free key/value extra fields (`setExtraFields()`, `addExtraField()`) on `Invoice`, `InvoiceDetails` and `PaymentMethodDetail`.
 
 ### Changed
 
 - `InvoiceType::supportsDeliveryNote()` now also allows types `1.4`, `3.1`, `3.2` and `11.5`.
 - Bundled XSD schemas updated to the v2.0.2 set (incl. the new `ConfirmDeliveryReturn-v2.0.2.xsd`).
+- `MyDataRequest::handleTransmissionException()` (`protected`) moved to `GuzzleGateway`: requests no longer map Guzzle exceptions themselves, the gateway that carried the request does. Subclasses that overrode it should move that logic into a `Gateway` (see `docs/upgrade-guide.md`).
 
 ### Fixed
 

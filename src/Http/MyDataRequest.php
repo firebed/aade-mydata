@@ -3,16 +3,9 @@
 namespace Firebed\AadeMyData\Http;
 
 use Firebed\AadeMyData\Exceptions\InvalidResponseException;
-use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
-use Firebed\AadeMyData\Exceptions\MyDataConnectionException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
-use Firebed\AadeMyData\Exceptions\MyDataTimeoutException;
-use Firebed\AadeMyData\Exceptions\RateLimitExceededException;
-use Firebed\AadeMyData\Exceptions\TransmissionFailedException;
 use Firebed\AadeMyData\Exceptions\UnsupportedChannelException;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use ReflectionClass;
@@ -32,6 +25,9 @@ abstract class MyDataRequest
     private static array $request_options;
 
     private static ?HandlerStack $handler;
+    private static ?Gateway $gateway = null;
+
+    private ?Gateway $gateway_override = null;
 
     public static function setHandler(?MockHandler $handler): void
     {
@@ -166,102 +162,71 @@ abstract class MyDataRequest
     }
 
     /**
-     * @throws MyDataAuthenticationException
+     * Replace the component that carries requests to the remote system.
+     * Pass null to restore the default GuzzleGateway (AADE myDATA REST API).
      */
-    private static function validateCredentials(): void
+    public static function setGateway(?Gateway $gateway): void
     {
-        if (empty(self::$user_id) || empty(self::$subscription_key)) {
-            throw new MyDataAuthenticationException(401);
-        }
+        self::$gateway = $gateway;
+    }
+
+    public static function gateway(): Gateway
+    {
+        return self::$gateway ??= new GuzzleGateway();
     }
 
     /**
-     * @throws MyDataAuthenticationException|MyDataException
+     * Carry only this request through the given gateway, leaving the globally registered
+     * one - and every other request - untouched. Pass null to fall back to the global one.
+     *
+     * Prefer this over setGateway() when the gateway is chosen per tenant or per flow,
+     * because setGateway() lives for the whole process.
+     */
+    public function usingGateway(?Gateway $gateway): static
+    {
+        $this->gateway_override = $gateway;
+
+        return $this;
+    }
+
+    private function resolveGateway(): Gateway
+    {
+        return $this->gateway_override ?? self::gateway();
+    }
+
+    public static function hasCredentials(): bool
+    {
+        return ! empty(self::$user_id) && ! empty(self::$subscription_key);
+    }
+
+    /**
+     * @throws MyDataException
      */
     protected function get(array $query): string
     {
-        self::validateCredentials();
-
-        try {
-            $response = $this->client()->get($this->getUrl(), ['query' => $query]);
-            $responseXml = $response->getBody()->getContents();
-
-            // We always expect a response XML from myDATA
-            if (empty(trim($responseXml))) {
-                throw new InvalidResponseException("Empty response received from AADE MyData API");
-            }
-
-            return $responseXml;
-        } catch (GuzzleException $e) {
-            $this->handleTransmissionException($e);
-        }
+        return self::ensureXml($this->resolveGateway()->get($this, $query));
     }
 
     /**
-     * @throws MyDataAuthenticationException|MyDataException
+     * @throws MyDataException
      */
     protected function post(?array $query = null, ?string $body = null): string
     {
-        self::validateCredentials();
-
-        $params = [];
-        if (! empty($query)) {
-            $params['query'] = $query;
-        }
-
-        if (! empty($body)) {
-            $params['body'] = $body;
-        }
-
-        try {
-            $response = $this->client()->post($this->getUrl(), $params);
-            $responseXml = $response->getBody()->getContents();
-
-            // We always expect a response XML from myDATA
-            if (empty(trim($responseXml))) {
-                throw new InvalidResponseException("Empty response received from AADE MyData API");
-            }
-
-            return $responseXml;
-        } catch (GuzzleException $e) {
-            $this->handleTransmissionException($e);
-        }
+        return self::ensureXml($this->resolveGateway()->post($this, $query, $body));
     }
 
     /**
-     * Authorization errors, bad request, communication errors,
-     * myDATA server errors, rate limits, connection timeout, etc.
+     * We always expect a response XML from myDATA, no matter which gateway carried the request.
      *
-     * @throws MyDataAuthenticationException|MyDataException
+     * @throws InvalidResponseException
      */
-    protected function handleTransmissionException(GuzzleException $exception)
+    private static function ensureXml(string $responseXml): string
     {
-        // Specific case for timeout exception (HTTP 28 for cURL)
-        // Connection with myDATA was established, but the response took too long
-        if ($exception instanceof RequestException) {
-            $errorNo = $exception->getHandlerContext()['errno'] ?? null;
-            if ($errorNo === 28) {
-                throw new MyDataTimeoutException(previous: $exception);
-            }
+        if (empty(trim($responseXml))) {
+            throw new InvalidResponseException("Empty response received from AADE MyData API");
         }
 
-        // In case the endpoint url is wrong or the connection timed out, myDATA is unreachable
-        if ($exception->getCode() === 0) {
-            throw new MyDataConnectionException($exception->getCode(), $exception);
-        }
-
-        // Authentication with myDATA failed
-        if ($exception->getCode() === 401) {
-            throw new MyDataAuthenticationException($exception->getCode(), $exception);
-        }
-
-        // Rate limit exception
-        if ($exception->getCode() === 429) {
-            throw new RateLimitExceededException($exception->getMessage(), $exception->getCode(), $exception);
-        }
-
-        $message = $exception->getResponse()?->getBody()->getContents() ?: $exception->getMessage();
-        throw new TransmissionFailedException($message, $exception->getCode(), $exception);
+        return $responseXml;
     }
 
     protected function filterArray(array $array): array
@@ -269,7 +234,11 @@ abstract class MyDataRequest
         return array_filter($array, fn ($value) => ! is_null($value) && $value !== '');
     }
 
-    private function client(): Client
+    /**
+     * Guzzle client configured with the AADE credentials, the request options,
+     * and (in tests) the mock handler. Used by the default GuzzleGateway.
+     */
+    public static function httpClient(): Client
     {
         $config = [
             'headers' => [

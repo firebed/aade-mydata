@@ -16,6 +16,7 @@ use Firebed\AadeMyData\Xml\InvoicesDocWriter;
 
 class Invoice extends Type
 {
+    use HasExtraFields;
     use HasFactory;
     use HasSchemaValidation;
 

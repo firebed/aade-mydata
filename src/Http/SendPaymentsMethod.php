@@ -17,6 +17,8 @@ use Firebed\AadeMyData\Xml\ResponseDocReader;
  */
 class SendPaymentsMethod extends MyDataXmlRequest
 {
+    private ?PaymentMethodsDoc $paymentMethodsDoc = null;
+
     /**
      * <ol>
      * <li>Κατά τη χρήση της μεθόδου, τουλάχιστον ένα αντικείμενο
@@ -33,6 +35,17 @@ class SendPaymentsMethod extends MyDataXmlRequest
             $paymentMethods = new PaymentMethodsDoc($paymentMethods);
         }
 
+        $this->paymentMethodsDoc = $paymentMethods;
+
         return $this->request(new PaymentMethodsDocWriter(), new ResponseDocReader(), $paymentMethods);
+    }
+
+    /**
+     * The payment methods handed to handle(), as models. A Gateway that routes through an
+     * e-invoicing provider reads them here instead of re-parsing the request XML.
+     */
+    public function getPaymentMethodsDoc(): ?PaymentMethodsDoc
+    {
+        return $this->paymentMethodsDoc;
     }
 }

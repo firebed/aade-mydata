@@ -11,6 +11,8 @@ use Firebed\AadeMyData\Xml\ResponseDocReader;
 
 class SendInvoices extends MyDataXmlRequest
 {
+    private ?InvoicesDoc $invoicesDoc = null;
+
     /**
      * <p>Το σώμα της κλήσης θα πρέπει είναι σε μορφή xml και περιέχει
      * το στοιχείο InvoicesDoc, το οποίο περιέχει ένα ή περισσότερα παραστατικά.</p>
@@ -25,6 +27,19 @@ class SendInvoices extends MyDataXmlRequest
             $invoices = new InvoicesDoc($invoices);
         }
 
+        $this->invoicesDoc = $invoices;
+
         return $this->request(new InvoicesDocWriter(), new ResponseDocReader(), $invoices);
+    }
+
+    /**
+     * The invoices handed to handle(), as models. A Gateway that routes through an
+     * e-invoicing provider reads them here instead of re-parsing the request XML, so
+     * attributes that never reach the myDATA XML (e.g. InvoiceHeader::setIssueTime())
+     * stay available to it.
+     */
+    public function getInvoicesDoc(): ?InvoicesDoc
+    {
+        return $this->invoicesDoc;
     }
 }

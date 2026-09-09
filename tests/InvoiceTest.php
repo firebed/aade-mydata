@@ -17,6 +17,17 @@ class InvoiceTest extends TestCase
 {
     use HandlesInvoiceXml;
 
+    public function test_extra_fields_stay_on_the_invoice_but_are_never_sent_to_mydata(): void
+    {
+        $invoice = Invoice::factory()->make()->setExtraFields(['order' => 'SO-1'])->addExtraField('channel', 'web');
+
+        $this->assertSame(['order' => 'SO-1', 'channel' => 'web'], $invoice->getExtraFields());
+        $this->assertSame(['order' => 'SO-1', 'channel' => 'web'], $invoice->toArray()['extraFields']);
+        $this->assertSame(['order' => 'SO-1'], Invoice::make(['extraFields' => ['order' => 'SO-1']])->getExtraFields());
+        $this->assertArrayNotHasKey('extraFields', $invoice->sortedAttributes());
+        $this->assertNull($this->toXML($invoice)->InvoicesDoc->invoice->extraFields);
+    }
+
     public function test_invoice_xml()
     {
         $invoice = Invoice::factory()->make([
