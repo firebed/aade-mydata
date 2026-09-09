@@ -6,11 +6,6 @@
 [![PHP Version Require](https://poser.pugx.org/firebed/aade-mydata/require/php)](https://packagist.org/packages/firebed/aade-mydata)
 [![License](https://poser.pugx.org/firebed/aade-mydata/license)](LICENSE.md)
 
-## Upcoming Changes
-- Separate documentation to a dedicated repository
-- Provider integration through the `Gateway` seam (see [Custom gateway](docs/getting-started.md#custom-gateway)); the Oxygen bridge lives in `oxygensuite/aade-mydata-oxygen`
-- v6.x release with an improved architecture and new features
-
 ## Support This Project
 
 If you find this project useful, you can show your appreciation and support by giving it a ⭐. Your support motivates us to work harder and make even better and more useful tools!
@@ -70,6 +65,40 @@ For development, you may need to disable client verification if you are not usin
 ```php
 MyDataRequest::verifyClient(false);
 ```
+
+## Transmitting through a provider (Gateway)
+
+ΑΑΔΕ is retiring the ERP transmission channel: invoices have to be transmitted through a
+licensed e-invoicing provider. Since 5.11 every request travels through a `Gateway`, so you
+can switch the transport without changing the code that builds and sends your invoices.
+
+To transmit through the **Oxygen provider**, install the ready-made gateway,
+[oxygensuite/aade-mydata-oxygen](https://github.com/oxygensuite/aade-mydata-oxygen), and
+register your provider token next to your existing setup:
+
+```shell
+composer require oxygensuite/aade-mydata-oxygen
+```
+
+```php
+use Firebed\AadeMyData\Http\MyDataRequest;
+use OxygenSuite\AadeMyData\OxygenProvider;
+
+// Your AADE setup stays: the requests that remain on the ERP channel still use it.
+MyDataRequest::setEnvironment($env);
+MyDataRequest::setCredentials($user_id, $subscription_key);
+
+// From now on SendInvoices, CancelInvoice and SendPaymentsMethod go through the provider.
+OxygenProvider::register(token: 'your-company-api-token');
+```
+
+Everything else — requesting documents, classifications, and so on — keeps talking to
+ΑΑΔΕ directly. The bridge's README documents what is routed, the responses you get back,
+and the attributes a provider needs that myDATA has no field for: the issue time
+(`setIssueTime()`, required), the unit price (`setUnitPrice()`), the line discount
+(`setDiscount()`) and free extra fields.
+
+To write a gateway for another provider, see [Custom gateway](docs/getting-started.md#custom-gateway).
 
 ## Send invoice example
 
