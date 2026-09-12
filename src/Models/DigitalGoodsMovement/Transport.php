@@ -25,7 +25,7 @@ class Transport extends Type implements ValidatesSchema
     ];
 
     /**
-     * @return TransportDetails|null Μοναδικός Αριθμός Καταχώρησης του γεγονότος μεταφοράς. Συμπληρώνεται από την υπηρεσία.
+     * @return int|null Μοναδικός Αριθμός Καταχώρησης του γεγονότος μεταφοράς. Συμπληρώνεται από την υπηρεσία.
      * @version 2.0.1
      */
     public function getTransferMark(): ?int
@@ -34,7 +34,7 @@ class Transport extends Type implements ValidatesSchema
     }
 
     /**
-     * @return TransportDetails|null Το URL του QR code του Δελτίου Αποστολής ή του Ομαδικού QR Code.
+     * @return string|null Το URL του QR code του Δελτίου Αποστολής ή του Ομαδικού QR Code.
      * @version 2.0.1
      */
     public function getQrUrl(): ?string

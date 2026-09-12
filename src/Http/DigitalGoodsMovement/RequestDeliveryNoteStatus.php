@@ -16,6 +16,8 @@ class RequestDeliveryNoteStatus extends MyDataRequest
     protected string $action = 'GetDeliveryNoteStatus';
 
     /**
+     * Αναζήτηση κατάστασης δελτίου με βάση το MARK.
+     *
      * @throws MyDataAuthenticationException
      * @throws MyDataException
      */
@@ -23,11 +25,35 @@ class RequestDeliveryNoteStatus extends MyDataRequest
     {
         $this->ensureERP();
 
-        $query = $this->filterArray([
+        return $this->request($this->filterArray([
             'mark' => $mark,
             'issuerVatNumber' => $issuerVatNumber,
-        ]);
+        ]));
+    }
 
+    /**
+     * Αναζήτηση κατάστασης δελτίου με βάση το URL του QR code (εναλλακτικά του MARK).
+     *
+     * @throws MyDataAuthenticationException
+     * @throws MyDataException
+     *
+     * @version 2.0.2
+     */
+    public function handleUsingQrUrl(string $qrUrl, ?string $issuerVatNumber = null): DeliveryNoteStatusResponse
+    {
+        $this->ensureERP();
+
+        return $this->request($this->filterArray([
+            'qrUrl' => $qrUrl,
+            'issuerVatNumber' => $issuerVatNumber,
+        ]));
+    }
+
+    /**
+     * @throws MyDataException
+     */
+    private function request(array $query): DeliveryNoteStatusResponse
+    {
         $reader = new DeliveryNoteStatusResponseReader();
         $response = $reader->parseXml($this->get($query));
 

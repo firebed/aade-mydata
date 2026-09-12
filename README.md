@@ -31,7 +31,8 @@ To use this package, you will need first a `aade id` and a `Subscription key`. Y
 
 | Version | PHP | myDATA  | Support |
 |---------|-----|---------|---------|
-| ^v5.x   | 8.1 | v2.0.1  | Active  |
+| ^v5.x   | 8.1 | v2.0.2  | Active  |
+| ^v5.x   | 8.1 | v2.0.1  | Ended   |
 | ^v5.x   | 8.1 | v1.0.12 | Ended   |
 | ^v4.x   | 8.1 | v1.0.8  | Ended   |
 | ^v3.x   | 8.1 | v1.0.7  | Ended   |
@@ -161,6 +162,7 @@ try {
 | [SendIncomeClassification](http://docs.invoicemaker.gr/http/send-income-classification)     | :white_check_mark: |
 | [SendExpensesClassification](http://docs.invoicemaker.gr/http/send-expenses-classification) | :white_check_mark: |
 | [CancelDeliveryNote](http://docs.invoicemaker.gr/http/cancel-delivery-note) (Για παρόχους)  | :white_check_mark: |
+| [CancelReceivingNote](http://docs.invoicemaker.gr/http/cancel-receiving-note) (Για παρόχους) | :white_check_mark: |
 
 ## Digital Goods Movement (Ψηφιακή Διακίνηση Αγαθών)
 
@@ -170,8 +172,9 @@ Digital Goods Movement methods allow real-time tracking and management of goods 
 |----------------------------------------------------------------------------------------------------------------|------------------------------|
 | [RegisterTransfer](http://docs.invoicemaker.gr/http/digital-goods-movement#registertransfer)                   | Register a transfer          |
 | [ConfirmDeliveryOutcome](http://docs.invoicemaker.gr/http/digital-goods-movement#confirmdeliveryoutcome)       | Confirm delivery outcome     |
+| [ConfirmDeliveryReturn](http://docs.invoicemaker.gr/http/digital-goods-movement#confirmdeliveryreturn)         | Confirm delivery return      |
 | [RejectDeliveryNote](http://docs.invoicemaker.gr/http/digital-goods-movement#rejectdeliverynote)               | Reject a delivery note       |
-| [RequestDeliveryNoteStatus](http://docs.invoicemaker.gr/http/digital-goods-movement#requestdeliverynotestatus) | Request delivery note status |
+| [RequestDeliveryNoteStatus](http://docs.invoicemaker.gr/http/digital-goods-movement#requestdeliverynotestatus) | Request delivery note status (by mark or qrUrl) |
 | [GenerateGroupQrCode](http://docs.invoicemaker.gr/http/digital-goods-movement#generategroupqrcode)             | Generate group QR code       |
 | [RequestGroupQrDetails](http://docs.invoicemaker.gr/http/digital-goods-movement#requestgroupqrdetails)         | Request group QR details     |
 
@@ -191,8 +194,8 @@ $details->setCarrierVatNumber('777777777');
 $details->setLocation(new Location(41.303921, -81.901693));
 
 $transport = new Transport();
-$transport->setMark(900001234567890);
-$transport->setTransportDetails($details);
+$transport->setQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_qr_url');
+$transport->setTransportDetail($details);
 
 $request = new RegisterTransfer();
 $response = $request->handle($transport);

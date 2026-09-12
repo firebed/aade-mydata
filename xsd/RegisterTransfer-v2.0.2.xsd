@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="2.0.1">
-	<xs:include schemaLocation="SimpleTypes-v2.0.1.xsd"/>
-	<xs:include schemaLocation="TransportTypes-v2.0.1.xsd"/>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="2.0.2">
+	<xs:include schemaLocation="SimpleTypes-v2.0.2.xsd"/>
+	<xs:include schemaLocation="TransportTypes-v2.0.2.xsd"/>
 	<xs:element name="Transport">
 		<xs:annotation>
 			<xs:documentation>Μεταφόρτωση</xs:documentation>

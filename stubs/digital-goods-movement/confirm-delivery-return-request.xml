@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ConfirmDeliveryReturnRequest>
+    <qrUrl>https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url</qrUrl>
+</ConfirmDeliveryReturnRequest>

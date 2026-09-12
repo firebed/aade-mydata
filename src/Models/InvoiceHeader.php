@@ -6,6 +6,7 @@ use Firebed\AadeMyData\Enums\CurrencyCode;
 use Firebed\AadeMyData\Enums\InvoiceType;
 use Firebed\AadeMyData\Enums\InvoiceVariationType;
 use Firebed\AadeMyData\Enums\MovePurpose;
+use Firebed\AadeMyData\Enums\ReceivingNotePurpose;
 use Firebed\AadeMyData\Enums\ReverseDeliveryNotePurpose;
 use Firebed\AadeMyData\Enums\SpecialInvoiceCategory;
 use Firebed\AadeMyData\Traits\HasFactory;
@@ -42,6 +43,10 @@ class InvoiceHeader extends Type
         'reverseDeliveryNote',
         'reverseDeliveryNotePurpose',
         'toWeigh',
+        'receivingNotePurpose',
+        'otherReceivingNotePurposeTitle',
+        'nonObligatedRecipient',
+        'withoutDigitalTransportTracking',
     ];
 
     protected array $casts = [
@@ -51,7 +56,8 @@ class InvoiceHeader extends Type
         'invoiceVariationType' => InvoiceVariationType::class,
         'otherCorrelatedEntities' => EntityType::class,
         'otherDeliveryNoteHeader' => OtherDeliveryNoteHeader::class,
-        'ReverseDeliveryNotePurpose' => ReverseDeliveryNotePurpose::class,
+        'reverseDeliveryNotePurpose' => ReverseDeliveryNotePurpose::class,
+        'receivingNotePurpose' => ReceivingNotePurpose::class,
     ];
 
     /**
@@ -623,6 +629,87 @@ class InvoiceHeader extends Type
     public function setToWeigh(?bool $toWeigh): static
     {
         return $this->set('toWeigh', $toWeigh);
+    }
+
+    /**
+     * @return ReceivingNotePurpose|null Αιτία Έκδοσης Δελτίου Ποσοτικής Παραλαβής
+     * @version 2.0.2
+     */
+    public function getReceivingNotePurpose(): ?ReceivingNotePurpose
+    {
+        return $this->get('receivingNotePurpose');
+    }
+
+    /**
+     * Συμπληρώνεται υποχρεωτικά όταν ο τύπος παραστατικού είναι 10.1 ή 10.2
+     * (Δελτίο Ποσοτικής Παραλαβής).
+     *
+     * @param ReceivingNotePurpose|int|null $receivingNotePurpose Αιτία Έκδοσης Δελτίου Ποσοτικής Παραλαβής
+     * @return $this
+     * @version 2.0.2
+     */
+    public function setReceivingNotePurpose(ReceivingNotePurpose|int|null $receivingNotePurpose): static
+    {
+        return $this->set('receivingNotePurpose', $receivingNotePurpose);
+    }
+
+    /**
+     * @return string|null Τίτλος της Λοιπής Περίπτωσης της Αιτίας Έκδοσης Δελτίου Ποσοτικής Παραλαβής
+     * @version 2.0.2
+     */
+    public function getOtherReceivingNotePurposeTitle(): ?string
+    {
+        return $this->get('otherReceivingNotePurposeTitle');
+    }
+
+    /**
+     * Συμπληρώνεται μόνο όταν receivingNotePurpose = 7 (ΛΟΙΠΕΣ ΠΕΡΙΠΤΩΣΕΙΣ). Μέγιστο μήκος 150 χαρακτήρες.
+     *
+     * @param string|null $otherReceivingNotePurposeTitle Τίτλος Λοιπής Περίπτωσης
+     * @return $this
+     * @version 2.0.2
+     */
+    public function setOtherReceivingNotePurposeTitle(?string $otherReceivingNotePurposeTitle): static
+    {
+        return $this->set('otherReceivingNotePurposeTitle', $otherReceivingNotePurposeTitle);
+    }
+
+    /**
+     * @return bool|null Μη Υπόχρεος Λήπτης (Αφορά Παραστατικό Διακίνησης)
+     * @version 2.0.2
+     */
+    public function isNonObligatedRecipient(): ?bool
+    {
+        return filter_var($this->get('nonObligatedRecipient'), FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * @param bool|null $nonObligatedRecipient Μη Υπόχρεος Λήπτης (Αφορά Παραστατικό Διακίνησης)
+     * @return $this
+     * @version 2.0.2
+     */
+    public function setNonObligatedRecipient(?bool $nonObligatedRecipient): static
+    {
+        return $this->set('nonObligatedRecipient', $nonObligatedRecipient);
+    }
+
+    /**
+     * @return bool|null Χωρίς Ψηφιακή Παρακολούθηση Διακίνησης
+     * @version 2.0.2
+     */
+    public function isWithoutDigitalTransportTracking(): ?bool
+    {
+        return filter_var($this->get('withoutDigitalTransportTracking'), FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * @param bool|null $withoutDigitalTransportTracking Χωρίς Ψηφιακή Παρακολούθηση Διακίνησης
+     * @return $this
+     * @version 2.0.2
+     */
+    public function setWithoutDigitalTransportTracking(?bool $withoutDigitalTransportTracking): static
+    {
+        return $this->set('withoutDigitalTransportTracking', $withoutDigitalTransportTracking);
     }
 
     public function set($key, $value): static

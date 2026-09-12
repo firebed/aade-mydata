@@ -5,6 +5,8 @@ namespace Tests;
 use Firebed\AadeMyData\Enums\InvoiceType;
 use Firebed\AadeMyData\Enums\InvoiceVariationType;
 use Firebed\AadeMyData\Enums\MovePurpose;
+use Firebed\AadeMyData\Enums\ReceivingNotePurpose;
+use Firebed\AadeMyData\Enums\ReverseDeliveryNotePurpose;
 use Firebed\AadeMyData\Enums\SpecialInvoiceCategory;
 use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\InvoiceHeader;
@@ -34,7 +36,7 @@ class InvoiceHeaderTest extends TestCase
         $header = $invoice->getInvoiceHeader();
         $headerXml = $this->toXML($invoice)->InvoicesDoc->invoice->invoiceHeader;
 
-        $this->assertCount(27, $headerXml);
+        $this->assertCount(28, $headerXml);
         $this->assertEquals($header->getSeries(), $headerXml->series);
         $this->assertEquals($header->getAa(), $headerXml->aa);
         $this->assertEquals($header->getIssueDate(), $headerXml->issueDate);
@@ -58,6 +60,7 @@ class InvoiceHeaderTest extends TestCase
         $this->assertEquals($header->getReverseDeliveryNote(), filter_var($headerXml->reverseDeliveryNote, FILTER_VALIDATE_BOOLEAN));
         $this->assertEquals($header->getReverseDeliveryNotePurpose()->value, $headerXml->reverseDeliveryNotePurpose);
         $this->assertEquals($header->getToWeigh(), filter_var($headerXml->toWeigh, FILTER_VALIDATE_BOOLEAN));
+        $this->assertEquals($header->getReceivingNotePurpose()->value, $headerXml->receivingNotePurpose);
     }
 
     public function test_it_converts_xml_to_invoice_header(): void
@@ -82,5 +85,45 @@ class InvoiceHeaderTest extends TestCase
         $this->assertEquals(SpecialInvoiceCategory::TYPE_5, $header->getSpecialInvoiceCategory());
         $this->assertEquals(InvoiceVariationType::TYPE_3, $header->getInvoiceVariationType());
         $this->assertTrue($header->getThirdPartyCollection());
+    }
+
+    public function test_it_sets_and_casts_v2_0_2_receiving_note_fields(): void
+    {
+        $header = new InvoiceHeader();
+        $header->setReceivingNotePurpose(7)
+            ->setOtherReceivingNotePurposeTitle('Λοιπή περίπτωση')
+            ->setNonObligatedRecipient(true)
+            ->setWithoutDigitalTransportTracking(false);
+
+        $this->assertSame(ReceivingNotePurpose::OTHER_CASES, $header->getReceivingNotePurpose());
+        $this->assertSame('Λοιπή περίπτωση', $header->getOtherReceivingNotePurposeTitle());
+        $this->assertTrue($header->isNonObligatedRecipient());
+        $this->assertFalse($header->isWithoutDigitalTransportTracking());
+    }
+
+    public function test_it_converts_v2_0_2_receiving_note_fields_to_xml(): void
+    {
+        $invoice = Invoice::factory()->make();
+        $invoice->getInvoiceHeader()
+            ->setReceivingNotePurpose(ReceivingNotePurpose::OTHER_CASES)
+            ->setOtherReceivingNotePurposeTitle('Λοιπή')
+            ->setNonObligatedRecipient(true);
+
+        $headerXml = $this->toXML($invoice)->InvoicesDoc->invoice->invoiceHeader;
+
+        $this->assertEquals('7', (string) $headerXml->receivingNotePurpose);
+        $this->assertEquals('Λοιπή', (string) $headerXml->otherReceivingNotePurposeTitle);
+        $this->assertTrue(filter_var($headerXml->nonObligatedRecipient, FILTER_VALIDATE_BOOLEAN));
+    }
+
+    public function test_reverse_delivery_note_purpose_casts_int_to_enum(): void
+    {
+        $header = new InvoiceHeader();
+        $header->setReverseDeliveryNotePurpose(3);
+
+        $this->assertSame(
+            ReverseDeliveryNotePurpose::INTRA_COMMUNITY_ACQUISITION,
+            $header->getReverseDeliveryNotePurpose()
+        );
     }
 }

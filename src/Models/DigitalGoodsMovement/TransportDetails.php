@@ -17,11 +17,13 @@ class TransportDetails extends Type
         'carrierVatNumber',
         'pNumber',
         'location',
+        'packingsDeclaration',
     ];
 
     protected array $casts = [
         'transportType' => TransportType::class,
         'location' => Location::class,
+        'packingsDeclaration' => PackagingDetail::class,
     ];
 
     /**
@@ -126,5 +128,43 @@ class TransportDetails extends Type
     public function setLocation(Location $location): static
     {
         return $this->set('location', $location);
+    }
+
+    /**
+     * @return PackagingDetail[]|null Δήλωση Συσκευασιών (Δηλώνεται από τον μεταφορέα κατά την εκκίνηση ή τις μεταφορτώσεις)
+     * @version 2.0.2
+     */
+    public function getPackingsDeclaration(): ?array
+    {
+        return $this->get('packingsDeclaration');
+    }
+
+    /**
+     * @param PackagingDetail[]|null $packingsDeclaration Δήλωση Συσκευασιών
+     * @return static
+     * @version 2.0.2
+     */
+    public function setPackingsDeclaration(?array $packingsDeclaration): static
+    {
+        return $this->set('packingsDeclaration', $packingsDeclaration);
+    }
+
+    /**
+     * @param PackagingDetail $packagingDetail Δήλωση Συσκευασίας
+     * @return static
+     * @version 2.0.2
+     */
+    public function addPackingsDeclaration(PackagingDetail $packagingDetail): static
+    {
+        return $this->push('packingsDeclaration', $packagingDetail);
+    }
+
+    public function set($key, $value): static
+    {
+        if ($key === 'packingsDeclaration' && ! is_array($value)) {
+            return $this->push('packingsDeclaration', $value);
+        }
+
+        return parent::set($key, $value);
     }
 }

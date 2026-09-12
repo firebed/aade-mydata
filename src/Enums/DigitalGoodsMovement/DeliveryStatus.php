@@ -15,6 +15,7 @@ enum DeliveryStatus: int
     case DELIVERED_BY_CARRIER = 5;
     case FAILED_DELIVERY = 7;
     case COMPLETED = 8;
+    case IN_TRANSIT_RETURN = 9;
 
     public function label(): string
     {
@@ -26,6 +27,7 @@ enum DeliveryStatus: int
             self::REJECTED => 'Απορρίφθηκε',
             self::CANCELLED => 'Ακυρώθηκε',
             self::FAILED_DELIVERY => 'Αποτυχία παράδοσης',
+            self::IN_TRANSIT_RETURN => 'Σε διακίνηση (Επιστροφή)',
         };
     }
 
@@ -39,6 +41,7 @@ enum DeliveryStatus: int
             'REJECTED' => self::REJECTED,
             'CANCELLED' => self::CANCELLED,
             'FAILED_DELIVERY' => self::FAILED_DELIVERY,
+            'IN_TRANSIT_RETURN' => self::IN_TRANSIT_RETURN,
             default => null,
         };
     }

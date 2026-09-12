@@ -67,6 +67,44 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
         $this->assertEquals('https://mydataapidev.aade.gr/GetDeliveryNoteStatus', $request->getUrl());
     }
 
+    /**
+     * @throws MyDataException
+     */
+    public function test_status_lookup_by_qr_url_builds_qr_url_query(): void
+    {
+        $mock = new MockHandler([
+            new Response(200, body: $this->getStub('request-delivery-note-status-response-registered.xml')),
+        ]);
+        MyDataRequest::setHandler($mock);
+
+        $request = new RequestDeliveryNoteStatus();
+        $response = $request->handleUsingQrUrl('https://mydataapidev.aade.gr/qr?q=abc', '123456789');
+
+        $query = $mock->getLastRequest()->getUri()->getQuery();
+        $this->assertStringContainsString('qrUrl=', $query);
+        $this->assertStringContainsString('issuerVatNumber=123456789', $query);
+        $this->assertStringNotContainsString('mark=', $query);
+
+        $this->assertEquals(DeliveryStatus::REGISTERED, $response->getStatus());
+    }
+
+    /**
+     * @throws MyDataException
+     */
+    public function test_status_lookup_by_mark_builds_mark_query(): void
+    {
+        $mock = new MockHandler([
+            new Response(200, body: $this->getStub('request-delivery-note-status-response-registered.xml')),
+        ]);
+        MyDataRequest::setHandler($mock);
+
+        (new RequestDeliveryNoteStatus())->handle(111111111111111);
+
+        $query = $mock->getLastRequest()->getUri()->getQuery();
+        $this->assertStringContainsString('mark=111111111111111', $query);
+        $this->assertStringNotContainsString('qrUrl=', $query);
+    }
+
     public function test_prod_erp_url_is_correct()
     {
         $this->initErpProd();

@@ -31,6 +31,18 @@ enum FuelCode: int
 
 
     /**
+     *  Βενζίνη αεροπλάνων
+     */
+    case TYPE_14 = 14;
+
+
+    /**
+     *  Ειδικό καύσιμο αεριωθουμένων
+     */
+    case TYPE_15 = 15;
+
+
+    /**
      *  Diesel
      */
     case TYPE_20 = 20;
@@ -43,21 +55,57 @@ enum FuelCode: int
 
 
     /**
-     *  Diesel Heatnn
+     *  Diesel Heating
      */
     case TYPE_30 = 30;
 
 
     /**
-     *  Diesel Heat premium
+     *  Diesel Heating premium
      */
     case TYPE_31 = 31;
 
 
     /**
-     *  Diesel Linht
+     *  Diesel Light
      */
     case TYPE_32 = 32;
+
+
+    /**
+     *  Diesel άλλων χρήσεων
+     */
+    case TYPE_33 = 33;
+
+
+    /**
+     *  Diesel ναυτιλίας
+     */
+    case TYPE_34 = 34;
+
+
+    /**
+     *  Κηροζίνη JP1
+     */
+    case TYPE_35 = 35;
+
+
+    /**
+     *  Κηροζίνη άλλων χρήσεων
+     */
+    case TYPE_36 = 36;
+
+
+    /**
+     *  Μαζούτ
+     */
+    case TYPE_37 = 37;
+
+
+    /**
+     *  Μαζούτ ναυτιλίας
+     */
+    case TYPE_38 = 38;
 
 
     /**
@@ -140,11 +188,19 @@ enum FuelCode: int
             self::TYPE_11 => "Benzine 95RON+",
             self::TYPE_12 => "Benzine 100RON",
             self::TYPE_13 => "Benzine LRP",
+            self::TYPE_14 => "Βενζίνη αεροπλάνων",
+            self::TYPE_15 => "Ειδικό καύσιμο αεριωθουμένων",
             self::TYPE_20 => "Diesel",
             self::TYPE_21 => "Diesel premium",
-            self::TYPE_30 => "Diesel Heatnn",
-            self::TYPE_31 => "Diesel Heat premium",
-            self::TYPE_32 => "Diesel Linht",
+            self::TYPE_30 => "Diesel Heating",
+            self::TYPE_31 => "Diesel Heating premium",
+            self::TYPE_32 => "Diesel Light",
+            self::TYPE_33 => "Diesel άλλων χρήσεων",
+            self::TYPE_34 => "Diesel ναυτιλίας",
+            self::TYPE_35 => "Κηροζίνη JP1",
+            self::TYPE_36 => "Κηροζίνη άλλων χρήσεων",
+            self::TYPE_37 => "Μαζούτ",
+            self::TYPE_38 => "Μαζούτ ναυτιλίας",
             self::TYPE_40 => "LPG (υγραέριο)",
             self::TYPE_41 => "Υγραέριο (LPG) και μεθάνιο βιομηχανικό/εμπορικό κινητήρων (χύδην)",
             self::TYPE_42 => "Υγραέριο (LPG) και μεθάνιο θέρμανσης και λοιπών χρήσεων (χύδην)",

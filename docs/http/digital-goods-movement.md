@@ -62,6 +62,7 @@ try {
 | `carrierVatNumber` | string        | Ναι         | ΑΦΜ Μεταφορικής Εταιρείας (max 20 χαρακτήρες)              |
 | `pNumber`          | string        | Όχι         | Αριθμός κυκλοφορίας "P" ρυμουλκούμενου (max 50 χαρακτήρες) |
 | `location`         | Location      | Όχι         | Τοποθεσία Μεταφόρτωσης (longitude, latitude)               |
+| `packingsDeclaration` | PackagingDetail[] | Όχι     | Δήλωση Συσκευασιών από τον μεταφορέα <sub><sup>v2.0.2</sup></sub> |
 
 ### Τύποι Μεταφορικού Μέσου (TransportType)
 
@@ -196,6 +197,47 @@ try {
 - `SACK` (5) - Σάκος
 - `OTHER` (6) - Λοιπά (απαιτεί `otherPackagingTypeTitle`)
 
+## ConfirmDeliveryReturn - Δήλωση Επιστροφής Διακίνησης <sub><sup>v2.0.2</sup></sub>
+
+```shell
+# production
+https://mydatapi.aade.gr/myDATA/ConfirmDeliveryReturn
+
+# development
+https://mydataapidev.aade.gr/ConfirmDeliveryReturn
+```
+
+Καλείται από τον **εκδότη** του δελτίου για να δηλώσει ολοκλήρωση της διακίνησης επί επιστροφής (ο μεταφορέας δεν παρέδωσε το σύνολο των αγαθών). Με την επιτυχή κλήση το δελτίο μεταβαίνει σε κατάσταση `Completed` και επιστρέφεται το `deliveryReturnMark`.
+
+### Παράδειγμα χρήσης
+
+```php
+use Firebed\AadeMyData\Http\DigitalGoodsMovement\ConfirmDeliveryReturn;
+use Firebed\AadeMyData\Models\DigitalGoodsMovement\DeliveryReturn;
+use Firebed\AadeMyData\Exceptions\MyDataException;
+
+$return = new DeliveryReturn('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url');
+
+$confirm = new ConfirmDeliveryReturn();
+
+try {
+    $response = $confirm->handle($return);
+
+    if ($response->first()->isSuccessful()) {
+        echo "Η επιστροφή δηλώθηκε με επιτυχία." . PHP_EOL;
+        echo "Delivery Return Mark: " . $response->first()->getDeliveryReturnMark();
+    }
+} catch (MyDataException $e) {
+    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
+}
+```
+
+### Πεδία DeliveryReturn
+
+| Πεδίο   | Τύπος  | Υποχρεωτικό | Περιγραφή                                                   |
+|---------|--------|-------------|-------------------------------------------------------------|
+| `qrUrl` | string | Ναι         | Το URL του QR code του δελτίου ή του Ομαδικού QR Code        |
+
 ## RejectDeliveryNote - Απόρριψη Δελτίου Αποστολής
 
 ```shell
@@ -275,7 +317,7 @@ https://mydatapi.aade.gr/myDATA/GetDeliveryNoteStatus
 https://mydataapidev.aade.gr/GetDeliveryNoteStatus
 ```
 
-Αναζητά την τρέχουσα κατάσταση ενός δελτίου αποστολής και το πλήρες ιστορικό των συμβάντων του (lifecycle history).
+Αναζητά την τρέχουσα κατάσταση ενός δελτίου αποστολής και το πλήρες ιστορικό των συμβάντων του (lifecycle history). Η αναζήτηση μπορεί να γίνει με `mark` ή, από την v2.0.2, εναλλακτικά με `qrUrl`.
 
 ### Παράδειγμα χρήσης
 
@@ -333,6 +375,13 @@ try {
 }
 ```
 
+### Αναζήτηση με QR URL <sub><sup>v2.0.2</sup></sub>
+
+```php
+$request = new RequestDeliveryNoteStatus();
+$response = $request->handleUsingQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url');
+```
+
 ### Πιθανές καταστάσεις δελτίου (DeliveryStatus)
 
 - `REGISTERED` (1) - Εκδόθηκε
@@ -342,12 +391,15 @@ try {
 - `DELIVERED_BY_CARRIER` (5) - Παραδόθηκε από τον μεταφορέα
 - `FAILED_DELIVERY` (7) - Αποτυχία παράδοσης
 - `COMPLETED` (8) - Ολοκληρώθηκε
+- `IN_TRANSIT_RETURN` (9) - Σε διακίνηση (Επιστροφή) <sub><sup>v2.0.2</sup></sub>
 
 ### Τύποι Συμβάντων (DeliveryEventType)
 
 - `RegisterTransfer` - Έναρξη διακίνησης / Μεταφόρτωση
 - `ConfirmOutcome` - Επιβεβαίωση παραλαβής
 - `Rejection` - Απόρριψη
+- `ConfirmReturn` - Επιβεβαίωση επιστροφής <sub><sup>v2.0.2</sup></sub>
+- `RegisterTransferReturn` - Επιστροφή διακίνησης <sub><sup>v2.0.2</sup></sub>
 
 ## RequestGroupQrDetails - Αναζήτηση Στοιχείων Ομαδικού QR
 
@@ -391,7 +443,7 @@ try {
 
 ### Response Objects
 
-Οι μέθοδοι `RegisterTransfer`, `ConfirmDeliveryOutcome`, και `RejectDeliveryNote` επιστρέφουν `ResponseDoc` (συλλογή από αντικείμενα `Response` - `Firebed\AadeMyData\Models\DigitalGoodsMovement\Response`).
+Οι μέθοδοι `RegisterTransfer`, `ConfirmDeliveryOutcome`, `ConfirmDeliveryReturn` και `RejectDeliveryNote` επιστρέφουν `ResponseDoc` (συλλογή από αντικείμενα `Response` - `Firebed\AadeMyData\Models\DigitalGoodsMovement\Response`).
 
 Κάθε `Response` περιέχει:
 - `index`: Αριθμός Σειράς Οντότητας
@@ -399,6 +451,7 @@ try {
 - `transferMark`: Μοναδικός Αριθμός Εκκίνησης/Μεταφόρτωσης (μόνο για `RegisterTransfer`)
 - `rejectMark`: Μοναδικός Αριθμός Απόρριψης (μόνο για `RejectDeliveryNote`)
 - `deliveryOutcomeMark`: Μοναδικός Αριθμός Καταχώρησης (μόνο για `ConfirmDeliveryOutcome`)
+- `deliveryReturnMark`: Μοναδικός Αριθμός Δήλωσης Επιστροφής (μόνο για `ConfirmDeliveryReturn`) <sub><sup>v2.0.2</sup></sub>
 - `errors`: Λίστα Σφαλμάτων (αν υπάρχουν)
 
 ```php

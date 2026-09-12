@@ -21,5 +21,5 @@ use Firebed\AadeMyData\Models\ECRToken;
 
 $ecrToken = new ECRToken();
 $ecrToken->setSigningAuthor('1234567890');
-$ecrToken->setSigningAuthor('123456');
+$ecrToken->setSessionNumber('123456');
 ```

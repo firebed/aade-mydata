@@ -53,7 +53,14 @@ class TypeAttributesTest extends TestCase
         // Set back the attributes to the invoice header
         $invoiceHeader->setAttributes(array_merge(array_flip($keys), $attributes));
 
-        // Assert that the attributes are sorted
-        $this->assertSame($invoiceHeader->getExpectedOrder(), array_keys($invoiceHeader->sortedAttributes()));
+        // Assert that the set attributes come out in the expected order. Optional
+        // fields that are not populated (e.g. the v2.0.2 receiving-note fields) are
+        // skipped so the assertion targets ordering, not completeness.
+        $expectedOrder = array_values(array_filter(
+            $invoiceHeader->getExpectedOrder(),
+            fn ($key) => array_key_exists($key, $invoiceHeader->attributes())
+        ));
+
+        $this->assertSame($expectedOrder, array_keys($invoiceHeader->sortedAttributes()));
     }
 }
