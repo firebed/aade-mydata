@@ -5,7 +5,7 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [5.12.0] - 2026-09-12
 
 Support for the myDATA API **v2.0.2** (AADE sandbox / preofficial, June 2026).
 The release focuses on the Digital Delivery Note and the new Receiving Note flow
@@ -24,20 +24,31 @@ optional and backwards compatible.
 - `RequestDeliveryNoteStatus::handleUsingQrUrl()` to look up a delivery note status by `qrUrl` as an alternative to `mark`.
 - `FuelCode` — fuel codes that were in the XSD but missing from the enum: `14`, `15` and `33`–`38`. The enum now covers all 29 codes from myDATA section 8.17 (previously such values were dropped when reading invoices).
 - `ExpenseClassificationType` — codes `E3_881_001`–`E3_881_004` (Πωλήσεις για λογαριασμό Τρίτων), previously missing from the enum.
-- `Http\Gateway` seam: a `Gateway` carries a request's XML to its destination. `GuzzleGateway` (the default) talks to AADE as before; `MyDataRequest::setGateway()` installs another one globally and `usingGateway()` per request, so a request can be routed through an e-invoicing provider without changing the code that builds and sends invoices. `SendInvoices::getInvoicesDoc()` and `SendPaymentsMethod::getPaymentMethodsDoc()` expose the models to a gateway.
-- Attributes a provider gateway reads that are never written to the myDATA XML (absent from `$expectedOrder`, kept by `toArray()` / `make()`): `InvoiceHeader::setIssueTime()`, `InvoiceDetails::setUnitPrice()`, `InvoiceDetails::setDiscount(DiscountType, float)` with the `DiscountType` enum (1 percentage, 2 amount), and free key/value extra fields (`setExtraFields()`, `addExtraField()`) on `Invoice`, `InvoiceDetails` and `PaymentMethodDetail`.
 
 ### Changed
 
 - `InvoiceType::supportsDeliveryNote()` now also allows types `1.4`, `3.1`, `3.2` and `11.5`.
 - Bundled XSD schemas updated to the v2.0.2 set (incl. the new `ConfirmDeliveryReturn-v2.0.2.xsd`).
-- `MyDataRequest::handleTransmissionException()` (`protected`) moved to `GuzzleGateway`: requests no longer map Guzzle exceptions themselves, the gateway that carried the request does. Subclasses that overrode it should move that logic into a `Gateway` (see `docs/upgrade-guide.md`).
 
 ### Fixed
 
 - `InvoiceHeader` `$casts` key for `reverseDeliveryNotePurpose` was mis-cased (`ReverseDeliveryNotePurpose`), so an integer value was never cast to the enum.
 - `FuelCode` label typos, verified against the v2.0.2 documentation: `Diesel Heatnn` → `Diesel Heating` (30), `Diesel Heat premium` → `Diesel Heating premium` (31), `Diesel Linht` → `Diesel Light` (32).
 - Documentation example corrections (README delivery-note quick example, `request-docs`/`request-transmitted-docs` continuation examples, `ecr-token` example, date format) and several `@return` PHPDoc types on `Transport`.
+
+## [5.11.0] - 2026-09-09
+
+A `Gateway` seam so a request can be routed through a licensed e-invoicing
+provider instead of going straight to AADE.
+
+### Added
+
+- `Http\Gateway` seam: a `Gateway` carries a request's XML to its destination. `GuzzleGateway` (the default) talks to AADE as before; `MyDataRequest::setGateway()` installs another one globally and `usingGateway()` per request, so a request can be routed through an e-invoicing provider without changing the code that builds and sends invoices. `SendInvoices::getInvoicesDoc()` and `SendPaymentsMethod::getPaymentMethodsDoc()` expose the models to a gateway.
+- Attributes a provider gateway reads that are never written to the myDATA XML (absent from `$expectedOrder`, kept by `toArray()` / `make()`): `InvoiceHeader::setIssueTime()`, `InvoiceDetails::setUnitPrice()`, `InvoiceDetails::setDiscount(DiscountType, float)` with the `DiscountType` enum (1 percentage, 2 amount), and free key/value extra fields (`setExtraFields()`, `addExtraField()`) on `Invoice`, `InvoiceDetails` and `PaymentMethodDetail`.
+
+### Changed
+
+- `MyDataRequest::handleTransmissionException()` (`protected`) moved to `GuzzleGateway`: requests no longer map Guzzle exceptions themselves, the gateway that carried the request does. Subclasses that overrode it should move that logic into a `Gateway` (see `docs/upgrade-guide.md`).
 
 ## [5.10.0] - 2026-03-12
 
@@ -353,7 +364,9 @@ Major release (no published release notes).
 
 Initial release.
 
-[Unreleased]: https://github.com/firebed/aade-mydata/compare/v5.10.0...HEAD
+[Unreleased]: https://github.com/firebed/aade-mydata/compare/v5.12.0...HEAD
+[5.12.0]: https://github.com/firebed/aade-mydata/compare/v5.11.0...v5.12.0
+[5.11.0]: https://github.com/firebed/aade-mydata/compare/v5.10.4...v5.11.0
 [5.10.0]: https://github.com/firebed/aade-mydata/compare/v5.9.0...v5.10.0
 [5.9.0]: https://github.com/firebed/aade-mydata/compare/v5.8.1...v5.9.0
 [5.8.1]: https://github.com/firebed/aade-mydata/compare/v5.8.0...v5.8.1
