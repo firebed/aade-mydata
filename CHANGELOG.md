@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [5.12.0] - 2026-09-12
 
-Support for the myDATA API **v2.0.2** (AADE sandbox / preofficial, June 2026).
+Support for the myDATA API **v2.0.2** (AADE official ERP specification, September 2026).
 The release focuses on the Digital Delivery Note and the new Receiving Note flow
 (Δελτίο Ποσοτικής Παραλαβής, invoice types 10.1 / 10.2). All new fields are
 optional and backwards compatible.

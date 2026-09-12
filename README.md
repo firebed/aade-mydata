@@ -18,8 +18,8 @@ This package provides an expressive, fluent interface to ΑΑΔΕ myDATA invoici
 
 - Official documentation is available 👉 [on our documentation site](https://docs.invoicemaker.gr/getting-started)
 - myDATA webpage: [AADE myDATA](https://www.aade.gr/mydata)
-- ERP myDATA documentation (PDF): [AADE ERP myDATA REST API v1.0.12](https://www.aade.gr/sites/default/files/2025-11/myDATA%20API%20Documentation%20v1.0.12_official_erp.pdf)
-- Provider myDATA documentation (PDF): [AADE Provider myDATA REST API v1.0.12](https://www.aade.gr/sites/default/files/2025-11/myDATA%20API%20Documentation_Providers_v1%200%2012_official.pdf)
+- ERP myDATA documentation (PDF): [AADE ERP myDATA REST API v2.0.2](https://www.aade.gr/sites/default/files/2026-09/myDATA%20API%20Documentation%20v2.0.2_official_erp_1.pdf)
+- Provider myDATA documentation (PDF): [AADE Provider myDATA REST API v2.0.2](https://www.aade.gr/sites/default/files/2026-09/myDATA%20API%20Documentation_Providers_v2%200%202_official_0.pdf)
 
 ## Requirements
 
