@@ -2,6 +2,7 @@
 
 namespace Firebed\AadeMyData\Actions;
 
+use Firebed\AadeMyData\Enums\VatCategory;
 use Firebed\AadeMyData\Models\ExpensesClassification;
 use Firebed\AadeMyData\Models\IncomeClassification;
 use Firebed\AadeMyData\Models\InvoiceDetails;
@@ -43,35 +44,113 @@ class SquashInvoiceRows
             return null;
         }
 
+        $this->rowsWithRecType = [];
+        $this->squashedRows = [];
+        $this->squashedIcls = [];
+        $this->squashedEcls = [];
         $this->options = $options;
 
-        return $this->squashInvoiceRows($invoiceRows);
-    }
-
-    /**
-     * Squashes invoice rows by combining rows with identical categories
-     * and summing their values.
-     *
-     * @param InvoiceDetails[] $invoiceRows
-     * @return array
-     */
-    private function squashInvoiceRows(array $invoiceRows): array
-    {
-        foreach ($invoiceRows as $row) {
-            if ($row->getRecType() !== null) {
-                $this->rowsWithRecType[] = $row;
+        foreach ($this->groups($invoiceRows, $options) as $index => $group) {
+            if ($group[0]->getRecType() !== null) {
+                // Cloned, since the output rows are renumbered and the caller keeps the originals.
+                $this->rowsWithRecType[] = clone $group[0];
                 continue;
             }
 
-            $rowKey = $this->generateRowKey($row);
-            $squashedRow = $this->squashedRows[$rowKey] ??= new InvoiceDetails($this->extractConcreteData($row));
+            $squashedRow = $this->squashedRows[$index] = new InvoiceDetails($this->extractConcreteData($group[0]));
 
-            $this->aggregateRowData($squashedRow, $row);
-            $this->aggregateIncomeClassifications($rowKey, $row->getIncomeClassification());
-            $this->aggregateExpenseClassifications($rowKey, $row->getExpensesClassification());
+            foreach ($group as $row) {
+                $this->aggregateRowData($squashedRow, $row);
+                $this->aggregateIncomeClassifications($index, $row->getIncomeClassification());
+                $this->aggregateExpenseClassifications($index, $row->getExpensesClassification());
+            }
         }
 
         return $this->mergeAndRoundResults();
+    }
+
+    /**
+     * Returns the rows that are squashed into the same row, without summing them,
+     * one group per squashed row in the order handle() returns them: the squashed
+     * rows first, then each row with a recType, which is not squashed and forms a
+     * group of its own.
+     *
+     * @param InvoiceDetails[] $invoiceRows An array of invoice rows.
+     * @param array $options The squashing options; only 'vatAmountTolerance' affects grouping.
+     * @return InvoiceDetails[][]
+     */
+    public function groups(array $invoiceRows, array $options = []): array
+    {
+        $tolerance = isset($options['vatAmountTolerance']) ? (float) $options['vatAmountTolerance'] : null;
+        $groups = [];
+        $groupTotals = [];
+        $rowsWithRecType = [];
+
+        foreach ($invoiceRows as $row) {
+            if ($row->getRecType() !== null) {
+                $rowsWithRecType[] = [$row];
+                continue;
+            }
+
+            if ($tolerance === null) {
+                $groups[$this->generateRowKey($row)][] = $row;
+                continue;
+            }
+
+            $groupKey = $this->toleratedGroupKey($row, $tolerance, $groupTotals);
+            $groups[$groupKey][] = $row;
+
+            [$netValue, $vatAmount] = $groupTotals[$groupKey] ?? [0.0, 0.0];
+            $groupTotals[$groupKey] = [$netValue + ($row->getNetValue() ?? 0), $vatAmount + ($row->getVatAmount() ?? 0)];
+        }
+
+        return array_merge(array_values($groups), $rowsWithRecType);
+    }
+
+    /**
+     * Returns the key of the group the given row is added to under a vat amount tolerance:
+     * the first group with the same categories whose vat amount stays within the tolerance
+     * from the vat of its net value, or a new one if none does. myDATA rejects a row whose
+     * vat amount is more than 1.00 away from its net value times its vat rate (error 229),
+     * so many rows with tiny rounding differences cannot be squashed into a single row.
+     *
+     * @param InvoiceDetails $row
+     * @param float $tolerance
+     * @param array<string, array{0: float, 1: float}> $groupTotals The net value and vat amount of each group so far.
+     * @return string
+     */
+    private function toleratedGroupKey(InvoiceDetails $row, float $tolerance, array $groupTotals): string
+    {
+        $rowKey = $this->generateRowKey($row);
+
+        for ($index = 0; isset($groupTotals["$rowKey#$index"]); $index++) {
+            [$netValue, $vatAmount] = $groupTotals["$rowKey#$index"];
+            $netValue += $row->getNetValue() ?? 0;
+            $vatAmount += $row->getVatAmount() ?? 0;
+
+            if ($this->vatAmountDeviation($row->getVatCategory(), $netValue, $vatAmount) <= $tolerance) {
+                return "$rowKey#$index";
+            }
+        }
+
+        return "$rowKey#$index";
+    }
+
+    /**
+     * Returns how far the vat amount is from the net value times the vat rate, both
+     * rounded to cents the way the squashed row is sent. myDATA rounds the expected
+     * vat half to even: 0.75 at 6% expects 0.04, not 0.05.
+     *
+     * @param VatCategory|null $vatCategory
+     * @param float $netValue
+     * @param float $vatAmount
+     * @return float
+     */
+    private function vatAmountDeviation(?VatCategory $vatCategory, float $netValue, float $vatAmount): float
+    {
+        $expectedVatAmount = round(round($netValue, 2) * ($vatCategory?->rate() ?? 0) / 100, 2, PHP_ROUND_HALF_EVEN);
+
+        return round(abs(round($vatAmount, 2) - $expectedVatAmount), 2);
     }
 
     /**
@@ -133,13 +212,13 @@ class SquashInvoiceRows
     }
 
     /**
-     * Aggregates income classifications for a given row key.
+     * Aggregates income classifications for a given group.
      *
-     * @param string $rowKey
+     * @param int $groupIndex
      * @param IncomeClassification[]|null $classifications
      * @return void
      */
-    private function aggregateIncomeClassifications(string $rowKey, ?array $classifications): void
+    private function aggregateIncomeClassifications(int $groupIndex, ?array $classifications): void
     {
         if (empty($classifications)) {
             return;
@@ -151,7 +230,7 @@ class SquashInvoiceRows
                 ($classification->getClassificationType()->value ?? ''),
             ]);
 
-            $squashedIcls = $this->squashedIcls[$rowKey][$iclsKey] ??= new IncomeClassification([
+            $squashedIcls = $this->squashedIcls[$groupIndex][$iclsKey] ??= new IncomeClassification([
                 'classificationCategory' => $classification->getClassificationCategory(),
                 'classificationType' => $classification->getClassificationType(),
             ]);
@@ -161,13 +240,13 @@ class SquashInvoiceRows
     }
 
     /**
-     * Aggregates expense classifications for a given row key.
+     * Aggregates expense classifications for a given group.
      *
-     * @param string $rowKey
+     * @param int $groupIndex
      * @param ExpensesClassification[]|null $classifications
      * @return void
      */
-    private function aggregateExpenseClassifications(string $rowKey, ?array $classifications): void
+    private function aggregateExpenseClassifications(int $groupIndex, ?array $classifications): void
     {
         if (empty($classifications)) {
             return;
@@ -181,7 +260,7 @@ class SquashInvoiceRows
                 ($classification->getVatExemptionCategory()->value ?? ''),
             ]);
 
-            $squashedEcls = $this->squashedEcls[$rowKey][$eclsKey] ??= new ExpensesClassification([
+            $squashedEcls = $this->squashedEcls[$groupIndex][$eclsKey] ??= new ExpensesClassification([
                 'classificationCategory' => $classification->getClassificationCategory(),
                 'classificationType' => $classification->getClassificationType(),
                 'vatCategory' => $classification->getVatCategory(),

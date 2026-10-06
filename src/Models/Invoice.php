@@ -269,8 +269,11 @@ class Invoice extends Type
     /**
      * "Squashes" similar invoice lines and sums up their values.
      *
-     * @param array{clsLineNumber: bool} $options Squashing options.
+     * @param array{clsLineNumber?: bool, vatAmountTolerance?: float|null} $options Squashing options.
      * If 'clsLineNumber' == true the process will add line numbers to classifications.
+     * If 'vatAmountTolerance' is set, rows with the same categories are squashed into as many
+     * rows as needed to keep each row's vat amount within the tolerance of its net value times
+     * its vat rate (myDATA allows 1.00). Null squashes them into a single row.
      *
      * @return $this
      */

@@ -5,6 +5,17 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [5.13.0] - 2026-10-06
+
+### Added
+
+- `squashInvoiceRows()` option `vatAmountTolerance`. When set, rows with the same categories are squashed into as many rows as needed to keep each row's vat amount within the tolerance of its net value times its vat rate, instead of a single row. myDATA rejects a row more than 1.00 away (error 229), which many rows with tiny rounding differences reach once summed. Defaults to `null`, which keeps the single-row behaviour.
+- `SquashInvoiceRows::groups()` returns the rows that are squashed into each row, without summing them, so callers can validate a squashed row and map it back to its original rows. `handle()` sums these groups, so both always agree.
+
+### Fixed
+
+- Squashing no longer renumbers the caller's original rows with a `recType`, so `unSquashInvoiceRows()` restores their line numbers.
+
 ## [5.12.0] - 2026-09-12
 
 Support for the myDATA API **v2.0.2** (AADE official ERP specification, September 2026).

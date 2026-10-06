@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Firebed\AadeMyData\Actions\SquashInvoiceRows;
 use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
 use Firebed\AadeMyData\Enums\ExpenseClassificationType;
 use Firebed\AadeMyData\Enums\FeesPercentCategory;
@@ -690,5 +691,243 @@ class SquashInvoiceRowsTest extends TestCase
         $this->assertNull($rows[0]->getExpensesClassification()[1]->getClassificationCategory());
         $this->assertEquals(ExpenseClassificationType::VAT_361, $rows[0]->getExpensesClassification()[1]->getClassificationType());
         $this->assertEquals(10, $rows[0]->getExpensesClassification()[1]->getAmount());
+    }
+
+    public function test_rows_are_squashed_into_one_row_without_vat_amount_tolerance(): void
+    {
+        $invoice = $this->invoiceWithRows(array_fill(0, 11, [10, 2.50]));
+
+        $invoice->squashInvoiceRows();
+        $rows = $invoice->getInvoiceDetails();
+
+        $this->assertCount(1, $rows);
+        $this->assertEquals(110, $rows[0]->getNetValue());
+        $this->assertEquals(27.50, $rows[0]->getVatAmount());
+    }
+
+    public function test_vat_amount_tolerance_starts_a_new_row_before_the_vat_amount_drifts_past_it(): void
+    {
+        $invoice = $this->invoiceWithRows(array_fill(0, 11, [10, 2.50]));
+
+        $invoice->squashInvoiceRows(['vatAmountTolerance' => 1.00])->summarizeInvoice();
+        $rows = $invoice->getInvoiceDetails();
+
+        $this->assertCount(2, $rows);
+
+        $this->assertEquals(1, $rows[0]->getLineNumber());
+        $this->assertEquals(100, $rows[0]->getNetValue());
+        $this->assertEquals(25.00, $rows[0]->getVatAmount());
+        $this->assertEquals(100, $rows[0]->getIncomeClassification()[0]->getAmount());
+
+        $this->assertEquals(2, $rows[1]->getLineNumber());
+        $this->assertEquals(10, $rows[1]->getNetValue());
+        $this->assertEquals(2.50, $rows[1]->getVatAmount());
+        $this->assertEquals(10, $rows[1]->getIncomeClassification()[0]->getAmount());
+
+        $this->assertEquals(110, $invoice->getInvoiceSummary()->getTotalNetValue());
+        $this->assertEquals(27.50, $invoice->getInvoiceSummary()->getTotalVatAmount());
+    }
+
+    public function test_vat_amount_tolerance_keeps_a_row_already_past_it_on_its_own(): void
+    {
+        $invoice = $this->invoiceWithRows([[100, 24], [4.20, 0], [100, 24]]);
+
+        $invoice->squashInvoiceRows(['vatAmountTolerance' => 1.00]);
+        $rows = $invoice->getInvoiceDetails();
+
+        $this->assertCount(2, $rows);
+        $this->assertEquals(200, $rows[0]->getNetValue());
+        $this->assertEquals(48, $rows[0]->getVatAmount());
+        $this->assertEquals(4.20, $rows[1]->getNetValue());
+        $this->assertEquals(0, $rows[1]->getVatAmount());
+    }
+
+    public function test_vat_amount_tolerance_is_checked_on_the_net_value_rounded_to_cents(): void
+    {
+        // 10.021 is sent as 10.02, whose 24% is 2.40, so 3.41 is 1.01 away although 10.021 * 24% rounds to 2.41.
+        $invoice = $this->invoiceWithRows([[5, 1.70], [5.021, 1.71]]);
+
+        $invoice->squashInvoiceRows(['vatAmountTolerance' => 1.00]);
+
+        $this->assertCount(2, $invoice->getInvoiceDetails());
+    }
+
+    public function test_vat_amount_tolerance_rounds_the_expected_vat_half_to_even(): void
+    {
+        // 0.75 at 6% is 0.045, which myDATA rounds to 0.04, so 1.05 is 1.01 away.
+        $invoice = $this->invoiceWithRows([[0.50, 0.53, VatCategory::VAT_3], [0.25, 0.52, VatCategory::VAT_3]]);
+
+        $invoice->squashInvoiceRows(['vatAmountTolerance' => 1.00]);
+
+        $this->assertCount(2, $invoice->getInvoiceDetails());
+    }
+
+    public function test_vat_amount_tolerance_keeps_classifications_with_their_split_row(): void
+    {
+        $invoice = new Invoice();
+
+        for ($i = 0; $i < 11; $i++) {
+            $invoice->addInvoiceDetails(new InvoiceDetails([
+                'vatCategory' => VatCategory::VAT_1,
+                'netValue' => 10,
+                'vatAmount' => 2.50,
+                'incomeClassification' => [
+                    [
+                        'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
+                        'classificationType' => IncomeClassificationType::E3_561_001,
+                        'amount' => 10,
+                    ]
+                ],
+                'expensesClassification' => [
+                    [
+                        'classificationCategory' => ExpenseClassificationCategory::CATEGORY_2_1,
+                        'classificationType' => ExpenseClassificationType::E3_101,
+                        'amount' => 10,
+                    ]
+                ]
+            ]));
+        }
+
+        $invoice->squashInvoiceRows(['vatAmountTolerance' => 1.00, 'clsLineNumber' => true]);
+        $rows = $invoice->getInvoiceDetails();
+
+        $this->assertCount(2, $rows);
+
+        $this->assertCount(1, $rows[0]->getIncomeClassification());
+        $this->assertEquals(100, $rows[0]->getIncomeClassification()[0]->getAmount());
+        $this->assertEquals(1, $rows[0]->getIncomeClassification()[0]->getId());
+        $this->assertCount(1, $rows[0]->getExpensesClassification());
+        $this->assertEquals(100, $rows[0]->getExpensesClassification()[0]->getAmount());
+        $this->assertEquals(2, $rows[0]->getExpensesClassification()[0]->getId());
+
+        $this->assertCount(1, $rows[1]->getIncomeClassification());
+        $this->assertEquals(10, $rows[1]->getIncomeClassification()[0]->getAmount());
+        $this->assertEquals(1, $rows[1]->getIncomeClassification()[0]->getId());
+        $this->assertCount(1, $rows[1]->getExpensesClassification());
+        $this->assertEquals(10, $rows[1]->getExpensesClassification()[0]->getAmount());
+        $this->assertEquals(2, $rows[1]->getExpensesClassification()[0]->getId());
+    }
+
+    public function test_vat_amount_tolerance_splits_rows_per_category(): void
+    {
+        $invoice = $this->invoiceWithRows([[10, 2.40], [10, 1.30, VatCategory::VAT_2], [10, 2.40]]);
+
+        $invoice->squashInvoiceRows(['vatAmountTolerance' => 1.00]);
+        $rows = $invoice->getInvoiceDetails();
+
+        $this->assertCount(2, $rows);
+        $this->assertEquals(VatCategory::VAT_1, $rows[0]->getVatCategory());
+        $this->assertEquals(20, $rows[0]->getNetValue());
+        $this->assertEquals(VatCategory::VAT_2, $rows[1]->getVatCategory());
+        $this->assertEquals(10, $rows[1]->getNetValue());
+    }
+
+    public function test_groups_returns_the_rows_squashed_into_each_row(): void
+    {
+        $groups = (new SquashInvoiceRows())->groups($this->hotelRows());
+
+        $this->assertSame([[1, 3, 6, 7], [2, 5], [4]], $this->lineNumbers($groups));
+    }
+
+    public function test_groups_splits_the_rows_a_vat_amount_tolerance_splits(): void
+    {
+        $groups = (new SquashInvoiceRows())->groups($this->hotelRows(), ['vatAmountTolerance' => 1.00]);
+
+        $this->assertSame([[1, 3, 6], [2, 5], [7], [4]], $this->lineNumbers($groups));
+    }
+
+    public function test_squashed_rows_are_the_sums_of_their_groups(): void
+    {
+        $groups = (new SquashInvoiceRows())->groups($this->hotelRows(), ['vatAmountTolerance' => 1.00]);
+        $rows = (new SquashInvoiceRows())->handle($this->hotelRows(), ['vatAmountTolerance' => 1.00]);
+
+        $this->assertCount(count($groups), $rows);
+
+        foreach ($groups as $index => $group) {
+            $netValue = round(array_sum(array_map(fn (InvoiceDetails $row) => $row->getNetValue(), $group)), 2);
+            $vatAmount = round(array_sum(array_map(fn (InvoiceDetails $row) => $row->getVatAmount(), $group)), 2);
+
+            $this->assertSame($netValue, $rows[$index]->getNetValue());
+            $this->assertSame($vatAmount, $rows[$index]->getVatAmount());
+            $this->assertSame($group[0]->getRecType(), $rows[$index]->getRecType());
+        }
+    }
+
+    public function test_squashing_leaves_the_original_rows_with_a_rec_type_unchanged(): void
+    {
+        $invoice = new Invoice();
+        $invoice->addInvoiceDetails(new InvoiceDetails(['lineNumber' => 1, 'vatCategory' => VatCategory::VAT_1, 'netValue' => 10, 'vatAmount' => 2.40, 'recType' => RecType::TYPE_2]));
+        $invoice->addInvoiceDetails(new InvoiceDetails(['lineNumber' => 2, 'vatCategory' => VatCategory::VAT_1, 'netValue' => 10, 'vatAmount' => 2.40]));
+        $invoice->addInvoiceDetails(new InvoiceDetails(['lineNumber' => 3, 'vatCategory' => VatCategory::VAT_1, 'netValue' => 10, 'vatAmount' => 2.40]));
+
+        $invoice->squashInvoiceRows();
+        $this->assertSame([1, 2], array_map(fn (InvoiceDetails $row) => $row->getLineNumber(), $invoice->getInvoiceDetails()));
+
+        $invoice->unSquashInvoiceRows();
+        $this->assertSame([1, 2, 3], array_map(fn (InvoiceDetails $row) => $row->getLineNumber(), $invoice->getInvoiceDetails()));
+    }
+
+    public function test_a_reused_squasher_does_not_carry_rows_over(): void
+    {
+        $squasher = new SquashInvoiceRows();
+        $squasher->handle($this->hotelRows());
+
+        $rows = $squasher->handle([new InvoiceDetails(['vatCategory' => VatCategory::VAT_1, 'netValue' => 10, 'vatAmount' => 2.40])]);
+
+        $this->assertCount(1, $rows);
+        $this->assertSame(10.0, $rows[0]->getNetValue());
+    }
+
+    /**
+     * Rooms at 24%, breakfasts at 13% one cent short, a city tax row with a recType and
+     * two extra beds 0.60 over each, so that both no longer fit the rooms' row together.
+     *
+     * @return InvoiceDetails[]
+     */
+    private function hotelRows(): array
+    {
+        return [
+            new InvoiceDetails(['lineNumber' => 1, 'vatCategory' => VatCategory::VAT_1, 'netValue' => 89.60, 'vatAmount' => 21.50]),
+            new InvoiceDetails(['lineNumber' => 2, 'vatCategory' => VatCategory::VAT_2, 'netValue' => 5.27, 'vatAmount' => 0.68]),
+            new InvoiceDetails(['lineNumber' => 3, 'vatCategory' => VatCategory::VAT_1, 'netValue' => 89.60, 'vatAmount' => 21.50]),
+            new InvoiceDetails(['lineNumber' => 4, 'vatCategory' => VatCategory::VAT_2, 'netValue' => 0.04, 'vatAmount' => 0.01, 'recType' => RecType::TYPE_2]),
+            new InvoiceDetails(['lineNumber' => 5, 'vatCategory' => VatCategory::VAT_2, 'netValue' => 5.27, 'vatAmount' => 0.68]),
+            new InvoiceDetails(['lineNumber' => 6, 'vatCategory' => VatCategory::VAT_1, 'netValue' => 10.00, 'vatAmount' => 3.00]),
+            new InvoiceDetails(['lineNumber' => 7, 'vatCategory' => VatCategory::VAT_1, 'netValue' => 10.00, 'vatAmount' => 3.00]),
+        ];
+    }
+
+    /**
+     * @param InvoiceDetails[][] $groups
+     * @return int[][]
+     */
+    private function lineNumbers(array $groups): array
+    {
+        return array_map(fn (array $group) => array_map(fn (InvoiceDetails $row) => $row->getLineNumber(), $group), $groups);
+    }
+
+    /**
+     * @param array<int, array{0: float, 1: float, 2?: VatCategory}> $rows Net value, vat amount and vat category of each row.
+     */
+    private function invoiceWithRows(array $rows): Invoice
+    {
+        $invoice = new Invoice();
+
+        foreach ($rows as $row) {
+            $invoice->addInvoiceDetails(new InvoiceDetails([
+                'vatCategory' => $row[2] ?? VatCategory::VAT_1,
+                'netValue' => $row[0],
+                'vatAmount' => $row[1],
+                'incomeClassification' => [
+                    [
+                        'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
+                        'classificationType' => IncomeClassificationType::E3_561_001,
+                        'amount' => $row[0],
+                    ]
+                ]
+            ]));
+        }
+
+        return $invoice;
     }
 }
