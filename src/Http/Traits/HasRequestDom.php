@@ -15,8 +15,12 @@ trait HasRequestDom
 
     public function getRequestXml(bool $formatOutput = true): ?string
     {
+        if ($this->requestDom === null) {
+            return null;
+        }
+
         $this->requestDom->formatOutput = $formatOutput;
-        return $this->requestDom?->saveXML();
+        return $this->requestDom->saveXML();
     }
 
     public function getRequestElement(string $localName, int $index): ?string

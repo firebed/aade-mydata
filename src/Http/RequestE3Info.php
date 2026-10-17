@@ -51,16 +51,7 @@ class RequestE3Info extends MyDataRequest
             'nextRowKey' => $nextRowKey
         ], fn ($value) => $value !== null);
 
-        // Get the response XML
-        $responseXML = $this->get($query);
-
-        // Parse the response XML
-        $reader = new E3InfoReader();
-        $e3Info = $reader->parseXML($responseXML);
-
-        $this->responseDom = $reader->getDomDocument();
-
-        return $e3Info;
+        return $this->read($this->get($query), new E3InfoReader());
     }
 
 }

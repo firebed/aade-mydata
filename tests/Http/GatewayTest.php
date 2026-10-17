@@ -2,8 +2,10 @@
 
 namespace Tests\Http;
 
+use Firebed\AadeMyData\Exceptions\ErrorResponseException;
 use Firebed\AadeMyData\Exceptions\InvalidResponseException;
 use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
+use Firebed\AadeMyData\Exceptions\TransmissionFailedException;
 use Firebed\AadeMyData\Http\Gateway;
 use Firebed\AadeMyData\Http\GuzzleGateway;
 use Firebed\AadeMyData\Http\MyDataRequest;
@@ -16,6 +18,7 @@ use Firebed\AadeMyData\Models\PaymentMethodDetail;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response as HttpResponse;
 use LogicException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class GatewayTest extends MyDataHttpTestCase
 {
@@ -149,6 +152,93 @@ class GatewayTest extends MyDataHttpTestCase
 
         $this->expectException(MyDataAuthenticationException::class);
         (new SendInvoices())->handle(new Invoice());
+    }
+
+    public static function unauthorizedReasons(): array
+    {
+        $refusal = 'User 110250755 is not authorized to view status for invoice 400001. Only the issuer, recipient, or related carriers/third parties can view the status.';
+        $apim = 'Access denied due to invalid subscription key. Make sure to provide a valid key for an active subscription.';
+        $oauth = '{"error":"invalid_token","error_description":"The token has expired"}';
+
+        return [
+            'plain text' => [$refusal, $refusal],
+            'JSON message' => [json_encode(['statusCode' => 401, 'message' => $apim]), $apim],
+            'JSON string' => ['"Access denied"', 'Access denied'],
+            'JSON without a message' => [$oauth, $oauth],
+            'short multibyte' => [str_repeat('Δ', 300), str_repeat('Δ', 300)],
+            'long, capped' => [str_repeat('Δ', 2000), str_repeat('Δ', 500) . '…'],
+            'not UTF-8, capped' => [str_repeat("\xC4", 2000), str_repeat('?', 500) . '…'],
+        ];
+    }
+
+    #[DataProvider('unauthorizedReasons')]
+    public function test_unauthorized_response_reports_its_reason(string $body, string $expected): void
+    {
+        $this->assertSame($expected, $this->unauthorized($body)->getMessage());
+    }
+
+    public static function unusableReasons(): array
+    {
+        return [
+            'empty body' => [''],
+            'HTML page' => ['<html><head><title>401 Unauthorized</title></head><body>...</body></html>'],
+        ];
+    }
+
+    #[DataProvider('unusableReasons')]
+    public function test_unauthorized_response_without_a_usable_reason_reports_bad_credentials(string $body): void
+    {
+        $e = $this->unauthorized($body);
+
+        $this->assertSame(401, $e->getCode());
+        $this->assertStringContainsString('Please check your user id and subscription key', $e->getMessage());
+    }
+
+    public function test_http_error_with_an_error_document_throws_its_errors(): void
+    {
+        MyDataRequest::setHandler(new MockHandler([
+            new HttpResponse(400, body: '<?xml version="1.0" encoding="utf-8"?><ResponseDoc><response><statusCode>ValidationError</statusCode><errors><error><message>Invalid request</message><code>101</code></error></errors></response></ResponseDoc>'),
+        ]));
+
+        try {
+            (new RequestVatInfo())->handle('01/01/2026', '31/01/2026');
+            $this->fail('An ErrorResponseException was expected.');
+        } catch (ErrorResponseException $e) {
+            $this->assertSame('101: Invalid request', $e->getMessage());
+            $this->assertSame('101', $e->getErrors()->first()->getCode());
+            // The HTTP status stays the code, and callers catching the previous exception type keep working
+            $this->assertSame(400, $e->getCode());
+            $this->assertInstanceOf(TransmissionFailedException::class, $e);
+        }
+    }
+
+    public function test_http_error_without_an_error_document_reports_its_body(): void
+    {
+        MyDataRequest::setHandler(new MockHandler([
+            new HttpResponse(404, body: '{"error":"Not found","message":"Invoice not found"}'),
+        ]));
+
+        try {
+            (new RequestVatInfo())->handle('01/01/2026', '31/01/2026');
+            $this->fail('A TransmissionFailedException was expected.');
+        } catch (TransmissionFailedException $e) {
+            $this->assertNotInstanceOf(ErrorResponseException::class, $e);
+            $this->assertSame('{"error":"Not found","message":"Invoice not found"}', $e->getMessage());
+            $this->assertSame(404, $e->getCode());
+        }
+    }
+
+    private function unauthorized(string $body): MyDataAuthenticationException
+    {
+        MyDataRequest::setHandler(new MockHandler([new HttpResponse(401, body: $body)]));
+
+        try {
+            (new RequestVatInfo())->handle('01/01/2026', '31/01/2026');
+        } catch (MyDataAuthenticationException $e) {
+            return $e;
+        }
+
+        $this->fail('A MyDataAuthenticationException was expected.');
     }
 
     public function test_has_credentials(): void

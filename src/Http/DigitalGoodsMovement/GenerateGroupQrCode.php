@@ -47,16 +47,7 @@ class GenerateGroupQrCode extends MyDataRequest
         $requestXML = $writer->asXML($groupQrCode);
         $this->requestDom = $writer->getDomDocument();
 
-        // Get the response XML
-        $responseXML = $this->post(body: $requestXML);
-
-        $reader = new GroupQrCodeReader();
-
-        // Parse the response XML
-        $responseDoc = $reader->parseXML($responseXML);
-        $this->responseDom = $reader->getDomDocument();
-
-        return $responseDoc;
+        return $this->read($this->post(body: $requestXML), new GroupQrCodeReader());
     }
 
     /**

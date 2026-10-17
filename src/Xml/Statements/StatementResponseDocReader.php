@@ -10,6 +10,8 @@ use Firebed\AadeMyData\Xml\XMLReader;
  */
 class StatementResponseDocReader extends XMLReader
 {
+    protected bool $readsResponseDoc = true;
+
     public function parseXML(string $xmlString): StatementResponseDoc
     {
         $doc = new StatementResponseDoc();

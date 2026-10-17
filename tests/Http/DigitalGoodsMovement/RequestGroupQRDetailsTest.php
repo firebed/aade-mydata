@@ -2,6 +2,7 @@
 
 namespace Tests\Http\DigitalGoodsMovement;
 
+use Firebed\AadeMyData\Exceptions\ErrorResponseException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Exceptions\UnsupportedChannelException;
 use Firebed\AadeMyData\Http\DigitalGoodsMovement\RequestGroupQrDetails;
@@ -78,5 +79,35 @@ class RequestGroupQRDetailsTest extends DigitalGoodsMovementTestCase
         $this->assertEquals("https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url_2", $qrUrls[1]);
 
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-group-qr-details-response.xml'), $request->getResponseXML());
+    }
+
+    /**
+     * @throws MyDataException
+     */
+    public function test_error_response_throws_an_exception(): void
+    {
+        MyDataRequest::setHandler(new MockHandler([
+            new Response(200, body: $this->getStub('error-response-807.xml')),
+        ]));
+
+        $this->expectException(ErrorResponseException::class);
+        $this->expectExceptionCode(807);
+        $this->expectExceptionMessage('807: Invalid QR');
+        (new RequestGroupQrDetails())->handle('test');
+    }
+
+    /**
+     * @throws MyDataException
+     */
+    public function test_error_without_a_code_reports_only_its_message(): void
+    {
+        MyDataRequest::setHandler(new MockHandler([
+            new Response(200, body: '<ResponseDoc><response><statusCode>ValidationError</statusCode><errors><error><message>Invalid request: groupId must be a valid 40-character SHA1 hash</message></error></errors></response></ResponseDoc>'),
+        ]));
+
+        $this->expectException(ErrorResponseException::class);
+        $this->expectExceptionCode(0);
+        $this->expectExceptionMessageMatches('/^Invalid request: groupId must be a valid 40-character SHA1 hash$/');
+        (new RequestGroupQrDetails())->handle('test');
     }
 }

@@ -62,15 +62,6 @@ abstract class MyDataGetRequest extends MyDataRequest
         // Merge query with params
         $query = array_merge($query, array_filter($params));
 
-        // Get the response XML
-        $responseXML = $this->get($query);
-
-        // Parse the response XML
-        $reader = new RequestedDocReader();
-        $responseDoc = $reader->parseXML($responseXML);
-
-        $this->responseDom = $reader->getDomDocument();
-
-        return $responseDoc;
+        return $this->read($this->get($query), new RequestedDocReader());
     }
 }

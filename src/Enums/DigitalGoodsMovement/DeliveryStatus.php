@@ -31,18 +31,21 @@ enum DeliveryStatus: int
         };
     }
 
+    /**
+     * myDATA dev returns the names as REGISTERED, IN_TRANSIT_RETURN, … while the
+     * specification spells them Registered, InTransit (Return), …, so case, spaces,
+     * underscores and brackets are ignored.
+     */
     public static function tryFromName(string $name): ?self
     {
-        return match ($name) {
-            'REGISTERED' => self::REGISTERED,
-            'IN_TRANSIT' => self::IN_TRANSIT,
-            'DELIVERED_BY_CARRIER' => self::DELIVERED_BY_CARRIER,
-            'COMPLETED' => self::COMPLETED,
-            'REJECTED' => self::REJECTED,
-            'CANCELLED' => self::CANCELLED,
-            'FAILED_DELIVERY' => self::FAILED_DELIVERY,
-            'IN_TRANSIT_RETURN' => self::IN_TRANSIT_RETURN,
-            default => null,
-        };
+        $name = strtoupper(preg_replace('/[^a-z0-9]/i', '', $name));
+
+        foreach (self::cases() as $case) {
+            if (str_replace('_', '', $case->name) === $name) {
+                return $case;
+            }
+        }
+
+        return null;
     }
 }

@@ -33,6 +33,10 @@ class RequestDeliveryNoteStatus extends MyDataRequest
 
     /**
      * Αναζήτηση κατάστασης δελτίου με βάση το URL του QR code (εναλλακτικά του MARK).
+     * Το QR code προσδιορίζει το δελτίο, οπότε το issuerVatNumber δεν επιτρέπεται εδώ
+     * (§3.2.4: myDATA απαντά HTTP 400 όταν δίνεται μαζί με το qrUrl).
+     *
+     * @param string|null $issuerVatNumber Deprecated and ignored, kept so existing calls keep working.
      *
      * @throws MyDataAuthenticationException
      * @throws MyDataException
@@ -43,10 +47,9 @@ class RequestDeliveryNoteStatus extends MyDataRequest
     {
         $this->ensureERP();
 
-        return $this->request($this->filterArray([
-            'qrUrl' => $qrUrl,
-            'issuerVatNumber' => $issuerVatNumber,
-        ]));
+        // myDATA hands out QR URLs already percent-encoded (…q=POiz…%2f…%3d), while the
+        // query string gets encoded on the way out. Decode once so it isn't encoded twice.
+        return $this->request(['qrUrl' => rawurldecode($qrUrl)]);
     }
 
     /**
@@ -54,11 +57,6 @@ class RequestDeliveryNoteStatus extends MyDataRequest
      */
     private function request(array $query): DeliveryNoteStatusResponse
     {
-        $reader = new DeliveryNoteStatusResponseReader();
-        $response = $reader->parseXml($this->get($query));
-
-        $this->responseDom = $reader->getDomDocument();
-
-        return $response;
+        return $this->read($this->get($query), new DeliveryNoteStatusResponseReader());
     }
 }

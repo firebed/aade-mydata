@@ -5,6 +5,30 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [5.14.0] - 2026-10-18
+
+### Upgrading
+
+Requests that used to return an empty result when myDATA answered with an error now throw `ErrorResponseException`, which is a `TransmissionFailedException` (and so a `MyDataException`). Code that already catches `MyDataException` needs no change. Code that relied on the empty result, or that only catches `MyDataAuthenticationException`, should catch `ErrorResponseException` and read `getErrors()`.
+
+### Added
+
+- `ErrorResponseException` (a `TransmissionFailedException`), thrown when myDATA answers with an error document (`ResponseDoc`) instead of the expected response. Its message lists each `code: message` of every response and `getErrors()` returns the errors. Its code is the HTTP status for an HTTP error, otherwise the first error's code.
+
+### Changed
+
+- Readers of a document other than `ResponseDoc` throw `ErrorResponseException` when given an error document, so the requests that use them (`RequestDocs`, `RequestTransmittedDocs`, `RequestMyIncome`, `RequestMyExpenses`, `RequestVatInfo`, `RequestE3Info`, `RequestStatements`, `RequestDeliveryNoteStatus`, `RequestGroupQrDetails`, `GenerateGroupQrCode`) no longer return an empty result with the error code lost. `getResponseXML()` still returns the error document.
+- An HTTP error whose body is an error document (e.g. HTTP 400) throws `ErrorResponseException` with a readable message instead of a `TransmissionFailedException` carrying the raw XML. The exception code is still the HTTP status.
+- A 401 now carries the reason myDATA gives (e.g. the user is not authorized to view a note's status) as the `MyDataAuthenticationException` message: the JSON `message` when there is one, otherwise the body, capped at 500 characters. The generic "check your user id and subscription key" message is used when there is no usable reason (empty body or an HTML page).
+- `RequestDeliveryNoteStatus::handleUsingQrUrl()` ignores its `issuerVatNumber` parameter, now deprecated. myDATA accepts it only with `mark` (§3.2.4) and answers HTTP 400 when it comes with `qrUrl`.
+
+### Fixed
+
+- `RequestDeliveryNoteStatus::handleUsingQrUrl()` no longer encodes the already percent-encoded QR URL a second time, which made every lookup fail with 807 Invalid QR.
+- `RequestDeliveryNoteStatus::handleUsingQrUrl()` lookups with an `issuerVatNumber` no longer fail with HTTP 400 (see Changed).
+- `DeliveryStatus::tryFromName()` also reads the specification's spelling of the status names (`Registered`, `InTransit`, `InTransit (Return)`, …) next to the `REGISTERED`-style names myDATA dev returns.
+- `getResponseXML()` and `getRequestXml()` return `null` before a request has been made instead of failing with a fatal error.
+
 ## [5.13.0] - 2026-10-06
 
 ### Added

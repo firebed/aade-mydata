@@ -2,6 +2,7 @@
 
 namespace Tests\Http\DigitalGoodsMovement;
 
+use Firebed\AadeMyData\Exceptions\ErrorResponseException;
 use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Exceptions\UnsupportedChannelException;
@@ -104,5 +105,25 @@ class GenerateGroupQrCodeTest extends DigitalGoodsMovementTestCase
         $this->assertEquals('https://mydataapidev.aade.gr/TimologioQR/GroupQRInfo?groupId=9946C6AA9DB3658C85CC3BF43DB726FE25BBC555', $response->getGroupQrUrl());
         $this->assertEquals(2, $response->getQrUrlsCount());
         $this->assertEquals('Success', $response->getStatusCode());
+    }
+
+    /**
+     * @throws MyDataException
+     */
+    public function test_error_response_throws_an_exception(): void
+    {
+        MyDataRequest::setHandler(new MockHandler([
+            new Response(200, body: $this->getStub('error-response-807.xml')),
+        ]));
+
+        $generate = new GenerateGroupQrCode();
+
+        try {
+            $generate->generateFromQrUrls(['https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=a', 'https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=b']);
+            $this->fail('An ErrorResponseException was expected.');
+        } catch (ErrorResponseException $e) {
+            $this->assertSame('807: Invalid QR', $e->getMessage());
+            $this->assertStringContainsString('<ResponseDoc', $generate->getResponseXML());
+        }
     }
 }

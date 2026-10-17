@@ -2,6 +2,7 @@
 
 namespace Firebed\AadeMyData\Http;
 
+use Firebed\AadeMyData\Exceptions\ErrorResponseException;
 use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
 use Firebed\AadeMyData\Exceptions\MyDataConnectionException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -80,9 +81,12 @@ class GuzzleGateway implements Gateway
             throw new MyDataConnectionException($exception->getCode(), $exception);
         }
 
-        // Authentication with myDATA failed
+        // Authentication with myDATA failed, or the user is not authorized for the
+        // requested resource. Keep the reason myDATA gives so the two can be told apart.
+        $body = $this->body($exception);
+
         if ($exception->getCode() === 401) {
-            throw new MyDataAuthenticationException($exception->getCode(), $exception);
+            throw new MyDataAuthenticationException($exception->getCode(), $exception, $this->reason($body));
         }
 
         // Rate limit exception
@@ -90,7 +94,39 @@ class GuzzleGateway implements Gateway
             throw new RateLimitExceededException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
-        $message = $exception->getResponse()?->getBody()->getContents() ?: $exception->getMessage();
-        throw new TransmissionFailedException($message, $exception->getCode(), $exception);
+        // myDATA can also answer a bad request with an error document (e.g. HTTP 400).
+        // The HTTP status stays the exception code, as it was before the errors were read.
+        throw ErrorResponseException::fromXml($body, $exception->getCode(), $exception)
+            ?? new TransmissionFailedException($body ?: $exception->getMessage(), $exception->getCode(), $exception);
+    }
+
+    /**
+     * The body of a failed response, read from the start even if it has been read before.
+     */
+    private function body(GuzzleException $exception): string
+    {
+        return $exception instanceof RequestException ? trim((string) $exception->getResponse()?->getBody()) : '';
+    }
+
+    /**
+     * The error message of a failed response: plain text from myDATA, the "message"
+     * of the JSON error returned by the API gateway, or any other JSON as it is.
+     * Markup (e.g. an HTML error page from a proxy) is not a usable reason.
+     */
+    private function reason(string $body): ?string
+    {
+        $json = json_decode($body, true);
+        if (is_array($json) && is_string($json['message'] ?? null)) {
+            $body = trim($json['message']);
+        } elseif (is_string($json)) {
+            $body = trim($json);
+        }
+
+        if ($body === '' || str_starts_with($body, '<')) {
+            return null;
+        }
+
+        // Keep the exception message readable
+        return mb_strlen($body) > 500 ? mb_substr($body, 0, 500) . '…' : $body;
     }
 }

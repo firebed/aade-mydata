@@ -32,13 +32,6 @@ class RequestStatements extends MyDataRequest
 
         $query = compact('stmtId', 'maxstmtId', 'entityVatNumber');
 
-        $responseXML = $this->get($query);
-
-        $reader = new RequestedStatementDocReader();
-        $doc = $reader->parseXML($responseXML);
-
-        $this->responseDom = $reader->getDomDocument();
-
-        return $doc;
+        return $this->read($this->get($query), new RequestedStatementDocReader());
     }
 }

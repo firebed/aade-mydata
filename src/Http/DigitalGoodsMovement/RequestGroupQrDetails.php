@@ -30,13 +30,6 @@ class RequestGroupQrDetails extends MyDataRequest
     {
         $this->ensureERP();
 
-        $responseXML = $this->get(['groupId' => $groupId]);
-
-        $reader = new GroupQrDetailsReader();
-        $response = $reader->parseXml($responseXML);
-
-        $this->responseDom = $reader->getDomDocument();
-
-        return $response;
+        return $this->read($this->get(['groupId' => $groupId]), new GroupQrDetailsReader());
     }
 }

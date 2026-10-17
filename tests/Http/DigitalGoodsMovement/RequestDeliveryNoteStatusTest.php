@@ -2,17 +2,21 @@
 
 namespace Tests\Http\DigitalGoodsMovement;
 
+use ErrorException;
 use Firebed\AadeMyData\Enums\DigitalGoodsMovement\DeliveryEventType;
 use Firebed\AadeMyData\Enums\DigitalGoodsMovement\DeliveryOutcomeType;
 use Firebed\AadeMyData\Enums\DigitalGoodsMovement\DeliveryStatus;
 use Firebed\AadeMyData\Enums\DigitalGoodsMovement\PackagingType;
 use Firebed\AadeMyData\Enums\DigitalGoodsMovement\TransportType;
+use Firebed\AadeMyData\Exceptions\ErrorResponseException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Exceptions\UnsupportedChannelException;
 use Firebed\AadeMyData\Http\DigitalGoodsMovement\RequestDeliveryNoteStatus;
 use Firebed\AadeMyData\Http\MyDataRequest;
 use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\Psr7\Query;
 use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
 {
@@ -78,14 +82,90 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
         MyDataRequest::setHandler($mock);
 
         $request = new RequestDeliveryNoteStatus();
-        $response = $request->handleUsingQrUrl('https://mydataapidev.aade.gr/qr?q=abc', '123456789');
+        // The deprecated issuerVatNumber is not sent: myDATA rejects it together with qrUrl (HTTP 400)
+        $response = $request->handleUsingQrUrl('https://mydataapidev.aade.gr/qr?q=abc', issuerVatNumber: '123456789');
 
-        $query = $mock->getLastRequest()->getUri()->getQuery();
-        $this->assertStringContainsString('qrUrl=', $query);
-        $this->assertStringContainsString('issuerVatNumber=123456789', $query);
-        $this->assertStringNotContainsString('mark=', $query);
+        $query = Query::parse($mock->getLastRequest()->getUri()->getQuery());
+        $this->assertSame(['qrUrl'], array_keys($query));
 
         $this->assertEquals(DeliveryStatus::REGISTERED, $response->getStatus());
+    }
+
+    /**
+     * @throws MyDataException
+     */
+    public function test_status_lookup_by_qr_url_does_not_encode_the_qr_url_twice(): void
+    {
+        $mock = new MockHandler([
+            new Response(200, body: $this->getStub('request-delivery-note-status-response-registered.xml')),
+        ]);
+        MyDataRequest::setHandler($mock);
+
+        // myDATA hands out QR URLs that are already percent-encoded
+        (new RequestDeliveryNoteStatus())->handleUsingQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=POiz%2fab%2bc%3d');
+
+        $query = $mock->getLastRequest()->getUri()->getQuery();
+        $this->assertStringNotContainsString('%25', $query);
+        $this->assertSame('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=POiz/ab+c=', Query::parse($query)['qrUrl']);
+    }
+
+    /**
+     * @throws MyDataException
+     */
+    public function test_error_response_throws_an_exception(): void
+    {
+        MyDataRequest::setHandler(new MockHandler([
+            new Response(200, body: $this->getStub('error-response-807.xml')),
+        ]));
+
+        $request = new RequestDeliveryNoteStatus();
+
+        try {
+            $request->handleUsingQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=abc');
+            $this->fail('An ErrorResponseException was expected.');
+        } catch (ErrorResponseException $e) {
+            $this->assertSame('807: Invalid QR', $e->getMessage());
+            $this->assertSame(807, $e->getCode());
+            $this->assertSame('807', $e->getErrors()->first()->getCode());
+            $this->assertStringContainsString('<ResponseDoc', $request->getResponseXML());
+        }
+    }
+
+    public static function errorDocumentsWithoutErrors(): array
+    {
+        return [
+            'no responses' => ['<ResponseDoc/>'],
+            'no errors' => ['<ResponseDoc><response><statusCode>ValidationError</statusCode></response></ResponseDoc>'],
+        ];
+    }
+
+    /**
+     * @throws MyDataException
+     */
+    #[DataProvider('errorDocumentsWithoutErrors')]
+    public function test_an_error_document_without_errors_still_throws_cleanly(string $body): void
+    {
+        MyDataRequest::setHandler(new MockHandler([new Response(200, body: $body)]));
+
+        // Fail on any warning, as frameworks that turn warnings into exceptions would
+        set_error_handler(fn (int $no, string $message) => throw new ErrorException($message, 0, $no));
+        try {
+            (new RequestDeliveryNoteStatus())->handle(111111111111111);
+            $this->fail('An ErrorResponseException was expected.');
+        } catch (ErrorResponseException $e) {
+            $this->assertSame('myDATA returned an error response.', $e->getMessage());
+            $this->assertSame(0, $e->getCode());
+            $this->assertCount(0, $e->getErrors());
+        } finally {
+            restore_error_handler();
+        }
+    }
+
+    public function test_response_xml_is_null_before_a_request_is_made(): void
+    {
+        $request = new RequestDeliveryNoteStatus();
+
+        $this->assertNull($request->getResponseXML());
     }
 
     /**

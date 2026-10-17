@@ -51,15 +51,6 @@ class RequestVatInfo extends MyDataRequest
             'nextRowKey' => $nextRowKey
         ], fn ($value) => $value !== null);
 
-        // Get the response XML
-        $responseXML = $this->get($query);
-
-        // Parse the response XML
-        $reader = new VatInfoReader();
-        $vatInfo = $reader->parseXML($responseXML);
-
-        $this->responseDom = $reader->getDomDocument();
-
-        return $vatInfo;
+        return $this->read($this->get($query), new VatInfoReader());
     }
 }

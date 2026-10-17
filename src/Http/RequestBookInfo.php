@@ -51,15 +51,6 @@ abstract class RequestBookInfo extends MyDataRequest
         $query = compact('dateFrom', 'dateTo', 'counterVatNumber', 'entityVatNumber', 'invType', 'nextPartitionKey', 'nextRowKey');
         $query = array_filter($query);
 
-        // Get the response XML
-        $responseXML = $this->get($query);
-
-        // Parse the response XML
-        $reader = new BookInfoReader();
-        $bookInfo = $reader->parseXML($responseXML);
-
-        $this->responseDom = $reader->getDomDocument();
-
-        return $bookInfo;
+        return $this->read($this->get($query), new BookInfoReader());
     }
 }

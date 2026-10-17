@@ -4,6 +4,7 @@ namespace Firebed\AadeMyData\Xml;
 
 use DOMDocument;
 use DOMElement;
+use Firebed\AadeMyData\Exceptions\ErrorResponseException;
 use Firebed\AadeMyData\Models\Type;
 use IteratorAggregate;
 
@@ -14,14 +15,38 @@ abstract class XMLReader
 {
     private DOMDocument $document;
 
+    /**
+     * Whether this reader reads a ResponseDoc. Every other reader takes a ResponseDoc
+     * as myDATA reporting errors instead of the expected document, and throws them.
+     */
+    protected bool $readsResponseDoc = false;
+
+    /**
+     * @throws ErrorResponseException
+     */
     protected function loadXML(string $xmlString, Type $parent): void
     {
-        $this->document = new DOMDocument();
-        $this->document->preserveWhiteSpace = false;
-        $this->document->formatOutput = true;
-        $this->document->loadXML($xmlString);
+        $document = new DOMDocument();
+        $document->preserveWhiteSpace = false;
+        $document->formatOutput = true;
+        $document->loadXML($xmlString);
 
-        $this->parseDOMElement($this->document->documentElement->childNodes, $parent);
+        $this->loadDocument($document, $parent);
+    }
+
+    /**
+     * @param DOMDocument $document Loaded without whitespace nodes (preserveWhiteSpace = false)
+     * @throws ErrorResponseException
+     */
+    protected function loadDocument(DOMDocument $document, Type $parent): void
+    {
+        $this->document = $document;
+
+        if (! $this->readsResponseDoc && ($error = ErrorResponseException::fromDocument($document)) !== null) {
+            throw $error;
+        }
+
+        $this->parseDOMElement($document->documentElement->childNodes, $parent);
     }
 
     /**
