@@ -51,4 +51,13 @@ class InvoicesExpensesClassificationDetail extends Type
     {
         return $this->set('expensesClassificationDetailData', $expensesClassificationDetailData);
     }
+
+    public function set($key, $value): static
+    {
+        if ($key === 'expensesClassificationDetailData' && $value !== null && ! is_array($value)) {
+            return $this->push($key, $value);
+        }
+
+        return parent::set($key, $value);
+    }
 }

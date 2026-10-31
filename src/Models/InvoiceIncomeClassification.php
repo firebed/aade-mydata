@@ -126,6 +126,15 @@ class InvoiceIncomeClassification extends Type
         return $this->get('classificationPostMode');
     }
 
+    public function set($key, $value): static
+    {
+        if ($key === 'invoicesIncomeClassificationDetails' && $value !== null && ! is_array($value)) {
+            return $this->push($key, $value);
+        }
+
+        return parent::set($key, $value);
+    }
+
     public function toXml(bool $asDoc = false): string
     {
         $writer = new IncomeClassificationsDocWriter();

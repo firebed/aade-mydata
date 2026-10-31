@@ -3,7 +3,7 @@
 namespace Firebed\AadeMyData\Models;
 
 /**
- * @extends TypeArray<ExpensesClassification>
+ * @extends TypeArray<InvoiceExpensesClassification>
  */
 class ExpensesClassificationsDoc extends TypeArray
 {

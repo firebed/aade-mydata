@@ -58,5 +58,33 @@ class SendExpensesClassificationTest extends MyDataHttpTestCase
         $this->assertCount(1, $responseDoc);
         $this->assertEquals($invoiceMark, $responseDoc->first()->getInvoiceMark());
         $this->assertNotNull($responseDoc->first()->getClassificationMark());
+
+        $this->assertSame('ExpensesClassificationsDoc', $sender->getRequestDom()->documentElement->localName);
+        $this->assertStringContainsString('<ExpensesClassificationsDoc', $sender->getRequestXml());
+        $this->assertNotNull($sender->getResponseDom());
+        $this->assertSame('ResponseDoc', $sender->getResponseDom()->documentElement->localName);
+    }
+
+    /**
+     * @throws MyDataException
+     */
+    public function test_it_sends_post_per_invoice_query_parameter()
+    {
+        $response = new ResponseDocXmlFactory();
+        $response->addResponse(Response::factory()->make());
+
+        $handler = new MockHandler([
+            new HttpResponse(200, body: $response->asXML()),
+            new HttpResponse(200, body: $response->asXML()),
+        ]);
+        MyDataRequest::setHandler($handler);
+
+        $classification = (new InvoiceExpensesClassification())->setInvoiceMark(900001843640886);
+
+        (new SendExpensesClassification())->handle([$classification], postPerInvoice: true);
+        $this->assertSame('postPerInvoice=true', $handler->getLastRequest()->getUri()->getQuery());
+
+        (new SendExpensesClassification())->handle([$classification]);
+        $this->assertSame('', $handler->getLastRequest()->getUri()->getQuery());
     }
 }
