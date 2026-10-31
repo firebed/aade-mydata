@@ -59,7 +59,7 @@ class TypeArray extends Type implements IteratorAggregate, ArrayAccess, Countabl
      */
     public function first()
     {
-        return $this->attributes[$this->childKey][0] ?? null;
+        return $this->offsetGet(0);
     }
 
     /**
@@ -83,7 +83,7 @@ class TypeArray extends Type implements IteratorAggregate, ArrayAccess, Countabl
      */
     public function getIterator(): Traversable
     {
-        return new ArrayIterator($this->attributes[$this->childKey] ?? []);
+        return new ArrayIterator($this->all());
     }
 
     /**

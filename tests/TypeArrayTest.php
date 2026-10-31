@@ -10,12 +10,7 @@ class TypeArrayTest extends TestCase
 {
     public function test_an_empty_doc_can_be_iterated(): void
     {
-        $items = [];
-        foreach (new ResponseDoc() as $item) {
-            $items[] = $item;
-        }
-
-        $this->assertSame([], $items);
+        $this->assertSame([], iterator_to_array(new ResponseDoc()));
     }
 
     public function test_first_returns_null_on_an_empty_doc(): void

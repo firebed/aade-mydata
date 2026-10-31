@@ -17,7 +17,7 @@ class ClassificationsParsingTest extends TestCase
 {
     public function test_it_parses_a_single_income_classification_detail_as_a_list(): void
     {
-        $doc = (new RequestedDocReader())->parseXML($this->incomeXml($this->incomeDetail(1, ['E3_561_001'])));
+        $doc = (new RequestedDocReader())->parseXML($this->xml('income', $this->detail('income', 1, ['E3_561_001'])));
 
         $classification = $doc->getIncomeClassifications()->first();
         $this->assertInstanceOf(InvoiceIncomeClassification::class, $classification);
@@ -35,9 +35,9 @@ class ClassificationsParsingTest extends TestCase
 
     public function test_it_keeps_every_repeated_income_classification_detail_and_detail_data(): void
     {
-        $xml = $this->incomeXml(
-            $this->incomeDetail(1, ['E3_561_001', 'E3_561_002']).
-            $this->incomeDetail(2, ['E3_561_003'])
+        $xml = $this->xml('income', 
+            $this->detail('income', 1, ['E3_561_001', 'E3_561_002']).
+            $this->detail('income', 2, ['E3_561_003'])
         );
 
         $doc = (new RequestedDocReader())->parseXML($xml);
@@ -58,7 +58,7 @@ class ClassificationsParsingTest extends TestCase
 
     public function test_it_parses_a_single_expenses_classification_detail_as_a_list(): void
     {
-        $doc = (new RequestedDocReader())->parseXML($this->expensesXml($this->expensesDetail(1, ['E3_102_001'])));
+        $doc = (new RequestedDocReader())->parseXML($this->xml('expenses', $this->detail('expenses', 1, ['E3_102_001'])));
 
         $classification = $doc->getExpensesClassifications()->first();
         $this->assertInstanceOf(InvoiceExpensesClassification::class, $classification);
@@ -71,9 +71,9 @@ class ClassificationsParsingTest extends TestCase
 
     public function test_it_keeps_every_repeated_expenses_classification_detail_and_detail_data(): void
     {
-        $xml = $this->expensesXml(
-            $this->expensesDetail(1, ['E3_102_001', 'E3_102_002']).
-            $this->expensesDetail(2, ['E3_102_003'])
+        $xml = $this->xml('expenses', 
+            $this->detail('expenses', 1, ['E3_102_001', 'E3_102_002']).
+            $this->detail('expenses', 2, ['E3_102_003'])
         );
 
         $doc = (new RequestedDocReader())->parseXML($xml);
@@ -119,43 +119,31 @@ class ClassificationsParsingTest extends TestCase
         $this->assertCount(1, $expensesDetail->getExpensesClassificationDetailData());
     }
 
-    private function incomeDetail(int $lineNumber, array $types): string
+    /** Namespace prefix and a classification category per kind */
+    private const KINDS = ['income' => ['icls', 'category1_1'], 'expenses' => ['ecls', 'category2_1']];
+
+    private function detail(string $kind, int $lineNumber, array $types): string
     {
+        [$ns, $category] = self::KINDS[$kind];
+        $element = 'invoices'.ucfirst($kind).'ClassificationDetails';
+
         $data = '';
         foreach ($types as $type) {
-            $data .= "<incomeClassificationDetailData><icls:classificationType>$type</icls:classificationType><icls:classificationCategory>category1_1</icls:classificationCategory><icls:amount>100</icls:amount></incomeClassificationDetailData>";
+            $data .= "<{$kind}ClassificationDetailData><$ns:classificationType>$type</$ns:classificationType><$ns:classificationCategory>$category</$ns:classificationCategory><$ns:amount>100</$ns:amount></{$kind}ClassificationDetailData>";
         }
 
-        return "<invoicesIncomeClassificationDetails><lineNumber>$lineNumber</lineNumber>$data</invoicesIncomeClassificationDetails>";
+        return "<$element><lineNumber>$lineNumber</lineNumber>$data</$element>";
     }
 
-    private function expensesDetail(int $lineNumber, array $types): string
+    private function xml(string $kind, string $details): string
     {
-        $data = '';
-        foreach ($types as $type) {
-            $data .= "<expensesClassificationDetailData><ecls:classificationType>$type</ecls:classificationType><ecls:classificationCategory>category2_1</ecls:classificationCategory><ecls:amount>100</ecls:amount></expensesClassificationDetailData>";
-        }
+        $ns = self::KINDS[$kind][0];
 
-        return "<invoicesExpensesClassificationDetails><lineNumber>$lineNumber</lineNumber>$data</invoicesExpensesClassificationDetails>";
-    }
-
-    private function incomeXml(string $details): string
-    {
         return '<?xml version="1.0" encoding="UTF-8"?>'
-            .'<RequestedDoc xmlns="http://www.aade.gr/myDATA/invoice/v1.0" xmlns:icls="https://www.aade.gr/myDATA/incomeClassificaton/v1.0">'
-            .'<incomeClassificationsDoc><incomeInvoiceClassification>'
+            ."<RequestedDoc xmlns=\"http://www.aade.gr/myDATA/invoice/v1.0\" xmlns:$ns=\"https://www.aade.gr/myDATA/{$kind}Classificaton/v1.0\">"
+            ."<{$kind}ClassificationsDoc><{$kind}InvoiceClassification>"
             .'<invoiceMark>400001000000100</invoiceMark><classificationMark>400001000000300</classificationMark>'
             .$details
-            .'</incomeInvoiceClassification></incomeClassificationsDoc></RequestedDoc>';
-    }
-
-    private function expensesXml(string $details): string
-    {
-        return '<?xml version="1.0" encoding="UTF-8"?>'
-            .'<RequestedDoc xmlns="http://www.aade.gr/myDATA/invoice/v1.0" xmlns:ecls="https://www.aade.gr/myDATA/expensesClassificaton/v1.0">'
-            .'<expensesClassificationsDoc><expensesInvoiceClassification>'
-            .'<invoiceMark>400001000000100</invoiceMark><classificationMark>400001000000300</classificationMark>'
-            .$details
-            .'</expensesInvoiceClassification></expensesClassificationsDoc></RequestedDoc>';
+            ."</{$kind}InvoiceClassification></{$kind}ClassificationsDoc></RequestedDoc>";
     }
 }

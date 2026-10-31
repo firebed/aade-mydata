@@ -37,15 +37,15 @@ class SendExpensesClassification extends MyDataXmlRequest
      */
     public function handle(ExpensesClassificationsDoc|array $expensesClassifications, bool $postPerInvoice = false): ResponseDoc
     {
-        if (!$expensesClassifications instanceof ExpensesClassificationsDoc) {
+        if (! $expensesClassifications instanceof ExpensesClassificationsDoc) {
             $expensesClassifications = new ExpensesClassificationsDoc($expensesClassifications);
         }
-        
+
         $query = [];
         if ($postPerInvoice) {
             $query['postPerInvoice'] = 'true';
         }
-        
+
         return $this->request(new ExpensesClassificationsDocWriter(), new ResponseDocReader(), $expensesClassifications, $query);
     }
 }

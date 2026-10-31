@@ -18,7 +18,7 @@ abstract class MyDataXmlRequest extends MyDataRequest
     /**
      * @throws MyDataException
      */
-    protected function request(XMLWriter $writer, XMLReader $reader, mixed $data, ?array $query = null):ResponseDoc|StatementResponseDoc
+    protected function request(XMLWriter $writer, XMLReader $reader, mixed $data, ?array $query = null): ResponseDoc|StatementResponseDoc
     {
         // Create the request XML
         $requestXML = $writer->asXML($data);
