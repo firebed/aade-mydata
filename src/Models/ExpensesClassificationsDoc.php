@@ -3,7 +3,7 @@
 namespace Firebed\AadeMyData\Models;
 
 /**
- * @extends TypeArray<ExpensesClassification>
+ * @extends TypeArray<InvoiceExpensesClassification>
  */
 class ExpensesClassificationsDoc extends TypeArray
 {
@@ -17,10 +17,5 @@ class ExpensesClassificationsDoc extends TypeArray
     public function __construct(InvoiceExpensesClassification|array $classifications = [])
     {
         parent::__construct('expensesInvoiceClassification', $classifications);
-    }
-
-    public function offsetGet($offset): InvoiceExpensesClassification
-    {
-        return $this->attributes['expensesInvoiceClassification'][$offset];
     }
 }

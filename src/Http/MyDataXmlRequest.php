@@ -18,14 +18,14 @@ abstract class MyDataXmlRequest extends MyDataRequest
     /**
      * @throws MyDataException
      */
-    protected function request(XMLWriter $writer, XMLReader $reader, mixed $data): ResponseDoc|StatementResponseDoc
+    protected function request(XMLWriter $writer, XMLReader $reader, mixed $data, ?array $query = null): ResponseDoc|StatementResponseDoc
     {
         // Create the request XML
         $requestXML = $writer->asXML($data);
         $this->requestDom = $writer->getDomDocument();
 
         // Get the response XML
-        $responseXML = $this->post(body: $requestXML);
+        $responseXML = $this->post($query, $requestXML);
 
         // Parse the response XML
         $responseDoc = $reader->parseXML($responseXML);

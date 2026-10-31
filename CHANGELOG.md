@@ -5,6 +5,20 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+
+- `SendIncomeClassification` and `SendExpensesClassification` extend `MyDataXmlRequest`, like `SendInvoices`. `MyDataXmlRequest::request()` takes an optional `$query` argument.
+
+### Fixed
+
+- Parsing income and expenses classifications (e.g. from `RequestDocs` or `RequestTransmittedDocs`) keeps every `invoicesIncomeClassificationDetails`, `incomeClassificationDetailData`, `invoicesExpensesClassificationDetails` and `expensesClassificationDetailData` element. A single element no longer makes the getters fail with a `TypeError`, and repeated elements no longer overwrite each other.
+- `SendIncomeClassification` and `SendExpensesClassification` keep the request in `getRequestDom()` and set `getResponseDom()`. Before, the response replaced the request and `getResponseDom()` stayed `null`.
+- Iterating an empty `TypeArray` document (e.g. a `ResponseDoc` with no responses) no longer fails, and `first()` returns `null` on an empty document.
+- `ExpensesClassificationsDoc` returns `null` for a missing item (e.g. `$doc[0]` on an empty document) instead of throwing a `TypeError`, like the other documents.
+- `IncomeClassificationsDoc` and `ExpensesClassificationsDoc` declare `InvoiceIncomeClassification` and `InvoiceExpensesClassification` as their items, so static analysis knows about `getInvoiceMark()` and `getClassificationMark()`.
+
 ## [5.14.0] - 2026-10-18
 
 ### Upgrading

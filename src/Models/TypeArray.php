@@ -83,7 +83,7 @@ class TypeArray extends Type implements IteratorAggregate, ArrayAccess, Countabl
      */
     public function getIterator(): Traversable
     {
-        return new ArrayIterator($this->attributes[$this->childKey]);
+        return new ArrayIterator($this->all());
     }
 
     /**
@@ -97,11 +97,11 @@ class TypeArray extends Type implements IteratorAggregate, ArrayAccess, Countabl
 
     /**
      * @param int $offset
-     * @return TType
+     * @return TType|null
      */
     public function offsetGet(mixed $offset): mixed
     {
-        return $this->attributes[$this->childKey][$offset];
+        return $this->attributes[$this->childKey][$offset] ?? null;
     }
 
     /**

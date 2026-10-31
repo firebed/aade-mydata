@@ -3,19 +3,14 @@
 namespace Firebed\AadeMyData\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
-use Firebed\AadeMyData\Http\Traits\HasRequestDom;
-use Firebed\AadeMyData\Http\Traits\HasResponseDom;
 use Firebed\AadeMyData\Models\IncomeClassificationsDoc;
 use Firebed\AadeMyData\Models\InvoiceIncomeClassification;
 use Firebed\AadeMyData\Models\ResponseDoc;
 use Firebed\AadeMyData\Xml\IncomeClassificationsDocWriter;
 use Firebed\AadeMyData\Xml\ResponseDocReader;
 
-class SendIncomeClassification extends MyDataRequest
+class SendIncomeClassification extends MyDataXmlRequest
 {
-    use HasResponseDom;
-    use HasRequestDom;
-
     /**
      * <ul>
      * <li>Το πεδίο transactionMode όταν παίρνει την τιμή 1 υποδηλώνει απόρριψη του
@@ -47,16 +42,6 @@ class SendIncomeClassification extends MyDataRequest
             $query['postPerInvoice'] = 'true';
         }
 
-        $writer = new IncomeClassificationsDocWriter();
-        $requestXml = $writer->asXML($incomeClassifications);
-        $this->requestDom = $writer->getDomDocument();
-
-        $responseXml = $this->post($query, $requestXml);
-
-        $reader = new ResponseDocReader();
-        $responseDoc = $reader->parseXML($responseXml);
-        $this->requestDom = $reader->getDomDocument();
-
-        return $responseDoc;
+        return $this->request(new IncomeClassificationsDocWriter(), new ResponseDocReader(), $incomeClassifications, $query);
     }
 }
