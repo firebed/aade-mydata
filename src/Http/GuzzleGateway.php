@@ -126,7 +126,10 @@ class GuzzleGateway implements Gateway
             return null;
         }
 
-        // Keep the exception message readable
+        // Keep the exception message readable: valid UTF-8 (mb_substr only replaces
+        // invalid bytes itself since PHP 8.3) and capped in length
+        $body = mb_scrub($body, 'UTF-8');
+
         return mb_strlen($body) > 500 ? mb_substr($body, 0, 500) . '…' : $body;
     }
 }
