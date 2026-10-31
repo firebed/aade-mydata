@@ -5,7 +5,7 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [5.14.1] - 2026-10-31
 
 ### Changed
 
@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - `SendIncomeClassification` and `SendExpensesClassification` keep the request in `getRequestDom()` and set `getResponseDom()`. Before, the response replaced the request and `getResponseDom()` stayed `null`.
 - Iterating an empty `TypeArray` document (e.g. a `ResponseDoc` with no responses) no longer fails, and `first()` returns `null` on an empty document.
 - `ExpensesClassificationsDoc` returns `null` for a missing item (e.g. `$doc[0]` on an empty document) instead of throwing a `TypeError`, like the other documents.
+- On PHP 8.1 and 8.2, the `MyDataAuthenticationException` message of a 401 whose body is not valid UTF-8 is valid UTF-8, with invalid bytes replaced by `?` as on PHP 8.3 and later.
 - `IncomeClassificationsDoc` and `ExpensesClassificationsDoc` declare `InvoiceIncomeClassification` and `InvoiceExpensesClassification` as their items, so static analysis knows about `getInvoiceMark()` and `getClassificationMark()`.
 
 ## [5.14.0] - 2026-10-18
@@ -413,7 +414,10 @@ Major release (no published release notes).
 
 Initial release.
 
-[Unreleased]: https://github.com/firebed/aade-mydata/compare/v5.12.0...HEAD
+[Unreleased]: https://github.com/firebed/aade-mydata/compare/v5.14.1...HEAD
+[5.14.1]: https://github.com/firebed/aade-mydata/compare/v5.14.0...v5.14.1
+[5.14.0]: https://github.com/firebed/aade-mydata/compare/v5.13.0...v5.14.0
+[5.13.0]: https://github.com/firebed/aade-mydata/compare/v5.12.0...v5.13.0
 [5.12.0]: https://github.com/firebed/aade-mydata/compare/v5.11.0...v5.12.0
 [5.11.0]: https://github.com/firebed/aade-mydata/compare/v5.10.4...v5.11.0
 [5.10.0]: https://github.com/firebed/aade-mydata/compare/v5.9.0...v5.10.0
