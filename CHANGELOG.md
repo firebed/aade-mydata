@@ -5,7 +5,7 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [5.14.2] - 2026-11-01
 
 ### Fixed
 
@@ -423,7 +423,8 @@ Major release (no published release notes).
 
 Initial release.
 
-[Unreleased]: https://github.com/firebed/aade-mydata/compare/v5.14.1...HEAD
+[Unreleased]: https://github.com/firebed/aade-mydata/compare/v5.14.2...HEAD
+[5.14.2]: https://github.com/firebed/aade-mydata/compare/v5.14.1...v5.14.2
 [5.14.1]: https://github.com/firebed/aade-mydata/compare/v5.14.0...v5.14.1
 [5.14.0]: https://github.com/firebed/aade-mydata/compare/v5.13.0...v5.14.0
 [5.13.0]: https://github.com/firebed/aade-mydata/compare/v5.12.0...v5.13.0
