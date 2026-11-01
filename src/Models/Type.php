@@ -120,7 +120,7 @@ abstract class Type
             }
 
             if (is_subclass_of($cast, TypeArray::class)) {
-                $this->$set(array_shift($value));
+                $this->$set(is_array($value) && ! array_is_list($value) ? array_shift($value) : $value);
                 continue;
             }
 

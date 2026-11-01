@@ -79,6 +79,8 @@
 
 Το πεδίο `packingsDeclarations` είναι λίστα από αντικείμενα `PackagingDetail` που περιέχει δηλώσεις συσκευασιών για παραστατικά διακίνησης.
 
+Οι συσκευασίες γράφονται ως στοιχεία `Packages` μέσα σε ένα `packingsDeclarations`, αφού το myDATA δέχεται μία μόνο δήλωση ανά παραστατικό. Το myDATA απορρίπτει ποσότητα 0 ή μικρότερη, καθώς και `otherPackagingTypeTitle` που λείπει από `PackagingType::OTHER` ή δηλώνεται με άλλο είδος. Η βιβλιοθήκη δεν τα ελέγχει.
+
 ```php
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\PackagingDetail;
 use Firebed\AadeMyData\Enums\DigitalGoodsMovement\PackagingType;

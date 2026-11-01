@@ -11,6 +11,7 @@ use Firebed\AadeMyData\Enums\TransmissionFailure;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\DeliveryEvent;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\DeliveryLifecycle;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\PackagingDetail;
+use Firebed\AadeMyData\Models\DigitalGoodsMovement\PackingsDeclaration;
 use Firebed\AadeMyData\Traits\HasFactory;
 use Firebed\AadeMyData\Xml\InvoicesDocWriter;
 
@@ -50,7 +51,7 @@ class Invoice extends Type
         'invoiceDetails' => InvoiceDetails::class,
         'taxesTotals' => TaxesTotals::class,
         'invoiceSummary' => InvoiceSummary::class,
-        'packingsDeclarations' => PackagingDetail::class,
+        'packingsDeclarations' => PackingsDeclaration::class,
         'invoiceDeliveryStatus' => DeliveryStatus::class,
         'deliveryLifecycle' => DeliveryLifecycle::class,
     ];
@@ -435,7 +436,7 @@ class Invoice extends Type
      */
     public function getPackingsDeclarations(): ?array
     {
-        return $this->get('packingsDeclarations');
+        return $this->get('packingsDeclarations')?->all();
     }
 
     /**
@@ -448,7 +449,7 @@ class Invoice extends Type
      */
     public function setPackingsDeclarations(?array $packingsDeclarations): static
     {
-        return $this->set('packingsDeclarations', $packingsDeclarations);
+        return $this->set('packingsDeclarations', $packingsDeclarations ? new PackingsDeclaration($packingsDeclarations) : null);
     }
 
     /**
@@ -458,7 +459,9 @@ class Invoice extends Type
      */
     public function addPackagingDeclaration(PackagingDetail $packagingDetailType): static
     {
-        return $this->push('packingsDeclarations', $packagingDetailType);
+        $packingsDeclaration = $this->get('packingsDeclarations') ?? new PackingsDeclaration();
+        $packingsDeclaration->add($packagingDetailType);
+        return $this->set('packingsDeclarations', $packingsDeclaration);
     }
 
     /**

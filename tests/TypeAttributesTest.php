@@ -4,6 +4,7 @@ namespace Tests;
 
 use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\InvoiceHeader;
+use Firebed\AadeMyData\Models\PaymentMethodDetail;
 use PHPUnit\Framework\TestCase;
 use Tests\Traits\HandlesInvoiceXml;
 
@@ -22,6 +23,17 @@ class TypeAttributesTest extends TestCase
 
             $this->assertEquals($invoiceXml, $invoiceCopyXml);
         }
+    }
+
+    public function test_list_type_attribute_accepts_a_plain_list_of_objects(): void
+    {
+        $invoice = new Invoice(['paymentMethods' => [
+            new PaymentMethodDetail(['type' => 3, 'amount' => 10]),
+            new PaymentMethodDetail(['type' => 5, 'amount' => 20]),
+        ]]);
+
+        $this->assertCount(2, $invoice->getPaymentMethods());
+        $this->assertEquals(20, $invoice->getPaymentMethods()[1]->getAmount());
     }
 
     public function test_type_constructor_with_mixed_attributes()

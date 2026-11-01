@@ -5,6 +5,15 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- An invoice's packages are written as `<packingsDeclarations><Packages>…</Packages></packingsDeclarations>`, as the XSD requires (new `PackingsDeclaration` model). Before, each `PackagingDetail` became its own `packingsDeclarations` element, which myDATA rejects (error 101). All packages go into one `packingsDeclarations`, since myDATA accepts only one per invoice.
+- Reading an invoice keeps its packages: `getPackingsDeclarations()` returns them as `PackagingDetail[]` instead of throwing a `TypeError`, and writing the invoice again no longer produces an empty `<packingsDeclarations/>`.
+- `setPackingsDeclarations([])` removes the packages instead of leaving an element that fails XSD validation.
+- Building a model from attributes accepts a plain list of objects for a list type (e.g. `new Invoice(['paymentMethods' => [$a, $b]])`). Before, only the first item was passed on, which failed with a `TypeError`.
+
 ## [5.14.1] - 2026-10-31
 
 ### Changed
