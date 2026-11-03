@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Enums\DigitalGoodsMovement\DeliveryOutcomeType;
@@ -19,7 +21,7 @@ class ConfirmDeliveryOutcomeTest extends DigitalGoodsMovementTestCase
     {
         $this->initErpDev();
 
-        $request = new ConfirmDeliveryOutcome();
+        $request = new ConfirmDeliveryOutcome;
         $this->assertEquals('https://mydataapidev.aade.gr/ConfirmDeliveryOutcome', $request->getUrl());
     }
 
@@ -27,7 +29,7 @@ class ConfirmDeliveryOutcomeTest extends DigitalGoodsMovementTestCase
     {
         $this->initErpProd();
 
-        $request = new ConfirmDeliveryOutcome();
+        $request = new ConfirmDeliveryOutcome;
         $this->assertEquals('https://mydatapi.aade.gr/myDATA/ConfirmDeliveryOutcome', $request->getUrl());
     }
 
@@ -40,8 +42,8 @@ class ConfirmDeliveryOutcomeTest extends DigitalGoodsMovementTestCase
 
         $this->expectException(UnsupportedChannelException::class);
 
-        $request = new ConfirmDeliveryOutcome();
-        $request->handle(new DeliveryOutcome());
+        $request = new ConfirmDeliveryOutcome;
+        $request->handle(new DeliveryOutcome);
     }
 
     /**
@@ -53,8 +55,8 @@ class ConfirmDeliveryOutcomeTest extends DigitalGoodsMovementTestCase
 
         $this->expectException(UnsupportedChannelException::class);
 
-        $request = new ConfirmDeliveryOutcome();
-        $request->handle(new DeliveryOutcome());
+        $request = new ConfirmDeliveryOutcome;
+        $request->handle(new DeliveryOutcome);
     }
 
     /**
@@ -66,7 +68,7 @@ class ConfirmDeliveryOutcomeTest extends DigitalGoodsMovementTestCase
             new Response(200, body: $this->getStub('confirm-delivery-outcome-response.xml')),
         ]));
 
-        $outcome = new DeliveryOutcome();
+        $outcome = new DeliveryOutcome;
         $outcome->setQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url');
         $outcome->setOutcome(DeliveryOutcomeType::FULL);
         $outcome->addDeliveredPackaging(new PackagingDetail(PackagingType::CRATE, 10));
@@ -75,7 +77,7 @@ class ConfirmDeliveryOutcomeTest extends DigitalGoodsMovementTestCase
         $this->assertEmpty($outcome->validate());
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('confirm-delivery-outcome-request.xml'), $outcome->toXml());
 
-        $confirm = new ConfirmDeliveryOutcome();
+        $confirm = new ConfirmDeliveryOutcome;
         $response = $confirm->handle($outcome);
 
         $this->assertCount(1, $response);

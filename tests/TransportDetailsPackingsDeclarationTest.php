@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use Firebed\AadeMyData\Enums\DigitalGoodsMovement\PackagingType;
@@ -13,7 +15,7 @@ class TransportDetailsPackingsDeclarationTest extends TestCase
 {
     public function test_it_serializes_repeated_packings_declaration_to_xml(): void
     {
-        $details = new TransportDetails();
+        $details = new TransportDetails;
         $details->setVehicleNumber('ABC1234');
         $details->setTransportType(1);
         $details->setCarrierVatNumber('123456789');
@@ -22,7 +24,7 @@ class TransportDetailsPackingsDeclarationTest extends TestCase
             new PackagingDetail(PackagingType::BOX, 5),
         ]);
 
-        $transport = new Transport();
+        $transport = new Transport;
         $transport->setQrUrl('https://example.test/qr');
         $transport->setTransportDetail($details);
 
@@ -38,13 +40,13 @@ class TransportDetailsPackingsDeclarationTest extends TestCase
 
     public function test_transport_with_packings_declaration_passes_xsd_validation(): void
     {
-        $details = new TransportDetails();
+        $details = new TransportDetails;
         $details->setVehicleNumber('ABC1234');
         $details->setTransportType(1);
         $details->setCarrierVatNumber('123456789');
         $details->addPackingsDeclaration(new PackagingDetail(PackagingType::PALLET, 3));
 
-        $transport = new Transport();
+        $transport = new Transport;
         $transport->setQrUrl('https://example.test/qr');
         $transport->setTransportDetail($details);
 
@@ -54,7 +56,7 @@ class TransportDetailsPackingsDeclarationTest extends TestCase
     public function test_repeated_elements_are_collected_when_read(): void
     {
         // Mirrors how XMLReader populates a non-collection Type: set() is called once per element.
-        $details = new TransportDetails();
+        $details = new TransportDetails;
         $details->set('packingsDeclaration', new PackagingDetail(PackagingType::PALLET, 1));
         $details->set('packingsDeclaration', new PackagingDetail(PackagingType::BOX, 2));
 
@@ -63,7 +65,7 @@ class TransportDetailsPackingsDeclarationTest extends TestCase
 
     public function test_add_packings_declaration_appends(): void
     {
-        $details = new TransportDetails();
+        $details = new TransportDetails;
         $details->addPackingsDeclaration(new PackagingDetail(PackagingType::CRATE, 4));
 
         $this->assertCount(1, $details->getPackingsDeclaration());

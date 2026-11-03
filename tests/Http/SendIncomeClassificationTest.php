@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http;
 
-use Firebed\AadeMyData\Enums\ExpenseClassificationType;
 use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
 use Firebed\AadeMyData\Enums\IncomeClassificationType;
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -25,7 +26,7 @@ class SendIncomeClassificationTest extends MyDataHttpTestCase
     {
         $invoiceMark = 900001843640886;
 
-        $classification = new InvoiceIncomeClassification();
+        $classification = new InvoiceIncomeClassification;
         $classification->setInvoiceMark($invoiceMark);
         $classification->setInvoicesIncomeClassificationDetails([
             new InvoicesIncomeClassificationDetail([
@@ -34,13 +35,13 @@ class SendIncomeClassificationTest extends MyDataHttpTestCase
                     new IncomeClassification([
                         'classificationType' => IncomeClassificationType::E3_561_001,
                         'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_2,
-                        'amount' => 10
+                        'amount' => 10,
                     ]),
                 ],
             ]),
         ]);
 
-        $response = new ResponseDocXmlFactory();
+        $response = new ResponseDocXmlFactory;
         $response->addResponse(Response::factory()->make([
             'invoiceMark' => $invoiceMark,
         ]));
@@ -49,7 +50,7 @@ class SendIncomeClassificationTest extends MyDataHttpTestCase
             new HttpResponse(200, body: $response->asXML()),
         ]));
 
-        $sender = new SendIncomeClassification();
+        $sender = new SendIncomeClassification;
         $responseDoc = $sender->handle([$classification]);
 
         $this->assertCount(1, $responseDoc);
@@ -67,7 +68,7 @@ class SendIncomeClassificationTest extends MyDataHttpTestCase
      */
     public function test_it_sends_post_per_invoice_query_parameter()
     {
-        $response = new ResponseDocXmlFactory();
+        $response = new ResponseDocXmlFactory;
         $response->addResponse(Response::factory()->make());
 
         $handler = new MockHandler([
@@ -76,12 +77,12 @@ class SendIncomeClassificationTest extends MyDataHttpTestCase
         ]);
         MyDataRequest::setHandler($handler);
 
-        $classification = (new InvoiceIncomeClassification())->setInvoiceMark(900001843640886);
+        $classification = (new InvoiceIncomeClassification)->setInvoiceMark(900001843640886);
 
-        (new SendIncomeClassification())->handle($classification, postPerInvoice: true);
+        (new SendIncomeClassification)->handle($classification, postPerInvoice: true);
         $this->assertSame('postPerInvoice=true', $handler->getLastRequest()->getUri()->getQuery());
 
-        (new SendIncomeClassification())->handle($classification);
+        (new SendIncomeClassification)->handle($classification);
         $this->assertSame('', $handler->getLastRequest()->getUri()->getQuery());
     }
 }

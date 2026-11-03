@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -14,14 +16,14 @@ class CancelReceivingNoteTest extends MyDataHttpTestCase
     public function test_dev_provider_url_is_correct(): void
     {
         MyDataRequest::init('test_user_id', 'test_user_secret', 'dev', true);
-        $request = new CancelReceivingNote();
+        $request = new CancelReceivingNote;
         $this->assertEquals('https://mydataapidev.aade.gr/myDataProvider/CancelReceivingNote', $request->getUrl());
     }
 
     public function test_prod_provider_url_is_correct(): void
     {
         MyDataRequest::init('test_user_id', 'test_user_secret', 'prod', true);
-        $request = new CancelReceivingNote();
+        $request = new CancelReceivingNote;
         $this->assertEquals('https://mydatapi.aade.gr/myDataProvider/CancelReceivingNote', $request->getUrl());
     }
 
@@ -34,7 +36,7 @@ class CancelReceivingNoteTest extends MyDataHttpTestCase
 
         $this->expectException(UnsupportedChannelException::class);
 
-        (new CancelReceivingNote())->handle('400008989888809', '123456789');
+        (new CancelReceivingNote)->handle('400008989888809', '123456789');
     }
 
     /**
@@ -48,7 +50,7 @@ class CancelReceivingNoteTest extends MyDataHttpTestCase
             new Response(200, body: $this->getStub('cancel-receiving-note-response')),
         ]));
 
-        $request = new CancelReceivingNote();
+        $request = new CancelReceivingNote;
         $responseDoc = $request->handle('400008989888809', '123456789');
 
         $this->assertCount(1, $responseDoc);

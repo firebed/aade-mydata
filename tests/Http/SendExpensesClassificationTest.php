@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http;
 
 use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
@@ -23,8 +25,8 @@ class SendExpensesClassificationTest extends MyDataHttpTestCase
     public function test_it_sends_expenses_classification()
     {
         $invoiceMark = 900001843640886;
-        
-        $classification = new InvoiceExpensesClassification();
+
+        $classification = new InvoiceExpensesClassification;
         $classification->setInvoiceMark($invoiceMark);
         $classification->setInvoicesExpensesClassificationDetails([
             new InvoicesExpensesClassificationDetail([
@@ -33,17 +35,17 @@ class SendExpensesClassificationTest extends MyDataHttpTestCase
                     new ExpensesClassification([
                         'classificationType' => ExpenseClassificationType::E3_102_001,
                         'classificationCategory' => ExpenseClassificationCategory::CATEGORY_2_1,
-                        'amount' => 10
+                        'amount' => 10,
                     ]),
                     new ExpensesClassification([
                         'classificationType' => ExpenseClassificationType::VAT_361,
-                        'amount' => 10
-                    ])
+                        'amount' => 10,
+                    ]),
                 ],
             ]),
         ]);
 
-        $response = new ResponseDocXmlFactory();
+        $response = new ResponseDocXmlFactory;
         $response->addResponse(Response::factory()->make([
             'invoiceMark' => $invoiceMark,
         ]));
@@ -52,7 +54,7 @@ class SendExpensesClassificationTest extends MyDataHttpTestCase
             new HttpResponse(200, body: $response->asXML()),
         ]));
 
-        $sender = new SendExpensesClassification();
+        $sender = new SendExpensesClassification;
         $responseDoc = $sender->handle([$classification]);
 
         $this->assertCount(1, $responseDoc);
@@ -70,7 +72,7 @@ class SendExpensesClassificationTest extends MyDataHttpTestCase
      */
     public function test_it_sends_post_per_invoice_query_parameter()
     {
-        $response = new ResponseDocXmlFactory();
+        $response = new ResponseDocXmlFactory;
         $response->addResponse(Response::factory()->make());
 
         $handler = new MockHandler([
@@ -79,12 +81,12 @@ class SendExpensesClassificationTest extends MyDataHttpTestCase
         ]);
         MyDataRequest::setHandler($handler);
 
-        $classification = (new InvoiceExpensesClassification())->setInvoiceMark(900001843640886);
+        $classification = (new InvoiceExpensesClassification)->setInvoiceMark(900001843640886);
 
-        (new SendExpensesClassification())->handle([$classification], postPerInvoice: true);
+        (new SendExpensesClassification)->handle([$classification], postPerInvoice: true);
         $this->assertSame('postPerInvoice=true', $handler->getLastRequest()->getUri()->getQuery());
 
-        (new SendExpensesClassification())->handle([$classification]);
+        (new SendExpensesClassification)->handle([$classification]);
         $this->assertSame('', $handler->getLastRequest()->getUri()->getQuery());
     }
 }

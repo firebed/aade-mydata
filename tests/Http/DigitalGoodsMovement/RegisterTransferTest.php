@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Enums\DigitalGoodsMovement\TransportType;
@@ -19,7 +21,7 @@ class RegisterTransferTest extends DigitalGoodsMovementTestCase
     {
         $this->initErpDev();
 
-        $request = new RegisterTransfer();
+        $request = new RegisterTransfer;
         $this->assertEquals('https://mydataapidev.aade.gr/RegisterTransfer', $request->getUrl());
     }
 
@@ -27,7 +29,7 @@ class RegisterTransferTest extends DigitalGoodsMovementTestCase
     {
         $this->initErpProd();
 
-        $request = new RegisterTransfer();
+        $request = new RegisterTransfer;
         $this->assertEquals('https://mydatapi.aade.gr/myDATA/RegisterTransfer', $request->getUrl());
     }
 
@@ -40,8 +42,8 @@ class RegisterTransferTest extends DigitalGoodsMovementTestCase
 
         $this->expectException(UnsupportedChannelException::class);
 
-        $request = new RegisterTransfer();
-        $request->handle(new Transport());
+        $request = new RegisterTransfer;
+        $request->handle(new Transport);
     }
 
     /**
@@ -53,8 +55,8 @@ class RegisterTransferTest extends DigitalGoodsMovementTestCase
 
         $this->expectException(UnsupportedChannelException::class);
 
-        $request = new RegisterTransfer();
-        $request->handle(new Transport());
+        $request = new RegisterTransfer;
+        $request->handle(new Transport);
     }
 
     /**
@@ -66,21 +68,21 @@ class RegisterTransferTest extends DigitalGoodsMovementTestCase
             new Response(200, body: $this->getStub('register-transfer-response')),
         ]));
 
-        $details = new TransportDetails();
+        $details = new TransportDetails;
         $details->setVehicleNumber('AHN0011');
         $details->setTransportType(TransportType::PRIVATE_USE_TRUCK);
         $details->setCarrierVatNumber('777777777');
         $details->setTrailorNumber('P22345');
         $details->setLocation(new Location(41.303921, -81.901693));
 
-        $transport = new Transport();
+        $transport = new Transport;
         $transport->setQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_qr_url');
         $transport->setTransportDetail($details);
 
         $this->assertEmpty($transport->validate());
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('register-transfer-request.xml'), $transport->toXml());
 
-        $registerTransfer = new RegisterTransfer();
+        $registerTransfer = new RegisterTransfer;
         $response = $registerTransfer->handle($transport);
 
         $this->assertCount(1, $response);

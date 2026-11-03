@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use Firebed\AadeMyData\Enums\EntityTypes;
@@ -26,7 +28,7 @@ class InvoiceSimilarityTest extends TestCase
     {
         $invoiceFromXml = $this->getInvoiceFromXml();
 
-        $invoice = new Invoice();
+        $invoice = new Invoice;
         $invoice->setIssuer($this->createIssuer());
         $invoice->setCounterpart($this->createCounterpart());
         $invoice->setInvoiceHeader($this->createInvoiceHeader());
@@ -38,14 +40,14 @@ class InvoiceSimilarityTest extends TestCase
 
     private function createIssuer(): Issuer
     {
-        $address = new Address();
+        $address = new Address;
         $address->setStreet('28ης Οκτωβρίου');
         $address->setNumber('54A');
         $address->setPostalCode('44458');
         $address->setCity('44458');
         $address->setCity('Ηράκλειο');
 
-        $issuer = new Issuer();
+        $issuer = new Issuer;
         $issuer->setVatNumber('888888888');
         $issuer->setCountry('GR');
         $issuer->setBranch(1);
@@ -60,13 +62,13 @@ class InvoiceSimilarityTest extends TestCase
 
     private function createCounterpart(): Counterpart
     {
-        $address = new Address();
+        $address = new Address;
         $address->setStreet('Τσιμισκή');
         $address->setNumber('52A');
         $address->setPostalCode('33333');
         $address->setCity('Χανιά');
 
-        $counterpart = new Counterpart();
+        $counterpart = new Counterpart;
         $counterpart->setVatNumber('999999999');
         $counterpart->setCountry('GR');
         $counterpart->setBranch(0);
@@ -81,7 +83,7 @@ class InvoiceSimilarityTest extends TestCase
 
     private function createInvoiceHeader(): InvoiceHeader
     {
-        $invoiceHeader = new InvoiceHeader();
+        $invoiceHeader = new InvoiceHeader;
         $invoiceHeader->setSeries('A');
         $invoiceHeader->setAA(101);
         $invoiceHeader->setIssueDate('2020-04-08');
@@ -96,10 +98,10 @@ class InvoiceSimilarityTest extends TestCase
         $invoiceHeader->setDispatchDate('2024-02-13');
         $invoiceHeader->setDispatchTime('00:00');
         $invoiceHeader->setVehicleNumber('KHB4201');
-        $invoiceHeader->setMovePurpose(MovePurpose::TYPE_19);
+        $invoiceHeader->setMovePurpose(MovePurpose::OTHER_MOVEMENTS);
         $invoiceHeader->setFuelInvoice(true);
-        $invoiceHeader->setSpecialInvoiceCategory(SpecialInvoiceCategory::TYPE_5);
-        $invoiceHeader->setInvoiceVariationType(InvoiceVariationType::TYPE_3);
+        $invoiceHeader->setSpecialInvoiceCategory(SpecialInvoiceCategory::COMPLEX_DOMESTIC_FOREIGN_TRANSACTIONS);
+        $invoiceHeader->setInvoiceVariationType(InvoiceVariationType::DEVIATION_BY_RECIPIENT);
         $invoiceHeader->addOtherCorrelatedEntities($this->createCorrelatedEntity1());
         $invoiceHeader->addOtherCorrelatedEntities($this->createCorrelatedEntity2());
         $invoiceHeader->setOtherDeliveryNoteHeader($this->createOtherDeliveryNoteHeader());
@@ -111,19 +113,20 @@ class InvoiceSimilarityTest extends TestCase
         $invoiceHeader->addMultipleConnectedMark(8000000165487101);
         $invoiceHeader->setTableAA('A14');
         $invoiceHeader->setTotalCancelDeliveryOrders(true);
+
         return $invoiceHeader;
     }
 
     private function createCorrelatedEntity1(): EntityType
     {
-        $entity = new EntityType();
-        $entity->setType(EntityTypes::TYPE_3);
-        $entity->setEntityData(new Party());
+        $entity = new EntityType;
+        $entity->setType(EntityTypes::CARRIER);
+        $entity->setEntityData(new Party);
         $entity->getEntityData()->setVatNumber('888888888');
         $entity->getEntityData()->setCountry('GR');
         $entity->getEntityData()->setBranch(1);
         $entity->getEntityData()->setName('Παπαδόπουλος ΙΚΕ');
-        $entity->getEntityData()->setAddress(new Address());
+        $entity->getEntityData()->setAddress(new Address);
         $entity->getEntityData()->getAddress()->setStreet('Λεωφόρου Στρατού');
         $entity->getEntityData()->getAddress()->setNumber('328');
         $entity->getEntityData()->getAddress()->setPostalCode('67550');
@@ -137,14 +140,14 @@ class InvoiceSimilarityTest extends TestCase
 
     private function createCorrelatedEntity2(): EntityType
     {
-        $entity = new EntityType();
-        $entity->setType(EntityTypes::TYPE_2);
-        $entity->setEntityData(new Party());
+        $entity = new EntityType;
+        $entity->setType(EntityTypes::INTERMEDIARY);
+        $entity->setEntityData(new Party);
         $entity->getEntityData()->setVatNumber('IT999999999');
         $entity->getEntityData()->setCountry('IT');
         $entity->getEntityData()->setBranch(2);
         $entity->getEntityData()->setName('Acme Limited');
-        $entity->getEntityData()->setAddress(new Address());
+        $entity->getEntityData()->setAddress(new Address);
         $entity->getEntityData()->getAddress()->setStreet('Via la Spezia');
         $entity->getEntityData()->getAddress()->setNumber('553');
         $entity->getEntityData()->getAddress()->setPostalCode('00042');
@@ -158,13 +161,13 @@ class InvoiceSimilarityTest extends TestCase
 
     private function createOtherDeliveryNoteHeader(): OtherDeliveryNoteHeader
     {
-        $header = new OtherDeliveryNoteHeader();
-        $header->setLoadingAddress(new Address());
+        $header = new OtherDeliveryNoteHeader;
+        $header->setLoadingAddress(new Address);
         $header->getLoadingAddress()->setStreet('Τσιμισκή');
         $header->getLoadingAddress()->setNumber('25');
         $header->getLoadingAddress()->setPostalCode('13152');
         $header->getLoadingAddress()->setCity('Θεσσαλονίκη');
-        $header->setDeliveryAddress(new Address());
+        $header->setDeliveryAddress(new Address);
 
         $header->getDeliveryAddress()->setStreet('Παπανδρέου');
         $header->getDeliveryAddress()->setNumber('52');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -16,7 +18,7 @@ class RejectDeliveryNoteTest extends DigitalGoodsMovementTestCase
     {
         $this->initErpDev();
 
-        $request = new RejectDeliveryNote();
+        $request = new RejectDeliveryNote;
         $this->assertEquals('https://mydataapidev.aade.gr/RejectDeliveryNote', $request->getUrl());
     }
 
@@ -24,7 +26,7 @@ class RejectDeliveryNoteTest extends DigitalGoodsMovementTestCase
     {
         $this->initErpProd();
 
-        $request = new RejectDeliveryNote();
+        $request = new RejectDeliveryNote;
         $this->assertEquals('https://mydatapi.aade.gr/myDATA/RejectDeliveryNote', $request->getUrl());
     }
 
@@ -37,8 +39,8 @@ class RejectDeliveryNoteTest extends DigitalGoodsMovementTestCase
 
         $this->expectException(UnsupportedChannelException::class);
 
-        $request = new RejectDeliveryNote();
-        $request->handle(new DeliveryRejection());
+        $request = new RejectDeliveryNote;
+        $request->handle(new DeliveryRejection);
     }
 
     /**
@@ -50,8 +52,8 @@ class RejectDeliveryNoteTest extends DigitalGoodsMovementTestCase
 
         $this->expectException(UnsupportedChannelException::class);
 
-        $request = new RejectDeliveryNote();
-        $request->handle(new DeliveryRejection());
+        $request = new RejectDeliveryNote;
+        $request->handle(new DeliveryRejection);
     }
 
     /**
@@ -68,7 +70,7 @@ class RejectDeliveryNoteTest extends DigitalGoodsMovementTestCase
         $this->assertEmpty($rejection->validate());
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('reject-delivery-note-by-mark.xml'), $rejection->toXml());
 
-        $reject = new RejectDeliveryNote();
+        $reject = new RejectDeliveryNote;
         $response = $reject->handle($rejection);
 
         $this->assertCount(1, $response);
@@ -96,7 +98,7 @@ class RejectDeliveryNoteTest extends DigitalGoodsMovementTestCase
         $this->assertEmpty($rejection->validate());
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('reject-delivery-note-by-qr-url.xml'), $rejection->toXml());
 
-        $reject = new RejectDeliveryNote();
+        $reject = new RejectDeliveryNote;
         $response = $reject->handle($rejection);
 
         $this->assertCount(1, $response);
@@ -119,7 +121,7 @@ class RejectDeliveryNoteTest extends DigitalGoodsMovementTestCase
             new Response(200, body: $this->getStub('reject-delivery-note-response.xml')),
         ]));
 
-        $reject = new RejectDeliveryNote();
+        $reject = new RejectDeliveryNote;
         $response = $reject->rejectUsingMark(400002969517846, 'Damaged goods');
 
         $this->assertCount(1, $response);
@@ -138,7 +140,7 @@ class RejectDeliveryNoteTest extends DigitalGoodsMovementTestCase
             new Response(200, body: $this->getStub('reject-delivery-note-response.xml')),
         ]));
 
-        $reject = new RejectDeliveryNote();
+        $reject = new RejectDeliveryNote;
         $response = $reject->rejectUsingQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url', 'Damaged goods');
 
         $this->assertCount(1, $response);

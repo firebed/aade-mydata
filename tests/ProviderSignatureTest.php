@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use Firebed\AadeMyData\Models\PaymentMethod;
@@ -14,7 +16,7 @@ class ProviderSignatureTest extends TestCase
 
     public function test_it_converts_xml_to_payment_methods()
     {
-        $providerSignature = new ProvidersSignature();
+        $providerSignature = new ProvidersSignature;
         $providerSignature->setEndToEndReferenceID('REF12345');
         $providerSignature->setSigningAuthor('01234567');
         $providerSignature->setSignature('SIGNATUREDATA');
@@ -26,12 +28,12 @@ class ProviderSignatureTest extends TestCase
 
     public function test_end_to_end_reference_id_is_included_in_the_xml()
     {
-        $providerSignature = new ProvidersSignature();
+        $providerSignature = new ProvidersSignature;
         $providerSignature->setEndToEndReferenceID('REF12345');
         $providerSignature->setSigningAuthor('01234567');
         $providerSignature->setSignature('SIGNATUREDATA');
 
-        $payment = new PaymentMethod();
+        $payment = new PaymentMethod;
         $payment->setInvoiceMark(12345);
         $payment->addPaymentMethodDetails(PaymentMethodDetail::factory()->make([
             'ProvidersSignature' => $providerSignature,

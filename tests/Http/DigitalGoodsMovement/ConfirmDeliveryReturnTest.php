@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -16,7 +18,7 @@ class ConfirmDeliveryReturnTest extends DigitalGoodsMovementTestCase
     {
         $this->initErpDev();
 
-        $request = new ConfirmDeliveryReturn();
+        $request = new ConfirmDeliveryReturn;
         $this->assertEquals('https://mydataapidev.aade.gr/ConfirmDeliveryReturn', $request->getUrl());
     }
 
@@ -24,7 +26,7 @@ class ConfirmDeliveryReturnTest extends DigitalGoodsMovementTestCase
     {
         $this->initErpProd();
 
-        $request = new ConfirmDeliveryReturn();
+        $request = new ConfirmDeliveryReturn;
         $this->assertEquals('https://mydatapi.aade.gr/myDATA/ConfirmDeliveryReturn', $request->getUrl());
     }
 
@@ -37,7 +39,7 @@ class ConfirmDeliveryReturnTest extends DigitalGoodsMovementTestCase
 
         $this->expectException(UnsupportedChannelException::class);
 
-        (new ConfirmDeliveryReturn())->handle(new DeliveryReturn('https://example.test/qr'));
+        (new ConfirmDeliveryReturn)->handle(new DeliveryReturn('https://example.test/qr'));
     }
 
     /**
@@ -49,13 +51,13 @@ class ConfirmDeliveryReturnTest extends DigitalGoodsMovementTestCase
             new Response(200, body: $this->getStub('confirm-delivery-return-response.xml')),
         ]));
 
-        $return = new DeliveryReturn();
+        $return = new DeliveryReturn;
         $return->setQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url');
 
         $this->assertEmpty($return->validate());
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('confirm-delivery-return-request.xml'), $return->toXml());
 
-        $confirm = new ConfirmDeliveryReturn();
+        $confirm = new ConfirmDeliveryReturn;
         $response = $confirm->handle($return);
 
         $this->assertCount(1, $response);

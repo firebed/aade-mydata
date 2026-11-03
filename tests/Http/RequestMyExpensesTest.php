@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -19,7 +21,7 @@ class RequestMyExpensesTest extends MyDataHttpTestCase
             new Response(200, body: $this->getStub('request-my-expenses-response')),
         ]));
 
-        $request = new RequestMyExpenses();
+        $request = new RequestMyExpenses;
         $bookInfo = $request->handle('01/01/2024', '31/12/2024');
 
         $this->assertCount(11, $bookInfo->getBookInfo());

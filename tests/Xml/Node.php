@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Xml;
 
 use ArrayAccess;
 use Countable;
 
-class Node implements Countable, ArrayAccess
+class Node implements ArrayAccess, Countable
 {
     private array $xml;
 
@@ -29,15 +31,15 @@ class Node implements Countable, ArrayAccess
         return isset($this->xml[$name]);
     }
 
-    public function get(string $name): mixed
+    public function get(string|int $name): mixed
     {
-        if (!isset($this->xml[$name])) {
+        if (! isset($this->xml[$name])) {
             return null;
         }
 
         $value = $this->xml[$name];
 
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             return $value;
         }
 
@@ -54,11 +56,7 @@ class Node implements Countable, ArrayAccess
         return $this->get($offset);
     }
 
-    public function offsetSet($offset, $value): void
-    {
-    }
+    public function offsetSet($offset, $value): void {}
 
-    public function offsetUnset($offset): void
-    {
-    }
+    public function offsetUnset($offset): void {}
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use Firebed\AadeMyData\Enums\ExpenseClassificationType;
@@ -17,7 +19,7 @@ class ClassificationsParsingTest extends TestCase
 {
     public function test_it_parses_a_single_income_classification_detail_as_a_list(): void
     {
-        $doc = (new RequestedDocReader())->parseXML($this->xml('income', $this->detail('income', 1, ['E3_561_001'])));
+        $doc = (new RequestedDocReader)->parseXML($this->xml('income', $this->detail('income', 1, ['E3_561_001'])));
 
         $classification = $doc->getIncomeClassifications()->first();
         $this->assertInstanceOf(InvoiceIncomeClassification::class, $classification);
@@ -35,30 +37,30 @@ class ClassificationsParsingTest extends TestCase
 
     public function test_it_keeps_every_repeated_income_classification_detail_and_detail_data(): void
     {
-        $xml = $this->xml('income', 
+        $xml = $this->xml('income',
             $this->detail('income', 1, ['E3_561_001', 'E3_561_002']).
             $this->detail('income', 2, ['E3_561_003'])
         );
 
-        $doc = (new RequestedDocReader())->parseXML($xml);
+        $doc = (new RequestedDocReader)->parseXML($xml);
         $details = $doc->getIncomeClassifications()->first()->getInvoicesIncomeClassificationDetails();
 
         $this->assertCount(2, $details);
-        $this->assertSame([1, 2], array_map(fn(InvoicesIncomeClassificationDetail $d) => $d->getLineNumber(), $details));
+        $this->assertSame([1, 2], array_map(fn (InvoicesIncomeClassificationDetail $d) => $d->getLineNumber(), $details));
 
         $this->assertSame(
             [IncomeClassificationType::E3_561_001, IncomeClassificationType::E3_561_002],
-            array_map(fn(IncomeClassification $c) => $c->getClassificationType(), $details[0]->getIncomeClassificationDetailData())
+            array_map(fn (IncomeClassification $c) => $c->getClassificationType(), $details[0]->getIncomeClassificationDetailData())
         );
         $this->assertSame(
             [IncomeClassificationType::E3_561_003],
-            array_map(fn(IncomeClassification $c) => $c->getClassificationType(), $details[1]->getIncomeClassificationDetailData())
+            array_map(fn (IncomeClassification $c) => $c->getClassificationType(), $details[1]->getIncomeClassificationDetailData())
         );
     }
 
     public function test_it_parses_a_single_expenses_classification_detail_as_a_list(): void
     {
-        $doc = (new RequestedDocReader())->parseXML($this->xml('expenses', $this->detail('expenses', 1, ['E3_102_001'])));
+        $doc = (new RequestedDocReader)->parseXML($this->xml('expenses', $this->detail('expenses', 1, ['E3_102_001'])));
 
         $classification = $doc->getExpensesClassifications()->first();
         $this->assertInstanceOf(InvoiceExpensesClassification::class, $classification);
@@ -71,30 +73,30 @@ class ClassificationsParsingTest extends TestCase
 
     public function test_it_keeps_every_repeated_expenses_classification_detail_and_detail_data(): void
     {
-        $xml = $this->xml('expenses', 
+        $xml = $this->xml('expenses',
             $this->detail('expenses', 1, ['E3_102_001', 'E3_102_002']).
             $this->detail('expenses', 2, ['E3_102_003'])
         );
 
-        $doc = (new RequestedDocReader())->parseXML($xml);
+        $doc = (new RequestedDocReader)->parseXML($xml);
         $details = $doc->getExpensesClassifications()->first()->getInvoicesExpensesClassificationDetails();
 
         $this->assertCount(2, $details);
-        $this->assertSame([1, 2], array_map(fn(InvoicesExpensesClassificationDetail $d) => $d->getLineNumber(), $details));
+        $this->assertSame([1, 2], array_map(fn (InvoicesExpensesClassificationDetail $d) => $d->getLineNumber(), $details));
 
         $this->assertSame(
             [ExpenseClassificationType::E3_102_001, ExpenseClassificationType::E3_102_002],
-            array_map(fn(ExpensesClassification $c) => $c->getClassificationType(), $details[0]->getExpensesClassificationDetailData())
+            array_map(fn (ExpensesClassification $c) => $c->getClassificationType(), $details[0]->getExpensesClassificationDetailData())
         );
         $this->assertSame(
             [ExpenseClassificationType::E3_102_003],
-            array_map(fn(ExpensesClassification $c) => $c->getClassificationType(), $details[1]->getExpensesClassificationDetailData())
+            array_map(fn (ExpensesClassification $c) => $c->getClassificationType(), $details[1]->getExpensesClassificationDetailData())
         );
     }
 
     public function test_array_setters_still_replace_the_whole_list(): void
     {
-        $income = new InvoiceIncomeClassification();
+        $income = new InvoiceIncomeClassification;
         $income->addInvoicesIncomeClassificationDetails(new InvoicesIncomeClassificationDetail(['lineNumber' => 1]));
         $income->setInvoicesIncomeClassificationDetails([new InvoicesIncomeClassificationDetail(['lineNumber' => 2])]);
         $this->assertCount(1, $income->getInvoicesIncomeClassificationDetails());
@@ -103,17 +105,17 @@ class ClassificationsParsingTest extends TestCase
         $income->setInvoicesIncomeClassificationDetails(null);
         $this->assertNull($income->getInvoicesIncomeClassificationDetails());
 
-        $incomeDetail = new InvoicesIncomeClassificationDetail();
+        $incomeDetail = new InvoicesIncomeClassificationDetail;
         $incomeDetail->addIncomeClassificationDetailData(new IncomeClassification(['amount' => 1]));
         $incomeDetail->setIncomeClassificationDetailData([new IncomeClassification(['amount' => 2])]);
         $this->assertCount(1, $incomeDetail->getIncomeClassificationDetailData());
 
-        $expenses = new InvoiceExpensesClassification();
+        $expenses = new InvoiceExpensesClassification;
         $expenses->addInvoicesExpensesClassificationDetails(new InvoicesExpensesClassificationDetail(['lineNumber' => 1]));
         $expenses->setInvoicesExpensesClassificationDetails([new InvoicesExpensesClassificationDetail(['lineNumber' => 2])]);
         $this->assertCount(1, $expenses->getInvoicesExpensesClassificationDetails());
 
-        $expensesDetail = new InvoicesExpensesClassificationDetail();
+        $expensesDetail = new InvoicesExpensesClassificationDetail;
         $expensesDetail->addExpensesClassificationDetailData(new ExpensesClassification(['amount' => 1]));
         $expensesDetail->setExpensesClassificationDetailData([new ExpensesClassification(['amount' => 2])]);
         $this->assertCount(1, $expensesDetail->getExpensesClassificationDetailData());

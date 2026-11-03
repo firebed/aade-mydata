@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
@@ -19,7 +21,7 @@ class InvoicesExpensesClassificationTest extends TestCase
 
     public function test_it_converts_simple_expenses_invoice_classification_to_xml(): void
     {
-        $cls = new InvoicesExpensesClassificationDetail();
+        $cls = new InvoicesExpensesClassificationDetail;
         $cls->setLineNumber(1);
         $cls->setExpensesClassificationDetailData([
             new ExpensesClassification([
@@ -29,11 +31,11 @@ class InvoicesExpensesClassificationTest extends TestCase
             ]),
         ]);
 
-        $invoiceExpensesClassification = new InvoiceExpensesClassification();
+        $invoiceExpensesClassification = new InvoiceExpensesClassification;
         $invoiceExpensesClassification->setInvoiceMark(1234567890);
         $invoiceExpensesClassification->setInvoicesExpensesClassificationDetails([$cls]);
 
-        $writer = new ExpensesClassificationsDocWriter();
+        $writer = new ExpensesClassificationsDocWriter;
         $xmlString = $writer->asXML(new ExpensesClassificationsDoc($invoiceExpensesClassification));
         $xml = (new Document($xmlString))->ExpensesClassificationsDoc->expensesInvoiceClassification;
 
@@ -48,7 +50,7 @@ class InvoicesExpensesClassificationTest extends TestCase
 
     public function test_it_converts_complex_expenses_invoice_classification_to_xml(): void
     {
-        $clsA = new InvoicesExpensesClassificationDetail();
+        $clsA = new InvoicesExpensesClassificationDetail;
         $clsA->setLineNumber(1);
         $clsA->setExpensesClassificationDetailData([
             new ExpensesClassification([
@@ -63,21 +65,21 @@ class InvoicesExpensesClassificationTest extends TestCase
             ]),
         ]);
 
-        $clsB = new InvoicesExpensesClassificationDetail();
+        $clsB = new InvoicesExpensesClassificationDetail;
         $clsB->setLineNumber(2);
         $clsB->setExpensesClassificationDetailData([
             new ExpensesClassification([
                 'classificationType' => ExpenseClassificationType::E3_102_002,
                 'classificationCategory' => ExpenseClassificationCategory::CATEGORY_2_1,
                 'amount' => 50,
-            ])
+            ]),
         ]);
 
-        $invoiceExpensesClassification = new InvoiceExpensesClassification();
+        $invoiceExpensesClassification = new InvoiceExpensesClassification;
         $invoiceExpensesClassification->setInvoiceMark(1234567890);
         $invoiceExpensesClassification->setInvoicesExpensesClassificationDetails([$clsA, $clsB]);
 
-        $writer = new ExpensesClassificationsDocWriter();
+        $writer = new ExpensesClassificationsDocWriter;
         $xmlString = $writer->asXML(new ExpensesClassificationsDoc($invoiceExpensesClassification));
 
         $xml = (new Document($xmlString))->ExpensesClassificationsDoc->expensesInvoiceClassification;

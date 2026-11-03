@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http;
 
 use Firebed\AadeMyData\Exceptions\ErrorResponseException;
@@ -17,7 +19,6 @@ use Firebed\AadeMyData\Models\PaymentMethod;
 use Firebed\AadeMyData\Models\PaymentMethodDetail;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response as HttpResponse;
-use LogicException;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class GatewayTest extends MyDataHttpTestCase
@@ -38,11 +39,11 @@ class GatewayTest extends MyDataHttpTestCase
 
     public function test_post_requests_are_dispatched_to_the_registered_gateway(): void
     {
-        $gateway = new RecordingGateway();
+        $gateway = new RecordingGateway;
         MyDataRequest::setGateway($gateway);
 
-        $invoice = new Invoice();
-        $sendInvoices = new SendInvoices();
+        $invoice = new Invoice;
+        $sendInvoices = new SendInvoices;
         $this->assertNull($sendInvoices->getInvoicesDoc());
 
         $responseDoc = $sendInvoices->handle($invoice);
@@ -61,10 +62,10 @@ class GatewayTest extends MyDataHttpTestCase
         $gateway = new RecordingGateway('<?xml version="1.0" encoding="utf-8"?><ResponseDoc><response><index>1</index><invoiceMark>400001</invoiceMark><paymentMethodMark>500001</paymentMethodMark><statusCode>Success</statusCode></response></ResponseDoc>');
         MyDataRequest::setGateway($gateway);
 
-        $paymentMethod = (new PaymentMethod())->setInvoiceMark(400001)
-            ->addPaymentMethodDetails((new PaymentMethodDetail())->setType(7)->setAmount(12.4));
+        $paymentMethod = (new PaymentMethod)->setInvoiceMark(400001)
+            ->addPaymentMethodDetails((new PaymentMethodDetail)->setType(7)->setAmount(12.4));
 
-        $request = new SendPaymentsMethod();
+        $request = new SendPaymentsMethod;
         $this->assertNull($request->getPaymentMethodsDoc());
 
         $responseDoc = $request->handle($paymentMethod);
@@ -81,7 +82,7 @@ class GatewayTest extends MyDataHttpTestCase
         $gateway = new RecordingGateway($this->getStub('request-vat-info-response'));
         MyDataRequest::setGateway($gateway);
 
-        $request = new RequestVatInfo();
+        $request = new RequestVatInfo;
         $request->handle('01/01/2024', '31/12/2024');
 
         $this->assertSame($request, $gateway->request);
@@ -91,30 +92,30 @@ class GatewayTest extends MyDataHttpTestCase
 
     public function test_a_gateway_can_be_registered_for_a_single_request(): void
     {
-        $global = new RecordingGateway();
-        $perRequest = new RecordingGateway();
+        $global = new RecordingGateway;
+        $perRequest = new RecordingGateway;
         MyDataRequest::setGateway($global);
 
-        $request = new SendInvoices();
-        $request->usingGateway($perRequest)->handle(new Invoice());
+        $request = new SendInvoices;
+        $request->usingGateway($perRequest)->handle(new Invoice);
 
         $this->assertSame($request, $perRequest->request);
         $this->assertNull($global->request);
         $this->assertSame($global, MyDataRequest::gateway());
 
         // The global gateway keeps serving every other request
-        $other = new SendInvoices();
-        $other->handle(new Invoice());
+        $other = new SendInvoices;
+        $other->handle(new Invoice);
         $this->assertSame($other, $global->request);
     }
 
     public function test_a_per_request_gateway_can_be_cleared(): void
     {
-        $global = new RecordingGateway();
+        $global = new RecordingGateway;
         MyDataRequest::setGateway($global);
 
-        $request = new SendInvoices();
-        $request->usingGateway(new RecordingGateway())->usingGateway(null)->handle(new Invoice());
+        $request = new SendInvoices;
+        $request->usingGateway(new RecordingGateway)->usingGateway(null)->handle(new Invoice);
 
         $this->assertSame($request, $global->request);
     }
@@ -124,12 +125,12 @@ class GatewayTest extends MyDataHttpTestCase
         MyDataRequest::setGateway(new RecordingGateway('   '));
 
         $this->expectException(InvalidResponseException::class);
-        (new SendInvoices())->handle(new Invoice());
+        (new SendInvoices)->handle(new Invoice);
     }
 
     public function test_setting_null_restores_the_default_gateway(): void
     {
-        MyDataRequest::setGateway(new RecordingGateway());
+        MyDataRequest::setGateway(new RecordingGateway);
         MyDataRequest::setGateway(null);
 
         $this->assertInstanceOf(GuzzleGateway::class, MyDataRequest::gateway());
@@ -141,7 +142,7 @@ class GatewayTest extends MyDataHttpTestCase
             new HttpResponse(200, body: $this->getStub('send-invoices-single-response')),
         ]));
 
-        $responseDoc = (new SendInvoices())->handle(new Invoice());
+        $responseDoc = (new SendInvoices)->handle(new Invoice);
 
         $this->assertSame('480301204040191', $responseDoc->first()->getInvoiceMark());
     }
@@ -151,7 +152,7 @@ class GatewayTest extends MyDataHttpTestCase
         MyDataRequest::setCredentials('', '');
 
         $this->expectException(MyDataAuthenticationException::class);
-        (new SendInvoices())->handle(new Invoice());
+        (new SendInvoices)->handle(new Invoice);
     }
 
     public static function unauthorizedReasons(): array
@@ -166,8 +167,8 @@ class GatewayTest extends MyDataHttpTestCase
             'JSON string' => ['"Access denied"', 'Access denied'],
             'JSON without a message' => [$oauth, $oauth],
             'short multibyte' => [str_repeat('Δ', 300), str_repeat('Δ', 300)],
-            'long, capped' => [str_repeat('Δ', 2000), str_repeat('Δ', 500) . '…'],
-            'not UTF-8, capped' => [str_repeat("\xC4", 2000), str_repeat('?', 500) . '…'],
+            'long, capped' => [str_repeat('Δ', 2000), str_repeat('Δ', 500).'…'],
+            'not UTF-8, capped' => [str_repeat("\xC4", 2000), str_repeat('?', 500).'…'],
         ];
     }
 
@@ -201,7 +202,7 @@ class GatewayTest extends MyDataHttpTestCase
         ]));
 
         try {
-            (new RequestVatInfo())->handle('01/01/2026', '31/01/2026');
+            (new RequestVatInfo)->handle('01/01/2026', '31/01/2026');
             $this->fail('An ErrorResponseException was expected.');
         } catch (ErrorResponseException $e) {
             $this->assertSame('101: Invalid request', $e->getMessage());
@@ -219,7 +220,7 @@ class GatewayTest extends MyDataHttpTestCase
         ]));
 
         try {
-            (new RequestVatInfo())->handle('01/01/2026', '31/01/2026');
+            (new RequestVatInfo)->handle('01/01/2026', '31/01/2026');
             $this->fail('A TransmissionFailedException was expected.');
         } catch (TransmissionFailedException $e) {
             $this->assertNotInstanceOf(ErrorResponseException::class, $e);
@@ -233,7 +234,7 @@ class GatewayTest extends MyDataHttpTestCase
         MyDataRequest::setHandler(new MockHandler([new HttpResponse(401, body: $body)]));
 
         try {
-            (new RequestVatInfo())->handle('01/01/2026', '31/01/2026');
+            (new RequestVatInfo)->handle('01/01/2026', '31/01/2026');
         } catch (MyDataAuthenticationException $e) {
             return $e;
         }
@@ -248,34 +249,5 @@ class GatewayTest extends MyDataHttpTestCase
 
         MyDataRequest::setCredentials('', 'key');
         $this->assertFalse(MyDataRequest::hasCredentials());
-    }
-}
-
-class RecordingGateway implements Gateway
-{
-    public ?MyDataRequest $request = null;
-    public ?array $query = null;
-    public ?string $body = null;
-
-    public function __construct(private ?string $responseXml = null)
-    {
-    }
-
-    public function get(MyDataRequest $request, array $query): string
-    {
-        $this->request = $request;
-        $this->query = $query;
-        $this->body = null;
-
-        return $this->responseXml ?? throw new LogicException('No response XML configured for GET.');
-    }
-
-    public function post(MyDataRequest $request, ?array $query = null, ?string $body = null): string
-    {
-        $this->request = $request;
-        $this->query = $query;
-        $this->body = $body;
-
-        return $this->responseXml ?? '<?xml version="1.0" encoding="utf-8"?><ResponseDoc><response><index>1</index><invoiceMark>400001</invoiceMark><statusCode>Success</statusCode></response></ResponseDoc>';
     }
 }

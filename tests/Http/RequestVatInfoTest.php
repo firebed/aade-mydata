@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -19,11 +21,11 @@ class RequestVatInfoTest extends MyDataHttpTestCase
             new Response(200, body: $this->getStub('request-vat-info-response')),
         ]));
 
-        $request = new RequestVatInfo();
+        $request = new RequestVatInfo;
         $requestedVatInfo = $request->handle('01/01/2024', '31/12/2024');
 
         $this->assertCount(11, $requestedVatInfo->getVatInfo());
-        
+
         $vatInfo = $requestedVatInfo->getVatInfo()[2];
         $this->assertEquals('461973816871023', $vatInfo->getMark());
         $this->assertFalse($vatInfo->isCancelled());

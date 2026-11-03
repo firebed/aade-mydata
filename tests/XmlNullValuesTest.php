@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
@@ -18,29 +20,29 @@ class XmlNullValuesTest extends TestCase
 
     public function test_null_values_are_removed_from_generated_xml()
     {
-        $icls1 = new IncomeClassification();
+        $icls1 = new IncomeClassification;
         $icls1->setClassificationType(null);
         $icls1->setClassificationCategory(IncomeClassificationCategory::CATEGORY_3);
         $icls1->setAmount(0);
 
-        $icls2 = new IncomeClassification();
+        $icls2 = new IncomeClassification;
         $icls2->setClassificationType(IncomeClassificationType::E3_106);
         $icls2->setClassificationCategory(IncomeClassificationCategory::CATEGORY_1_3);
         $icls2->setAmount(0);
 
-        $ecls = new ExpensesClassification();
+        $ecls = new ExpensesClassification;
         $ecls->setClassificationType(null);
         $ecls->setClassificationCategory(ExpenseClassificationCategory::CATEGORY_2_1);
         $ecls->setAmount(0);
 
-        $row = new InvoiceDetails();
+        $row = new InvoiceDetails;
         $row->addIncomeClassification($icls1);
         $row->addIncomeClassification($icls2);
         $row->addExpensesClassification($ecls);
 
-        $invoice = new Invoice();
+        $invoice = new Invoice;
         $invoice->addInvoiceDetails($row);
-        
+
         $classifications = $this->toXML($invoice)->InvoicesDoc->invoice->invoiceDetails;
 
         $income = $classifications->incomeClassification;

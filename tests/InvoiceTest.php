@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use Firebed\AadeMyData\Enums\DigitalGoodsMovement\DeliveryEventType;
@@ -9,6 +11,7 @@ use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
 use Firebed\AadeMyData\Enums\IncomeClassificationType;
 use Firebed\AadeMyData\Enums\RecType;
 use Firebed\AadeMyData\Enums\TransmissionFailure;
+use Firebed\AadeMyData\Exceptions\InvalidAttributeException;
 use Firebed\AadeMyData\Models\Invoice;
 use PHPUnit\Framework\TestCase;
 use Tests\Traits\HandlesInvoiceXml;
@@ -35,16 +38,16 @@ class InvoiceTest extends TestCase
                 [
                     'lineNumber' => 1,
                     'netValue' => 5,
-                    'recType' => RecType::TYPE_2,
+                    'recType' => RecType::FEES_LINE_WITH_VAT,
                     'incomeClassification' => [
                         [
                             'classificationType' => IncomeClassificationType::E3_561_001,
                             'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_1,
-                            'amount' => 5
-                        ]
-                    ]
-                ]
-            ]
+                            'amount' => 5,
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertNotEmpty($invoice->toXml());
@@ -57,16 +60,16 @@ class InvoiceTest extends TestCase
                 [
                     'lineNumber' => 1,
                     'netValue' => 5,
-                    'recType' => RecType::TYPE_2,
+                    'recType' => RecType::FEES_LINE_WITH_VAT,
                     'incomeClassification' => [
                         [
                             'classificationType' => '',
                             'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_95,
-                            'amount' => 5
-                        ]
-                    ]
-                ]
-            ]
+                            'amount' => 5,
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertNotEmpty($invoice->toXml());
@@ -128,44 +131,44 @@ class InvoiceTest extends TestCase
     public function test_invoice_validation()
     {
         $invoice = Invoice::factory()->make();
-        $this->assertEmpty($invoice->validate(), "Validation failed: ".print_r($invoice->validate(), true));
+        $this->assertEmpty($invoice->validate(), 'Validation failed: '.print_r($invoice->validate(), true));
     }
 
     public function test_invoice_special_characters()
     {
         $invoice = Invoice::factory()->make();
-        $invoice->getInvoiceDetails()[0]->setItemDescr("<Πλακάκια> & Είδη Υγιεινής");
+        $invoice->getInvoiceDetails()[0]->setItemDescr('<Πλακάκια> & Είδη Υγιεινής');
 
         $xml = $invoice->toXml();
-        $this->assertStringContainsString("<itemDescr>&lt;Πλακάκια&gt; &amp; Είδη Υγιεινής</itemDescr>", $xml);
+        $this->assertStringContainsString('<itemDescr>&lt;Πλακάκια&gt; &amp; Είδη Υγιεινής</itemDescr>', $xml);
     }
 
-    public function test_invoice_validation_fail()
+    public function test_an_unknown_enum_value_throws(): void
     {
         $invoice = Invoice::factory()->make();
-        $invoice->getInvoiceHeader()->setInvoiceType("wrong");
+
+        $this->expectException(InvalidAttributeException::class);
+        $this->expectExceptionMessage("'wrong' is not a valid Firebed\AadeMyData\Enums\InvoiceType for attribute 'invoiceType'.");
+
+        $invoice->getInvoiceHeader()->setInvoiceType('wrong');
+    }
+
+    public function test_invoice_validation_fail(): void
+    {
+        $invoice = Invoice::factory()->make();
         $invoice->getInvoiceSummary()->setTotalGrossValue(-10);
 
-        // "wrong" value will be cast to null because InvoiceType enum does
-        // not have "wrong" value.
-        // Since null values are stripped from the array, we expect a failure
-        // that the next give attribute (vatPaymentSuspension) is not expected
         $this->assertEquals([
-            "field" => "{http://www.aade.gr/myDATA/invoice/v1.0}vatPaymentSuspension",
-            "message" => "This element is not expected. Expected is ( {http://www.aade.gr/myDATA/invoice/v1.0}invoiceType )."
+            'field' => '{http://www.aade.gr/myDATA/invoice/v1.0}totalGrossValue',
+            'message' => "The value '-10' is less than the minimum value allowed ('0').",
         ], $invoice->validate()[0]);
-
-        $this->assertEquals([
-            "field" => "{http://www.aade.gr/myDATA/invoice/v1.0}totalGrossValue",
-            "message" => "The value '-10' is less than the minimum value allowed ('0')."
-        ], $invoice->validate()[1]);
     }
 
     public function test_transmission_failure_is_sorted()
     {
         $invoice = Invoice::factory()->make();
         $invoice->setTransmissionFailure(TransmissionFailure::ERP_CONNECTION_FAILURE);
-        $this->assertStringContainsString("<transmissionFailure>1</transmissionFailure>", $invoice->toXml());
+        $this->assertStringContainsString('<transmissionFailure>1</transmissionFailure>', $invoice->toXml());
     }
 
     public function test_auto_filled_fields()
@@ -175,8 +178,8 @@ class InvoiceTest extends TestCase
         $invoice->set('mark', 'test-mark');
         $invoice->set('authenticationCode', 'test-auth-code');
 
-        $this->assertStringContainsString("<uid>test-uid</uid>", $invoice->toXml());
-        $this->assertStringContainsString("<mark>test-mark</mark>", $invoice->toXml());
-        $this->assertStringContainsString("<authenticationCode>test-auth-code</authenticationCode>", $invoice->toXml());
+        $this->assertStringContainsString('<uid>test-uid</uid>', $invoice->toXml());
+        $this->assertStringContainsString('<mark>test-mark</mark>', $invoice->toXml());
+        $this->assertStringContainsString('<authenticationCode>test-auth-code</authenticationCode>', $invoice->toXml());
     }
 }

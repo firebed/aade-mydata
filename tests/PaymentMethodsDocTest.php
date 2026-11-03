@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
-use Firebed\AadeMyData\Enums\PaymentMethod;
+use Firebed\AadeMyData\Enums\PaymentType;
 use PHPUnit\Framework\TestCase;
 use Tests\Traits\HandlesInvoiceXml;
 
@@ -19,7 +21,7 @@ class PaymentMethodsDocTest extends TestCase
         $this->assertCount(3, $paymentMethods);
 
         $paymentMethodDetail = $paymentMethods[0]->getPaymentMethodDetails()[0];
-        $this->assertEquals(PaymentMethod::METHOD_7, $paymentMethodDetail->getType());
+        $this->assertEquals(PaymentType::POS, $paymentMethodDetail->getType());
         $this->assertEquals(10, $paymentMethodDetail->getAmount());
         $this->assertEquals('PLM111', $paymentMethodDetail->getTransactionId());
         $this->assertEquals('TESLA', $paymentMethodDetail->getECRToken()->getSigningAuthor());
@@ -29,7 +31,7 @@ class PaymentMethodsDocTest extends TestCase
         $this->assertEquals(888888888, $paymentMethods[0]->getEntityVatNumber());
 
         $paymentMethodDetail = $paymentMethods[1]->getPaymentMethodDetails()[0];
-        $this->assertEquals(PaymentMethod::METHOD_3, $paymentMethodDetail->getType());
+        $this->assertEquals(PaymentType::CASH, $paymentMethodDetail->getType());
         $this->assertEquals(10, $paymentMethodDetail->getAmount());
         $this->assertEquals('SSA569', $paymentMethodDetail->getTransactionId());
         $this->assertEquals('ORBIT', $paymentMethodDetail->getECRToken()->getSigningAuthor());
@@ -39,7 +41,7 @@ class PaymentMethodsDocTest extends TestCase
         $this->assertEquals(888888888, $paymentMethods[1]->getEntityVatNumber());
 
         $paymentMethodDetail = $paymentMethods[2]->getPaymentMethodDetails()[0];
-        $this->assertEquals(PaymentMethod::METHOD_4, $paymentMethodDetail->getType());
+        $this->assertEquals(PaymentType::CHEQUE, $paymentMethodDetail->getType());
         $this->assertEquals(20, $paymentMethodDetail->getAmount());
         $this->assertEquals('ERA544', $paymentMethodDetail->getTransactionId());
         $this->assertEquals('ACME', $paymentMethodDetail->getECRToken()->getSigningAuthor());

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\Response;
@@ -10,7 +12,7 @@ class ResponseDeliveryReturnMarkTest extends TestCase
 {
     public function test_getter_returns_delivery_return_mark(): void
     {
-        $response = new Response();
+        $response = new Response;
         $response->set('deliveryReturnMark', '400123');
 
         $this->assertSame(400123, $response->getDeliveryReturnMark());
@@ -19,10 +21,10 @@ class ResponseDeliveryReturnMarkTest extends TestCase
     public function test_reader_parses_delivery_return_mark(): void
     {
         $xml = '<ResponseDoc><response><index>1</index>'
-            . '<deliveryReturnMark>400123</deliveryReturnMark>'
-            . '<statusCode>Success</statusCode></response></ResponseDoc>';
+            .'<deliveryReturnMark>400123</deliveryReturnMark>'
+            .'<statusCode>Success</statusCode></response></ResponseDoc>';
 
-        $doc = (new ResponseDocReader())->parseXml($xml);
+        $doc = (new ResponseDocReader)->parseXml($xml);
 
         $this->assertSame(400123, $doc->first()->getDeliveryReturnMark());
     }

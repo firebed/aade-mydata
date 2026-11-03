@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
@@ -19,7 +21,7 @@ class InvoicesIncomeClassificationTest extends TestCase
 
     public function test_it_converts_simple_income_invoice_classification_to_xml(): void
     {
-        $cls = new InvoicesIncomeClassificationDetail();
+        $cls = new InvoicesIncomeClassificationDetail;
         $cls->setLineNumber(1);
         $cls->setIncomeClassificationDetailData([
             new IncomeClassification([
@@ -29,13 +31,13 @@ class InvoicesIncomeClassificationTest extends TestCase
             ]),
         ]);
 
-        $invoiceIncomeClassification = new InvoiceIncomeClassification();
+        $invoiceIncomeClassification = new InvoiceIncomeClassification;
         $invoiceIncomeClassification->setInvoiceMark(1234567890);
         $invoiceIncomeClassification->setInvoicesIncomeClassificationDetails([$cls]);
 
-        $writer = new IncomeClassificationsDocWriter();
+        $writer = new IncomeClassificationsDocWriter;
         $xmlString = $writer->asXML(new IncomeClassificationsDoc($invoiceIncomeClassification));
-        
+
         $xml = (new Document($xmlString))->IncomeClassificationsDoc->incomeInvoiceClassification;
 
         $this->assertEquals($invoiceIncomeClassification->getInvoiceMark(), $xml->invoiceMark);
@@ -49,7 +51,7 @@ class InvoicesIncomeClassificationTest extends TestCase
 
     public function test_it_converts_complex_income_invoice_classification_to_xml(): void
     {
-        $clsA = new InvoicesIncomeClassificationDetail();
+        $clsA = new InvoicesIncomeClassificationDetail;
         $clsA->setLineNumber(1);
         $clsA->setIncomeClassificationDetailData([
             new IncomeClassification([
@@ -64,21 +66,21 @@ class InvoicesIncomeClassificationTest extends TestCase
             ]),
         ]);
 
-        $clsB = new InvoicesIncomeClassificationDetail();
+        $clsB = new InvoicesIncomeClassificationDetail;
         $clsB->setLineNumber(2);
         $clsB->setIncomeClassificationDetailData([
             new IncomeClassification([
                 'classificationType' => IncomeClassificationType::E3_561_002,
                 'classificationCategory' => IncomeClassificationCategory::CATEGORY_1_2,
                 'amount' => 50,
-            ])
+            ]),
         ]);
 
-        $invoiceIncomeClassification = new InvoiceIncomeClassification();
+        $invoiceIncomeClassification = new InvoiceIncomeClassification;
         $invoiceIncomeClassification->setInvoiceMark(1234567890);
         $invoiceIncomeClassification->setInvoicesIncomeClassificationDetails([$clsA, $clsB]);
 
-        $writer = new IncomeClassificationsDocWriter();
+        $writer = new IncomeClassificationsDocWriter;
         $xmlString = $writer->asXML(new IncomeClassificationsDoc($invoiceIncomeClassification));
 
         $xml = (new Document($xmlString))->IncomeClassificationsDoc->incomeInvoiceClassification;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -15,6 +17,7 @@ class RequestE3InfoTest extends MyDataHttpTestCase
 {
     /**
      * @throws MyDataException
+     *
      * @version 1.0.10
      */
     public function test_vat_info_is_received()
@@ -23,7 +26,7 @@ class RequestE3InfoTest extends MyDataHttpTestCase
             new Response(200, body: $this->getStub('request-e3-info-response')),
         ]));
 
-        $request = new RequestE3Info();
+        $request = new RequestE3Info;
         $requestedVatInfo = $request->handle('01/01/2024', '31/12/2024');
 
         $this->assertCount(10, $requestedVatInfo->getE3Info());

@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
-use Firebed\AadeMyData\Enums\PaymentMethod;
+use Firebed\AadeMyData\Enums\PaymentType;
 use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\PaymentMethodDetail;
 use Firebed\AadeMyData\Models\PaymentMethods;
@@ -50,8 +52,8 @@ class InvoicePaymentMethodsTest extends TestCase
         $invoice = Invoice::factory()
             ->state([
                 'paymentMethods' => PaymentMethods::factory()->state([
-                    'paymentMethodDetails' => PaymentMethodDetail::factory(2)
-                ])
+                    'paymentMethodDetails' => PaymentMethodDetail::factory(2),
+                ]),
             ])
             ->make();
 
@@ -83,8 +85,8 @@ class InvoicePaymentMethodsTest extends TestCase
     {
         $invoice = Invoice::factory()->make();
         $invoice->setPaymentMethods(new PaymentMethods([
-            PaymentMethodDetail::factory(),
-            PaymentMethodDetail::factory()
+            PaymentMethodDetail::factory()->make(),
+            PaymentMethodDetail::factory()->make(),
         ]));
 
         $this->assertCount(2, $invoice->getPaymentMethods());
@@ -93,7 +95,7 @@ class InvoicePaymentMethodsTest extends TestCase
     public function test_it_converts_multiple_invoice_payment_methods_to_xml_using_array(): void
     {
         $invoice = Invoice::factory()->make();
-        $invoice->setPaymentMethods([PaymentMethodDetail::factory(), PaymentMethodDetail::factory()]);
+        $invoice->setPaymentMethods([PaymentMethodDetail::factory()->make(), PaymentMethodDetail::factory()->make()]);
 
         $this->assertCount(2, $invoice->getPaymentMethods());
     }
@@ -115,11 +117,11 @@ class InvoicePaymentMethodsTest extends TestCase
 
         $this->assertCount(2, $paymentMethods);
 
-        $this->assertEquals(PaymentMethod::METHOD_1, $paymentMethods[0]->getType());
+        $this->assertEquals(PaymentType::DOMESTIC_PAYMENTS_ACCOUNT, $paymentMethods[0]->getType());
         $this->assertEquals(6000, $paymentMethods[0]->getAmount());
         $this->assertEquals('GR1234556668877922', $paymentMethods[0]->getPaymentMethodInfo());
 
-        $this->assertEquals(PaymentMethod::METHOD_7, $paymentMethods[1]->getType());
+        $this->assertEquals(PaymentType::POS, $paymentMethods[1]->getType());
         $this->assertEquals(205, $paymentMethods[1]->getAmount());
         $this->assertEquals('Τοις Μετρητοίς', $paymentMethods[1]->getPaymentMethodInfo());
         $this->assertEquals(5, $paymentMethods[1]->getTipAmount());

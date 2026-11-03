@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http;
 
 use Firebed\AadeMyData\Http\MyDataRequest;
@@ -25,10 +27,10 @@ abstract class MyDataHttpTestCase extends TestCase
         MyDataRequest::init('test_user_id', 'test_user_secret', 'dev', true);
     }
 
-        protected function initProviderProd(): void
-        {
-            MyDataRequest::init('test_user_id', 'test_user_secret', 'prod', true);
-        }
+    protected function initProviderProd(): void
+    {
+        MyDataRequest::init('test_user_id', 'test_user_secret', 'prod', true);
+    }
 
     protected function setUp(): void
     {

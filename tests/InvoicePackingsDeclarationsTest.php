@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use Firebed\AadeMyData\Enums\DigitalGoodsMovement\PackagingType;
@@ -27,7 +29,7 @@ class InvoicePackingsDeclarationsTest extends TestCase
 
     public function test_add_packaging_declaration_appends_to_the_same_declaration(): void
     {
-        $invoice = new Invoice();
+        $invoice = new Invoice;
         $invoice->addPackagingDeclaration(new PackagingDetail(PackagingType::CRATE, 4));
         $invoice->addPackagingDeclaration(new PackagingDetail(PackagingType::SACK, 1));
 
@@ -42,7 +44,7 @@ class InvoicePackingsDeclarationsTest extends TestCase
     {
         $invoice = Invoice::factory()->make()->setPackingsDeclarations($this->packages());
 
-        $read = (new InvoicesDocReader())->parseXML($invoice->toXml(true))->first();
+        $read = (new InvoicesDocReader)->parseXML($invoice->toXml(true))->first();
         $packages = $read->getPackingsDeclarations();
         $errors = $read->validate();
 

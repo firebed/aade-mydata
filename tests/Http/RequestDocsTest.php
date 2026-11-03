@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http;
 
 use Firebed\AadeMyData\Exceptions\ErrorResponseException;
@@ -20,9 +22,9 @@ class RequestDocsTest extends MyDataHttpTestCase
             new Response(200, body: $this->getStub('request-doc-response')),
         ]));
 
-        $request = new RequestDocs();
+        $request = new RequestDocs;
         $requestedDoc = $request->handle();
-        
+
         $this->assertCount(2, $requestedDoc->getInvoices());
         $this->assertCount(5, $requestedDoc->getCancelledInvoices());
         $this->assertCount(2, $requestedDoc->getIncomeClassifications());
@@ -39,7 +41,7 @@ class RequestDocsTest extends MyDataHttpTestCase
             new Response(200, body: $this->getStub('response-doc-with-errors')),
         ]));
 
-        $request = new RequestDocs();
+        $request = new RequestDocs;
 
         try {
             $request->handle();

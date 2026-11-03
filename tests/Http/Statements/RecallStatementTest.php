@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http\Statements;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -14,28 +16,28 @@ class RecallStatementTest extends MyDataHttpTestCase
     public function test_dev_erp_url_is_correct()
     {
         MyDataRequest::init('test_user_id', 'test_user_secret', 'dev');
-        $request = new RecallStatement();
+        $request = new RecallStatement;
         $this->assertEquals('https://mydataapidev.aade.gr/RecallStatement', $request->getUrl());
     }
 
     public function test_prod_erp_url_is_correct()
     {
         MyDataRequest::init('test_user_id', 'test_user_secret', 'prod');
-        $request = new RecallStatement();
+        $request = new RecallStatement;
         $this->assertEquals('https://mydatapi.aade.gr/myDATA/RecallStatement', $request->getUrl());
     }
 
     public function test_dev_provider_url_is_correct()
     {
         MyDataRequest::init('test_user_id', 'test_user_secret', 'dev', true);
-        $request = new RecallStatement();
+        $request = new RecallStatement;
         $this->assertEquals('https://mydataapidev.aade.gr/myDataProvider/RecallStatement', $request->getUrl());
     }
 
     public function test_prod_provider_url_is_correct()
     {
         MyDataRequest::init('test_user_id', 'test_user_secret', 'prod', true);
-        $request = new RecallStatement();
+        $request = new RecallStatement;
         $this->assertEquals('https://mydatapi.aade.gr/myDataProvider/RecallStatement', $request->getUrl());
     }
 
@@ -50,7 +52,7 @@ class RecallStatementTest extends MyDataHttpTestCase
             new Response(200, body: $this->getStub('statements/cancel-statement-response')),
         ]));
 
-        $request = new RecallStatement();
+        $request = new RecallStatement;
         $responseDoc = $request->handle('790', '1234567', 2);
 
         $this->assertCount(1, $responseDoc);

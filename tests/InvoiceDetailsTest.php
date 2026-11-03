@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use Firebed\AadeMyData\Enums\DiscountType;
@@ -133,7 +135,7 @@ class InvoiceDetailsTest extends TestCase
                 'invoiceDetails' => InvoiceDetails::factory(2)->state([
                     'incomeClassification' => IncomeClassification::factory(2),
                     'expensesClassification' => ExpensesClassification::factory(2),
-                ])
+                ]),
             ])
             ->make();
 
@@ -161,7 +163,7 @@ class InvoiceDetailsTest extends TestCase
         $row = $rows[0];
         $this->assertEquals(1, $row->getLineNumber());
         $this->assertEquals(5000, $row->getNetValue());
-        $this->assertEquals(VatCategory::VAT_1, $row->getVatCategory());
+        $this->assertEquals(VatCategory::RATE_24, $row->getVatCategory());
         $this->assertEquals(1200, $row->getVatAmount());
 
         $this->assertCount(1, $row->getIncomeClassification());
@@ -177,8 +179,8 @@ class InvoiceDetailsTest extends TestCase
         $this->assertEquals(ExpenseClassificationType::E3_102_001, $ecls1->getClassificationType());
         $this->assertEquals(ExpenseClassificationCategory::CATEGORY_2_1, $ecls1->getClassificationCategory());
         $this->assertEquals(3000, $ecls1->getAmount());
-        $this->assertEquals(VatCategory::VAT_4, $ecls1->getVatCategory());
-        $this->assertEquals(VatExemption::TYPE_12, $ecls1->getVatExemptionCategory());
+        $this->assertEquals(VatCategory::RATE_17, $ecls1->getVatCategory());
+        $this->assertEquals(VatExemption::ARTICLE_32_OPEN_SEA_VESSELS, $ecls1->getVatExemptionCategory());
         $this->assertEquals(2, $ecls1->getId());
 
         $ecls2 = $row->getExpensesClassification()[1];
@@ -190,23 +192,23 @@ class InvoiceDetailsTest extends TestCase
 
     public function test_it_sets_move_purpose_line_with_enum(): void
     {
-        $row = new InvoiceDetails();
-        $row->setMovePurposeLine(MovePurpose::TYPE_1);
+        $row = new InvoiceDetails;
+        $row->setMovePurposeLine(MovePurpose::SALE);
 
-        $this->assertEquals(MovePurpose::TYPE_1, $row->getMovePurposeLine());
+        $this->assertEquals(MovePurpose::SALE, $row->getMovePurposeLine());
     }
 
     public function test_it_sets_move_purpose_line_with_int(): void
     {
-        $row = new InvoiceDetails();
+        $row = new InvoiceDetails;
         $row->setMovePurposeLine(1);
 
-        $this->assertEquals(MovePurpose::TYPE_1, $row->getMovePurposeLine());
+        $this->assertEquals(MovePurpose::SALE, $row->getMovePurposeLine());
     }
 
     public function test_it_sets_move_purpose_line_with_null(): void
     {
-        $row = new InvoiceDetails();
+        $row = new InvoiceDetails;
         $row->setMovePurposeLine(null);
 
         $this->assertNull($row->getMovePurposeLine());

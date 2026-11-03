@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
@@ -57,9 +59,9 @@ class InvoiceSummaryTest extends TestCase
         $invoice = Invoice::factory()
             ->state([
                 'invoiceSummary' => InvoiceSummary::factory()->state([
-                    'incomeClassification'   => IncomeClassification::factory(4),
-                    'expensesClassification' => ExpensesClassification::factory(6)
-                ])
+                    'incomeClassification' => IncomeClassification::factory(4),
+                    'expensesClassification' => ExpensesClassification::factory(6),
+                ]),
             ])->make();
 
         $summary = $invoice->getInvoiceSummary();
@@ -87,7 +89,7 @@ class InvoiceSummaryTest extends TestCase
         $this->assertEquals(0, $summary->getTotalOtherTaxesAmount());
         $this->assertEquals(40, $summary->getTotalDeductionsAmount());
         $this->assertEquals(6000, $summary->getTotalGrossValue());
-        
+
         $this->assertCount(1, $summary->getIncomeClassifications());
 
         $icls = $summary->getIncomeClassifications()[0];
@@ -101,8 +103,8 @@ class InvoiceSummaryTest extends TestCase
         $this->assertEquals(ExpenseClassificationType::E3_102_001, $ecls1->getClassificationType());
         $this->assertEquals(ExpenseClassificationCategory::CATEGORY_2_1, $ecls1->getClassificationCategory());
         $this->assertEquals(5000, $ecls1->getAmount());
-        $this->assertEquals(VatCategory::VAT_4, $ecls1->getVatCategory());
-        $this->assertEquals(VatExemption::TYPE_12, $ecls1->getVatExemptionCategory());
+        $this->assertEquals(VatCategory::RATE_17, $ecls1->getVatCategory());
+        $this->assertEquals(VatExemption::ARTICLE_32_OPEN_SEA_VESSELS, $ecls1->getVatExemptionCategory());
         $this->assertEquals(2, $ecls1->getId());
 
         $ecls2 = $summary->getExpensesClassifications()[1];

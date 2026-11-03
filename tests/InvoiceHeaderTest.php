@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use Firebed\AadeMyData\Enums\InvoiceType;
@@ -80,16 +82,16 @@ class InvoiceHeaderTest extends TestCase
         $this->assertEquals('2024-02-13', $header->getDispatchDate());
         $this->assertEquals('00:00', $header->getDispatchTime());
         $this->assertEquals('KHB4201', $header->getVehicleNumber());
-        $this->assertEquals(MovePurpose::TYPE_19, $header->getMovePurpose());
+        $this->assertEquals(MovePurpose::OTHER_MOVEMENTS, $header->getMovePurpose());
         $this->assertTrue($header->isFuelInvoice());
-        $this->assertEquals(SpecialInvoiceCategory::TYPE_5, $header->getSpecialInvoiceCategory());
-        $this->assertEquals(InvoiceVariationType::TYPE_3, $header->getInvoiceVariationType());
+        $this->assertEquals(SpecialInvoiceCategory::COMPLEX_DOMESTIC_FOREIGN_TRANSACTIONS, $header->getSpecialInvoiceCategory());
+        $this->assertEquals(InvoiceVariationType::DEVIATION_BY_RECIPIENT, $header->getInvoiceVariationType());
         $this->assertTrue($header->getThirdPartyCollection());
     }
 
     public function test_it_sets_and_casts_v2_0_2_receiving_note_fields(): void
     {
-        $header = new InvoiceHeader();
+        $header = new InvoiceHeader;
         $header->setReceivingNotePurpose(7)
             ->setOtherReceivingNotePurposeTitle('Λοιπή περίπτωση')
             ->setNonObligatedRecipient(true)
@@ -118,7 +120,7 @@ class InvoiceHeaderTest extends TestCase
 
     public function test_reverse_delivery_note_purpose_casts_int_to_enum(): void
     {
-        $header = new InvoiceHeader();
+        $header = new InvoiceHeader;
         $header->setReverseDeliveryNotePurpose(3);
 
         $this->assertSame(

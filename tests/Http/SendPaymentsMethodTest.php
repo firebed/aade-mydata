@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -21,7 +23,7 @@ class SendPaymentsMethodTest extends MyDataHttpTestCase
         $paymentMethod1 = PaymentMethod::factory()->make();
         $paymentMethod2 = PaymentMethod::factory()->make();
 
-        $response = new ResponseDocXmlFactory();
+        $response = new ResponseDocXmlFactory;
         $response->addResponse($response1 = Response::factory()->make());
         $response->addResponse($response2 = Response::factory()->make());
 
@@ -29,7 +31,7 @@ class SendPaymentsMethodTest extends MyDataHttpTestCase
             new HttpResponse(200, body: $response->asXML()),
         ]));
 
-        $sendPayments = new SendPaymentsMethod();
+        $sendPayments = new SendPaymentsMethod;
         $responseDoc = $sendPayments->handle([$paymentMethod1, $paymentMethod2]);
 
         $this->assertCount(2, $responseDoc);
@@ -44,14 +46,14 @@ class SendPaymentsMethodTest extends MyDataHttpTestCase
     {
         $paymentMethod = PaymentMethod::factory()->make();
 
-        $response = new ResponseDocXmlFactory();
+        $response = new ResponseDocXmlFactory;
         $response->addResponse($response1 = Response::factory()->make());
 
         MyDataRequest::setHandler(new MockHandler([
             new HttpResponse(200, body: $response->asXML()),
         ]));
 
-        $sendPayments = new SendPaymentsMethod();
+        $sendPayments = new SendPaymentsMethod;
         $responseDoc = $sendPayments->handle($paymentMethod);
 
         $this->assertCount(1, $responseDoc);

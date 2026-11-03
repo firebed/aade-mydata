@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Traits;
 
 trait UsesStubs
 {
     protected function stubsPath($path): string
     {
-        return __DIR__ . "/../../stubs" . ($path ? "/$path" : '');
+        return __DIR__.'/../../stubs'.($path ? "/$path" : '');
     }
 
     protected function getStub(string $name): string

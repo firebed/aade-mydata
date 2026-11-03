@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http\DigitalGoodsMovement;
 
 use ErrorException;
@@ -67,7 +69,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
     {
         $this->initErpDev();
 
-        $request = new RequestDeliveryNoteStatus();
+        $request = new RequestDeliveryNoteStatus;
         $this->assertEquals('https://mydataapidev.aade.gr/GetDeliveryNoteStatus', $request->getUrl());
     }
 
@@ -81,7 +83,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
         ]);
         MyDataRequest::setHandler($mock);
 
-        $request = new RequestDeliveryNoteStatus();
+        $request = new RequestDeliveryNoteStatus;
         // The deprecated issuerVatNumber is not sent: myDATA rejects it together with qrUrl (HTTP 400)
         $response = $request->handleUsingQrUrl('https://mydataapidev.aade.gr/qr?q=abc', issuerVatNumber: '123456789');
 
@@ -102,7 +104,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
         MyDataRequest::setHandler($mock);
 
         // myDATA hands out QR URLs that are already percent-encoded
-        (new RequestDeliveryNoteStatus())->handleUsingQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=POiz%2fab%2bc%3d');
+        (new RequestDeliveryNoteStatus)->handleUsingQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=POiz%2fab%2bc%3d');
 
         $query = $mock->getLastRequest()->getUri()->getQuery();
         $this->assertStringNotContainsString('%25', $query);
@@ -118,7 +120,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
             new Response(200, body: $this->getStub('error-response-807.xml')),
         ]));
 
-        $request = new RequestDeliveryNoteStatus();
+        $request = new RequestDeliveryNoteStatus;
 
         try {
             $request->handleUsingQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=abc');
@@ -150,7 +152,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
         // Fail on any warning, as frameworks that turn warnings into exceptions would
         set_error_handler(fn (int $no, string $message) => throw new ErrorException($message, 0, $no));
         try {
-            (new RequestDeliveryNoteStatus())->handle(111111111111111);
+            (new RequestDeliveryNoteStatus)->handle(111111111111111);
             $this->fail('An ErrorResponseException was expected.');
         } catch (ErrorResponseException $e) {
             $this->assertSame('myDATA returned an error response.', $e->getMessage());
@@ -163,7 +165,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
 
     public function test_response_xml_is_null_before_a_request_is_made(): void
     {
-        $request = new RequestDeliveryNoteStatus();
+        $request = new RequestDeliveryNoteStatus;
 
         $this->assertNull($request->getResponseXML());
     }
@@ -178,7 +180,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
         ]);
         MyDataRequest::setHandler($mock);
 
-        (new RequestDeliveryNoteStatus())->handle(111111111111111);
+        (new RequestDeliveryNoteStatus)->handle(111111111111111);
 
         $query = $mock->getLastRequest()->getUri()->getQuery();
         $this->assertStringContainsString('mark=111111111111111', $query);
@@ -189,7 +191,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
     {
         $this->initErpProd();
 
-        $request = new RequestDeliveryNoteStatus();
+        $request = new RequestDeliveryNoteStatus;
         $this->assertEquals('https://mydatapi.aade.gr/myDATA/GetDeliveryNoteStatus', $request->getUrl());
     }
 
@@ -202,7 +204,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
 
         $this->expectException(UnsupportedChannelException::class);
 
-        $request = new RequestDeliveryNoteStatus();
+        $request = new RequestDeliveryNoteStatus;
         $request->handle(123);
     }
 
@@ -215,7 +217,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
 
         $this->expectException(UnsupportedChannelException::class);
 
-        $request = new RequestDeliveryNoteStatus();
+        $request = new RequestDeliveryNoteStatus;
         $request->handle(123);
     }
 
@@ -228,7 +230,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
             new Response(200, body: $this->getStub('request-delivery-note-status-response-registered.xml')),
         ]));
 
-        $request = new RequestDeliveryNoteStatus();
+        $request = new RequestDeliveryNoteStatus;
         $response = $request->handle(111111111111111);
 
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-delivery-note-status-response-registered.xml'), $request->getResponseXML());
@@ -246,7 +248,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
             new Response(200, body: $this->getStub('request-delivery-note-status-response-in-transit.xml')),
         ]));
 
-        $request = new RequestDeliveryNoteStatus();
+        $request = new RequestDeliveryNoteStatus;
         $response = $request->handle(111111111111111);
 
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-delivery-note-status-response-in-transit.xml'), $request->getResponseXML());
@@ -268,7 +270,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
             new Response(200, body: $this->getStub('request-delivery-note-status-response-delivered-by-carrier.xml')),
         ]));
 
-        $request = new RequestDeliveryNoteStatus();
+        $request = new RequestDeliveryNoteStatus;
         $response = $request->handle(111111111111111);
 
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-delivery-note-status-response-delivered-by-carrier.xml'), $request->getResponseXML());
@@ -291,7 +293,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
             new Response(200, body: $this->getStub('request-delivery-note-status-response-rejected.xml')),
         ]));
 
-        $request = new RequestDeliveryNoteStatus();
+        $request = new RequestDeliveryNoteStatus;
         $response = $request->handle(111111111111111);
 
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-delivery-note-status-response-rejected.xml'), $request->getResponseXML());
@@ -320,7 +322,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
             new Response(200, body: $this->getStub('request-delivery-note-status-response-completed.xml')),
         ]));
 
-        $request = new RequestDeliveryNoteStatus();
+        $request = new RequestDeliveryNoteStatus;
         $response = $request->handle(111111111111111);
 
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-delivery-note-status-response-completed.xml'), $request->getResponseXML());
@@ -344,7 +346,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
             new Response(200, body: $this->getStub('request-delivery-note-status-response-failed-delivery.xml')),
         ]));
 
-        $request = new RequestDeliveryNoteStatus();
+        $request = new RequestDeliveryNoteStatus;
         $response = $request->handle(111111111111111);
 
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-delivery-note-status-response-failed-delivery.xml'), $request->getResponseXML());

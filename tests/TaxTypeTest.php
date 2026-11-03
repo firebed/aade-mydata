@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use Firebed\AadeMyData\Enums\FeesPercentCategory;
@@ -11,19 +13,19 @@ class TaxTypeTest extends TestCase
 {
     public function test_tax_combination(): void
     {
-        $this->assertTrue(TaxType::taxClassificationExists(TaxType::TYPE_1, WithheldPercentCategory::TAX_1->value));
-        $this->assertTrue(TaxType::taxClassificationExists(TaxType::TYPE_1, WithheldPercentCategory::TAX_1));
-        $this->assertTrue(TaxType::taxClassificationExists(TaxType::TYPE_5, null));
-        $this->assertFalse(TaxType::taxClassificationExists(TaxType::TYPE_1, FeesPercentCategory::TYPE_22->value));
-        $this->assertFalse(TaxType::taxClassificationExists(TaxType::TYPE_1, FeesPercentCategory::TYPE_22));
-        $this->assertFalse(TaxType::taxClassificationExists(TaxType::TYPE_1, null));
+        $this->assertTrue(TaxType::taxClassificationExists(TaxType::WITHHELD_TAX, WithheldPercentCategory::INTEREST_15->value));
+        $this->assertTrue(TaxType::taxClassificationExists(TaxType::WITHHELD_TAX, WithheldPercentCategory::INTEREST_15));
+        $this->assertTrue(TaxType::taxClassificationExists(TaxType::DEDUCTIONS, null));
+        $this->assertFalse(TaxType::taxClassificationExists(TaxType::WITHHELD_TAX, FeesPercentCategory::OTHER_GROSS_REVENUE_FEES->value));
+        $this->assertFalse(TaxType::taxClassificationExists(TaxType::WITHHELD_TAX, FeesPercentCategory::OTHER_GROSS_REVENUE_FEES));
+        $this->assertFalse(TaxType::taxClassificationExists(TaxType::WITHHELD_TAX, null));
 
-        $this->assertTrue(TaxType::TYPE_1->supportsTaxCategory(WithheldPercentCategory::TAX_1->value));
-        $this->assertTrue(TaxType::TYPE_1->supportsTaxCategory(WithheldPercentCategory::TAX_1));
-        $this->assertTrue(TaxType::TYPE_5->supportsTaxCategory(null));
-        $this->assertFalse(TaxType::TYPE_1->supportsTaxCategory(FeesPercentCategory::TYPE_22->value));
-        $this->assertFalse(TaxType::TYPE_1->supportsTaxCategory(FeesPercentCategory::TYPE_22));
-        $this->assertFalse(TaxType::TYPE_1->supportsTaxCategory(null));
+        $this->assertTrue(TaxType::WITHHELD_TAX->supportsTaxCategory(WithheldPercentCategory::INTEREST_15->value));
+        $this->assertTrue(TaxType::WITHHELD_TAX->supportsTaxCategory(WithheldPercentCategory::INTEREST_15));
+        $this->assertTrue(TaxType::DEDUCTIONS->supportsTaxCategory(null));
+        $this->assertFalse(TaxType::WITHHELD_TAX->supportsTaxCategory(FeesPercentCategory::OTHER_GROSS_REVENUE_FEES->value));
+        $this->assertFalse(TaxType::WITHHELD_TAX->supportsTaxCategory(FeesPercentCategory::OTHER_GROSS_REVENUE_FEES));
+        $this->assertFalse(TaxType::WITHHELD_TAX->supportsTaxCategory(null));
 
         $this->assertFalse(TaxType::taxClassificationExists(999, 1));
     }

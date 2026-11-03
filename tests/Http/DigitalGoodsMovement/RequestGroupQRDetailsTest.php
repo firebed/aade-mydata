@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Exceptions\ErrorResponseException;
@@ -16,7 +18,7 @@ class RequestGroupQRDetailsTest extends DigitalGoodsMovementTestCase
     {
         $this->initErpDev();
 
-        $request = new RequestGroupQrDetails();
+        $request = new RequestGroupQrDetails;
         $this->assertEquals('https://mydataapidev.aade.gr/RequestGroupQRDetails', $request->getUrl());
     }
 
@@ -24,7 +26,7 @@ class RequestGroupQRDetailsTest extends DigitalGoodsMovementTestCase
     {
         $this->initErpProd();
 
-        $request = new RequestGroupQrDetails();
+        $request = new RequestGroupQrDetails;
         $this->assertEquals('https://mydatapi.aade.gr/myDATA/RequestGroupQRDetails', $request->getUrl());
     }
 
@@ -37,7 +39,7 @@ class RequestGroupQRDetailsTest extends DigitalGoodsMovementTestCase
 
         $this->expectException(UnsupportedChannelException::class);
 
-        $request = new RequestGroupQrDetails();
+        $request = new RequestGroupQrDetails;
         $request->handle('test');
     }
 
@@ -50,7 +52,7 @@ class RequestGroupQRDetailsTest extends DigitalGoodsMovementTestCase
 
         $this->expectException(UnsupportedChannelException::class);
 
-        $request = new RequestGroupQrDetails();
+        $request = new RequestGroupQrDetails;
         $request->handle('test');
     }
 
@@ -63,7 +65,7 @@ class RequestGroupQRDetailsTest extends DigitalGoodsMovementTestCase
             new Response(200, body: $this->getStub('request-group-qr-details-response.xml')),
         ]));
 
-        $request = new RequestGroupQrDetails();
+        $request = new RequestGroupQrDetails;
         $response = $request->handle('9946C6AA9DB3658C85CC3BF43DB726FE25BBC555');
 
         $this->assertEquals('9946C6AA9DB3658C85CC3BF43DB726FE25BBC555', $response->getGroupId());
@@ -75,8 +77,8 @@ class RequestGroupQRDetailsTest extends DigitalGoodsMovementTestCase
         $this->assertEquals('Success', $response->getStatusCode());
 
         $qrUrls = $response->getQrUrls();
-        $this->assertEquals("https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url_1", $qrUrls[0]);
-        $this->assertEquals("https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url_2", $qrUrls[1]);
+        $this->assertEquals('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url_1', $qrUrls[0]);
+        $this->assertEquals('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url_2', $qrUrls[1]);
 
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-group-qr-details-response.xml'), $request->getResponseXML());
     }
@@ -93,7 +95,7 @@ class RequestGroupQRDetailsTest extends DigitalGoodsMovementTestCase
         $this->expectException(ErrorResponseException::class);
         $this->expectExceptionCode(807);
         $this->expectExceptionMessage('807: Invalid QR');
-        (new RequestGroupQrDetails())->handle('test');
+        (new RequestGroupQrDetails)->handle('test');
     }
 
     /**
@@ -108,6 +110,6 @@ class RequestGroupQRDetailsTest extends DigitalGoodsMovementTestCase
         $this->expectException(ErrorResponseException::class);
         $this->expectExceptionCode(0);
         $this->expectExceptionMessageMatches('/^Invalid request: groupId must be a valid 40-character SHA1 hash$/');
-        (new RequestGroupQrDetails())->handle('test');
+        (new RequestGroupQrDetails)->handle('test');
     }
 }

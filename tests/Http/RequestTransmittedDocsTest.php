@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -19,7 +21,7 @@ class RequestTransmittedDocsTest extends MyDataHttpTestCase
             new Response(200, body: $this->getStub('request-doc-response')),
         ]));
 
-        $request = new RequestTransmittedDocs();
+        $request = new RequestTransmittedDocs;
         $requestedDoc = $request->handle();
 
         $this->assertCount(2, $requestedDoc->getInvoices());

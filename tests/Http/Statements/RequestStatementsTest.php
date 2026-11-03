@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Http\Statements;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -14,14 +16,14 @@ class RequestStatementsTest extends MyDataHttpTestCase
     public function test_dev_provider_url_is_correct()
     {
         MyDataRequest::init('test_user_id', 'test_user_secret', 'dev', true);
-        $request = new RequestStatements();
+        $request = new RequestStatements;
         $this->assertEquals('https://mydataapidev.aade.gr/myDataProvider/RequestStatements', $request->getUrl());
     }
 
     public function test_prod_provider_url_is_correct()
     {
         MyDataRequest::init('test_user_id', 'test_user_secret', 'prod', true);
-        $request = new RequestStatements();
+        $request = new RequestStatements;
         $this->assertEquals('https://mydatapi.aade.gr/myDataProvider/RequestStatements', $request->getUrl());
     }
 
@@ -30,13 +32,13 @@ class RequestStatementsTest extends MyDataHttpTestCase
         MyDataRequest::init('test_user_id', 'test_user_secret', 'dev');
 
         MyDataRequest::setHandler(new MockHandler([
-            new Response(200)
+            new Response(200),
         ]));
 
         $this->expectException(MyDataException::class);
         $this->expectExceptionMessage('RequestStatements can only be used with the Provider route.');
 
-        (new RequestStatements())->handle();
+        (new RequestStatements)->handle();
     }
 
     /**
@@ -50,7 +52,7 @@ class RequestStatementsTest extends MyDataHttpTestCase
             new Response(200, body: $this->getStub('statements/request-statements-response')),
         ]));
 
-        $request = new RequestStatements();
+        $request = new RequestStatements;
         $responseDoc = $request->handle();
 
         $this->assertCount(2, $responseDoc);

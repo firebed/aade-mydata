@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Xml;
 
 use DOMDocument;
@@ -8,11 +10,12 @@ use DOMNode;
 class Document
 {
     private DOMDocument $dom;
-    private Node        $xml;
+
+    private Node $xml;
 
     public function __construct(string $xmlString)
     {
-        $this->dom = new DOMDocument();
+        $this->dom = new DOMDocument;
         $this->dom->preserveWhiteSpace = false;
         $this->dom->formatOutput = true;
         $this->dom->loadXML($xmlString);
@@ -34,11 +37,11 @@ class Document
             $nodeName = $child->nodeName;
 
             // Check if the node already exists in the result array
-            if (!isset($result[$nodeName])) {
+            if (! isset($result[$nodeName])) {
                 $result[$nodeName] = $this->toArray($child);
             } else {
                 // Convert to array if it's not already an array
-                if (!isset($groups[$nodeName])) {
+                if (! isset($groups[$nodeName])) {
                     $result[$nodeName] = [$result[$child->nodeName]];
                     $groups[$nodeName] = true;
                 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use Firebed\AadeMyData\Enums\CountryCode;
@@ -25,7 +27,7 @@ class EnumMatchesXsdTest extends TestCase
 {
     public function test_enums_match_their_xsd_enumerations(): void
     {
-        $xsd = file_get_contents(__DIR__ . '/../xsd/SimpleTypes-' . Invoice::VERSION . '.xsd');
+        $xsd = file_get_contents(__DIR__.'/../xsd/SimpleTypes-'.Invoice::VERSION.'.xsd');
         $this->assertNotFalse($xsd);
 
         $pairs = [
@@ -41,7 +43,7 @@ class EnumMatchesXsdTest extends TestCase
         $problems = [];
 
         foreach ($pairs as [$enumClass, $xsdType]) {
-            preg_match('#<xs:simpleType name="' . preg_quote($xsdType, '#') . '">(.*?)</xs:simpleType>#s', $xsd, $block);
+            preg_match('#<xs:simpleType name="'.preg_quote($xsdType, '#').'">(.*?)</xs:simpleType>#s', $xsd, $block);
             preg_match_all('#<xs:enumeration value="([^"]*)"#', $block[1] ?? '', $m);
 
             $xsdVals = $m[1];
@@ -57,7 +59,7 @@ class EnumMatchesXsdTest extends TestCase
             }
         }
 
-        $this->assertSame([], $problems, 'Enum/XSD mismatches: ' . json_encode($problems, JSON_UNESCAPED_UNICODE));
+        $this->assertSame([], $problems, 'Enum/XSD mismatches: '.json_encode($problems, JSON_UNESCAPED_UNICODE));
     }
 
     /**
@@ -68,7 +70,7 @@ class EnumMatchesXsdTest extends TestCase
      */
     public function test_expense_classification_contains_all_xsd_codes(): void
     {
-        $xsd = file_get_contents(__DIR__ . '/../xsd/SimpleTypes-' . Invoice::VERSION . '.xsd');
+        $xsd = file_get_contents(__DIR__.'/../xsd/SimpleTypes-'.Invoice::VERSION.'.xsd');
         $this->assertNotFalse($xsd);
 
         preg_match('#<xs:simpleType name="ExpensesClassificationValueType">(.*?)</xs:simpleType>#s', $xsd, $block);
@@ -77,6 +79,6 @@ class EnumMatchesXsdTest extends TestCase
         $enumVals = array_map(fn ($c) => (string) $c->value, ExpenseClassificationType::cases());
         $missing = array_values(array_diff($m[1], $enumVals));
 
-        $this->assertSame([], $missing, 'ExpenseClassificationType is missing XSD codes: ' . implode(', ', $missing));
+        $this->assertSame([], $missing, 'ExpenseClassificationType is missing XSD codes: '.implode(', ', $missing));
     }
 }

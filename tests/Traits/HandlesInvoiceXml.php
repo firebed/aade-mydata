@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Traits;
 
 use Firebed\AadeMyData\Models\Invoice;
@@ -19,7 +21,7 @@ trait HandlesInvoiceXml
     {
         $xmlString = $this->getStub($filename);
 
-        $parser = new RequestedDocReader();
+        $parser = new RequestedDocReader;
         $requestedDoc = $parser->parseXML($xmlString);
 
         return $requestedDoc->getInvoices()->offsetGet(0);
@@ -28,7 +30,7 @@ trait HandlesInvoiceXml
     public function getRequestedDocFromXml(string $filename = 'request-doc-response'): RequestedDoc
     {
         $xmlString = $this->getStub($filename);
-        $parser = new RequestedDocReader();
+        $parser = new RequestedDocReader;
 
         return $parser->parseXML($xmlString);
     }
@@ -36,14 +38,14 @@ trait HandlesInvoiceXml
     public function getResponseDocFromXml(string $filename): ResponseDoc
     {
         $xmlString = $this->getStub($filename);
-        $parser = new ResponseDocReader();
+        $parser = new ResponseDocReader;
 
         return $parser->parseXML($xmlString);
     }
 
     protected function toXML(Invoice $invoice): object
     {
-        $writer = new InvoicesDocWriter();
+        $writer = new InvoicesDocWriter;
 
         // First convert the Invoice to XML
         $xmlString = $writer->asXML(new InvoicesDoc($invoice));

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use Firebed\AadeMyData\Enums\EntityTypes;
@@ -55,7 +57,7 @@ class InvoiceHeaderOtherCorrelatedEntitiesTest extends TestCase
 
         // Testing other correlated entity 1
         $entity1 = $header->getOtherCorrelatedEntities()[0];
-        $this->assertEquals(EntityTypes::TYPE_3, $entity1->getType());
+        $this->assertEquals(EntityTypes::CARRIER, $entity1->getType());
         $this->assertEquals('888888888', $entity1->getEntityData()->getVatNumber());
         $this->assertEquals('GR', $entity1->getEntityData()->getCountry());
         $this->assertEquals(1, $entity1->getEntityData()->getBranch());
@@ -67,7 +69,7 @@ class InvoiceHeaderOtherCorrelatedEntitiesTest extends TestCase
 
         // Testing other correlated entity 2
         $entity2 = $header->getOtherCorrelatedEntities()[1];
-        $this->assertEquals(EntityTypes::TYPE_2, $entity2->getType());
+        $this->assertEquals(EntityTypes::INTERMEDIARY, $entity2->getType());
         $this->assertEquals('IT999999999', $entity2->getEntityData()->getVatNumber());
         $this->assertEquals('IT', $entity2->getEntityData()->getCountry());
         $this->assertEquals(2, $entity2->getEntityData()->getBranch());
