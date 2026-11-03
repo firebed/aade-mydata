@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Firebed\AadeMyData\Enums\Statements;
 
 use Firebed\AadeMyData\Enums\HasLabels;
+use Firebed\AadeMyData\Enums\Label;
 
 /**
  * Τύπος Παρόχου
@@ -18,18 +19,12 @@ enum ProviderType: int
     /**
      * Πάροχος
      */
+    #[Label('Πάροχος')]
     case PROVIDER = 1;
 
     /**
      * ΙδιοΠάροχος
      */
+    #[Label('ΙδιοΠάροχος')]
     case SELF_PROVIDER = 2;
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::PROVIDER => 'Πάροχος',
-            self::SELF_PROVIDER => 'ΙδιοΠάροχος',
-        };
-    }
 }

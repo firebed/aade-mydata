@@ -11,126 +11,120 @@ enum MovePurpose: int
     /**
      *  Πώληση
      */
-    case TYPE_1 = 1;
+    #[Label('Πώληση')]
+    case SALE = 1;
 
     /**
      *  Πώληση για Λογαριασμό Τρίτων
      */
-    case TYPE_2 = 2;
+    #[Label('Πώληση για Λογαριασμό Τρίτων')]
+    case SALE_FOR_THIRD_PARTIES = 2;
 
     /**
      *  Δειγματισμός
      */
-    case TYPE_3 = 3;
+    #[Label('Δειγματισμός')]
+    case SAMPLING = 3;
 
     /**
      *  Έκθεση
      */
-    case TYPE_4 = 4;
+    #[Label('Έκθεση')]
+    case EXHIBITION = 4;
 
     /**
      *  Επιστροφή
      */
-    case TYPE_5 = 5;
+    #[Label('Επιστροφή')]
+    case RETURN = 5;
 
     /**
      *  Φύλαξη
      */
-    case TYPE_6 = 6;
+    #[Label('Φύλαξη')]
+    case SAFEKEEPING = 6;
 
     /**
      *  Επεξεργασία - Συναρμολόγηση - Αποσυναρμολόγηση
      */
-    case TYPE_7 = 7;
+    #[Label('Επεξεργασία - Συναρμολόγηση - Αποσυναρμολόγηση')]
+    case PROCESSING_ASSEMBLY_DISASSEMBLY = 7;
 
     /**
      *  Ενδοδιακίνηση
      */
-    case TYPE_8 = 8;
+    #[Label('Ενδοδιακίνηση')]
+    case INTERNAL_MOVEMENT = 8;
 
     /**
      *  Αγορά
      */
-    case TYPE_9 = 9;
+    #[Label('Αγορά')]
+    case PURCHASE = 9;
 
     /**
      *  Εφοδιασμός πλοίων και αεροσκαφών
      */
-    case TYPE_10 = 10;
+    #[Label('Εφοδιασμός πλοίων και αεροσκαφών')]
+    case SHIP_AND_AIRCRAFT_SUPPLY = 10;
 
     /**
      *  Δωρεάν διάθεση
      */
-    case TYPE_11 = 11;
+    #[Label('Δωρεάν διάθεση')]
+    case FREE_DISPOSAL = 11;
 
     /**
      *  Εγγύηση
      */
-    case TYPE_12 = 12;
+    #[Label('Εγγύηση')]
+    case WARRANTY = 12;
 
     /**
      *  Χρησιδανεισμός
      */
-    case TYPE_13 = 13;
+    #[Label('Χρησιδανεισμός')]
+    case LOAN_FOR_USE = 13;
 
     /**
      *  Αποθήκευση σε Τρίτους
      */
-    case TYPE_14 = 14;
+    #[Label('Αποθήκευση σε Τρίτους')]
+    case STORAGE_AT_THIRD_PARTIES = 14;
 
     /**
      *  Επιστροφή από Φύλαξη
      */
-    case TYPE_15 = 15;
+    #[Label('Επιστροφή από Φύλαξη')]
+    case RETURN_FROM_SAFEKEEPING = 15;
 
     /**
      *  Ανακύκλωση
      */
-    case TYPE_16 = 16;
+    #[Label('Ανακύκλωση')]
+    case RECYCLING = 16;
 
     /**
      *  Καταστροφή άχρηστου υλικού
      */
-    case TYPE_17 = 17;
+    #[Label('Καταστροφή άχρηστου υλικού')]
+    case SCRAP_DESTRUCTION = 17;
 
     /**
      *  Διακίνηση Παγίων (Ενδοδιακίνηση)
      */
-    case TYPE_18 = 18;
+    #[Label('Διακίνηση Παγίων (Ενδοδιακίνηση)')]
+    case FIXED_ASSETS_MOVEMENT = 18;
 
     /**
      *  Λοιπές Διακινήσεις
      */
-    case TYPE_19 = 19;
+    #[Label('Λοιπές Διακινήσεις')]
+    case OTHER_MOVEMENTS = 19;
 
     /**
      * Μεταφορές - Ταχυμεταφορές
      */
-    case TYPE_20 = 20;
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::TYPE_1 => 'Πώληση',
-            self::TYPE_2 => 'Πώληση για Λογαριασμό Τρίτων',
-            self::TYPE_3 => 'Δειγματισμός',
-            self::TYPE_4 => 'Έκθεση',
-            self::TYPE_5 => 'Επιστροφή',
-            self::TYPE_6 => 'Φύλαξη',
-            self::TYPE_7 => 'Επεξεργασία - Συναρμολόγηση - Αποσυναρμολόγηση',
-            self::TYPE_8 => 'Ενδοδιακίνηση',
-            self::TYPE_9 => 'Αγορά',
-            self::TYPE_10 => 'Εφοδιασμός πλοίων και αεροσκαφών',
-            self::TYPE_11 => 'Δωρεάν διάθεση',
-            self::TYPE_12 => 'Εγγύηση',
-            self::TYPE_13 => 'Χρησιδανεισμός',
-            self::TYPE_14 => 'Αποθήκευση σε Τρίτους',
-            self::TYPE_15 => 'Επιστροφή από Φύλαξη',
-            self::TYPE_16 => 'Ανακύκλωση',
-            self::TYPE_17 => 'Καταστροφή άχρηστου υλικού',
-            self::TYPE_18 => 'Διακίνηση Παγίων (Ενδοδιακίνηση)',
-            self::TYPE_19 => 'Λοιπές Διακινήσεις',
-            self::TYPE_20 => 'Μεταφορές - Ταχυμεταφορές',
-        };
-    }
+    #[Label('Μεταφορές - Ταχυμεταφορές')]
+    case TRANSPORT_AND_COURIER = 20;
 }

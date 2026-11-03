@@ -13,27 +13,32 @@ enum TaxType: int
     /**
      * Παρακρατούμενος Φόρος
      */
-    case TYPE_1 = 1;
+    #[Label('Παρακρατούμενος Φόρος')]
+    case WITHHELD_TAX = 1;
 
     /**
      * Τέλη
      */
-    case TYPE_2 = 2;
+    #[Label('Τέλη')]
+    case FEES = 2;
 
     /**
      * Λοιποί Φόροι
      */
-    case TYPE_3 = 3;
+    #[Label('Λοιποί Φόροι')]
+    case OTHER_TAXES = 3;
 
     /**
      * Ψηφιακό Τέλος Συναλλαγής
      */
-    case TYPE_4 = 4;
+    #[Label('Ψηφιακό Τέλος Συναλλαγής')]
+    case STAMP_DUTY = 4;
 
     /**
      * Κρατήσεις
      */
-    case TYPE_5 = 5;
+    #[Label('Κρατήσεις')]
+    case DEDUCTIONS = 5;
 
     /**
      * Checks if a given tax category exists for a specific tax type.
@@ -47,12 +52,12 @@ enum TaxType: int
      * @return bool Returns `true` if the tax category exists for the given tax type, otherwise `false`.
      *
      * @example
-     * Check if tax category 1 exists for TaxType::TYPE_1
-     * taxClassificationExists(TaxType::TYPE_1, 1); // Returns true if valid, false otherwise
-     * taxClassificationExists(TaxType::TYPE_1, WithheldPercentCategory::TAX_1); // Returns true if valid, false otherwise
+     * Check if tax category 1 exists for TaxType::WITHHELD_TAX
+     * taxClassificationExists(TaxType::WITHHELD_TAX, 1); // Returns true if valid, false otherwise
+     * taxClassificationExists(TaxType::WITHHELD_TAX, WithheldPercentCategory::INTEREST_15); // Returns true if valid, false otherwise
      *
-     * Check if tax category is valid for TaxType::TYPE_5 (which requires no category)
-     * taxClassificationExists(TaxType::TYPE_5, null); // Returns true
+     * Check if tax category is valid for TaxType::DEDUCTIONS (which requires no category)
+     * taxClassificationExists(TaxType::DEDUCTIONS, null); // Returns true
      */
     public static function taxClassificationExists(TaxType|int $taxType, BackedEnum|int|null $taxCategory): bool
     {
@@ -76,36 +81,25 @@ enum TaxType: int
     {
         // Check for null tax category to avoid tryFrom calls on null values
         if ($taxCategory === null) {
-            return $this === self::TYPE_5;
+            return $this === self::DEDUCTIONS;
         }
 
         if ($taxCategory instanceof BackedEnum) {
             return match ($this) {
-                self::TYPE_1 => $taxCategory instanceof WithheldPercentCategory, // Παρακρατούμενοι Φόροι
-                self::TYPE_2 => $taxCategory instanceof FeesPercentCategory, // Τέλη
-                self::TYPE_3 => $taxCategory instanceof OtherTaxesPercentCategory, // Άλλοι Φόροι
-                self::TYPE_4 => $taxCategory instanceof StampCategory, // Ψηφιακό Τέλος Συναλλαγής
+                self::WITHHELD_TAX => $taxCategory instanceof WithheldPercentCategory, // Παρακρατούμενοι Φόροι
+                self::FEES => $taxCategory instanceof FeesPercentCategory, // Τέλη
+                self::OTHER_TAXES => $taxCategory instanceof OtherTaxesPercentCategory, // Άλλοι Φόροι
+                self::STAMP_DUTY => $taxCategory instanceof StampCategory, // Ψηφιακό Τέλος Συναλλαγής
                 default => false,
             };
         }
 
         return match ($this) {
-            self::TYPE_1 => WithheldPercentCategory::tryFrom($taxCategory) !== null, // Παρακρατούμενοι Φόροι
-            self::TYPE_2 => FeesPercentCategory::tryFrom($taxCategory) !== null, // Τέλη
-            self::TYPE_3 => OtherTaxesPercentCategory::tryFrom($taxCategory) !== null, // Άλλοι Φόροι
-            self::TYPE_4 => StampCategory::tryFrom($taxCategory) !== null, // Ψηφιακό Τέλος Συναλλαγής
+            self::WITHHELD_TAX => WithheldPercentCategory::tryFrom($taxCategory) !== null, // Παρακρατούμενοι Φόροι
+            self::FEES => FeesPercentCategory::tryFrom($taxCategory) !== null, // Τέλη
+            self::OTHER_TAXES => OtherTaxesPercentCategory::tryFrom($taxCategory) !== null, // Άλλοι Φόροι
+            self::STAMP_DUTY => StampCategory::tryFrom($taxCategory) !== null, // Ψηφιακό Τέλος Συναλλαγής
             default => false,
-        };
-    }
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::TYPE_1 => 'Παρακρατούμενος Φόρος',
-            self::TYPE_2 => 'Τέλη',
-            self::TYPE_3 => 'Λοιποί Φόροι',
-            self::TYPE_4 => 'Ψηφιακό Τέλος Συναλλαγής',
-            self::TYPE_5 => 'Κρατήσεις',
         };
     }
 }

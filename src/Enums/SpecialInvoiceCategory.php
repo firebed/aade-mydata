@@ -11,44 +11,51 @@ enum SpecialInvoiceCategory: int
     /**
      *  Επιδοτήσεις – Επιχορηγήσεις
      */
-    case TYPE_1 = 1;
+    #[Label('Επιδοτήσεις – Επιχορηγήσεις')]
+    case SUBSIDIES_GRANTS = 1;
 
     /**
      *  Έσοδα Λιανικής Ξενοδοχείων
      */
-    case TYPE_2 = 2;
+    #[Label('Έσοδα Λιανικής Ξενοδοχείων')]
+    case HOTEL_RETAIL_INCOME = 2;
 
     /**
      *  Λογιστική Εγγραφή
      */
-    case TYPE_3 = 3;
+    #[Label('Λογιστική Εγγραφή')]
+    case ACCOUNTING_ENTRY = 3;
 
     /**
      * Tax Free
      * Έγκυρη τιμή μόνο για διαβίβαση μέσω erp ή έκδοση μέσω παρόχου ή timologio
      */
-    case TYPE_4 = 4;
+    #[Label('Tax Free')]
+    case TAX_FREE = 4;
 
     /**
      * Σύνθετες συναλλαγές ημεδαπής – αλλοδαπής
      *
      * @version 1.0.7
      */
-    case TYPE_5 = 5;
+    #[Label('Σύνθετες συναλλαγές ημεδαπής – αλλοδαπής')]
+    case COMPLEX_DOMESTIC_FOREIGN_TRANSACTIONS = 5;
 
     /**
      * Δικαιούχοι του άρθρου 3 της υπό στοιχεία 139818 ΕΞ2022/28.09.2022 (Β’5083) κοινής υπουργικής απόφασης
      *
      * @version 1.0.7
      */
-    case TYPE_6 = 6;
+    #[Label('Δικαιούχοι του άρθρου 3 της υπό στοιχεία 139818 ΕΞ2022/28.09.2022 (Β’5083) κοινής υπουργικής απόφασης')]
+    case DECISION_139818_BENEFICIARIES = 6;
 
     /**
      * Αγορά αγροτικών αγαθών υπηρεσιών Άρθρο 41 του Κώδικα ΦΠΑ
      *
      * @version 1.0.7
      */
-    case TYPE_7 = 7;
+    #[Label('Αγορά αγροτικών αγαθών υπηρεσιών Άρθρο 41 του Κώδικα ΦΠΑ')]
+    case AGRICULTURAL_PURCHASES_ARTICLE_41 = 7;
 
     /**
      * Έσοδα Λιανικών ΦΗΜ ΑΑΔΕ_1
@@ -56,7 +63,8 @@ enum SpecialInvoiceCategory: int
      *
      * @version 1.0.7
      */
-    case TYPE_8 = 8;
+    #[Label('Έσοδα Λιανικών ΦΗΜ ΑΑΔΕ_1')]
+    case RETAIL_INCOME_FISCAL_DEVICE_AADE_1 = 8;
 
     /**
      * Έσοδα Λιανικών ΦΗΜ ΑΑΔΕ_2
@@ -64,24 +72,28 @@ enum SpecialInvoiceCategory: int
      *
      * @version 1.0.7
      */
-    case TYPE_9 = 9;
+    #[Label('Έσοδα Λιανικών ΦΗΜ ΑΑΔΕ_2')]
+    case RETAIL_INCOME_FISCAL_DEVICE_AADE_2 = 9;
 
     /**
      * Έσοδα Λιανικών ΦΗΜ Επιχείρησης Απόκλιση
      *
      * @version 1.0.7
      */
-    case TYPE_10 = 10;
+    #[Label('Έσοδα Λιανικών ΦΗΜ Επιχείρησης Απόκλιση')]
+    case RETAIL_INCOME_FISCAL_DEVICE_DEVIATION = 10;
 
     /**
      *  Επίδομα Θέρμανσης
      */
-    case TYPE_11 = 11;
+    #[Label('Επίδομα Θέρμανσης')]
+    case HEATING_ALLOWANCE = 11;
 
     /**
      *  Συναλλαγές εστίασης
      */
-    case TYPE_12 = 12;
+    #[Label('Συναλλαγές εστίασης')]
+    case RESTAURANT_TRANSACTIONS = 12;
 
     /**
      * Ένδειξη Δυσχέρεια Συσχέτισης
@@ -89,24 +101,6 @@ enum SpecialInvoiceCategory: int
      *
      * @version 1.0.11
      */
-    case TYPE_13 = 13;
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::TYPE_1 => 'Επιδοτήσεις – Επιχορηγήσεις',
-            self::TYPE_2 => 'Έσοδα Λιανικής Ξενοδοχείων',
-            self::TYPE_3 => 'Λογιστική Εγγραφή',
-            self::TYPE_4 => 'Tax Free',
-            self::TYPE_5 => 'Σύνθετες συναλλαγές ημεδαπής – αλλοδαπής',
-            self::TYPE_6 => 'Δικαιούχοι του άρθρου 3 της υπό στοιχεία 139818 ΕΞ2022/28.09.2022 (Β’5083) κοινής υπουργικής απόφασης',
-            self::TYPE_7 => 'Αγορά αγροτικών αγαθών υπηρεσιών Άρθρο 41 του Κώδικα ΦΠΑ',
-            self::TYPE_8 => 'Έσοδα Λιανικών ΦΗΜ ΑΑΔΕ_1',
-            self::TYPE_9 => 'Έσοδα Λιανικών ΦΗΜ ΑΑΔΕ_2',
-            self::TYPE_10 => 'Έσοδα Λιανικών ΦΗΜ Επιχείρησης Απόκλιση',
-            self::TYPE_11 => 'Επίδομα Θέρμανσης',
-            self::TYPE_12 => 'Συναλλαγές εστίασης',
-            self::TYPE_13 => 'Ένδειξη Δυσχέρεια Συσχέτισης',
-        };
-    }
+    #[Label('Ένδειξη Δυσχέρεια Συσχέτισης')]
+    case CORRELATION_DIFFICULTY = 13;
 }

@@ -11,18 +11,12 @@ enum InvoiceDetailType: int
     /**
      *  Εκκαθάριση Πωλήσεων Τρίτων
      */
-    case TYPE_1 = 1;
+    #[Label('Εκκαθάριση Πωλήσεων Τρίτων')]
+    case THIRD_PARTY_SALES_SETTLEMENT = 1;
 
     /**
      *  Αμοιβή από Πωλήσεις Τρίτων
      */
-    case TYPE_2 = 2;
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::TYPE_1 => 'Εκκαθάριση Πωλήσεων Τρίτων',
-            self::TYPE_2 => 'Αμοιβή από Πωλήσεις Τρίτων',
-        };
-    }
+    #[Label('Αμοιβή από Πωλήσεις Τρίτων')]
+    case THIRD_PARTY_SALES_FEE = 2;
 }

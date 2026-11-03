@@ -5,40 +5,36 @@ declare(strict_types=1);
 namespace Firebed\AadeMyData\Enums\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Enums\HasLabels;
+use Firebed\AadeMyData\Enums\Label;
+use Firebed\AadeMyData\Enums\TryFromName;
 
-enum DeliveryStatus: int
+enum DeliveryStatus: int implements TryFromName
 {
     use HasLabels;
 
+    #[Label('Εκδόθηκε')]
     case REGISTERED = 1;
+    #[Label('Ακυρώθηκε')]
     case CANCELLED = 2;
+    #[Label('Σε διακίνηση')]
     case IN_TRANSIT = 3;
+    #[Label('Απορρίφθηκε')]
     case REJECTED = 4;
+    #[Label('Παραδόθηκε από τον μεταφορέα')]
     case DELIVERED_BY_CARRIER = 5;
+    #[Label('Αποτυχία παράδοσης')]
     case FAILED_DELIVERY = 7;
+    #[Label('Ολοκληρώθηκε')]
     case COMPLETED = 8;
+    #[Label('Σε διακίνηση (Επιστροφή)')]
     case IN_TRANSIT_RETURN = 9;
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::REGISTERED => 'Εκδόθηκε',
-            self::IN_TRANSIT => 'Σε διακίνηση',
-            self::DELIVERED_BY_CARRIER => 'Παραδόθηκε από τον μεταφορέα',
-            self::COMPLETED => 'Ολοκληρώθηκε',
-            self::REJECTED => 'Απορρίφθηκε',
-            self::CANCELLED => 'Ακυρώθηκε',
-            self::FAILED_DELIVERY => 'Αποτυχία παράδοσης',
-            self::IN_TRANSIT_RETURN => 'Σε διακίνηση (Επιστροφή)',
-        };
-    }
 
     /**
      * myDATA dev returns the names as REGISTERED, IN_TRANSIT_RETURN, … while the
      * specification spells them Registered, InTransit (Return), …, so case, spaces,
      * underscores and brackets are ignored.
      */
-    public static function tryFromName(string $name): ?self
+    public static function tryFromName(string $name): ?static
     {
         $name = strtoupper(preg_replace('/[^a-z0-9]/i', '', $name));
 

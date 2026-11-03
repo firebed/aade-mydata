@@ -15,18 +15,12 @@ enum DiscountType: int
     /**
      * Το ποσό έκπτωσης είναι ποσοστό επί της αξίας της γραμμής.
      */
+    #[Label('Ποσοστό')]
     case PERCENTAGE = 1;
 
     /**
      * Το ποσό έκπτωσης είναι απόλυτο ποσό.
      */
+    #[Label('Ποσό')]
     case AMOUNT = 2;
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::PERCENTAGE => 'Ποσοστό',
-            self::AMOUNT => 'Ποσό',
-        };
-    }
 }

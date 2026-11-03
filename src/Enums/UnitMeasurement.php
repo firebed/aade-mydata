@@ -11,48 +11,42 @@ enum UnitMeasurement: int
     /**
      *  Τεμάχια
      */
-    case UNIT_1 = 1;
+    #[Label('Τεμάχια')]
+    case PIECES = 1;
 
     /**
      *  Κιλά
      */
-    case UNIT_2 = 2;
+    #[Label('Κιλά')]
+    case KILOGRAMS = 2;
 
     /**
      *  Λίτρα
      */
-    case UNIT_3 = 3;
+    #[Label('Λίτρα')]
+    case LITERS = 3;
 
     /**
      * Μέτρα
      */
-    case UNIT_4 = 4;
+    #[Label('Μέτρα')]
+    case METERS = 4;
 
     /**
      * Τετραγωνικά Μέτρα
      */
-    case UNIT_5 = 5;
+    #[Label('Τετραγωνικά Μέτρα')]
+    case SQUARE_METERS = 5;
 
     /**
      * Κυβικά Μέτρα
      */
-    case UNIT_6 = 6;
+    #[Label('Κυβικά Μέτρα')]
+    case CUBIC_METERS = 6;
 
     /**
      * Τεμάχια_Λοιπές Περιπτώσεις
      */
-    case UNIT_7 = 7;
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::UNIT_1 => 'Τεμάχια',
-            self::UNIT_2 => 'Κιλά',
-            self::UNIT_3 => 'Λίτρα',
-            self::UNIT_4 => 'Μέτρα',
-            self::UNIT_5 => 'Τετραγωνικά Μέτρα',
-            self::UNIT_6 => 'Κυβικά Μέτρα',
-            self::UNIT_7 => 'Τεμάχια_Λοιπές Περιπτώσεις',
-        };
-    }
+    #[Label('Τεμάχια_Λοιπές Περιπτώσεις')]
+    case PIECES_OTHER_CASES = 7;
 }

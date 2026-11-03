@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Firebed\AadeMyData\Enums\Statements;
 
 use Firebed\AadeMyData\Enums\HasLabels;
+use Firebed\AadeMyData\Enums\Label;
 
 /**
  * Τύπος Ανάκλησης
@@ -18,18 +19,12 @@ enum RecallStatus: int
     /**
      * Μερική Ανάκληση
      */
+    #[Label('Μερική Ανάκληση')]
     case PARTIAL_RECALL = 1;
 
     /**
      * Πλήρης Ανάκληση (Ακύρωση της Δήλωσης)
      */
+    #[Label('Πλήρης Ανάκληση (Ακύρωση της Δήλωσης)')]
     case FULL_RECALL = 2;
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::PARTIAL_RECALL => 'Μερική Ανάκληση',
-            self::FULL_RECALL => 'Πλήρης Ανάκληση (Ακύρωση της Δήλωσης)',
-        };
-    }
 }
