@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -32,7 +34,8 @@ class SendExpensesClassification extends MyDataXmlRequest
      * </ul>
      * With this method the user can classify invoices that produce income.
      *
-     * @param ExpensesClassificationsDoc|InvoiceExpensesClassification[] $expensesClassifications
+     * @param  ExpensesClassificationsDoc|list<InvoiceExpensesClassification>  $expensesClassifications
+     *
      * @throws MyDataException
      */
     public function handle(ExpensesClassificationsDoc|array $expensesClassifications, bool $postPerInvoice = false): ResponseDoc
@@ -46,6 +49,6 @@ class SendExpensesClassification extends MyDataXmlRequest
             $query['postPerInvoice'] = 'true';
         }
 
-        return $this->request(new ExpensesClassificationsDocWriter(), new ResponseDocReader(), $expensesClassifications, $query);
+        return $this->request(new ExpensesClassificationsDocWriter, new ResponseDocReader, $expensesClassifications, $query);
     }
 }

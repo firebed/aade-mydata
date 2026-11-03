@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Http\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
-use Firebed\AadeMyData\Http\MyDataRequest;
-use Firebed\AadeMyData\Http\Traits\HasRequestDom;
-use Firebed\AadeMyData\Http\Traits\HasResponseDom;
+use Firebed\AadeMyData\Http\MyDataXmlRequest;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\DeliveryReturn;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\ResponseDoc;
 use Firebed\AadeMyData\Xml\DigitalGoodsMovement\DeliveryReturnWriter;
@@ -22,11 +22,8 @@ use Firebed\AadeMyData\Xml\DigitalGoodsMovement\ResponseDocReader;
  *
  * @version 2.0.2
  */
-class ConfirmDeliveryReturn extends MyDataRequest
+class ConfirmDeliveryReturn extends MyDataXmlRequest
 {
-    use HasRequestDom;
-    use HasResponseDom;
-
     /**
      * @throws MyDataAuthenticationException
      * @throws MyDataException
@@ -37,21 +34,6 @@ class ConfirmDeliveryReturn extends MyDataRequest
     {
         $this->ensureERP();
 
-        $writer = new DeliveryReturnWriter();
-
-        // Create the request XML
-        $requestXML = $writer->asXML($deliveryReturn);
-        $this->requestDom = $writer->getDomDocument();
-
-        // Get the response XML
-        $responseXML = $this->post(body: $requestXML);
-
-        $reader = new ResponseDocReader();
-
-        // Parse the response XML
-        $responseDoc = $reader->parseXML($responseXML);
-        $this->responseDom = $reader->getDomDocument();
-
-        return $responseDoc;
+        return $this->request(new DeliveryReturnWriter, new ResponseDocReader, $deliveryReturn);
     }
 }

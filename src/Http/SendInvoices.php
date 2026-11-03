@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -17,8 +19,8 @@ class SendInvoices extends MyDataXmlRequest
      * <p>Το σώμα της κλήσης θα πρέπει είναι σε μορφή xml και περιέχει
      * το στοιχείο InvoicesDoc, το οποίο περιέχει ένα ή περισσότερα παραστατικά.</p>
      *
-     * @param InvoicesDoc|Invoice|Invoice[] $invoices InvoicesDoc
-     * @return ResponseDoc
+     * @param  InvoicesDoc|Invoice|list<Invoice>  $invoices
+     *
      * @throws MyDataException
      */
     public function handle(InvoicesDoc|Invoice|array $invoices): ResponseDoc
@@ -29,7 +31,7 @@ class SendInvoices extends MyDataXmlRequest
 
         $this->invoicesDoc = $invoices;
 
-        return $this->request(new InvoicesDocWriter(), new ResponseDocReader(), $invoices);
+        return $this->request(new InvoicesDocWriter, new ResponseDocReader, $invoices);
     }
 
     /**

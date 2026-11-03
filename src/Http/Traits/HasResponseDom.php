@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Http\Traits;
 
 use DOMDocument;
 use Firebed\AadeMyData\Exceptions\ErrorResponseException;
+use Firebed\AadeMyData\Models\Model;
+use Firebed\AadeMyData\Xml\Dom;
 use Firebed\AadeMyData\Xml\XMLReader;
 
 trait HasResponseDom
@@ -22,7 +26,8 @@ trait HasResponseDom
         }
 
         $this->responseDom->formatOutput = $formatOutput;
-        return $this->responseDom->saveXML();
+
+        return Dom::save($this->responseDom);
     }
 
     public function getResponseElement(string $localName, int $index): ?string
@@ -32,16 +37,19 @@ trait HasResponseDom
         }
 
         $element = $this->responseDom->getElementsByTagName($localName)->item($index);
-        return $this->responseDom->saveXML($element);
+
+        return Dom::save($this->responseDom, $element);
     }
 
     /**
      * Parse the response with the given reader and keep its DOM for getResponseXML(),
      * also when the reader finds myDATA's errors in it and throws ErrorResponseException.
      *
-     * @template T
-     * @param XMLReader<T> $reader
+     * @template T of Model
+     *
+     * @param  XMLReader<T>  $reader
      * @return T
+     *
      * @throws ErrorResponseException
      */
     protected function read(string $responseXml, XMLReader $reader): mixed

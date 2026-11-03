@@ -1,49 +1,70 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Http;
 
+use BackedEnum;
 use Firebed\AadeMyData\Exceptions\InvalidResponseException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Exceptions\UnsupportedChannelException;
+use Firebed\AadeMyData\Models\Paginated;
+use Generator;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
-use ReflectionClass;
 
+/**
+ * Base of every myDATA request. A request is carried over a Connection: the one given
+ * with using() (or by the MyData client), else the process-wide default connection
+ * configured through the static setters below (init(), setCredentials(), …).
+ */
 abstract class MyDataRequest
 {
-    private const DEV_ERP_URL = 'https://mydataapidev.aade.gr/';
-    private const PROD_ERP_URL = 'https://mydatapi.aade.gr/myDATA/';
+    /**
+     * The myDATA action of the request; the short class name when not declared.
+     */
+    protected string $action;
 
-    private const DEV_PROVIDER_URL = 'https://mydataapidev.aade.gr/myDataProvider/';
-    private const PROD_PROVIDER_URL = 'https://mydatapi.aade.gr/myDataProvider/';
+    private static ?Connection $default = null;
 
-    private static ?string $user_id = null;
-    private static ?string $subscription_key = null;
-    private static ?string $env = null;
-    private static ?bool $is_provider = false;
-    private static array $request_options;
-
-    private static ?HandlerStack $handler;
-    private static ?Gateway $gateway = null;
+    private ?Connection $connection = null;
 
     private ?Gateway $gateway_override = null;
 
+    /**
+     * The default connection, used by every request that is not given one with using().
+     */
+    public static function defaultConnection(): Connection
+    {
+        return self::$default ??= new Connection;
+    }
+
+    /**
+     * Replaces the default connection. Null resets it to an empty one.
+     */
+    public static function setDefaultConnection(?Connection $connection): void
+    {
+        self::$default = $connection;
+    }
+
+    /**
+     * Use a Guzzle mock handler for the default connection (tests). Null restores the real transport.
+     */
     public static function setHandler(?MockHandler $handler): void
     {
-        self::$handler = HandlerStack::create($handler);
+        self::$default = self::defaultConnection()->withHandler($handler === null ? null : HandlerStack::create($handler));
     }
 
     /**
      * Initialize the myDATA API with the user_id, subscription_key, and environment.
      *
-     * @param string $user_id The user id provided by AADE
-     * @param string $subscription_key The subscription key provided by AADE
-     * @param string $env 'dev' or 'prod'
-     * @param bool $is_provider Set to true if the request is for the providers
-     * @return void
+     * @param  string  $user_id  The user id provided by AADE
+     * @param  string  $subscription_key  The subscription key provided by AADE
+     * @param  Environment|string  $env  'dev' or 'prod'
+     * @param  bool  $is_provider  Set to true if the request is for the providers
      */
-    public static function init(string $user_id, string $subscription_key, string $env, bool $is_provider = false): void
+    public static function init(string $user_id, string $subscription_key, Environment|string $env, bool $is_provider = false): void
     {
         self::setCredentials($user_id, $subscription_key);
         self::setEnvironment($env, $is_provider);
@@ -52,27 +73,23 @@ abstract class MyDataRequest
     /**
      * Set the user_id and subscription_key for the myDATA API.
      *
-     * @param string $user_id The user id provided by AADE
-     * @param string $subscription_key The subscription key provided by AADE
-     * @return void
+     * @param  string  $user_id  The user id provided by AADE
+     * @param  string  $subscription_key  The subscription key provided by AADE
      */
     public static function setCredentials(string $user_id, string $subscription_key): void
     {
-        self::$user_id = $user_id;
-        self::$subscription_key = $subscription_key;
+        self::$default = self::defaultConnection()->withCredentials($user_id, $subscription_key);
     }
 
     /**
      * Set the environment to either 'dev' or 'prod'.
      *
-     * @param string $env 'dev' or 'prod'
-     * @param bool $is_provider Set to true if the request is for the providers
-     * @return void
+     * @param  Environment|string  $env  'dev' or 'prod'
+     * @param  bool  $is_provider  Set to true if the request is for the providers
      */
-    public static function setEnvironment(string $env, bool $is_provider = false): void
+    public static function setEnvironment(Environment|string $env, bool $is_provider = false): void
     {
-        self::$env = strtolower($env);
-        self::$is_provider = $is_provider;
+        self::$default = self::defaultConnection()->withEnvironment($env)->asProvider($is_provider);
     }
 
     /**
@@ -100,36 +117,27 @@ abstract class MyDataRequest
      * (provided by the maintainer of cURL). Once you have a CA bundle available on disk, you can set the "openssl.cafile" PHP ini
      * setting to point to the path to the file, allowing you to omit the "verify" request option.
      * Much more detail on SSL certificates can be found on the <a href="http://curl.haxx.se/docs/sslcerts.html">cURL website</a>.</p>
-     *
-     * @param bool|string $verify
-     * @return void
      */
     public static function verifyClient(bool|string $verify = true): void
     {
-        self::$request_options['verify'] = $verify;
+        self::$default = self::defaultConnection()->withVerify($verify);
     }
 
     /**
      * The number of seconds to wait while trying to connect to myDATA server.
      * Use 0 to wait indefinitely (the default behavior).
-     *
-     * @param int $seconds
-     * @return void
      */
     public static function setConnectionTimeout(int $seconds): void
     {
-        self::$request_options['connect_timeout'] = $seconds;
+        self::$default = self::defaultConnection()->withConnectionTimeout($seconds);
     }
 
     /**
      * Total time for the request.
-     *
-     * @param int $seconds
-     * @return void
      */
     public static function setTimeout(int $seconds): void
     {
-        self::$request_options['timeout'] = $seconds;
+        self::$default = self::defaultConnection()->withTimeout($seconds);
     }
 
     /**
@@ -137,28 +145,61 @@ abstract class MyDataRequest
      * Request options control various aspects of a request including, headers, query string
      * parameters, timeout settings, the body of a request, and much more.
      *
-     * @param array $requestOptions
-     * @return void
+     * @param  array<string, mixed>  $requestOptions
+     *
      * @see https://docs.guzzlephp.org/en/stable/request-options.html
      */
     public static function setRequestOptions(array $requestOptions): void
     {
-        self::$request_options = $requestOptions;
+        self::$default = self::defaultConnection()->withRequestOptions($requestOptions);
+    }
+
+    /**
+     * Retry requests that fail with 429, 502, 503, 504 or a connection failure.
+     *
+     * @param  int  $retries  Number of retries (0 disables retrying)
+     * @param  int  $delay  Delay before the first retry in milliseconds, doubled on every further retry
+     */
+    public static function setRetries(int $retries, int $delay = 500): void
+    {
+        self::$default = self::defaultConnection()->withRetries($retries, $delay);
+    }
+
+    /**
+     * Keep at least this many milliseconds between two requests of the default connection,
+     * so that a loop over many pages or marks stays under myDATA's rate limit.
+     */
+    public static function setThrottle(int $milliseconds): void
+    {
+        self::$default = self::defaultConnection()->withThrottle($milliseconds);
+    }
+
+    /**
+     * Sit out a 429 of up to this many seconds and send the request again, instead of failing.
+     */
+    public static function setRateLimitWait(int $maxSeconds = 600): void
+    {
+        self::$default = self::defaultConnection()->withRateLimitWait($maxSeconds);
     }
 
     public static function isProduction(): bool
     {
-        return self::$env === 'prod';
+        return self::defaultConnection()->isProduction();
     }
 
     public static function isDevelopment(): bool
     {
-        return self::$env === 'dev';
+        return self::defaultConnection()->isDevelopment();
     }
 
     public static function isProvider(): bool
     {
-        return self::$is_provider;
+        return self::defaultConnection()->isProvider();
+    }
+
+    public static function hasCredentials(): bool
+    {
+        return self::defaultConnection()->hasCredentials();
     }
 
     /**
@@ -167,17 +208,35 @@ abstract class MyDataRequest
      */
     public static function setGateway(?Gateway $gateway): void
     {
-        self::$gateway = $gateway;
+        self::$default = self::defaultConnection()->withGateway($gateway);
     }
 
     public static function gateway(): Gateway
     {
-        return self::$gateway ??= new GuzzleGateway();
+        return self::defaultConnection()->gateway();
     }
 
     /**
-     * Carry only this request through the given gateway, leaving the globally registered
-     * one - and every other request - untouched. Pass null to fall back to the global one.
+     * The Guzzle client of the default connection.
+     */
+    public static function httpClient(): Client
+    {
+        return self::defaultConnection()->httpClient();
+    }
+
+    /**
+     * Carry this request over the given connection instead of the default one.
+     */
+    public function using(?Connection $connection): static
+    {
+        $this->connection = $connection;
+
+        return $this;
+    }
+
+    /**
+     * Carry only this request through the given gateway, leaving the connection's
+     * one - and every other request - untouched. Pass null to fall back to it.
      *
      * Prefer this over setGateway() when the gateway is chosen per tenant or per flow,
      * because setGateway() lives for the whole process.
@@ -189,17 +248,22 @@ abstract class MyDataRequest
         return $this;
     }
 
-    private function resolveGateway(): Gateway
+    /**
+     * The connection this request is carried over.
+     */
+    public function connection(): Connection
     {
-        return $this->gateway_override ?? self::gateway();
+        return $this->connection ?? self::defaultConnection();
     }
 
-    public static function hasCredentials(): bool
+    private function resolveGateway(): Gateway
     {
-        return ! empty(self::$user_id) && ! empty(self::$subscription_key);
+        return $this->gateway_override ?? $this->connection()->gateway();
     }
 
     /**
+     * @param  array<string, mixed>  $query
+     *
      * @throws MyDataException
      */
     protected function get(array $query): string
@@ -208,6 +272,8 @@ abstract class MyDataRequest
     }
 
     /**
+     * @param  array<string, mixed>|null  $query
+     *
      * @throws MyDataException
      */
     protected function post(?array $query = null, ?string $body = null): string
@@ -222,64 +288,71 @@ abstract class MyDataRequest
      */
     private static function ensureXml(string $responseXml): string
     {
-        if (empty(trim($responseXml))) {
-            throw new InvalidResponseException("Empty response received from AADE MyData API");
+        if (trim($responseXml) === '') {
+            throw new InvalidResponseException('Empty response received from AADE MyData API');
         }
 
         return $responseXml;
     }
 
+    /**
+     * Query parameters that have a value: null and '' are dropped, enums become their value.
+     *
+     * @param  array<string, mixed>  $array
+     * @return array<string, mixed>
+     */
     protected function filterArray(array $array): array
     {
-        return array_filter($array, fn ($value) => ! is_null($value) && $value !== '');
-    }
+        $query = [];
+        foreach ($array as $key => $value) {
+            if ($value instanceof BackedEnum) {
+                $value = $value->value;
+            }
 
-    /**
-     * Guzzle client configured with the AADE credentials, the request options,
-     * and (in tests) the mock handler. Used by the default GuzzleGateway.
-     */
-    public static function httpClient(): Client
-    {
-        $config = [
-            'headers' => [
-                'aade-user-id' => self::$user_id,
-                'ocp-apim-subscription-key' => self::$subscription_key,
-                'Content-Type' => "text/xml",
-            ],
-        ];
-
-        if (isset(self::$handler)) {
-            $config['handler'] = self::$handler;
+            if ($value !== null && $value !== '') {
+                $query[$key] = $value;
+            }
         }
 
-        if (isset(self::$request_options)) {
-            $config = array_merge($config, self::$request_options);
-        }
-
-        return new Client($config);
+        return $query;
     }
 
     public function getUrl(): string
     {
-        $action = $this->getAction();
-        $url = self::$is_provider ? $this->getUrlForProvider() : $this->getUrlForErp();
-
-        return $url . $action;
+        return $this->connection()->url($this->getAction());
     }
 
-    private function getUrlForErp(): string
+    /**
+     * Fetches page after page, lazily, following the continuation token until a page
+     * has none. A token myDATA repeats ends the iteration instead of looping forever.
+     *
+     * @template TPage of Paginated
+     *
+     * @param  callable(?string, ?string): TPage  $fetch  Fetches the page for a partition key and row key
+     * @return Generator<int, TPage>
+     */
+    protected function paginate(callable $fetch, ?string $nextPartitionKey = null, ?string $nextRowKey = null): Generator
     {
-        return self::isProduction() ? self::PROD_ERP_URL : self::DEV_ERP_URL;
-    }
+        do {
+            $page = $fetch($nextPartitionKey, $nextRowKey);
 
-    private function getUrlForProvider(): string
-    {
-        return self::isProduction() ? self::PROD_PROVIDER_URL : self::DEV_PROVIDER_URL;
+            yield $page;
+
+            $previous = [$nextPartitionKey, $nextRowKey];
+            $token = $page->getContinuationToken();
+            $nextPartitionKey = $token?->getNextPartitionKey();
+            $nextRowKey = $token?->getNextRowKey();
+        } while ($nextPartitionKey !== null && $nextRowKey !== null && [$nextPartitionKey, $nextRowKey] !== $previous);
     }
 
     private function getAction(): string
     {
-        return $this->action ?? (new ReflectionClass($this))->getShortName();
+        return $this->action ?? $this->shortName();
+    }
+
+    private function shortName(): string
+    {
+        return substr(static::class, (int) strrpos(static::class, '\\') + 1);
     }
 
     /**
@@ -287,9 +360,8 @@ abstract class MyDataRequest
      */
     protected function ensureProvider(): void
     {
-        if (! $this->isProvider()) {
-            $className = (new ReflectionClass($this))->getShortName();
-            throw new UnsupportedChannelException($className . ' can only be used with the Provider route.');
+        if (! $this->connection()->isProvider()) {
+            throw new UnsupportedChannelException($this->shortName().' can only be used with the Provider route.');
         }
     }
 
@@ -298,9 +370,8 @@ abstract class MyDataRequest
      */
     protected function ensureERP(): void
     {
-        if ($this->isProvider()) {
-            $className = (new ReflectionClass($this))->getShortName();
-            throw new UnsupportedChannelException($className . ' can only be used with the ERP route.');
+        if ($this->connection()->isProvider()) {
+            throw new UnsupportedChannelException($this->shortName().' can only be used with the ERP route.');
         }
     }
 }

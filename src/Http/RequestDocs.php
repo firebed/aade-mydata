@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Http;
 
 /**
@@ -15,6 +17,4 @@ namespace Firebed\AadeMyData\Http;
  * αποτελεσμάτων και θα χρησιμοποιούνται ως παράμετροι στην κλήση για τη λήψη
  * του επόμενου τμήματος αποτελεσμάτων.</p>
  */
-class RequestDocs extends MyDataGetRequest
-{
-}
+class RequestDocs extends MyDataGetRequest {}

@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Http\Traits;
 
 use DOMDocument;
+use Firebed\AadeMyData\Xml\Dom;
 
 trait HasRequestDom
 {
@@ -20,7 +23,8 @@ trait HasRequestDom
         }
 
         $this->requestDom->formatOutput = $formatOutput;
-        return $this->requestDom->saveXML();
+
+        return Dom::save($this->requestDom);
     }
 
     public function getRequestElement(string $localName, int $index): ?string
@@ -30,6 +34,7 @@ trait HasRequestDom
         }
 
         $element = $this->requestDom->getElementsByTagName($localName)->item($index);
-        return $this->requestDom->saveXML($element);
+
+        return Dom::save($this->requestDom, $element);
     }
 }

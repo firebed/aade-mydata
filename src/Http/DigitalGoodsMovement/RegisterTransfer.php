@@ -1,22 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Http\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
-use Firebed\AadeMyData\Http\MyDataRequest;
-use Firebed\AadeMyData\Http\Traits\HasRequestDom;
-use Firebed\AadeMyData\Http\Traits\HasResponseDom;
+use Firebed\AadeMyData\Http\MyDataXmlRequest;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\ResponseDoc;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\Transport;
 use Firebed\AadeMyData\Xml\DigitalGoodsMovement\ResponseDocReader;
 use Firebed\AadeMyData\Xml\DigitalGoodsMovement\TransportWriter;
 
-class RegisterTransfer extends MyDataRequest
+class RegisterTransfer extends MyDataXmlRequest
 {
-    use HasRequestDom;
-    use HasResponseDom;
-
     /**
      * 1. Η μέθοδος καλείται από τον μεταφορέα για να δηλώσει την παραλαβή των αγαθών
      *    και την έναρξη της διακίνησης, ή την παραλαβή από προηγούμενο μεταφορέα (μεταφόρτωση).
@@ -32,21 +29,6 @@ class RegisterTransfer extends MyDataRequest
     {
         $this->ensureERP();
 
-        $writer = new TransportWriter();
-
-        // Create the request XML
-        $requestXML = $writer->asXML($transport);
-        $this->requestDom = $writer->getDomDocument();
-
-        // Get the response XML
-        $responseXML = $this->post(body: $requestXML);
-
-        $reader = new ResponseDocReader();
-
-        // Parse the response XML
-        $responseDoc = $reader->parseXML($responseXML);
-        $this->responseDom = $reader->getDomDocument();
-
-        return $responseDoc;
+        return $this->request(new TransportWriter, new ResponseDocReader, $transport);
     }
 }

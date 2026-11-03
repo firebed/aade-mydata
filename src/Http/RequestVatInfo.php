@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
@@ -7,6 +9,7 @@ use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Http\Traits\HasResponseDom;
 use Firebed\AadeMyData\Models\RequestedVatInfo;
 use Firebed\AadeMyData\Xml\VatInfoReader;
+use Generator;
 
 /**
  * Στις περιπτώσεις που ο χρήστης καλέσει τη μέθοδο λήψης πληροφοριών για στοιχεία
@@ -29,28 +32,43 @@ class RequestVatInfo extends MyDataRequest
      * εγγραφές ΦΠΑ ενός προσώπου ή επιχείρησης, είτε ανά τιμολόγιο είτε ανά ημέρα, ανάλογα
      * με τις παραμέτρους που έχουν δοθεί.
      *
-     * @param string $dateFrom Αρχή χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης (μορφή dd/MM/yyyy)
-     * @param string $dateTo Τέλος χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης (μορφή dd/MM/yyyy)
-     * @param string|null $entityVatNumber ΑΦΜ οντότητας
-     * @param bool $groupedPerDay Παράμετρος που δηλώνει εάν τα αποτελέσματα πρέπει να ομαδοποιηθούν ανά ημέρα.
-     * @param string|null $nextPartitionKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων <code>($groupedPerDay = false)</code>
-     * @param string|null $nextRowKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων <code>($groupedPerDay = false)</code>
-     * @return RequestedVatInfo
+     * @param  string  $dateFrom  Αρχή χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης (μορφή dd/MM/yyyy)
+     * @param  string  $dateTo  Τέλος χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης (μορφή dd/MM/yyyy)
+     * @param  string|null  $entityVatNumber  ΑΦΜ οντότητας
+     * @param  bool  $groupedPerDay  Παράμετρος που δηλώνει εάν τα αποτελέσματα πρέπει να ομαδοποιηθούν ανά ημέρα.
+     * @param  string|null  $nextPartitionKey  Παράμετρος για την τμηματική λήψη των αποτελεσμάτων <code>($groupedPerDay = false)</code>
+     * @param  string|null  $nextRowKey  Παράμετρος για την τμηματική λήψη των αποτελεσμάτων <code>($groupedPerDay = false)</code>
+     *
      * @throws MyDataException
      * @throws MyDataAuthenticationException
+     *
      * @version 1.0.8
      */
     public function handle(string $dateFrom, string $dateTo, ?string $entityVatNumber = null, bool $groupedPerDay = false, ?string $nextPartitionKey = null, ?string $nextRowKey = null): RequestedVatInfo
     {
-        $query = array_filter([
+        $query = $this->filterArray([
             'dateFrom' => $dateFrom,
             'dateTo' => $dateTo,
             'entityVatNumber' => $entityVatNumber,
-            'GroupedPerDay' => $groupedPerDay ? "true" : "false",
+            'GroupedPerDay' => $groupedPerDay ? 'true' : 'false',
             'nextPartitionKey' => $nextPartitionKey,
-            'nextRowKey' => $nextRowKey
-        ], fn ($value) => $value !== null);
+            'nextRowKey' => $nextRowKey,
+        ]);
 
-        return $this->read($this->get($query), new VatInfoReader());
+        return $this->read($this->get($query), new VatInfoReader);
+    }
+
+    /**
+     * Every page of the results, following the continuation token myDATA returns when
+     * the results exceed its size limit (myDATA pages only when not grouped per day).
+     * Pass $nextPartitionKey and $nextRowKey to resume from a page's continuation token.
+     *
+     * @return Generator<int, RequestedVatInfo>
+     *
+     * @throws MyDataException
+     */
+    public function pages(string $dateFrom, string $dateTo, ?string $entityVatNumber = null, bool $groupedPerDay = false, ?string $nextPartitionKey = null, ?string $nextRowKey = null): Generator
+    {
+        return $this->paginate(fn (?string $npk, ?string $nrk) => $this->handle($dateFrom, $dateTo, $entityVatNumber, $groupedPerDay, $npk, $nrk), $nextPartitionKey, $nextRowKey);
     }
 }

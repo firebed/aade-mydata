@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Http\Statements;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -16,8 +18,6 @@ class SendStatement extends MyDataXmlRequest
      * Η κλήση της μεθόδου SendStatement είναι διαθέσιμη μόνο για πιστοποιημένους παρόχους και αποστέλει
      * μια νέα δήλωση.
      *
-     * @param StatementDoc|Statement $statement
-     * @return StatementResponseDoc
      * @throws MyDataException
      *
      * @version 1.0.12
@@ -27,11 +27,11 @@ class SendStatement extends MyDataXmlRequest
         $this->ensureProvider();
 
         if ($statement instanceof Statement) {
-            $doc = new StatementDoc();
+            $doc = new StatementDoc;
             $doc->set('statement', $statement);
             $statement = $doc;
         }
 
-        return $this->request(new StatementDocWriter(), new StatementResponseDocReader(), $statement);
+        return $this->request(new StatementDocWriter, new StatementResponseDocReader, $statement);
     }
 }

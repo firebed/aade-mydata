@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Http\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
@@ -36,7 +38,7 @@ class RequestDeliveryNoteStatus extends MyDataRequest
      * Το QR code προσδιορίζει το δελτίο, οπότε το issuerVatNumber δεν επιτρέπεται εδώ
      * (§3.2.4: myDATA απαντά HTTP 400 όταν δίνεται μαζί με το qrUrl).
      *
-     * @param string|null $issuerVatNumber Deprecated and ignored, kept so existing calls keep working.
+     * @param  string|null  $issuerVatNumber  Deprecated and ignored, kept so existing calls keep working.
      *
      * @throws MyDataAuthenticationException
      * @throws MyDataException
@@ -53,10 +55,12 @@ class RequestDeliveryNoteStatus extends MyDataRequest
     }
 
     /**
+     * @param  array<string, mixed>  $query
+     *
      * @throws MyDataException
      */
     private function request(array $query): DeliveryNoteStatusResponse
     {
-        return $this->read($this->get($query), new DeliveryNoteStatusResponseReader());
+        return $this->read($this->get($query), new DeliveryNoteStatusResponseReader);
     }
 }

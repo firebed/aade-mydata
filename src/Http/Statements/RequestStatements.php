@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Http\Statements;
 
 use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
@@ -17,10 +19,6 @@ class RequestStatements extends MyDataRequest
      * Με αυτή τη μέθοδο ο πιστοποιημένος πάροχος χρήστης λαμβάνει πληροφορίες
      * τις δηλώσεις έκδοσης στοιχείων μέσω Παρόχου ή ΙδιοΠαρόχου που έχει διαβιβάσει.
      *
-     * @param string $stmtId
-     * @param string|null $maxstmtId
-     * @param string|null $entityVatNumber
-     * @return RequestedStatementDoc
      * @throws MyDataException
      * @throws MyDataAuthenticationException
      *
@@ -30,8 +28,8 @@ class RequestStatements extends MyDataRequest
     {
         $this->ensureProvider();
 
-        $query = compact('stmtId', 'maxstmtId', 'entityVatNumber');
+        $query = ['stmtId' => $stmtId] + $this->filterArray(compact('maxstmtId', 'entityVatNumber'));
 
-        return $this->read($this->get($query), new RequestedStatementDocReader());
+        return $this->read($this->get($query), new RequestedStatementDocReader);
     }
 }

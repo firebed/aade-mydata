@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Http;
 
 use Firebed\AadeMyData\Enums\InvoiceType;
@@ -7,6 +9,7 @@ use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Http\Traits\HasResponseDom;
 use Firebed\AadeMyData\Models\RequestedBookInfo;
 use Firebed\AadeMyData\Xml\BookInfoReader;
+use Generator;
 
 abstract class RequestBookInfo extends MyDataRequest
 {
@@ -34,23 +37,39 @@ abstract class RequestBookInfo extends MyDataRequest
      * του επόμενου τμήματος αποτελεσμάτων.</li>
      * </ol>
      *
-     * @param string $dateFrom Η αρχή χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης dd/MM/yyyy
-     * @param string $dateTo Το τέλος χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης dd/MM/yyyy
-     * @param string|null $counterVatNumber ΑΦΜ αντισυμβαλλόμενου
-     * @param string|null $entityVatNumber ΑΦΜ οντότητας
-     * @param InvoiceType|string|null $invType Τύπος παραστατικού
-     * @param string|null $nextPartitionKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
-     * @param string|null $nextRowKey Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
-     * @return RequestedBookInfo
+     * @param  string  $dateFrom  Η αρχή χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης dd/MM/yyyy
+     * @param  string  $dateTo  Το τέλος χρονικού διαστήματος αναζήτησης για την ημερομηνία έκδοσης dd/MM/yyyy
+     * @param  string|null  $counterVatNumber  ΑΦΜ αντισυμβαλλόμενου
+     * @param  string|null  $entityVatNumber  ΑΦΜ οντότητας
+     * @param  InvoiceType|string|null  $invType  Τύπος παραστατικού
+     * @param  string|null  $nextPartitionKey  Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
+     * @param  string|null  $nextRowKey  Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
+     *
      * @throws MyDataException
      */
     public function handle(string $dateFrom, string $dateTo, ?string $counterVatNumber = null, ?string $entityVatNumber = null, InvoiceType|string|null $invType = null, ?string $nextPartitionKey = null, ?string $nextRowKey = null): RequestedBookInfo
     {
-        $invType = $invType instanceof InvoiceType ? $invType->value : $invType;
+        $query = $this->filterArray(compact('dateFrom', 'dateTo', 'counterVatNumber', 'entityVatNumber', 'invType', 'nextPartitionKey', 'nextRowKey'));
 
-        $query = compact('dateFrom', 'dateTo', 'counterVatNumber', 'entityVatNumber', 'invType', 'nextPartitionKey', 'nextRowKey');
-        $query = array_filter($query);
+        return $this->read($this->get($query), new BookInfoReader);
+    }
 
-        return $this->read($this->get($query), new BookInfoReader());
+    /**
+     * Every page of the results, following the continuation token myDATA returns when
+     * the results exceed its size limit. Pages are fetched lazily as they are iterated.
+     *
+     * myDATA throttles the document requests of a subscription key by the number of calls
+     * in a window of about five minutes, so a long run either spaces its calls
+     * (Connection::withThrottle()), sits out the window (Connection::withRateLimitWait()),
+     * or catches RateLimitExceededException and resumes later from the last page's
+     * continuation token through $nextPartitionKey and $nextRowKey.
+     *
+     * @return Generator<int, RequestedBookInfo>
+     *
+     * @throws MyDataException
+     */
+    public function pages(string $dateFrom, string $dateTo, ?string $counterVatNumber = null, ?string $entityVatNumber = null, InvoiceType|string|null $invType = null, ?string $nextPartitionKey = null, ?string $nextRowKey = null): Generator
+    {
+        return $this->paginate(fn (?string $npk, ?string $nrk) => $this->handle($dateFrom, $dateTo, $counterVatNumber, $entityVatNumber, $invType, $npk, $nrk), $nextPartitionKey, $nextRowKey);
     }
 }

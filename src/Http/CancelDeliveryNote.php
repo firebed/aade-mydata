@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Http;
 
 use Firebed\AadeMyData\Models\ResponseDoc;
@@ -21,7 +23,7 @@ use Firebed\AadeMyData\Models\ResponseDoc;
  */
 class CancelDeliveryNote extends CancelInvoice
 {
-    public function handle(string $mark, ?string $entityVatNumber = null): ResponseDoc
+    public function handle(string|int $mark, string|int|null $entityVatNumber = null): ResponseDoc
     {
         $this->ensureProvider();
 

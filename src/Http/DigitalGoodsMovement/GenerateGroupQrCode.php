@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Http\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
-use Firebed\AadeMyData\Http\MyDataRequest;
-use Firebed\AadeMyData\Http\Traits\HasRequestDom;
-use Firebed\AadeMyData\Http\Traits\HasResponseDom;
+use Firebed\AadeMyData\Http\MyDataXmlRequest;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\GroupQrCode;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\GroupQrCodeResponse;
 use Firebed\AadeMyData\Xml\DigitalGoodsMovement\GroupQrCodeReader;
@@ -15,11 +15,8 @@ use Firebed\AadeMyData\Xml\DigitalGoodsMovement\GroupQrCodeWriter;
 /**
  * @version 2.0.1
  */
-class GenerateGroupQrCode extends MyDataRequest
+class GenerateGroupQrCode extends MyDataXmlRequest
 {
-    use HasRequestDom;
-    use HasResponseDom;
-
     protected string $action = 'GenerateGroupQRCode';
 
     /**
@@ -41,26 +38,20 @@ class GenerateGroupQrCode extends MyDataRequest
     {
         $this->ensureERP();
 
-        $writer = new GroupQrCodeWriter();
-
-        // Create the request XML
-        $requestXML = $writer->asXML($groupQrCode);
-        $this->requestDom = $writer->getDomDocument();
-
-        return $this->read($this->post(body: $requestXML), new GroupQrCodeReader());
+        return $this->request(new GroupQrCodeWriter, new GroupQrCodeReader, $groupQrCode);
     }
 
     /**
      * Helper method to generate a group QR code from an array of string QR URLs.
      *
-     * @param string[] $qrUrls
-     * @return GroupQrCodeResponse
+     * @param  list<string>  $qrUrls
+     *
      * @throws MyDataAuthenticationException
      * @throws MyDataException
      */
     public function generateFromQrUrls(array $qrUrls): GroupQrCodeResponse
     {
-        $group = new GroupQrCode();
+        $group = new GroupQrCode;
         $group->setQrUrls($qrUrls);
 
         return $this->handle($group);

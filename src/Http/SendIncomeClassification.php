@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -27,8 +29,8 @@ class SendIncomeClassification extends MyDataXmlRequest
      * entityVatNumber, διαφορετικά το εν λόγω πεδίο παραμένει κενό</li>
      * </ul>
      *
-     * @param IncomeClassificationsDoc|InvoiceIncomeClassification|array $incomeClassifications
-     * @return ResponseDoc
+     * @param  IncomeClassificationsDoc|InvoiceIncomeClassification|list<InvoiceIncomeClassification>  $incomeClassifications
+     *
      * @throws MyDataException
      */
     public function handle(IncomeClassificationsDoc|InvoiceIncomeClassification|array $incomeClassifications, bool $postPerInvoice = false): ResponseDoc
@@ -42,6 +44,6 @@ class SendIncomeClassification extends MyDataXmlRequest
             $query['postPerInvoice'] = 'true';
         }
 
-        return $this->request(new IncomeClassificationsDocWriter(), new ResponseDocReader(), $incomeClassifications, $query);
+        return $this->request(new IncomeClassificationsDocWriter, new ResponseDocReader, $incomeClassifications, $query);
     }
 }

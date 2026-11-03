@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Http;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -25,8 +27,8 @@ class SendPaymentsMethod extends MyDataXmlRequest
      * PaymentMethodDetail ανά παραστατικό πρέπει να είναι τύπου POS.</li>
      * </ol>
      *
-     * @param PaymentMethod|PaymentMethod[] $paymentMethods
-     * @return ResponseDoc
+     * @param  PaymentMethod|PaymentMethod[]  $paymentMethods
+     *
      * @throws MyDataException
      */
     public function handle(PaymentMethodsDoc|PaymentMethod|array $paymentMethods): ResponseDoc
@@ -37,7 +39,7 @@ class SendPaymentsMethod extends MyDataXmlRequest
 
         $this->paymentMethodsDoc = $paymentMethods;
 
-        return $this->request(new PaymentMethodsDocWriter(), new ResponseDocReader(), $paymentMethods);
+        return $this->request(new PaymentMethodsDocWriter, new ResponseDocReader, $paymentMethods);
     }
 
     /**
