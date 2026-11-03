@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Enums;
 
 enum UnitMeasurement: int
@@ -11,12 +13,10 @@ enum UnitMeasurement: int
      */
     case UNIT_1 = 1;
 
-
     /**
      *  Κιλά
      */
     case UNIT_2 = 2;
-
 
     /**
      *  Λίτρα
@@ -28,18 +28,15 @@ enum UnitMeasurement: int
      */
     case UNIT_4 = 4;
 
-
     /**
      * Τετραγωνικά Μέτρα
      */
     case UNIT_5 = 5;
 
-
     /**
      * Κυβικά Μέτρα
      */
     case UNIT_6 = 6;
-
 
     /**
      * Τεμάχια_Λοιπές Περιπτώσεις
@@ -49,13 +46,13 @@ enum UnitMeasurement: int
     public function label(): string
     {
         return match ($this) {
-            self::UNIT_1 => "Τεμάχια",
-            self::UNIT_2 => "Κιλά",
-            self::UNIT_3 => "Λίτρα",
-            self::UNIT_4 => "Μέτρα",
-            self::UNIT_5 => "Τετραγωνικά Μέτρα",
-            self::UNIT_6 => "Κυβικά Μέτρα",
-            self::UNIT_7 => "Τεμάχια_Λοιπές Περιπτώσεις",
+            self::UNIT_1 => 'Τεμάχια',
+            self::UNIT_2 => 'Κιλά',
+            self::UNIT_3 => 'Λίτρα',
+            self::UNIT_4 => 'Μέτρα',
+            self::UNIT_5 => 'Τετραγωνικά Μέτρα',
+            self::UNIT_6 => 'Κυβικά Μέτρα',
+            self::UNIT_7 => 'Τεμάχια_Λοιπές Περιπτώσεις',
         };
     }
 }

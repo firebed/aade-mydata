@@ -1,0 +1,16 @@
+{
+    "preset": "laravel",
+    "exclude": [
+        "config",
+        "docs",
+        "stubs",
+        "xsd",
+        "vendor"
+    ],
+    "notName": [
+        "kernel.php"
+    ],
+    "rules": {
+        "declare_strict_types": true
+    }
+}

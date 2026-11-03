@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Enums;
 
 enum InvoiceDetailType: int
@@ -11,7 +13,6 @@ enum InvoiceDetailType: int
      */
     case TYPE_1 = 1;
 
-
     /**
      *  Αμοιβή από Πωλήσεις Τρίτων
      */
@@ -20,8 +21,8 @@ enum InvoiceDetailType: int
     public function label(): string
     {
         return match ($this) {
-            self::TYPE_1 => "Εκκαθάριση Πωλήσεων Τρίτων",
-            self::TYPE_2 => "Αμοιβή από Πωλήσεις Τρίτων",
+            self::TYPE_1 => 'Εκκαθάριση Πωλήσεων Τρίτων',
+            self::TYPE_2 => 'Αμοιβή από Πωλήσεις Τρίτων',
         };
     }
 }

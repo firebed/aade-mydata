@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Enums;
 
 enum TransactionMode: int
@@ -16,7 +18,6 @@ enum TransactionMode: int
      */
     case REJECT = 1;
 
-
     /**
      * Απόρριψη του παραστατικού λόγω απόκλισης στα ποσά
      */
@@ -25,9 +26,9 @@ enum TransactionMode: int
     public function label(): string
     {
         return match ($this) {
-            self::ACCEPT => "Αποδοχή του παραστατικού",
-            self::REJECT => "Απόρριψη του παραστατικού λόγω διαφωνίας",
-            self::DEVIATION => "Απόρριψη του παραστατικού λόγω απόκλισης στα ποσά",
+            self::ACCEPT => 'Αποδοχή του παραστατικού',
+            self::REJECT => 'Απόρριψη του παραστατικού λόγω διαφωνίας',
+            self::DEVIATION => 'Απόρριψη του παραστατικού λόγω απόκλισης στα ποσά',
         };
     }
 }

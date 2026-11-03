@@ -2,9 +2,9 @@ name: PHP Composer
 
 on:
   push:
-    branches: [ "4.x", "5.x" ]
+    branches: [ "5.x", "6.x" ]
   pull_request:
-    branches: [ "4.x", "5.x" ]
+    branches: [ "5.x", "6.x" ]
 
 permissions:
   contents: read
@@ -17,9 +17,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [ '8.1', '8.2', '8.3', '8.4', '8.5' ]
+        php: [ '8.3', '8.4', '8.5' ]
+        guzzle: [ '^7.8', '^8.0' ]
 
-    name: PHP ${{ matrix.php }}
+    name: PHP ${{ matrix.php }}, Guzzle ${{ matrix.guzzle }}
 
     steps:
     - uses: actions/checkout@v4
@@ -35,24 +36,29 @@ jobs:
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
 
-    # PHP 8.1 is end-of-life, so roave/security-advisories conflicts with every
-    # 8.1 release. It is a dev-only dependency, so dropping it here does not
-    # change what library users install; it only lets us keep testing ^8.1.
-    - name: Remove roave/security-advisories (EOL PHP)
-      if: matrix.php == '8.1'
-      run: composer remove --dev roave/security-advisories --no-update --no-interaction
-
     - name: Cache Composer packages
       id: composer-cache
       uses: actions/cache@v4
       with:
         path: vendor
-        key: ${{ runner.os }}-php-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
+        key: ${{ runner.os }}-php-${{ matrix.php }}-guzzle-${{ matrix.guzzle }}-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
-          ${{ runner.os }}-php-${{ matrix.php }}-
+          ${{ runner.os }}-php-${{ matrix.php }}-guzzle-${{ matrix.guzzle }}-
+
+    - name: Pin Guzzle ${{ matrix.guzzle }}
+      run: composer require "guzzlehttp/guzzle:${{ matrix.guzzle }}" --no-update --no-interaction
 
     - name: Install dependencies
       run: composer update --prefer-dist --no-progress --no-interaction
+
+    - name: Code style (Pint)
+      run: composer run-script lint
+
+    # The PHPDoc types follow the locked Guzzle 8 (HandlerStack is generic there, not in 7);
+    # the Guzzle 7 jobs are covered by the test suite.
+    - name: Static analysis (PHPStan)
+      if: matrix.guzzle == '^8.0'
+      run: composer run-script analyse
 
     - name: Run test suite
       run: composer run-script test

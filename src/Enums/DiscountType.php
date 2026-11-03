@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Enums;
 
 /**
@@ -23,8 +25,8 @@ enum DiscountType: int
     public function label(): string
     {
         return match ($this) {
-            self::PERCENTAGE => "Ποσοστό",
-            self::AMOUNT => "Ποσό",
+            self::PERCENTAGE => 'Ποσοστό',
+            self::AMOUNT => 'Ποσό',
         };
     }
 }

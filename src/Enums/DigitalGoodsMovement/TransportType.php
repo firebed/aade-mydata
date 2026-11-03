@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Enums\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Enums\HasLabels;
@@ -19,13 +21,13 @@ enum TransportType: int
     public function label(): string
     {
         return match ($this) {
-            self::PUBLIC_USE_TRUCK => "Φορτηγό Δημόσιας Χρήσης",
-            self::PRIVATE_USE_TRUCK => "Φορτηγό Ιδιωτικής Χρήσης",
-            self::SHIP => "Πλοίο",
-            self::TRAIN => "Τρένο",
-            self::AIRPLANE => "Αεροπλάνο",
-            self::OTHER_TRANSPORT_MEANS => "Λοιπά Μεταφορικά Μέσα",
-            self::WITHOUT => "Άνευ",
+            self::PUBLIC_USE_TRUCK => 'Φορτηγό Δημόσιας Χρήσης',
+            self::PRIVATE_USE_TRUCK => 'Φορτηγό Ιδιωτικής Χρήσης',
+            self::SHIP => 'Πλοίο',
+            self::TRAIN => 'Τρένο',
+            self::AIRPLANE => 'Αεροπλάνο',
+            self::OTHER_TRANSPORT_MEANS => 'Λοιπά Μεταφορικά Μέσα',
+            self::WITHOUT => 'Άνευ',
         };
     }
 }

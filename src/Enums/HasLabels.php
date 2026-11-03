@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Enums;
 
 trait HasLabels
 {
-    public abstract function label(): string;
+    abstract public function label(): string;
 
     public static function labels(): array
     {

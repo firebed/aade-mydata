@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Enums;
 
 enum StampCategory: int
@@ -11,18 +13,15 @@ enum StampCategory: int
      */
     case TYPE_1 = 1;
 
-
     /**
      *  Συντελεστής 2,4 % [2,40%]
      */
     case TYPE_2 = 2;
 
-
     /**
      *  Συντελεστής 3,6 % [3,60%]
      */
     case TYPE_3 = 3;
-
 
     /**
      *  Λοιπές περιπτώσεις Ψηφιακού Τέλους Συναλλαγής [ποσό]
@@ -32,10 +31,10 @@ enum StampCategory: int
     public function label(): string
     {
         return match ($this) {
-            self::TYPE_1 => "Συντελεστής 1.2 %",
-            self::TYPE_2 => "Συντελεστής 2.4 %",
-            self::TYPE_3 => "Συντελεστής 3.6 %",
-            self::TYPE_4 => "Λοιπές περιπτώσεις Ψηφιακού Τέλους Συναλλαγής",
+            self::TYPE_1 => 'Συντελεστής 1.2 %',
+            self::TYPE_2 => 'Συντελεστής 2.4 %',
+            self::TYPE_3 => 'Συντελεστής 3.6 %',
+            self::TYPE_4 => 'Λοιπές περιπτώσεις Ψηφιακού Τέλους Συναλλαγής',
         };
     }
 }

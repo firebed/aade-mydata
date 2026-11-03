@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Enums;
 
 use BackedEnum;
@@ -40,8 +42,8 @@ enum TaxType: int
      * corresponds to a specific set of tax categories, represented by enums. If the tax category
      * is valid for the tax type, the function returns `true`; otherwise, it returns `false`.
      *
-     * @param TaxType|int $taxType The tax type to check. Can be an instance of `TaxType` or an integer.
-     * @param BackedEnum|int|null $taxCategory The tax category to validate. Can be a tax category enum, an integer or `null` (for tax types that don't require a category).
+     * @param  TaxType|int  $taxType  The tax type to check. Can be an instance of `TaxType` or an integer.
+     * @param  BackedEnum|int|null  $taxCategory  The tax category to validate. Can be a tax category enum, an integer or `null` (for tax types that don't require a category).
      * @return bool Returns `true` if the tax category exists for the given tax type, otherwise `false`.
      *
      * @example
@@ -67,7 +69,7 @@ enum TaxType: int
     /**
      * Determines whether a given tax category is supported by the current tax type.
      *
-     * @param BackedEnum|int|null $taxCategory The tax category to check. Can be an instance of a backed enum, an integer, or null.
+     * @param  BackedEnum|int|null  $taxCategory  The tax category to check. Can be an instance of a backed enum, an integer, or null.
      * @return bool Returns `true` if the tax category is supported for the current tax type, otherwise `false`.
      */
     public function supportsTaxCategory(BackedEnum|int|null $taxCategory): bool
@@ -99,11 +101,11 @@ enum TaxType: int
     public function label(): string
     {
         return match ($this) {
-            self::TYPE_1 => "Παρακρατούμενος Φόρος",
-            self::TYPE_2 => "Τέλη",
-            self::TYPE_3 => "Λοιποί Φόροι",
-            self::TYPE_4 => "Ψηφιακό Τέλος Συναλλαγής",
-            self::TYPE_5 => "Κρατήσεις",
+            self::TYPE_1 => 'Παρακρατούμενος Φόρος',
+            self::TYPE_2 => 'Τέλη',
+            self::TYPE_3 => 'Λοιποί Φόροι',
+            self::TYPE_4 => 'Ψηφιακό Τέλος Συναλλαγής',
+            self::TYPE_5 => 'Κρατήσεις',
         };
     }
 }
