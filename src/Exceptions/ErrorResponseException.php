@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Exceptions;
 
 use DOMDocument;
@@ -11,11 +13,13 @@ use Throwable;
 /**
  * myDATA answered with an error document (ResponseDoc with errors) instead of
  * the response the request expects, either with HTTP 200 or with an HTTP error.
+ *
+ * @phpstan-consistent-constructor
  */
 class ErrorResponseException extends TransmissionFailedException
 {
     /**
-     * @param int|null $code The HTTP status of an HTTP error; otherwise the code of the first error is used
+     * @param  int|null  $code  The HTTP status of an HTTP error; otherwise the code of the first error is used
      */
     public function __construct(private readonly Errors $errors, ?int $code = null, ?Throwable $previous = null)
     {
@@ -30,7 +34,7 @@ class ErrorResponseException extends TransmissionFailedException
      */
     public static function fromXml(string $xml, ?int $code = null, ?Throwable $previous = null): ?static
     {
-        $document = new DOMDocument();
+        $document = new DOMDocument;
         $document->preserveWhiteSpace = false;
 
         return str_contains($xml, '<ResponseDoc') && @$document->loadXML($xml)
@@ -41,7 +45,7 @@ class ErrorResponseException extends TransmissionFailedException
     /**
      * The errors of every response in a ResponseDoc, or null when the document is something else.
      *
-     * @param DOMDocument $document Loaded without whitespace nodes (preserveWhiteSpace = false)
+     * @param  DOMDocument  $document  Loaded without whitespace nodes (preserveWhiteSpace = false)
      */
     public static function fromDocument(DOMDocument $document, ?int $code = null, ?Throwable $previous = null): ?static
     {
@@ -49,9 +53,11 @@ class ErrorResponseException extends TransmissionFailedException
             return null;
         }
 
-        $errors = new Errors();
-        foreach ((new ResponseDocReader())->parseDocument($document)->all() as $response) {
-            $errors->push('error', $response->getErrors()?->all() ?? []);
+        $errors = new Errors;
+        foreach ((new ResponseDocReader)->parseDocument($document)->all() as $response) {
+            foreach ($response->getErrors()?->all() ?? [] as $error) {
+                $errors->add($error);
+            }
         }
 
         return new static($errors, $code, $previous);

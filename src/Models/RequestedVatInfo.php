@@ -1,13 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
-class RequestedVatInfo extends Type
+use Firebed\AadeMyData\Casts\Arr;
+
+class RequestedVatInfo extends Model implements Paginated
 {
-    protected array $casts = [
-        'continuationToken' => ContinuationToken::class,
-        'VatInfo' => VatInfo::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'continuationToken' => ContinuationToken::class,
+            'VatInfo' => Arr::of(VatInfo::class),
+        ];
+    }
 
     /**
      * @return ContinuationToken|null Στοιχείο για την τμηματική λήψη αποτελεσμάτων
@@ -23,14 +30,5 @@ class RequestedVatInfo extends Type
     public function getVatInfo(): ?array
     {
         return $this->get('VatInfo');
-    }
-
-    public function set($key, $value): static
-    {
-        if ($key === 'VatInfo' && ! is_array($value)) {
-            return $this->push($key, $value);
-        }
-
-        return parent::set($key, $value);
     }
 }

@@ -1,22 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\Statements;
 
-use Firebed\AadeMyData\Models\TypeArray;
+use Firebed\AadeMyData\Casts\Arr;
+use Firebed\AadeMyData\Models\ModelCollection;
 
 /**
- * @extends TypeArray<RecalledStatementType>
+ * @extends ModelCollection<RecalledStatementType>
  *
  * @version 1.0.12
  */
-class RecallStatementDoc extends TypeArray
+class RecallStatementDoc extends ModelCollection
 {
-    protected array $casts = [
-        'recalledStatement' => RecalledStatementType::class,
-    ];
-
-    public function __construct()
+    protected function casts(): array
     {
-        parent::__construct('recalledStatement');
+        return [
+            'recalledStatement' => Arr::of(RecalledStatementType::class),
+        ];
     }
 }

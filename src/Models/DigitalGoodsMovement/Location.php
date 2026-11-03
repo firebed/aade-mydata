@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
-use Firebed\AadeMyData\Models\Type;
+use Firebed\AadeMyData\Models\Model;
 
 /**
  * @version 2.0.1
  */
-class Location extends Type
+class Location extends Model
 {
     protected array $expectedOrder = [
         'longitude',
@@ -26,6 +28,7 @@ class Location extends Type
 
     /**
      * @return float|null Γεωγραφικό μήκος
+     *
      * @version v2.0.1
      */
     public function getLongitude(): ?float
@@ -34,8 +37,8 @@ class Location extends Type
     }
 
     /**
-     * @param float $longitude Γεωγραφικό μήκος
-     * @return $this
+     * @param  float  $longitude  Γεωγραφικό μήκος
+     *
      * @version v2.0.1
      */
     public function setLongitude(float $longitude): static
@@ -45,6 +48,7 @@ class Location extends Type
 
     /**
      * @return float|null Γεωγραφικό πλάτος
+     *
      * @version v2.0.1
      */
     public function getLatitude(): ?float
@@ -53,8 +57,8 @@ class Location extends Type
     }
 
     /**
-     * @param float $latitude Γεωγραφικό πλάτος
-     * @return $this
+     * @param  float  $latitude  Γεωγραφικό πλάτος
+     *
      * @version v2.0.1
      */
     public function setLatitude(float $latitude): static

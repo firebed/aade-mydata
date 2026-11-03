@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Xml\Statements;
 
 use Firebed\AadeMyData\Models\Statements\StatementDoc;
+use Firebed\AadeMyData\Xml\Dom;
 use Firebed\AadeMyData\Xml\XMLWriter;
 
 /**
@@ -10,7 +13,7 @@ use Firebed\AadeMyData\Xml\XMLWriter;
  */
 class StatementDocWriter extends XMLWriter
 {
-    private const XSI = 'http://www.w3.org/2001/XMLSchema-instance';
+    private const string XSI = 'http://www.w3.org/2001/XMLSchema-instance';
 
     /** @noinspection PhpUnhandledExceptionInspection */
     public function asXML($data): string
@@ -24,6 +27,6 @@ class StatementDocWriter extends XMLWriter
         // Build statement node
         $this->build($rootNode, 'statement', $data->get('statement'));
 
-        return $this->document->saveXML();
+        return Dom::save($this->document);
     }
 }

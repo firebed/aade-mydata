@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
 use Firebed\AadeMyData\Traits\HasFactory;
 
-class Address extends Type
+class Address extends Model
 {
     use HasFactory;
 
@@ -12,7 +14,7 @@ class Address extends Type
         'street',
         'number',
         'postalCode',
-        'city'
+        'city',
     ];
 
     /**
@@ -24,7 +26,7 @@ class Address extends Type
     }
 
     /**
-     * @param string|null $street Οδός
+     * @param  string|null  $street  Οδός
      */
     public function setStreet(?string $street): static
     {
@@ -40,7 +42,7 @@ class Address extends Type
     }
 
     /**
-     * @param string|null $number Αριθμός Οδού
+     * @param  string|null  $number  Αριθμός Οδού
      */
     public function setNumber(?string $number): static
     {
@@ -56,7 +58,7 @@ class Address extends Type
     }
 
     /**
-     * @param string $postalCode Ταχυδρομικός Κώδικας
+     * @param  string  $postalCode  Ταχυδρομικός Κώδικας
      */
     public function setPostalCode(string $postalCode): static
     {
@@ -72,7 +74,7 @@ class Address extends Type
     }
 
     /**
-     * @param string $city Όνομα πόλης
+     * @param  string  $city  Όνομα πόλης
      */
     public function setCity(string $city): static
     {

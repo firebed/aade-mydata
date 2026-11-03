@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
-use Firebed\AadeMyData\Traits\HasIterator;
+use Firebed\AadeMyData\Casts\Arr;
 
 /**
  * Στις περιπτώσεις που ο χρήστης καλέσει μια εκ των δυο μεθόδων λήψης στοιχείων εσόδων/εξόδων
@@ -12,14 +14,15 @@ use Firebed\AadeMyData\Traits\HasIterator;
  * καθώς και το στοιχείο continuationToken, σε περίπτωση που ο όγκος των δεδομένων
  * υπερβαίνει το επιτρεπτό όριο και η λήψη τους γίνει τμηματικά.
  */
-class RequestedBookInfo extends Type
+class RequestedBookInfo extends Model implements Paginated
 {
-    use HasIterator;
-
-    protected array $casts = [
-        'continuationToken' => ContinuationToken::class,
-        'bookInfo' => BookInfo::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'continuationToken' => ContinuationToken::class,
+            'bookInfo' => Arr::of(BookInfo::class),
+        ];
+    }
 
     /**
      * @return ContinuationToken|null Στοιχείο για την τμηματική λήψη αποτελεσμάτων
@@ -35,14 +38,5 @@ class RequestedBookInfo extends Type
     public function getBookInfo(): ?array
     {
         return $this->get('bookInfo');
-    }
-
-    public function set($key, $value): static
-    {
-        if ($key === 'bookInfo' && ! is_array($value)) {
-            return $this->push($key, $value);
-        }
-
-        return parent::set($key, $value);
     }
 }

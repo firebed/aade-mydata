@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Xml;
 
 use BackedEnum;
@@ -7,7 +9,8 @@ use DOMDocument;
 use DOMElement;
 use DOMException;
 use DOMNode;
-use Firebed\AadeMyData\Models\Type;
+use Firebed\AadeMyData\Models\Model;
+use Firebed\AadeMyData\Models\ModelCollection;
 
 /**
  * @template T
@@ -17,11 +20,17 @@ abstract class XMLWriter
     // DOMDocument object for XML manipulation
     protected DOMDocument $document;
 
+    /**
+     * Namespaces of the elements, as 'element' => ['' => namespace of the element, 'child' => …, '*' => every child].
+     *
+     * @var array<string, array<string, string>>
+     */
+    protected array $namespaces = [];
+
     public function __construct()
     {
         $this->document = new DOMDocument('1.0', 'utf-8');
         $this->document->preserveWhiteSpace = false;
-        $this->document->formatOutput = true;
     }
 
     /**
@@ -33,13 +42,20 @@ abstract class XMLWriter
             return;
         }
 
-        if ($nodeValue instanceof Type) {
-            $this->buildType($parent, $nodeName, $nodeValue);
+        // An empty wrapper element (e.g. <paymentMethods/>) fails the XSD, so it is left out
+        if ($nodeValue instanceof ModelCollection && $nodeValue->isEmpty()) {
+            return;
+        }
+
+        if ($nodeValue instanceof Model) {
+            $this->buildModel($parent, $nodeName, $nodeValue);
+
             return;
         }
 
         if (is_array($nodeValue)) {
             $this->buildArray($parent, $nodeName, $nodeValue);
+
             return;
         }
 
@@ -51,12 +67,14 @@ abstract class XMLWriter
     /**
      * @throws DOMException
      */
-    protected function buildType(DOMNode $parent, string $nodeName, Type $nodeValue): DOMNode
+    protected function buildModel(DOMNode $parent, string $nodeName, Model $nodeValue): DOMNode
     {
         return $this->processAssocArray($parent, $nodeName, $nodeValue->sortedAttributes());
     }
 
     /**
+     * @param  array<int|string, mixed>  $nodeValue
+     *
      * @throws DOMException
      */
     protected function buildArray(DOMNode $parent, string $nodeName, array $nodeValue): void
@@ -64,6 +82,7 @@ abstract class XMLWriter
         // If the array is associative
         if (! array_is_list($nodeValue)) {
             $this->processAssocArray($parent, $nodeName, $nodeValue);
+
             return;
         }
 
@@ -73,6 +92,8 @@ abstract class XMLWriter
     }
 
     /**
+     * @param  array<int|string, mixed>  $nodeValue
+     *
      * @throws DOMException
      */
     protected function processAssocArray(DOMNode $parent, string $nodeName, array $nodeValue): DOMNode
@@ -83,17 +104,16 @@ abstract class XMLWriter
         $parent->appendChild($child);
 
         foreach ($nodeValue as $key => $value) {
-            $this->build($child, $key, $value, $nodeName . '.' . $key);
+            $this->build($child, (string) $key, $value, $nodeName.'.'.$key);
         }
 
         return $child;
     }
 
-
     /**
      * @throws DOMException
      */
-    protected function createElement(string $nodeName, mixed $nodeValue = null, ?string $namespaceURI = null): DOMElement
+    protected function createElement(string $nodeName, ?string $nodeValue = null, ?string $namespaceURI = null): DOMElement
     {
         // Create the element (with or without namespace)
         $newNode = $namespaceURI
@@ -108,14 +128,14 @@ abstract class XMLWriter
         return $newNode;
     }
 
-    protected function toValue($value): ?string
+    protected function toValue(mixed $value): string
     {
         if (is_bool($value)) {
             return $value ? 'true' : 'false';
         }
 
         if ($value instanceof BackedEnum) {
-            return $value->value;
+            return (string) $value->value;
         }
 
         return (string) $value;
@@ -129,7 +149,7 @@ abstract class XMLWriter
 
         // If key contains '.', split it into parent and child
         if (str_contains($key, '.')) {
-            [$parent, $child] = explode('.', $key);
+            [$parent, $child] = explode('.', $key, 2);
 
             // If child exists, return corresponding namespace URI
             if ($child) {
@@ -146,8 +166,7 @@ abstract class XMLWriter
     }
 
     /**
-     * @param T $data
-     * @return string
+     * @param  T  $data
      */
-    public abstract function asXml($data): string;
+    abstract public function asXml(mixed $data): string;
 }

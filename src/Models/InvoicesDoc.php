@@ -1,21 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
-/**
- * @extends TypeArray<Invoice>
- */
-class InvoicesDoc extends TypeArray
-{
-    protected array $casts = [
-        'invoice' => Invoice::class,
-    ];
+use Firebed\AadeMyData\Casts\Arr;
 
-    /**
-     * @param Invoice|Invoice[] $invoices
-     */
-    public function __construct(Invoice|array $invoices = [])
+/**
+ * @extends ModelCollection<Invoice>
+ */
+class InvoicesDoc extends ModelCollection
+{
+    protected function casts(): array
     {
-        parent::__construct('invoice', $invoices);
+        return [
+            'invoice' => Arr::of(Invoice::class),
+        ];
     }
 }

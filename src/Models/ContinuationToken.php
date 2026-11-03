@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
-class ContinuationToken extends Type
+class ContinuationToken extends Model
 {
     /**
      * @return string|null Παράμετρος για επόμενη κλήση λήψης

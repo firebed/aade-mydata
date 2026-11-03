@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Models\HasSchemaValidation;
 use Firebed\AadeMyData\Models\Invoice;
-use Firebed\AadeMyData\Models\Type;
+use Firebed\AadeMyData\Models\Model;
 use Firebed\AadeMyData\Models\ValidatesSchema;
 use Firebed\AadeMyData\Xml\DigitalGoodsMovement\TransportWriter;
 
 /**
  * @version 2.0.1
  */
-class Transport extends Type implements ValidatesSchema
+class Transport extends Model implements ValidatesSchema
 {
     use HasSchemaValidation;
 
@@ -20,12 +22,16 @@ class Transport extends Type implements ValidatesSchema
         'transportDetail',
     ];
 
-    protected array $casts = [
-        'transportDetail' => TransportDetails::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'transportDetail' => TransportDetails::class,
+        ];
+    }
 
     /**
      * @return int|null Μοναδικός Αριθμός Καταχώρησης του γεγονότος μεταφοράς. Συμπληρώνεται από την υπηρεσία.
+     *
      * @version 2.0.1
      */
     public function getTransferMark(): ?int
@@ -35,6 +41,7 @@ class Transport extends Type implements ValidatesSchema
 
     /**
      * @return string|null Το URL του QR code του Δελτίου Αποστολής ή του Ομαδικού QR Code.
+     *
      * @version 2.0.1
      */
     public function getQrUrl(): ?string
@@ -43,8 +50,8 @@ class Transport extends Type implements ValidatesSchema
     }
 
     /**
-     * @param string $qrUrl Το URL του QR code του Δελτίου Αποστολής ή του Ομαδικού QR Code.
-     * @return static
+     * @param  string  $qrUrl  Το URL του QR code του Δελτίου Αποστολής ή του Ομαδικού QR Code.
+     *
      * @version 2.0.1
      */
     public function setQrUrl(string $qrUrl): static
@@ -54,6 +61,7 @@ class Transport extends Type implements ValidatesSchema
 
     /**
      * @return TransportDetails|null Λεπτομέρειες της μεταφοράς.
+     *
      * @version 2.0.1
      */
     public function getTransportDetail(): ?TransportDetails
@@ -62,8 +70,8 @@ class Transport extends Type implements ValidatesSchema
     }
 
     /**
-     * @param TransportDetails $transportDetail Λεπτομέρειες της μεταφοράς.
-     * @return static
+     * @param  TransportDetails  $transportDetail  Λεπτομέρειες της μεταφοράς.
+     *
      * @version 2.0.1
      */
     public function setTransportDetail(TransportDetails $transportDetail): static
@@ -73,13 +81,13 @@ class Transport extends Type implements ValidatesSchema
 
     public function toXml(): string
     {
-        return (new TransportWriter())->asXml($this);
+        return (new TransportWriter)->asXml($this);
     }
 
     public function validate(): array
     {
-        $xml = (new TransportWriter())->asXml($this);
+        $xml = (new TransportWriter)->asXml($this);
 
-        return $this->validateSchema($xml, 'RegisterTransfer-' . Invoice::VERSION . '.xsd');
+        return $this->validateSchema($xml, 'RegisterTransfer-'.Invoice::VERSION.'.xsd');
     }
 }

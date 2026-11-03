@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Xml\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\GroupQrDetailsResponse;
@@ -12,7 +14,7 @@ class GroupQrDetailsReader extends XMLReader
 {
     public function parseXml(string $xmlString): GroupQrDetailsResponse
     {
-        $responseDoc = new GroupQrDetailsResponse();
+        $responseDoc = new GroupQrDetailsResponse;
         $this->loadXML($xmlString, $responseDoc);
 
         return $responseDoc;

@@ -1,25 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\Statements;
 
-use Firebed\AadeMyData\Models\TypeArray;
+use Firebed\AadeMyData\Casts\Arr;
+use Firebed\AadeMyData\Models\ModelCollection;
 
 /**
- * @extends TypeArray<RequestedStatement>
+ * @extends ModelCollection<RequestedStatement>
  *
  * @version 1.0.12
  */
-class RequestedStatementDoc extends TypeArray
+class RequestedStatementDoc extends ModelCollection
 {
-    protected array $casts = [
-        'requestedStatement' => RequestedStatement::class,
-    ];
-
-    /**
-     * @param RequestedStatement|RequestedStatement[] $items Λίστα ζητούμενων δηλώσεων
-     */
-    public function __construct(RequestedStatement|array $items = [])
+    protected function casts(): array
     {
-        parent::__construct('requestedStatement', $items);
+        return [
+            'requestedStatement' => Arr::of(RequestedStatement::class),
+        ];
     }
 }

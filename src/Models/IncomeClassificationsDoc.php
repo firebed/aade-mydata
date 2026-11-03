@@ -1,21 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
-/**
- * @extends TypeArray<InvoiceIncomeClassification>
- */
-class IncomeClassificationsDoc extends TypeArray
-{
-    protected array $casts = [
-        'incomeInvoiceClassification' => InvoiceIncomeClassification::class,
-    ];
+use Firebed\AadeMyData\Casts\Arr;
 
-    /**
-     * @param InvoiceIncomeClassification|InvoiceIncomeClassification[] $classifications
-     */
-    public function __construct(InvoiceIncomeClassification|array $classifications = [])
+/**
+ * @extends ModelCollection<InvoiceIncomeClassification>
+ */
+class IncomeClassificationsDoc extends ModelCollection
+{
+    protected function casts(): array
     {
-        parent::__construct('incomeClassificationsDoc', $classifications);
+        return [
+            'incomeInvoiceClassification' => Arr::of(InvoiceIncomeClassification::class),
+        ];
     }
 }

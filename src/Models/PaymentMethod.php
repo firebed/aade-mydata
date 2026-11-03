@@ -1,28 +1,35 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
-use DOMDocument;
+use Firebed\AadeMyData\Casts\Arr;
 use Firebed\AadeMyData\Traits\HasFactory;
+use Firebed\AadeMyData\Xml\Dom;
 use Firebed\AadeMyData\Xml\PaymentMethodsDocWriter;
 
 /**
  * @version 1.0.8
  */
-class PaymentMethod extends Type
+class PaymentMethod extends Model
 {
     use HasFactory;
+    use HasSchemaValidation;
 
     protected array $expectedOrder = [
         'invoiceMark',
         'paymentMethodMark',
         'entityVatNumber',
-        'paymentMethodDetails'
+        'paymentMethodDetails',
     ];
 
-    protected array $casts = [
-        'paymentMethodDetails' => PaymentMethodDetail::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'paymentMethodDetails' => Arr::of(PaymentMethodDetail::class),
+        ];
+    }
 
     /**
      * @return int|null Μοναδικός Αριθμός Καταχώρησης Παραστατικού
@@ -35,9 +42,6 @@ class PaymentMethod extends Type
     }
 
     /**
-     * @param int $invoiceMark
-     *
-     * @return PaymentMethod
      * @version 1.0.8
      */
     public function setInvoiceMark(int $invoiceMark): static
@@ -72,7 +76,7 @@ class PaymentMethod extends Type
      * αποστέλλεται μέσω του πεδίου entityVatNumber, διαφορετικά το εν λόγω πεδίο
      * παραμένει κενό.
      *
-     * @param string|null $entityVatNumber ΑΦΜ Οντότητας Αναφοράς
+     * @param  string|null  $entityVatNumber  ΑΦΜ Οντότητας Αναφοράς
      *
      * @version 1.0.8
      */
@@ -95,7 +99,7 @@ class PaymentMethod extends Type
      * Το σύνολο των ποσών amount ανά αντικείμενο PaymentMethodType πρέπει να
      * ισούται με το totalValue του παραστατικού στο οποίο αντιστοιχεί το invoiceMark.
      *
-     * @param PaymentMethodDetail $paymentMethodDetails Τρόπος Πληρωμής
+     * @param  PaymentMethodDetail  $paymentMethodDetails  Τρόπος Πληρωμής
      *
      * @version 1.0.8
      */
@@ -108,7 +112,7 @@ class PaymentMethod extends Type
      * Το σύνολο των ποσών amount ανά αντικείμενο PaymentMethodType πρέπει να
      * ισούται με το totalValue του παραστατικού στο οποίο αντιστοιχεί το invoiceMark.
      *
-     * @param PaymentMethodDetail[] $paymentMethodDetails Τρόποι Πληρωμής
+     * @param  PaymentMethodDetail[]  $paymentMethodDetails  Τρόποι Πληρωμής
      *
      * @version 1.0.8
      */
@@ -117,18 +121,9 @@ class PaymentMethod extends Type
         return $this->set('paymentMethodDetails', $paymentMethodDetails);
     }
 
-    public function set($key, $value): static
-    {
-        if ($key === 'paymentMethodDetails' && ! is_array($value)) {
-            return $this->addPaymentMethodDetails($value);
-        }
-
-        return parent::set($key, $value);
-    }
-
     public function toXml(bool $asDoc = false): string
     {
-        $writer = new PaymentMethodsDocWriter();
+        $writer = new PaymentMethodsDocWriter;
         $fullXml = $writer->asXML(new PaymentMethodsDoc($this));
 
         if ($asDoc) {
@@ -136,27 +131,19 @@ class PaymentMethod extends Type
         }
 
         $doc = $writer->getDomDocument();
-        return $doc->saveXML($doc->getElementsByTagName('invoice')->item(0));
+
+        return Dom::save($doc, $doc->getElementsByTagName('paymentMethods')->item(0));
     }
 
+    /**
+     * Validates the payment method against the myDATA XSD.
+     *
+     * @return list<array{field: string|null, message: string|null}> The validation errors, empty when the payment method is valid
+     */
     public function validate(): array
     {
-        libxml_use_internal_errors(true);
-        libxml_clear_errors();
+        $xml = (new PaymentMethodsDocWriter)->asXML(new PaymentMethodsDoc($this));
 
-        $writer = new PaymentMethodsDocWriter();
-        $xml = $writer->asXML(new PaymentMethodsDoc($this));
-
-        $dom = new DOMDocument();
-        $dom->loadXML($xml);
-        $dom->schemaValidate(__DIR__ . '/../../xsd/paymentMethods-' . Invoice::VERSION . '.xsd');
-
-        return array_map(function ($error) {
-            preg_match("/Element '(.+?)':( \[.*?])? (.+)/", $error->message, $matches);
-            return [
-                'field' => $matches[1] ?? null,
-                'message' => $matches[3] ?? null,
-            ];
-        }, libxml_get_errors());
+        return $this->validateSchema($xml, 'paymentMethods-'.Invoice::VERSION.'.xsd');
     }
 }

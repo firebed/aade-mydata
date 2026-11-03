@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
 use Firebed\AadeMyData\Enums\FeesPercentCategory;
@@ -12,7 +14,7 @@ use Firebed\AadeMyData\Traits\HasFactory;
 /**
  * Περιγράφει τη δομή των φόρων που αφορούν το σύνολο του παραστατικού.
  */
-class TaxTotals extends Type
+class TaxTotals extends Model
 {
     use HasFactory;
 
@@ -24,9 +26,13 @@ class TaxTotals extends Type
         'id',
     ];
 
-    protected array $casts = [
-        'taxType' => TaxType::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'taxType' => TaxType::class,
+            'taxCategory' => 'int',
+        ];
+    }
 
     /**
      * @return TaxType|null Είδος Φόρου
@@ -37,7 +43,7 @@ class TaxTotals extends Type
     }
 
     /**
-     * @param TaxType|string $taxType Είδος Φόρου
+     * @param  TaxType|string  $taxType  Είδος Φόρου
      */
     public function setTaxType(TaxType|string $taxType): static
     {
@@ -45,9 +51,9 @@ class TaxTotals extends Type
     }
 
     /**
-     * @return WithheldPercentCategory|FeesPercentCategory|OtherTaxesPercentCategory|StampCategory|int|null Κατηγορία Φόρου
+     * @return int|null Κατηγορία Φόρου: the code of the category, which enum it belongs to depends on taxType
      */
-    public function getTaxCategory(): WithheldPercentCategory|FeesPercentCategory|OtherTaxesPercentCategory|StampCategory|int|null
+    public function getTaxCategory(): ?int
     {
         return $this->get('taxCategory');
     }
@@ -57,7 +63,7 @@ class TaxTotals extends Type
      * από τον αντίστοιχο πίνακα του Παραρτήματος του φόρου που
      * αναφέρεται στο πεδίο taxType.
      *
-     * @param WithheldPercentCategory|FeesPercentCategory|OtherTaxesPercentCategory|StampCategory|int|null $taxCategory Κατηγορία Φόρου
+     * @param  WithheldPercentCategory|FeesPercentCategory|OtherTaxesPercentCategory|StampCategory|int|null  $taxCategory  Κατηγορία Φόρου
      */
     public function setTaxCategory(WithheldPercentCategory|FeesPercentCategory|OtherTaxesPercentCategory|StampCategory|int|null $taxCategory): static
     {
@@ -78,7 +84,7 @@ class TaxTotals extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param float|null $underlyingValue Υποκείμενη Αξία
+     * @param  float|null  $underlyingValue  Υποκείμενη Αξία
      */
     public function setUnderlyingValue(?float $underlyingValue): static
     {
@@ -99,7 +105,7 @@ class TaxTotals extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param float $taxAmount Ποσό Φόρου
+     * @param  float  $taxAmount  Ποσό Φόρου
      */
     public function setTaxAmount(float $taxAmount): static
     {
@@ -115,11 +121,10 @@ class TaxTotals extends Type
     }
 
     /**
-     * @param int|null $id Αύξων αριθμός γραμμής
+     * @param  int|null  $id  Αύξων αριθμός γραμμής
      */
     public function setId(?int $id): static
     {
         return $this->set('id', $id);
     }
-
 }

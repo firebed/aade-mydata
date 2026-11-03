@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Xml;
 
 use Firebed\AadeMyData\Models\PaymentMethodsDoc;
@@ -9,15 +11,17 @@ use Firebed\AadeMyData\Models\PaymentMethodsDoc;
  */
 class PaymentMethodsDocWriter extends XMLWriter
 {
-    private const XMLNS = 'https://www.aade.gr/myDATA/paymentMethod/v1.0';
-    private const XSI = 'http://www.w3.org/2001/XMLSchema-instance';
-    private const INV = "http://www.aade.gr/myDATA/invoice/v1.0";
+    private const string XMLNS = 'https://www.aade.gr/myDATA/paymentMethod/v1.0';
+
+    private const string XSI = 'http://www.w3.org/2001/XMLSchema-instance';
+
+    private const string INV = 'http://www.aade.gr/myDATA/invoice/v1.0';
 
     protected array $namespaces = [
         'paymentMethodDetails' => ['*' => self::INV],
         'ECRToken' => [
             '' => self::INV,
-            '*' => self::INV
+            '*' => self::INV,
         ],
         'ProvidersSignature' => [
             '' => self::INV,
@@ -36,6 +40,6 @@ class PaymentMethodsDocWriter extends XMLWriter
 
         $this->buildArray($rootNode, 'paymentMethods', iterator_to_array($data));
 
-        return $this->document->saveXML();
+        return Dom::save($this->document);
     }
 }

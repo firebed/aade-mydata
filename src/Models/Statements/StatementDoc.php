@@ -1,17 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\Statements;
 
-use Firebed\AadeMyData\Models\Type;
+use Firebed\AadeMyData\Models\Model;
 
 /**
  * @version 1.0.12
  */
-class StatementDoc extends Type
+class StatementDoc extends Model
 {
-    protected array $casts = [
-        'statement' => Statement::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'statement' => Statement::class,
+        ];
+    }
 
     /**
      * @return Statement|null Το αντικείμενο δήλωσης
@@ -22,8 +27,7 @@ class StatementDoc extends Type
     }
 
     /**
-     * @param Statement $statement Δήλωση Παρόχου/ΙδιοΠαρόχου
-     * @return static
+     * @param  Statement  $statement  Δήλωση Παρόχου/ΙδιοΠαρόχου
      */
     public function setStatement(Statement $statement): static
     {

@@ -1,26 +1,51 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Services;
 
 use ArrayAccess;
 use ArrayIterator;
 use BackedEnum;
 use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
+use Firebed\AadeMyData\Enums\ExpenseClassificationType;
 use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
+use Firebed\AadeMyData\Enums\IncomeClassificationType;
 use IteratorAggregate;
 use Traversable;
 
+/**
+ * The classification categories of an invoice type, each with its types; reading
+ * a category gives its types as a TypeClassificationCollection.
+ *
+ * @phpstan-type Types array<int|string, IncomeClassificationType|ExpenseClassificationType|string>
+ *
+ * @implements ArrayAccess<string, TypeClassificationCollection|Types>
+ * @implements IteratorAggregate<string, Types>
+ */
 class CategoryClassificationCollection implements ArrayAccess, IteratorAggregate
 {
+    /**
+     * @var array<string, Types>
+     */
     private array $classifications;
+
     private bool $isIncome;
 
+    /**
+     * @param  array<string, Types>  $classifications  Category => types
+     */
     public function __construct(array $classifications, bool $isIncome)
     {
         $this->classifications = $classifications;
         $this->isIncome = $isIncome;
     }
 
+    /**
+     * Converts the categories to an associative array with keys and labels.
+     *
+     * @return array<string, string>
+     */
     public function toKeyLabel(): array
     {
         $results = [];
@@ -33,6 +58,11 @@ class CategoryClassificationCollection implements ArrayAccess, IteratorAggregate
         return $results;
     }
 
+    /**
+     * Converts the categories to an associative array of the key/label arrays of their types.
+     *
+     * @return array<string, array<string, string>>
+     */
     public function toKeyLabels(): array
     {
         $results = [];
@@ -45,6 +75,11 @@ class CategoryClassificationCollection implements ArrayAccess, IteratorAggregate
         return $results;
     }
 
+    /**
+     * Returns the category keys.
+     *
+     * @return list<string>
+     */
     public function keys(): array
     {
         return array_keys($this->classifications);
@@ -53,11 +88,19 @@ class CategoryClassificationCollection implements ArrayAccess, IteratorAggregate
     public function uniqueTypes(): TypeClassificationCollection
     {
         return new TypeClassificationCollection(
-            array_unique(array_merge(...array_values($this->classifications))),
+            array_unique(array_map(
+                static fn (IncomeClassificationType|ExpenseClassificationType|string $type) => $type instanceof BackedEnum ? $type->value : $type,
+                array_merge(...array_values($this->classifications))
+            )),
             $this->isIncome
         );
     }
 
+    /**
+     * Returns the classifications as an array.
+     *
+     * @return array<string, Types>
+     */
     public function toArray(): array
     {
         return $this->classifications;
@@ -82,18 +125,17 @@ class CategoryClassificationCollection implements ArrayAccess, IteratorAggregate
         return new TypeClassificationCollection($this->classifications[$offset] ?? [], $this->isIncome);
     }
 
-    public function get(mixed $offset): TypeClassificationCollection
+    public function get(IncomeClassificationCategory|ExpenseClassificationCategory|string $offset): TypeClassificationCollection
     {
-        if ($offset instanceof BackedEnum) {
-            return $this->offsetGet($offset->value);
-        }
-
-        return $this->offsetGet($offset);
+        return $this->offsetGet($offset instanceof BackedEnum ? $offset->value : $offset);
     }
 
+    /**
+     * @param  TypeClassificationCollection|Types  $value  The types of the category
+     */
     public function offsetSet(mixed $offset, mixed $value): void
     {
-        $this->classifications[$offset] = $value;
+        $this->classifications[$offset] = $value instanceof TypeClassificationCollection ? $value->toArray() : $value;
     }
 
     public function offsetUnset(mixed $offset): void

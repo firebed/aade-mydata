@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
-use Firebed\AadeMyData\Enums\PaymentMethod;
+use Firebed\AadeMyData\Enums\PaymentType;
 use Firebed\AadeMyData\Traits\HasFactory;
 
-class PaymentMethodDetail extends Type
+class PaymentMethodDetail extends Model
 {
     use HasExtraFields;
     use HasFactory;
@@ -18,28 +20,30 @@ class PaymentMethodDetail extends Type
         'transactionId',
         'tid',
         'ProvidersSignature',
-        'ECRToken'
+        'ECRToken',
     ];
 
-    protected array $casts = [
-        'type' => PaymentMethod::class,
-        'ProvidersSignature' => ProvidersSignature::class,
-        'ECRToken' => ECRToken::class
-    ];
+    protected function casts(): array
+    {
+        return [
+            'type' => PaymentType::class,
+            'ProvidersSignature' => ProvidersSignature::class,
+            'ECRToken' => ECRToken::class,
+        ];
+    }
 
     /**
-     * @return PaymentMethod|null Τύπος Πληρωμής
+     * @return PaymentType|null Τύπος Πληρωμής
      */
-    public function getType(): ?PaymentMethod
+    public function getType(): ?PaymentType
     {
         return $this->get('type');
     }
 
     /**
-     * @param PaymentMethod|int $type Τύπος Πληρωμής
-     * @return PaymentMethodDetail
+     * @param  PaymentType|int  $type  Τύπος Πληρωμής
      */
-    public function setType(PaymentMethod|int $type): static
+    public function setType(PaymentType|int $type): static
     {
         return $this->set('type', $type);
     }
@@ -61,7 +65,7 @@ class PaymentMethodDetail extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param float $amount Ποσό Πληρωμής
+     * @param  float  $amount  Ποσό Πληρωμής
      */
     public function setAmount(float $amount): static
     {
@@ -80,7 +84,7 @@ class PaymentMethodDetail extends Type
      * Το πεδίο Πληροφορίες μπορεί να περιέχει επιπλέον πληροφορίες σχετικά με
      * τον συγκεκριμένο τύπο (πχ Αρ. Λογαριασμού Τραπέζης)
      *
-     * @param string|null $paymentMethodInfo Πληροφορίες γραμμής
+     * @param  string|null  $paymentMethodInfo  Πληροφορίες γραμμής
      */
     public function setPaymentMethodInfo(?string $paymentMethodInfo): static
     {
@@ -89,6 +93,7 @@ class PaymentMethodDetail extends Type
 
     /**
      * @return float|null Ποσό φιλοδωρήματος
+     *
      * @version 1.0.8
      */
     public function getTipAmount(): ?float
@@ -102,7 +107,8 @@ class PaymentMethodDetail extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param float|null $tipAmount Ποσό φιλοδωρήματος
+     * @param  float|null  $tipAmount  Ποσό φιλοδωρήματος
+     *
      * @version 1.0.8
      */
     public function setTipAmount(?float $tipAmount): static
@@ -112,6 +118,7 @@ class PaymentMethodDetail extends Type
 
     /**
      * @return string|null Μοναδική Ταυτότητα Πληρωμής
+     *
      * @version 1.0.8
      */
     public function getTransactionId(): ?string
@@ -124,7 +131,8 @@ class PaymentMethodDetail extends Type
      * ή type = 8 (IRIS) και περιέχει τη μοναδική ταυτότητα πληρωμής. Στην περίπτωση
      * πληρωμών με type = 8 (IRIS) το πεδίο transactionId συμπληρώνεται με το authorizationRequestID.
      *
-     * @param string|null $transactionId Μοναδική Ταυτότητα Πληρωμής
+     * @param  string|null  $transactionId  Μοναδική Ταυτότητα Πληρωμής
+     *
      * @version 1.0.8
      */
     public function setTransactionId(?string $transactionId): static
@@ -134,6 +142,7 @@ class PaymentMethodDetail extends Type
 
     /**
      * @return string|null Κωδικός tid POS
+     *
      * @version 1.0.9
      */
     public function getTid(): ?string
@@ -146,8 +155,8 @@ class PaymentMethodDetail extends Type
      * πληρωμών με type = 7 (POS) και έχει διαβιβαστεί είτε το ProvidersSignature είτε το
      * ECRToken (ανάλογα την περίπτωση)
      *
-     * @param string|null $tid Κωδικός tid POS (Μέγιστο επιτρεπτό μήκος 200)
-     * @return $this
+     * @param  string|null  $tid  Κωδικός tid POS (Μέγιστο επιτρεπτό μήκος 200)
+     *
      * @version 1.0.9
      */
     public function setTid(?string $tid): static
@@ -159,8 +168,8 @@ class PaymentMethodDetail extends Type
      * Το πεδίο ProvidersSignature διαβιβάζεται στην περίπτωση
      * πληρωμών με type = 7 και όταν η διαβίβαση γίνεται από το κανάλι του παρόχου
      *
-     * @param ProvidersSignature|string|null $providersSignature Υπογραφή Πληρωμής Παρόχου
-     * @param string|null $signature
+     * @param  ProvidersSignature|string|null  $providersSignature  Υπογραφή Πληρωμής Παρόχου
+     *
      * @version 1.0.8
      */
     public function setProvidersSignature(ProvidersSignature|string|null $providersSignature, ?string $signature = null): static
@@ -174,6 +183,7 @@ class PaymentMethodDetail extends Type
 
     /**
      * @return ProvidersSignature|null Υπογραφή Πληρωμής Παρόχου
+     *
      * @version 1.0.8
      */
     public function getProvidersSignature(): ?ProvidersSignature
@@ -185,8 +195,8 @@ class PaymentMethodDetail extends Type
      * Το πεδίο ECRToken διαβιβάζεται στην περίπτωση πληρωμών με type = 7 και
      * όταν η διαβίβαση γίνεται από ERP.
      *
-     * @param ECRToken|string|null $ecrToken Υπογραφή Πληρωμής ΦΗΜ με σύστημα λογισμικού (ERP)
-     * @param string|null $sessionNumber
+     * @param  ECRToken|string|null  $ecrToken  Υπογραφή Πληρωμής ΦΗΜ με σύστημα λογισμικού (ERP)
+     *
      * @version 1.0.8
      */
     public function setECRToken(ECRToken|string|null $ecrToken, ?string $sessionNumber = null): static
@@ -200,6 +210,7 @@ class PaymentMethodDetail extends Type
 
     /**
      * @return ECRToken|null Υπογραφή Πληρωμής ΦΗΜ με σύστημα λογισμικού (ERP)
+     *
      * @version 1.0.8
      */
     public function getECRToken(): ?ECRToken

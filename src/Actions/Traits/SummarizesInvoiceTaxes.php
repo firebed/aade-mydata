@@ -1,27 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Actions\Traits;
 
 use Firebed\AadeMyData\Enums\TaxType;
-use Firebed\AadeMyData\Enums\WithheldPercentCategory;
 use Firebed\AadeMyData\Models\InvoiceDetails;
 use Firebed\AadeMyData\Models\InvoiceSummary;
 use Firebed\AadeMyData\Models\TaxTotals;
+use InvalidArgumentException;
 
 trait SummarizesInvoiceTaxes
 {
     protected float $totalWithheldAmount = 0;
-    protected float $totalFeesAmount = 0;
-    protected float $totalStampDutyAmount = 0;
-    protected float $totalOtherTaxesAmount = 0;
-    protected float $totalDeductionsAmount = 0;
 
-    /**
-     * @var float Tax amounts that do not affect gross value
-     * and should be excluded from total gross value.
-     * @deprecated
-     */
-    protected float $totalInformationalTaxAmount = 0;
+    protected float $totalFeesAmount = 0;
+
+    protected float $totalStampDutyAmount = 0;
+
+    protected float $totalOtherTaxesAmount = 0;
+
+    protected float $totalDeductionsAmount = 0;
 
     protected function addTaxesFromInvoiceRow(InvoiceDetails $row): void
     {
@@ -30,34 +29,20 @@ trait SummarizesInvoiceTaxes
         $this->totalStampDutyAmount += abs($row->getStampDutyAmount() ?? 0);
         $this->totalOtherTaxesAmount += abs($row->getOtherTaxesAmount() ?? 0);
         $this->totalDeductionsAmount += abs($row->getDeductionsAmount() ?? 0);
-
-        $withheldCategory = $row->getWithheldPercentCategory();
-        if ($withheldCategory !== null && ! $withheldCategory->affectsTotalGrossValue()) {
-            $this->totalInformationalTaxAmount += abs($row->getWithheldAmount() ?? 0);
-        }
     }
 
     protected function addTaxesFromTaxTotals(TaxTotals $tax): void
     {
-        $amount = abs($tax->getTaxAmount());
+        $amount = abs($tax->getTaxAmount() ?? 0);
 
         match ($tax->getTaxType()) {
-            TaxType::TYPE_1 => $this->totalWithheldAmount += $amount,
-            TaxType::TYPE_2 => $this->totalFeesAmount += $amount,
-            TaxType::TYPE_3 => $this->totalOtherTaxesAmount += $amount,
-            TaxType::TYPE_4 => $this->totalStampDutyAmount += $amount,
-            TaxType::TYPE_5 => $this->totalDeductionsAmount += $amount,
+            TaxType::WITHHELD_TAX => $this->totalWithheldAmount += $amount,
+            TaxType::FEES => $this->totalFeesAmount += $amount,
+            TaxType::OTHER_TAXES => $this->totalOtherTaxesAmount += $amount,
+            TaxType::STAMP_DUTY => $this->totalStampDutyAmount += $amount,
+            TaxType::DEDUCTIONS => $this->totalDeductionsAmount += $amount,
+            null => throw new InvalidArgumentException('A tax total without a tax type cannot be summarized.'),
         };
-
-        if ($tax->getTaxType() === TaxType::TYPE_1) {
-            $taxCategory = $tax->getTaxCategory() instanceof WithheldPercentCategory
-                ? $tax->getTaxCategory()
-                : WithheldPercentCategory::tryFrom($tax->getTaxCategory());
-
-            if ($taxCategory !== null && ! $taxCategory->affectsTotalGrossValue()) {
-                $this->totalInformationalTaxAmount += $amount;
-            }
-        }
     }
 
     protected function saveTaxes(InvoiceSummary $summary): void
@@ -76,9 +61,6 @@ trait SummarizesInvoiceTaxes
 
         $deductionsAmount = $this->round($summary->getTotalDeductionsAmount() + $this->totalDeductionsAmount);
         $summary->setTotalDeductionsAmount($deductionsAmount);
-
-        $informationalTaxes = $this->round($summary->getTotalInformationalTaxAmount() + $this->totalInformationalTaxAmount);
-        $summary->setTotalInformationalTaxAmount($informationalTaxes);
     }
 
     protected function getTotalTaxes(): float
@@ -95,5 +77,5 @@ trait SummarizesInvoiceTaxes
         return round($num, $precision);
     }
 
-    abstract function saveTotals(InvoiceSummary $summary): void;
+    abstract public function saveTotals(InvoiceSummary $summary): void;
 }

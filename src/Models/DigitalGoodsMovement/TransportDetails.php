@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
+use Firebed\AadeMyData\Casts\Arr;
 use Firebed\AadeMyData\Enums\DigitalGoodsMovement\TransportType;
-use Firebed\AadeMyData\Models\Type;
+use Firebed\AadeMyData\Models\Model;
 
 /**
  * @version 2.0.1
  */
-class TransportDetails extends Type
+class TransportDetails extends Model
 {
     protected array $expectedOrder = [
         'vehicleNumber',
@@ -20,14 +23,18 @@ class TransportDetails extends Type
         'packingsDeclaration',
     ];
 
-    protected array $casts = [
-        'transportType' => TransportType::class,
-        'location' => Location::class,
-        'packingsDeclaration' => PackagingDetail::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'transportType' => TransportType::class,
+            'location' => Location::class,
+            'packingsDeclaration' => Arr::of(PackagingDetail::class),
+        ];
+    }
 
     /**
      * @return string|null Αριθμός Μεταφορικού Μέσου (Αριθμός κυκλοφορίας/Όνομα πλωτού μέσου/Κωδικός Δρομολογίου ή πτήσης/Διακίνηση άνευ Μεταφορικού Μέσου)
+     *
      * @version 2.0.1
      */
     public function getVehicleNumber(): ?string
@@ -36,8 +43,8 @@ class TransportDetails extends Type
     }
 
     /**
-     * @param string $vehicleNumber Αριθμός Μεταφορικού Μέσου (Αριθμός κυκλοφορίας/Όνομα πλωτού μέσου/Κωδικός Δρομολογίου ή πτήσης/Διακίνηση άνευ Μεταφορικού Μέσου)
-     * @return static
+     * @param  string  $vehicleNumber  Αριθμός Μεταφορικού Μέσου (Αριθμός κυκλοφορίας/Όνομα πλωτού μέσου/Κωδικός Δρομολογίου ή πτήσης/Διακίνηση άνευ Μεταφορικού Μέσου)
+     *
      * @version 2.0.1
      */
     public function setVehicleNumber(string $vehicleNumber): static
@@ -47,6 +54,7 @@ class TransportDetails extends Type
 
     /**
      * @return TransportType|null Είδος Μεταφορικού Μέσου
+     *
      * @version 2.0.1
      */
     public function getTransportType(): ?TransportType
@@ -55,8 +63,8 @@ class TransportDetails extends Type
     }
 
     /**
-     * @param TransportType|int $transportType Είδος Μεταφορικού Μέσου
-     * @return static
+     * @param  TransportType|int  $transportType  Είδος Μεταφορικού Μέσου
+     *
      * @version 2.0.1
      */
     public function setTransportType(TransportType|int $transportType): static
@@ -66,6 +74,7 @@ class TransportDetails extends Type
 
     /**
      * @return string|null Χρονοσήμανση (Y-m-dTH:i:s). Συμπληρώνεται από την υπηρεσία.
+     *
      * @version 2.0.1
      */
     public function getTimestamp(): ?string
@@ -75,6 +84,7 @@ class TransportDetails extends Type
 
     /**
      * @return string|null ΑΦΜ Μεταφορικής Εταιρείας
+     *
      * @version 2.0.1
      */
     public function getCarrierVatNumber(): ?string
@@ -83,8 +93,8 @@ class TransportDetails extends Type
     }
 
     /**
-     * @param string $carrierVatNumber ΑΦΜ Μεταφορικής Εταιρείας
-     * @return static
+     * @param  string  $carrierVatNumber  ΑΦΜ Μεταφορικής Εταιρείας
+     *
      * @version 2.0.1
      */
     public function setCarrierVatNumber(string $carrierVatNumber): static
@@ -94,6 +104,7 @@ class TransportDetails extends Type
 
     /**
      * @return string|null Αριθμός κυκλοφορίας "Ρ" (αριθμός κυκλοφορίας του επικαθήμενου/ρυμουλκούμενου οχήματος)
+     *
      * @version 2.0.1
      */
     public function getTrailorNumber(): ?string
@@ -102,8 +113,8 @@ class TransportDetails extends Type
     }
 
     /**
-     * @param string|null $pNumber Αριθμός κυκλοφορίας "Ρ" (αριθμός κυκλοφορίας του επικαθήμενου/ρυμουλκούμενου οχήματος)
-     * @return static
+     * @param  string|null  $pNumber  Αριθμός κυκλοφορίας "Ρ" (αριθμός κυκλοφορίας του επικαθήμενου/ρυμουλκούμενου οχήματος)
+     *
      * @version 2.0.1
      */
     public function setTrailorNumber(?string $pNumber): static
@@ -113,6 +124,7 @@ class TransportDetails extends Type
 
     /**
      * @return Location|null Τοποθεσία Μεταφόρτωσης
+     *
      * @version 2.0.1
      */
     public function getLocation(): ?Location
@@ -121,8 +133,8 @@ class TransportDetails extends Type
     }
 
     /**
-     * @param Location $location Τοποθεσία Μεταφόρτωσης
-     * @return static
+     * @param  Location  $location  Τοποθεσία Μεταφόρτωσης
+     *
      * @version 2.0.1
      */
     public function setLocation(Location $location): static
@@ -132,6 +144,7 @@ class TransportDetails extends Type
 
     /**
      * @return PackagingDetail[]|null Δήλωση Συσκευασιών (Δηλώνεται από τον μεταφορέα κατά την εκκίνηση ή τις μεταφορτώσεις)
+     *
      * @version 2.0.2
      */
     public function getPackingsDeclaration(): ?array
@@ -140,8 +153,8 @@ class TransportDetails extends Type
     }
 
     /**
-     * @param PackagingDetail[]|null $packingsDeclaration Δήλωση Συσκευασιών
-     * @return static
+     * @param  PackagingDetail[]|null  $packingsDeclaration  Δήλωση Συσκευασιών
+     *
      * @version 2.0.2
      */
     public function setPackingsDeclaration(?array $packingsDeclaration): static
@@ -150,21 +163,12 @@ class TransportDetails extends Type
     }
 
     /**
-     * @param PackagingDetail $packagingDetail Δήλωση Συσκευασίας
-     * @return static
+     * @param  PackagingDetail  $packagingDetail  Δήλωση Συσκευασίας
+     *
      * @version 2.0.2
      */
     public function addPackingsDeclaration(PackagingDetail $packagingDetail): static
     {
         return $this->push('packingsDeclaration', $packagingDetail);
-    }
-
-    public function set($key, $value): static
-    {
-        if ($key === 'packingsDeclaration' && ! is_array($value)) {
-            return $this->push('packingsDeclaration', $value);
-        }
-
-        return parent::set($key, $value);
     }
 }

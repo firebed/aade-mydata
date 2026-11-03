@@ -1,25 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
-use Firebed\AadeMyData\Models\TypeArray;
+use Firebed\AadeMyData\Casts\Arr;
+use Firebed\AadeMyData\Models\ModelCollection;
 
 /**
- * @extends TypeArray<string>
+ * @extends ModelCollection<string>
+ *
  * @version 2.0.1
  */
-class QrUrls extends TypeArray
+class QrUrls extends ModelCollection
 {
-    /**
-     * @param array<string>|null $items Λίστα με τα URL των QR code προς ομαδοποίηση.
-     */
-    public function __construct(?array $items = null)
+    protected function casts(): array
     {
-        parent::__construct('qrUrl', $items);
-    }
-
-    public function set($key, $value): static
-    {
-        return $this->push('qrUrl', $value);
+        return [
+            'qrUrl' => Arr::of('string'),
+        ];
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
 use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
@@ -15,7 +17,7 @@ use Firebed\AadeMyData\Traits\HasFactory;
  * κλήσης SendIncomeClassification (βλ παράγραφος 4.3.2)</li>
  * </ul>
  */
-class IncomeClassification extends Type
+class IncomeClassification extends Model
 {
     use HasFactory;
 
@@ -23,13 +25,16 @@ class IncomeClassification extends Type
         'classificationType',
         'classificationCategory',
         'amount',
-        'id'
+        'id',
     ];
 
-    protected array $casts = [
-        'classificationType' => IncomeClassificationType::class,
-        'classificationCategory' => IncomeClassificationCategory::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'classificationType' => IncomeClassificationType::class,
+            'classificationCategory' => IncomeClassificationCategory::class,
+        ];
+    }
 
     /**
      * @return IncomeClassificationType|null Κωδικός Χαρακτηρισμού
@@ -40,7 +45,7 @@ class IncomeClassification extends Type
     }
 
     /**
-     * @param IncomeClassificationType|string|null $classificationType Κωδικός Χαρακτηρισμού
+     * @param  IncomeClassificationType|string|null  $classificationType  Κωδικός Χαρακτηρισμού
      */
     public function setClassificationType(IncomeClassificationType|string|null $classificationType): static
     {
@@ -56,7 +61,7 @@ class IncomeClassification extends Type
     }
 
     /**
-     * @param IncomeClassificationCategory|string $classificationCategory Κατηγορία Χαρακτηρισμού
+     * @param  IncomeClassificationCategory|string  $classificationCategory  Κατηγορία Χαρακτηρισμού
      */
     public function setClassificationCategory(IncomeClassificationCategory|string $classificationCategory): static
     {
@@ -77,7 +82,7 @@ class IncomeClassification extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param float $amount Ποσό
+     * @param  float  $amount  Ποσό
      */
     public function setAmount(float $amount): static
     {
@@ -100,7 +105,7 @@ class IncomeClassification extends Type
     /**
      * Το πεδίο id προσφέρεται για σειριακή αρίθμηση των χαρακτηρισμών εντός μιας γραμμής.
      *
-     * @param int $id Αύξων αριθμός Χαρακτηρισμού
+     * @param  int  $id  Αύξων αριθμός Χαρακτηρισμού
      */
     public function setId(int $id): static
     {

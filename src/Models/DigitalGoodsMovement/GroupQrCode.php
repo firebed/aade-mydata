@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Models\HasSchemaValidation;
 use Firebed\AadeMyData\Models\Invoice;
-use Firebed\AadeMyData\Models\Type;
+use Firebed\AadeMyData\Models\Model;
 use Firebed\AadeMyData\Models\ValidatesSchema;
 use Firebed\AadeMyData\Xml\DigitalGoodsMovement\GroupQrCodeWriter;
 
 /**
  * @version 2.0.1
  */
-class GroupQrCode extends Type implements ValidatesSchema
+class GroupQrCode extends Model implements ValidatesSchema
 {
     use HasSchemaValidation;
 
@@ -19,12 +21,16 @@ class GroupQrCode extends Type implements ValidatesSchema
         'qrUrls',
     ];
 
-    protected array $casts = [
-        'qrUrls' => QrUrls::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'qrUrls' => QrUrls::class,
+        ];
+    }
 
     /**
      * @return QrUrls|null Λίστα με τα URLs των QR codes των Δελτίων Αποστολής που περιλαμβάνονται στο Ομαδικό QR Code
+     *
      * @version 2.0.1
      */
     public function getQrUrls(): ?QrUrls
@@ -33,16 +39,12 @@ class GroupQrCode extends Type implements ValidatesSchema
     }
 
     /**
-     * @param QrUrls|array $qrUrls Λίστα με τα URLs των QR codes των Δελτίων Αποστολής που περιλαμβάνονται στο Ομαδικό QR Code
-     * @return static
+     * @param  QrUrls|list<string>  $qrUrls  Λίστα με τα URLs των QR codes των Δελτίων Αποστολής που περιλαμβάνονται στο Ομαδικό QR Code
+     *
      * @version 2.0.1
      */
     public function setQrUrls(QrUrls|array $qrUrls): static
     {
-        if (is_array($qrUrls)) {
-            $qrUrls = new QrUrls($qrUrls);
-        }
-
         return $this->set('qrUrls', $qrUrls);
     }
 
@@ -50,7 +52,7 @@ class GroupQrCode extends Type implements ValidatesSchema
     {
         $qrUrls = $this->getQrUrls();
         if ($qrUrls === null) {
-            $qrUrls = new QrUrls();
+            $qrUrls = new QrUrls;
             $this->setQrUrls($qrUrls);
         }
 
@@ -61,13 +63,13 @@ class GroupQrCode extends Type implements ValidatesSchema
 
     public function toXml(): string
     {
-        return (new GroupQrCodeWriter())->asXml($this);
+        return (new GroupQrCodeWriter)->asXml($this);
     }
 
     public function validate(): array
     {
-        $xml = (new GroupQrCodeWriter())->asXml($this);
+        $xml = (new GroupQrCodeWriter)->asXml($this);
 
-        return $this->validateSchema($xml, 'GenerateGroupQRCode-' . Invoice::VERSION . '.xsd');
+        return $this->validateSchema($xml, 'GenerateGroupQRCode-'.Invoice::VERSION.'.xsd');
     }
 }

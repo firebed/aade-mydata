@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
-/**
- * @extends TypeArray<Error>
- */
-class Errors extends TypeArray
-{
-    protected array $casts = [
-        'error' => Error::class,
-    ];
+use Firebed\AadeMyData\Casts\Arr;
 
-    public function __construct()
+/**
+ * @extends ModelCollection<Error>
+ */
+class Errors extends ModelCollection
+{
+    protected function casts(): array
     {
-        parent::__construct('error');
+        return [
+            'error' => Arr::of(Error::class),
+        ];
     }
 }

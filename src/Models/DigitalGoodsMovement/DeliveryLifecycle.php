@@ -1,26 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
-use Firebed\AadeMyData\Models\TypeArray;
+use Firebed\AadeMyData\Casts\Arr;
+use Firebed\AadeMyData\Models\ModelCollection;
 
 /**
  * This class is used to store the delivery lifecycle of a digital good movement.
  *
- * @extends TypeArray<DeliveryEvent>
+ * @extends ModelCollection<DeliveryEvent>
+ *
  * @version 2.0.1
  */
-class DeliveryLifecycle extends TypeArray
+class DeliveryLifecycle extends ModelCollection
 {
-    protected array $casts = [
-        'deliveryEvents' => DeliveryEvent::class,
-    ];
-
-    /**
-     * @param DeliveryEvent|DeliveryEvent[] $events
-     */
-    public function __construct(array $events = [])
+    protected function casts(): array
     {
-        parent::__construct('deliveryEvents', $events);
+        return [
+            'deliveryEvents' => Arr::of(DeliveryEvent::class),
+        ];
     }
 }

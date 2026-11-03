@@ -1,21 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
-use Firebed\AadeMyData\Models\TypeArray;
+use Firebed\AadeMyData\Casts\Arr;
+use Firebed\AadeMyData\Models\ModelCollection;
 
 /**
- * @extends TypeArray<Response>
+ * @extends ModelCollection<Response>
+ *
  * @version 2.0.1
  */
-class ResponseDoc extends TypeArray
+class ResponseDoc extends ModelCollection
 {
-    protected array $casts = [
-        'response' => Response::class,
-    ];
-
-    public function __construct()
+    protected function casts(): array
     {
-        parent::__construct('response');
+        return [
+            'response' => Arr::of(Response::class),
+        ];
     }
 }

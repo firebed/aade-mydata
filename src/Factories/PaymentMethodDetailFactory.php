@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Factories;
 
-use Firebed\AadeMyData\Enums\PaymentMethod;
+use Firebed\AadeMyData\Enums\PaymentType;
 use Firebed\AadeMyData\Models\PaymentMethodDetail;
 
 /**
@@ -13,7 +15,7 @@ class PaymentMethodDetailFactory extends Factory
     public function definition(): array
     {
         return [
-            'type' => fake()->randomElement(PaymentMethod::cases())->value,
+            'type' => fake()->randomElement(PaymentType::cases())->value,
             'amount' => fake()->randomFloat(2, 20, 100),
             'paymentMethodInfo' => fake()->text(100),
             'tipAmount' => fake()->randomFloat(2, 0, 10),
@@ -27,8 +29,8 @@ class PaymentMethodDetailFactory extends Factory
         return $this->state([
             'ECRToken' => [
                 'SigningAuthor' => fake()->sha1(),
-                'SessionNumber' => fake()->numerify("??##??"),
-            ]
+                'SessionNumber' => fake()->numerify('??##??'),
+            ],
         ]);
     }
 
@@ -37,8 +39,8 @@ class PaymentMethodDetailFactory extends Factory
         return $this->state([
             'ProvidersSignature' => [
                 'SigningAuthor' => fake()->sha1(),
-                'SessionNumber' => fake()->bothify("??##??"),
-            ]
+                'SessionNumber' => fake()->bothify('??##??'),
+            ],
         ]);
     }
 }

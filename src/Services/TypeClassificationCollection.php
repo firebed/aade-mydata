@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Services;
 
 use ArrayAccess;
@@ -10,17 +12,21 @@ use Firebed\AadeMyData\Enums\IncomeClassificationType;
 use IteratorAggregate;
 use Traversable;
 
+/**
+ * @implements ArrayAccess<int|string, IncomeClassificationType|ExpenseClassificationType|string>
+ * @implements IteratorAggregate<int|string, IncomeClassificationType|ExpenseClassificationType|string>
+ */
 class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
 {
     /**
-     * @var array<int|string, IncomeClassificationType|ExpenseClassificationType|string> $classifications
+     * @var array<int|string, IncomeClassificationType|ExpenseClassificationType|string>
      */
     private array $classifications;
+
     private bool $isIncome;
 
     /**
-     * @param array<int|string, IncomeClassificationType|ExpenseClassificationType|string> $classifications
-     * @param bool $isIncome
+     * @param  array<int|string, IncomeClassificationType|ExpenseClassificationType|string>  $classifications
      */
     public function __construct(array $classifications, bool $isIncome)
     {
@@ -40,7 +46,7 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
         foreach ($this->classifications as $classification) {
             $enum = $this->toEnum($classification);
 
-            $results[$enum?->value ?? ""] = $enum?->label() ?? "";
+            $results[$enum->value ?? ''] = $enum?->label() ?? '';
         }
 
         return $results;
@@ -49,7 +55,7 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
     /**
      * Returns the keys of the classifications array.
      *
-     * @return array<int|string>
+     * @return array<int|string, IncomeClassificationType|ExpenseClassificationType|string>
      */
     public function keys(): array
     {
@@ -68,9 +74,6 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
 
     /**
      * Checks if an offset exists in the classifications array.
-     *
-     * @param mixed $offset
-     * @return bool
      */
     public function offsetExists(mixed $offset): bool
     {
@@ -79,9 +82,6 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
 
     /**
      * Gets the value at the given offset.
-     *
-     * @param mixed $offset
-     * @return string|IncomeClassificationType|ExpenseClassificationType|null
      */
     public function offsetGet(mixed $offset): string|null|IncomeClassificationType|ExpenseClassificationType
     {
@@ -90,9 +90,6 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
 
     /**
      * Checks if the classifications array contains a specific value.
-     *
-     * @param mixed $value
-     * @return bool
      */
     public function contains(mixed $value): bool
     {
@@ -109,9 +106,6 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
 
     /**
      * Gets the classification as an enum if possible.
-     *
-     * @param mixed $offset
-     * @return IncomeClassificationType|ExpenseClassificationType|null
      */
     public function get(mixed $offset): IncomeClassificationType|ExpenseClassificationType|null
     {
@@ -121,9 +115,7 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
     /**
      * Sets the value at the given offset.
      *
-     * @param mixed $offset
-     * @param IncomeClassificationType|ExpenseClassificationType|string $value
-     * @return void
+     * @param  IncomeClassificationType|ExpenseClassificationType|string  $value
      */
     public function offsetSet(mixed $offset, mixed $value): void
     {
@@ -132,9 +124,6 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
 
     /**
      * Unsets the value at the given offset.
-     *
-     * @param mixed $offset
-     * @return void
      */
     public function offsetUnset(mixed $offset): void
     {
@@ -153,8 +142,6 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
 
     /**
      * Checks if the classifications array is empty.
-     *
-     * @return bool
      */
     public function isEmpty(): bool
     {
@@ -163,9 +150,6 @@ class TypeClassificationCollection implements ArrayAccess, IteratorAggregate
 
     /**
      * Converts a value to the appropriate enum type if possible.
-     *
-     * @param mixed $value
-     * @return IncomeClassificationType|ExpenseClassificationType|null
      */
     private function toEnum(mixed $value): IncomeClassificationType|ExpenseClassificationType|null
     {

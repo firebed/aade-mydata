@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Factories;
 
 use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
@@ -17,7 +19,7 @@ class IncomeClassificationFactory extends Factory
             'classificationType' => fake()->randomElement(IncomeClassificationType::cases()),
             'classificationCategory' => fake()->randomElement(IncomeClassificationCategory::cases()),
             'amount' => fake()->randomFloat(2, 0, 1000),
-            'id' => fake()->numberBetween(1, 100)
+            'id' => fake()->numberBetween(1, 100),
         ];
     }
 }

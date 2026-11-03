@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Xml\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\ResponseDoc;
@@ -14,7 +16,7 @@ class ResponseDocReader extends XMLReader
 
     public function parseXml(string $xmlString): ResponseDoc
     {
-        $responseDoc = new ResponseDoc();
+        $responseDoc = new ResponseDoc;
         $this->loadXML($xmlString, $responseDoc);
 
         return $responseDoc;

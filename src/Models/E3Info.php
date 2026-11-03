@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
 /**
  * @version 1.0.10
  */
-class E3Info extends Type
+class E3Info extends Model
 {
     public function getVat(): ?string
     {
@@ -13,7 +15,6 @@ class E3Info extends Type
     }
 
     /**
-     * @return string|null
      * @version 1.0.10
      */
     public function getMark(): ?string
@@ -22,7 +23,6 @@ class E3Info extends Type
     }
 
     /**
-     * @return string|null
      * @version 1.0.10
      */
     public function getIssueDate(): ?string
@@ -31,7 +31,6 @@ class E3Info extends Type
     }
 
     /**
-     * @return string|null
      * @version 1.0.10
      */
     public function getClassCategory(): ?string
@@ -40,7 +39,6 @@ class E3Info extends Type
     }
 
     /**
-     * @return string|null
      * @version 1.0.10
      */
     public function getClassType(): ?string
@@ -49,7 +47,6 @@ class E3Info extends Type
     }
 
     /**
-     * @return string|null
      * @version 1.0.10
      */
     public function getClassValue(): ?string

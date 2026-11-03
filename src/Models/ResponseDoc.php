@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
+
+use Firebed\AadeMyData\Casts\Arr;
 
 /**
  * Στις περιπτώσεις που ο χρήστης χρησιμοποιήσει κάποια μέθοδο υποβολής στοιχείων ή
@@ -9,16 +13,14 @@ namespace Firebed\AadeMyData\Models;
  * αντικείμενο περιλαμβάνει μια λίστα από στοιχεία τύπου response, ένα για κάθε οντότητα
  * που υποβλήθηκε.
  *
- * @extends TypeArray<Response>
+ * @extends ModelCollection<Response>
  */
-class ResponseDoc extends TypeArray
+class ResponseDoc extends ModelCollection
 {
-    protected array $casts = [
-        'response' => Response::class,
-    ];
-
-    public function __construct()
+    protected function casts(): array
     {
-        parent::__construct('response');
+        return [
+            'response' => Arr::of(Response::class),
+        ];
     }
 }

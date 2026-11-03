@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
 use Firebed\AadeMyData\Traits\HasFactory;
@@ -7,7 +9,7 @@ use Firebed\AadeMyData\Traits\HasFactory;
 /**
  * @version 1.0.8
  */
-class OtherDeliveryNoteHeader extends Type
+class OtherDeliveryNoteHeader extends Model
 {
     use HasFactory;
 
@@ -15,16 +17,20 @@ class OtherDeliveryNoteHeader extends Type
         'loadingAddress',
         'deliveryAddress',
         'startShippingBranch',
-        'completeShippingBranch'
+        'completeShippingBranch',
     ];
 
-    protected array $casts = [
-        'loadingAddress' => Address::class,
-        'deliveryAddress' => Address::class
-    ];
+    protected function casts(): array
+    {
+        return [
+            'loadingAddress' => Address::class,
+            'deliveryAddress' => Address::class,
+        ];
+    }
 
     /**
      * @return Address|null Διεύθυνση Φόρτωσης
+     *
      * @version 1.0.8
      */
     public function getLoadingAddress(): ?Address
@@ -36,7 +42,8 @@ class OtherDeliveryNoteHeader extends Type
      * Συμπληρώνεται για παραστατικά που είναι δελτία αποστολής
      * (π.χ 9.3) ή τιμολόγιο και δελτίο αποστολής (isDeliveryNote = true).
      *
-     * @param Address $loadingAddress Διεύθυνση Φόρτωσης
+     * @param  Address  $loadingAddress  Διεύθυνση Φόρτωσης
+     *
      * @version 1.0.8
      */
     public function setLoadingAddress(Address $loadingAddress): static
@@ -46,6 +53,7 @@ class OtherDeliveryNoteHeader extends Type
 
     /**
      * @return Address|null Διεύθυνση Παράδοσης
+     *
      * @version 1.0.8
      */
     public function getDeliveryAddress(): ?Address
@@ -57,7 +65,8 @@ class OtherDeliveryNoteHeader extends Type
      * Συμπληρώνεται για παραστατικά που είναι δελτία αποστολής
      * (π.χ 9.3) ή τιμολόγιο και δελτίο αποστολής (isDeliveryNote = true).
      *
-     * @param Address $deliveryAddress Διεύθυνση Παράδοσης
+     * @param  Address  $deliveryAddress  Διεύθυνση Παράδοσης
+     *
      * @version 1.0.8
      */
     public function setDeliveryAddress(Address $deliveryAddress): static
@@ -67,6 +76,7 @@ class OtherDeliveryNoteHeader extends Type
 
     /**
      * @return int|null Εγκατάσταση έναρξης διακίνησης (Εκδότη)
+     *
      * @version 1.0.8
      */
     public function getStartShippingBranch(): ?int
@@ -85,7 +95,8 @@ class OtherDeliveryNoteHeader extends Type
      * διαφορετικό από το υποκατάστημα του εκδότη του δελτίου.</li>
      * </ul>
      *
-     * @param int|null $startShippingBranch Εγκατάσταση έναρξης διακίνησης (Εκδότη)
+     * @param  int|null  $startShippingBranch  Εγκατάσταση έναρξης διακίνησης (Εκδότη)
+     *
      * @version 1.0.8
      */
     public function setStartShippingBranch(?int $startShippingBranch): static
@@ -95,6 +106,7 @@ class OtherDeliveryNoteHeader extends Type
 
     /**
      * @return int|null Εγκατάσταση ολοκλήρωσης διακίνησης (Λήπτη)
+     *
      * @version 1.0.8
      */
     public function getCompleteShippingBranch(): ?int
@@ -113,7 +125,8 @@ class OtherDeliveryNoteHeader extends Type
      * διαφορετικό από το υποκατάστημα του λήπτη του δελτίου</li>
      * </ul>
      *
-     * @param int|null $completeShippingBranch Εγκατάσταση ολοκλήρωσης διακίνησης (Λήπτη)
+     * @param  int|null  $completeShippingBranch  Εγκατάσταση ολοκλήρωσης διακίνησης (Λήπτη)
+     *
      * @version 1.0.8
      */
     public function setCompleteShippingBranch(?int $completeShippingBranch): static

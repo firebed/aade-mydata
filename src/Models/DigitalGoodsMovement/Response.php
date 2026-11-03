@@ -1,21 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Models\Errors;
-use Firebed\AadeMyData\Models\Type;
+use Firebed\AadeMyData\Models\Model;
 
 /**
  * @version 2.0.1
  */
-class Response extends Type
+class Response extends Model
 {
-    protected array $casts = [
-        'errors' => Errors::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'errors' => Errors::class,
+        ];
+    }
 
     /**
      * @return int|null Αριθμός Σειράς Οντότητας εντός του υποβληθέντος xml
+     *
      * @version 2.0.1
      */
     public function getIndex(): ?int
@@ -25,6 +31,7 @@ class Response extends Type
 
     /**
      * @return string|null Κωδικός Αποτελέσματος
+     *
      * @version 2.0.1
      */
     public function getStatusCode(): ?string
@@ -34,6 +41,7 @@ class Response extends Type
 
     /**
      * @return int|null Μοναδικός Αριθμός Εκκίνησης/Μεταφόρτωσης Διακίνησης
+     *
      * @version 2.0.1
      */
     public function getTransferMark(): ?int
@@ -43,6 +51,7 @@ class Response extends Type
 
     /**
      * @return string|null Μοναδικός Αριθμός Απόρριψης Διακίνησης
+     *
      * @version 2.0.1
      */
     public function getRejectMark(): ?string
@@ -52,6 +61,7 @@ class Response extends Type
 
     /**
      * @return int|null Μοναδικός Αριθμός Καταχώρησης
+     *
      * @version 2.0.1
      */
     public function getDeliveryOutcomeMark(): ?int
@@ -61,6 +71,7 @@ class Response extends Type
 
     /**
      * @return int|null Μοναδικός Αριθμός Δήλωσης Επιστροφής Διακίνησης
+     *
      * @version 2.0.2
      */
     public function getDeliveryReturnMark(): ?int
@@ -70,6 +81,7 @@ class Response extends Type
 
     /**
      * @return Errors|null Λίστα Σφαλμάτων
+     *
      * @version 2.0.1
      */
     public function getErrors(): ?Errors

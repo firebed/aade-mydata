@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
 use Firebed\AadeMyData\Traits\HasFactory;
 
-class Ship extends Type
+class Ship extends Model
 {
     use HasFactory;
 
@@ -12,7 +14,7 @@ class Ship extends Type
         'applicationId',
         'applicationDate',
         'doy',
-        'shipId'
+        'shipId',
     ];
 
     /**
@@ -24,7 +26,7 @@ class Ship extends Type
     }
 
     /**
-     * @param string $applicationId Αριθμός Δήλωσης Διενέργειας Δραστηριότητας
+     * @param  string  $applicationId  Αριθμός Δήλωσης Διενέργειας Δραστηριότητας
      */
     public function setApplicationId(string $applicationId): static
     {
@@ -40,7 +42,7 @@ class Ship extends Type
     }
 
     /**
-     * @param string $applicationDate Ημερομηνία Δήλωσης Y-m-d
+     * @param  string  $applicationDate  Ημερομηνία Δήλωσης Y-m-d
      */
     public function setApplicationDate(string $applicationDate): static
     {
@@ -56,7 +58,7 @@ class Ship extends Type
     }
 
     /**
-     * @param string|null $doy Ημερομηνία ΔΟΥ Δήλωσης
+     * @param  string|null  $doy  Ημερομηνία ΔΟΥ Δήλωσης
      */
     public function setDoy(?string $doy): static
     {
@@ -72,7 +74,7 @@ class Ship extends Type
     }
 
     /**
-     * @param string $shipId Στοιχεία Πλοίου
+     * @param  string  $shipId  Στοιχεία Πλοίου
      */
     public function setShipId(string $shipId): static
     {

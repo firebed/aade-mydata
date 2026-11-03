@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Casts\Arr;
 use Firebed\AadeMyData\Enums\TransactionMode;
+use Firebed\AadeMyData\Xml\Dom;
 use Firebed\AadeMyData\Xml\IncomeClassificationsDocWriter;
 
-class InvoiceIncomeClassification extends Type
+class InvoiceIncomeClassification extends Model
 {
     protected array $expectedOrder = [
         'invoiceMark',
@@ -15,10 +19,13 @@ class InvoiceIncomeClassification extends Type
         'classificationPostMode',
     ];
 
-    protected array $casts = [
-        'transactionMode' => TransactionMode::class,
-        'invoicesIncomeClassificationDetails' => InvoicesIncomeClassificationDetail::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'transactionMode' => TransactionMode::class,
+            'invoicesIncomeClassificationDetails' => Arr::of(InvoicesIncomeClassificationDetail::class),
+        ];
+    }
 
     /**
      * @return int|null Μοναδικός Αριθμός Καταχώρησης Παραστατικού
@@ -29,7 +36,7 @@ class InvoiceIncomeClassification extends Type
     }
 
     /**
-     * @param int $invoiceMark Μοναδικός Αριθμός Καταχώρησης Παραστατικού
+     * @param  int  $invoiceMark  Μοναδικός Αριθμός Καταχώρησης Παραστατικού
      */
     public function setInvoiceMark(int $invoiceMark): static
     {
@@ -59,7 +66,7 @@ class InvoiceIncomeClassification extends Type
      * ο ΑΦΜ της οντότητας που αναφέρεται ο χαρακτηρισμός του παραστατικού αποστέλλεται μέσω του πεδίου entityVatNumber,
      * διαφορετικά το εν λόγω πεδίο παραμένει κενό.
      *
-     * @param string|null $entityVatNumber ΑΦΜ Οντότητας Αναφοράς
+     * @param  string|null  $entityVatNumber  ΑΦΜ Οντότητας Αναφοράς
      */
     public function setEntityVatNumber(?string $entityVatNumber): static
     {
@@ -82,7 +89,7 @@ class InvoiceIncomeClassification extends Type
      *
      * Ο χρήστης μπορεί να συμπεριλάβει είτε το στοιχείο transactionMode ή λίστα στοιχείων invoicesIncomeClassificationDetails.
      *
-     * @param TransactionMode|int|null $transactionMode Είδος Συναλλαγής
+     * @param  TransactionMode|int|null  $transactionMode  Είδος Συναλλαγής
      */
     public function setTransactionMode(TransactionMode|int|null $transactionMode): static
     {
@@ -106,7 +113,7 @@ class InvoiceIncomeClassification extends Type
      * Κάθε στοιχείο invoicesIncomeClassificationDetails περιέχει ένα lineNumber και
      * μια λίστα στοιχείων incomeClassificationDetailData.
      *
-     * @param InvoicesIncomeClassificationDetail[]|null $incomeClassifications Στοιχεία Χαρακτηρισμού Εσόδων
+     * @param  InvoicesIncomeClassificationDetail[]|null  $incomeClassifications  Στοιχεία Χαρακτηρισμού Εσόδων
      */
     public function setInvoicesIncomeClassificationDetails(?array $incomeClassifications): static
     {
@@ -126,18 +133,9 @@ class InvoiceIncomeClassification extends Type
         return $this->get('classificationPostMode');
     }
 
-    public function set($key, $value): static
-    {
-        if ($key === 'invoicesIncomeClassificationDetails' && $value !== null && ! is_array($value)) {
-            return $this->push($key, $value);
-        }
-
-        return parent::set($key, $value);
-    }
-
     public function toXml(bool $asDoc = false): string
     {
-        $writer = new IncomeClassificationsDocWriter();
+        $writer = new IncomeClassificationsDocWriter;
         $fullXml = $writer->asXML(new IncomeClassificationsDoc($this));
 
         if ($asDoc) {
@@ -145,6 +143,7 @@ class InvoiceIncomeClassification extends Type
         }
 
         $doc = $writer->getDomDocument();
-        return $doc->saveXML($doc->getElementsByTagName('incomeInvoiceClassification')->item(0));
+
+        return Dom::save($doc, $doc->getElementsByTagName('incomeInvoiceClassification')->item(0));
     }
 }

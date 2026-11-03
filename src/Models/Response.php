@@ -1,17 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
 use Firebed\AadeMyData\Traits\HasFactory;
 
-class Response extends Type
+class Response extends Model
 {
     use HasFactory;
 
-    protected array $casts = [
-        'errors' => Errors::class,
-        'receptionEmails' => ReceptionEmails::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'errors' => Errors::class,
+            'receptionEmails' => ReceptionEmails::class,
+        ];
+    }
 
     /**
      * @return int|null Αριθμός Σειράς Οντότητας εντός του υποβληθέντος xml
@@ -44,6 +49,7 @@ class Response extends Type
      * <li>TechnicalError</li>
      * <li>XMLSyntaxError</li>
      * </ul>
+     *
      * @return string|null Κωδικός Αποτελέσματος
      */
     public function getStatusCode(): ?string
@@ -146,11 +152,12 @@ class Response extends Type
 
     public function hasErrors(): bool
     {
-        return ! is_null($this->getErrors()) && count($this->getErrors()) > 0;
+        return $this->getErrors()?->isNotEmpty() ?? false;
     }
 
     /**
      * @return string|null Το πεδίο qrUrl επιστρέφει μόνο στις υποβολές παραστατικών τύπου από 1.1 έως 11.5
+     *
      * @version 1.0.7
      */
     public function getQrUrl(): ?string
@@ -161,11 +168,10 @@ class Response extends Type
     /**
      * Χρησιμοποιείται από τα προγράμματα για τη δημιουργία QR Code τύπου Url
      *
-     * @param $qrUrl
-     * @return Response
+     *
      * @version 1.0.7
      */
-    public function setQrUrl($qrUrl): static
+    public function setQrUrl(?string $qrUrl): static
     {
         return $this->set('qrUrl', $qrUrl);
     }
@@ -186,14 +192,5 @@ class Response extends Type
     public function isSuccessful(): bool
     {
         return $this->getStatusCode() === 'Success';
-    }
-
-    public function set($key, $value): static
-    {
-        if ($key === 'receptionEmails' && empty($value)) {
-            return parent::set('receptionEmails', new ReceptionEmails());
-        }
-
-        return parent::set($key, $value);
     }
 }

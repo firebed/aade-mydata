@@ -1,27 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Casts\Arr;
 use Firebed\AadeMyData\Traits\HasFactory;
 
 /**
  * This class is used to store taxes totals and is part of Invoice class.
  *
- * @extends TypeArray<TaxTotals>
+ * @extends ModelCollection<TaxTotals>
  */
-class TaxesTotals extends TypeArray
+class TaxesTotals extends ModelCollection
 {
     use HasFactory;
 
-    protected array $casts = [
-        'taxes' => TaxTotals::class,
-    ];
-
-    /**
-     * @param TaxTotals|TaxTotals[] $taxes
-     */
-    public function __construct(array $taxes = [])
+    protected function casts(): array
     {
-        parent::__construct('taxes', $taxes);
+        return [
+            'taxes' => Arr::of(TaxTotals::class),
+        ];
     }
 }

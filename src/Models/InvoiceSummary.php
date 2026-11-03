@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Casts\Arr;
 use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
 use Firebed\AadeMyData\Enums\ExpenseClassificationType;
 use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
 use Firebed\AadeMyData\Enums\IncomeClassificationType;
 use Firebed\AadeMyData\Traits\HasFactory;
 
-class InvoiceSummary extends Type
+class InvoiceSummary extends Model
 {
     use HasFactory;
 
@@ -22,18 +25,16 @@ class InvoiceSummary extends Type
         'totalDeductionsAmount',
         'totalGrossValue',
         'incomeClassification',
-        'expensesClassification'
+        'expensesClassification',
     ];
 
-    protected array $casts = [
-        'incomeClassification' => IncomeClassification::class,
-        'expensesClassification' => ExpensesClassification::class,
-    ];
-
-    /**
-     * @deprecated
-     */
-    private float $totalInformationalTaxAmount = 0;
+    protected function casts(): array
+    {
+        return [
+            'incomeClassification' => Arr::of(IncomeClassification::class),
+            'expensesClassification' => Arr::of(ExpensesClassification::class),
+        ];
+    }
 
     /**
      * @return float|null Σύνολο Καθαρής Αξίας
@@ -53,7 +54,7 @@ class InvoiceSummary extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param float $totalNetValue Σύνολο Καθαρής Αξίας
+     * @param  float  $totalNetValue  Σύνολο Καθαρής Αξίας
      */
     public function setTotalNetValue(float $totalNetValue): static
     {
@@ -74,7 +75,7 @@ class InvoiceSummary extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param float $totalVatAmount Σύνολο ΦΠΑ
+     * @param  float  $totalVatAmount  Σύνολο ΦΠΑ
      */
     public function setTotalVatAmount(float $totalVatAmount): static
     {
@@ -99,31 +100,11 @@ class InvoiceSummary extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param float $totalWithheldAmount Σύνολο Παρακρατήσεων Φόρων
+     * @param  float  $totalWithheldAmount  Σύνολο Παρακρατήσεων Φόρων
      */
     public function setTotalWithheldAmount(float $totalWithheldAmount): static
     {
         return $this->set('totalWithheldAmount', $totalWithheldAmount);
-    }
-
-    /**
-     * @return float Το σύνολο των προκαταβληθέντων φόρων που δεν επηρεάζουν τη συνολική αξία (πληρωτέο ποσό) του παραστατικού.
-     * @deprecated
-     */
-    public function getTotalInformationalTaxAmount(): float
-    {
-        return $this->totalInformationalTaxAmount;
-    }
-
-    /**
-     * @param float $amount Το σύνολο των προκαταβληθέντων φόρων που δεν επηρεάζουν τη συνολική αξία (πληρωτέο ποσό) του παραστατικού.
-     * @return $this
-     * @deprecated
-     */
-    public function setTotalInformationalTaxAmount(float $amount): static
-    {
-        $this->totalInformationalTaxAmount = $amount;
-        return $this;
     }
 
     /**
@@ -144,7 +125,7 @@ class InvoiceSummary extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param float $totalFeesAmount Σύνολο Τελών
+     * @param  float  $totalFeesAmount  Σύνολο Τελών
      */
     public function setTotalFeesAmount(float $totalFeesAmount): static
     {
@@ -169,7 +150,7 @@ class InvoiceSummary extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param float $totalStampDutyAmount Σύνολο Ψηφιακού Τέλους συναλλαγής
+     * @param  float  $totalStampDutyAmount  Σύνολο Ψηφιακού Τέλους συναλλαγής
      */
     public function setTotalStampDutyAmount(float $totalStampDutyAmount): static
     {
@@ -194,7 +175,7 @@ class InvoiceSummary extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param float $totalOtherTaxesAmount Σύνολο Λοιπών Φόρων
+     * @param  float  $totalOtherTaxesAmount  Σύνολο Λοιπών Φόρων
      */
     public function setTotalOtherTaxesAmount(float $totalOtherTaxesAmount): static
     {
@@ -219,7 +200,7 @@ class InvoiceSummary extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param float $totalDeductionsAmount Σύνολο Κρατήσεων
+     * @param  float  $totalDeductionsAmount  Σύνολο Κρατήσεων
      */
     public function setTotalDeductionsAmount(float $totalDeductionsAmount): static
     {
@@ -244,7 +225,7 @@ class InvoiceSummary extends Type
      * <li>Δεκαδικά ψηφία = 2</li>
      * </ul>
      *
-     * @param float $totalGrossValue Συνολική Αξία
+     * @param  float  $totalGrossValue  Συνολική Αξία
      */
     public function setTotalGrossValue(float $totalGrossValue): static
     {
@@ -259,6 +240,9 @@ class InvoiceSummary extends Type
         return $this->get('incomeClassification');
     }
 
+    /**
+     * @param  IncomeClassification[]|null  $incomeClassifications  Χαρακτηρισμοί Εσόδων
+     */
     public function setIncomeClassifications(?array $incomeClassifications): static
     {
         return $this->set('incomeClassification', $incomeClassifications);
@@ -270,24 +254,15 @@ class InvoiceSummary extends Type
      * <p>Το incomeClassification περιέχει το άθροισμα για κάθε συνδυασμό όλων των πεδίων
      * incomeClassificationCategory που εντοπίζονται στις γραμμές του παραστατικού.</p>
      *
-     * @param IncomeClassification|IncomeClassificationType|string|null $incomeClassification Χαρακτηρισμοί Εσόδων
-     * @param IncomeClassificationCategory|string|null $classificationCategory
-     * @param float|null $classificationAmount
-     * @return InvoiceSummary
+     * @param  IncomeClassification|IncomeClassificationType|string|null  $incomeClassification  Χαρακτηρισμοί Εσόδων
      */
     public function addIncomeClassification(IncomeClassification|IncomeClassificationType|string|null $incomeClassification, IncomeClassificationCategory|string|null $classificationCategory = null, ?float $classificationAmount = null): static
     {
-        if ($incomeClassification instanceof IncomeClassification) {
-            $this->push('incomeClassification', $incomeClassification);
-        } else {
-            $classification = new IncomeClassification();
-            $classification->setClassificationType($incomeClassification);
-            $classification->setClassificationCategory($classificationCategory);
-            $classification->setAmount($classificationAmount);
-            $this->addIncomeClassification($classification);
-        }
-
-        return $this;
+        return $this->push('incomeClassification', $incomeClassification instanceof IncomeClassification ? $incomeClassification : [
+            'classificationType' => $incomeClassification,
+            'classificationCategory' => $classificationCategory,
+            'amount' => $classificationAmount,
+        ]);
     }
 
     public function getTotalIncomeClassificationAmount(): float
@@ -307,6 +282,9 @@ class InvoiceSummary extends Type
         return $this->get('expensesClassification');
     }
 
+    /**
+     * @param  ExpensesClassification[]|null  $expensesClassifications  Χαρακτηρισμοί Εξόδων
+     */
     public function setExpensesClassifications(?array $expensesClassifications): static
     {
         return $this->set('expensesClassification', $expensesClassifications);
@@ -317,25 +295,14 @@ class InvoiceSummary extends Type
      *
      * <p>Το expensesClassification περιέχει το άθροισμα για κάθε συνδυασμό όλων των πεδίων
      * expensesClassificationCategory που εντοπίζονται στις γραμμές του παραστατικού.</p>
-     *
-     * @param ExpensesClassification|ExpenseClassificationType|string|null $expenseClassification
-     * @param ExpenseClassificationCategory|string|null $expenseClassificationCategory
-     * @param float|null $classificationAmount
-     * @return InvoiceSummary
      */
     public function addExpensesClassification(ExpensesClassification|ExpenseClassificationType|string|null $expenseClassification, ExpenseClassificationCategory|string|null $expenseClassificationCategory = null, ?float $classificationAmount = null): static
     {
-        if ($expenseClassification instanceof ExpensesClassification) {
-            $this->push('expensesClassification', $expenseClassification);
-        } else {
-            $classification = new ExpensesClassification();
-            $classification->setClassificationType($expenseClassification);
-            $classification->setClassificationCategory($expenseClassificationCategory);
-            $classification->setAmount($classificationAmount);
-            $this->addExpensesClassification($classification);
-        }
-
-        return $this;
+        return $this->push('expensesClassification', $expenseClassification instanceof ExpensesClassification ? $expenseClassification : [
+            'classificationType' => $expenseClassification,
+            'classificationCategory' => $expenseClassificationCategory,
+            'amount' => $classificationAmount,
+        ]);
     }
 
     public function getTotalExpensesClassificationAmount(): float
@@ -345,14 +312,5 @@ class InvoiceSummary extends Type
         }
 
         return array_reduce($this->getExpensesClassifications(), fn ($c, ExpensesClassification $ec) => $c + $ec->getAmount(), 0);
-    }
-
-    public function set($key, $value): static
-    {
-        if (($key === 'expensesClassification' || $key === 'incomeClassification') && ! is_array($value)) {
-            return $this->push($key, $value);
-        }
-
-        return parent::set($key, $value);
     }
 }

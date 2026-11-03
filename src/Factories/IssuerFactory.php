@@ -1,13 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Factories;
 
 use Firebed\AadeMyData\Models\Issuer;
 
 /**
- * @extends Factory<Issuer>
+ * @extends PartyFactory<Issuer>
  */
-class IssuerFactory extends PartyFactory
-{
-
-}
+class IssuerFactory extends PartyFactory {}

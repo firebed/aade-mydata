@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Factories;
 
 use Firebed\AadeMyData\Models\PaymentMethodDetail;
@@ -12,7 +14,7 @@ class PaymentMethodsFactory extends Factory
     public function definition(): array
     {
         return [
-            'paymentMethodDetails' => PaymentMethodDetail::factory()
+            'paymentMethodDetails' => PaymentMethodDetail::factory(),
         ];
     }
 }

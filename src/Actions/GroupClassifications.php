@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Actions;
 
 use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
@@ -14,15 +16,18 @@ use Firebed\AadeMyData\Models\InvoiceDetails;
 
 class GroupClassifications
 {
+    /** @var array<string, array<string, float>> Category => type => amount */
     private array $incomeClassifications = [];
+
+    /** @var array<string, array<string, array<int|string, array<int|string, array{amount: float, vatAmount: float}>>>> Category => type => vat category => vat exemption => amounts ('' when not set) */
     private array $expensesClassifications = [];
 
     /**
      * Handles the grouping of income and expense classifications.
      *
-     * @param InvoiceDetails[]|null $rows
-     * @param array $options
-     * @return array
+     * @param  InvoiceDetails[]|null  $rows
+     * @param  array{enableClassificationIds?: bool}  $options
+     * @return array{0: IncomeClassification[], 1: ExpensesClassification[]} The income classifications and the expenses classifications
      */
     public function handle(?array $rows, array $options = []): array
     {
@@ -37,14 +42,14 @@ class GroupClassifications
 
         return [
             $this->flattenIncomeClassifications($options),
-            $this->flattenExpensesClassifications($options)
+            $this->flattenExpensesClassifications($options),
         ];
     }
 
     /**
      * Flattens the income classifications into an array.
      *
-     * @param array $options
+     * @param  array{enableClassificationIds?: bool}  $options
      * @return IncomeClassification[]
      */
     private function flattenIncomeClassifications(array $options = []): array
@@ -57,7 +62,7 @@ class GroupClassifications
             foreach ($iclsTypes as $iclsType => $amount) {
                 $type = $iclsType ? IncomeClassificationType::from($iclsType) : null;
 
-                $icls = new IncomeClassification();
+                $icls = new IncomeClassification;
                 $icls->setClassificationType($type);
                 $icls->setClassificationCategory($category);
                 $icls->setAmount(round($amount, 2));
@@ -77,7 +82,7 @@ class GroupClassifications
     /**
      * Flattens the expense classifications into an array.
      *
-     * @param array $options
+     * @param  array{enableClassificationIds?: bool}  $options
      * @return ExpensesClassification[]
      */
     private function flattenExpensesClassifications(array $options = []): array
@@ -96,7 +101,7 @@ class GroupClassifications
                     foreach ($eclsVatExemptions as $vatExemption => $amounts) {
                         $exemption = $vatExemption ? VatExemption::from($vatExemption) : null;
 
-                        $ecls = new ExpensesClassification();
+                        $ecls = new ExpensesClassification;
                         $ecls->setClassificationType($type);
                         $ecls->setClassificationCategory($category);
                         $ecls->setAmount(round($amounts['amount'], 2));
@@ -167,10 +172,7 @@ class GroupClassifications
         $newAmount = $previousAmount + abs($ecls->getAmount() ?? 0);
         $newVatAmount = $previousVatAmount + abs($ecls->getVatAmount() ?? 0);
 
-        $this->expensesClassifications[$eclsCategory->value ?? '']
-        [$eclsType->value ?? '']
-        [$vatCategory->value ?? '']
-        [$vatExemptionCategory->value ?? '']
+        $this->expensesClassifications[$eclsCategory->value ?? ''][$eclsType->value ?? ''][$vatCategory->value ?? ''][$vatExemptionCategory->value ?? '']
             = ['amount' => $newAmount, 'vatAmount' => $newVatAmount];
     }
 
@@ -181,9 +183,6 @@ class GroupClassifications
         $vatCategory = $ecls->getVatCategory();
         $vatExemptionCategory = $ecls->getVatExemptionCategory();
 
-        return $this->expensesClassifications[$eclsCategory->value ?? '']
-        [$eclsType->value ?? '']
-        [$vatCategory->value ?? '']
-        [$vatExemptionCategory->value ?? ''][$key] ?? 0;
+        return $this->expensesClassifications[$eclsCategory->value ?? ''][$eclsType->value ?? ''][$vatCategory->value ?? ''][$vatExemptionCategory->value ?? ''][$key] ?? 0;
     }
 }

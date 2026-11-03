@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
 /**
  * @version 1.0.8
  */
-class ProvidersSignature extends Type
+class ProvidersSignature extends Model
 {
     protected array $expectedOrder = [
         'SigningAuthor',
@@ -37,7 +39,7 @@ class ProvidersSignature extends Type
     /**
      * Μέγιστο επιτρεπτό μήκος 20
      *
-     * @param string $signingAuthor Αριθμός Απόφασης έγκρισης ΥΠΑΗΕΣ Παρόχου
+     * @param  string  $signingAuthor  Αριθμός Απόφασης έγκρισης ΥΠΑΗΕΣ Παρόχου
      *
      * @version 1.0.8
      */
@@ -60,7 +62,7 @@ class ProvidersSignature extends Type
      * Λεπτομέρειες στην υπ’ αριθμ. Α. 1155/09-10-* 2023 απόφαση
      * (ΦΕΚ 5992 myDATA REST API 30 Β΄/13.10.2023)
      *
-     * @param string $signature Υπογραφή
+     * @param  string  $signature  Υπογραφή
      *
      * @version 1.0.8
      */

@@ -1,27 +1,29 @@
 <?php
 
-namespace Firebed\AadeMyData\Models;
+declare(strict_types=1);
 
+namespace Firebed\AadeMyData\Models;
 
 use Firebed\AadeMyData\Actions\GenerateUid;
 use Firebed\AadeMyData\Actions\SquashInvoiceRows;
 use Firebed\AadeMyData\Actions\SummarizeInvoice;
+use Firebed\AadeMyData\Casts\Arr;
 use Firebed\AadeMyData\Enums\DigitalGoodsMovement\DeliveryStatus;
 use Firebed\AadeMyData\Enums\TransmissionFailure;
-use Firebed\AadeMyData\Models\DigitalGoodsMovement\DeliveryEvent;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\DeliveryLifecycle;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\PackagingDetail;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\PackingsDeclaration;
 use Firebed\AadeMyData\Traits\HasFactory;
+use Firebed\AadeMyData\Xml\Dom;
 use Firebed\AadeMyData\Xml\InvoicesDocWriter;
 
-class Invoice extends Type
+class Invoice extends Model
 {
     use HasExtraFields;
     use HasFactory;
     use HasSchemaValidation;
 
-    const VERSION = 'v2.0.2';
+    public const string VERSION = 'v2.0.2';
 
     protected array $expectedOrder = [
         'uid',
@@ -43,22 +45,26 @@ class Invoice extends Type
         'deliveryLifecycle',
     ];
 
-    protected array $casts = [
-        'issuer' => Issuer::class,
-        'counterpart' => Counterpart::class,
-        'invoiceHeader' => InvoiceHeader::class,
-        'paymentMethods' => PaymentMethods::class,
-        'invoiceDetails' => InvoiceDetails::class,
-        'taxesTotals' => TaxesTotals::class,
-        'invoiceSummary' => InvoiceSummary::class,
-        'packingsDeclarations' => PackingsDeclaration::class,
-        'invoiceDeliveryStatus' => DeliveryStatus::class,
-        'deliveryLifecycle' => DeliveryLifecycle::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'issuer' => Issuer::class,
+            'counterpart' => Counterpart::class,
+            'invoiceHeader' => InvoiceHeader::class,
+            'paymentMethods' => PaymentMethods::class,
+            'invoiceDetails' => Arr::of(InvoiceDetails::class),
+            'taxesTotals' => TaxesTotals::class,
+            'invoiceSummary' => InvoiceSummary::class,
+            'packingsDeclarations' => PackingsDeclaration::class,
+            'invoiceDeliveryStatus' => DeliveryStatus::class,
+            'deliveryLifecycle' => DeliveryLifecycle::class,
+        ];
+    }
 
     /**
-     * Property to store the original invoice rows before squashing.
-     * @var array|null
+     * The original invoice rows before squashing.
+     *
+     * @var InvoiceDetails[]|null
      */
     protected ?array $originalInvoiceRows = null;
 
@@ -74,7 +80,8 @@ class Invoice extends Type
 
     public function guessUid(): ?string
     {
-        $generator = new GenerateUid();
+        $generator = new GenerateUid;
+
         return $generator->handle(
             vatNumber: $this->getIssuer()->getVatNumber(),
             issueDate: $this->getInvoiceHeader()->getIssueDate(),
@@ -132,8 +139,7 @@ class Invoice extends Type
      * <li>Στην περίπτωση αδυναμίας επικοινωνίας του ERP με το myDATA κατά την έκδοση / διαβίβαση παραστατικού</li>
      * </ol>
      *
-     * @param TransmissionFailure|int|null $transmissionFailure Κωδικός αδυναμίας επικοινωνίας παρόχου
-     * @return Invoice
+     * @param  TransmissionFailure|int|null  $transmissionFailure  Κωδικός αδυναμίας επικοινωνίας παρόχου
      */
     public function setTransmissionFailure(TransmissionFailure|int|null $transmissionFailure): static
     {
@@ -149,7 +155,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param Issuer $issuer Εκδότης Παραστατικού
+     * @param  Issuer  $issuer  Εκδότης Παραστατικού
      */
     public function setIssuer(Issuer $issuer): static
     {
@@ -165,9 +171,9 @@ class Invoice extends Type
     }
 
     /**
-     * @param Counterpart|null $counterpart Λήπτης Παραστατικού
+     * @param  Counterpart|null  $counterpart  Λήπτης Παραστατικού
      */
-    public function setCounterpart(Counterpart|null $counterpart): static
+    public function setCounterpart(?Counterpart $counterpart): static
     {
         return $this->set('counterpart', $counterpart);
     }
@@ -181,15 +187,11 @@ class Invoice extends Type
     }
 
     /**
-     * @param PaymentMethods|PaymentMethodDetail[] $paymentMethods
+     * @param  PaymentMethods|list<PaymentMethodDetail>|null  $paymentMethods  Τρόποι Πληρωμής
      */
     public function setPaymentMethods(PaymentMethods|array|null $paymentMethods): static
     {
-        if ($paymentMethods === null || $paymentMethods instanceof PaymentMethods) {
-            return $this->set('paymentMethods', $paymentMethods);
-        }
-
-        return $this->set('paymentMethods', new PaymentMethods($paymentMethods));
+        return $this->set('paymentMethods', $paymentMethods);
     }
 
     public function getTotalPaymentAmount(): float
@@ -200,12 +202,13 @@ class Invoice extends Type
     /**
      * Προσθήκη τρόπου πληρωμής.
      *
-     * @param PaymentMethodDetail $paymentMethodDetail Τρόπος Πληρωμής
+     * @param  PaymentMethodDetail  $paymentMethodDetail  Τρόπος Πληρωμής
      */
     public function addPaymentMethod(PaymentMethodDetail $paymentMethodDetail): static
     {
-        $paymentMethods = $this->getPaymentMethods() ?? new PaymentMethods();
+        $paymentMethods = $this->getPaymentMethods() ?? new PaymentMethods;
         $paymentMethods->add($paymentMethodDetail);
+
         return $this->set('paymentMethods', $paymentMethods);
     }
 
@@ -218,7 +221,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param InvoiceHeader $invoiceHeader Επικεφαλίδα Παραστατικού
+     * @param  InvoiceHeader  $invoiceHeader  Επικεφαλίδα Παραστατικού
      */
     public function setInvoiceHeader(InvoiceHeader $invoiceHeader): static
     {
@@ -236,7 +239,7 @@ class Invoice extends Type
     /**
      * Προσθήκη γραμμής παραστατικού.
      *
-     * @param InvoiceDetails $invoiceDetails Γραμμή Παραστατικού
+     * @param  InvoiceDetails  $invoiceDetails  Γραμμή Παραστατικού
      */
     public function addInvoiceDetails(InvoiceDetails $invoiceDetails): static
     {
@@ -244,9 +247,9 @@ class Invoice extends Type
     }
 
     /**
-     * @param InvoiceDetails[] $invoiceDetails Γραμμές Παραστατικού
+     * @param  InvoiceDetails[]|null  $invoiceDetails  Γραμμές Παραστατικού
      */
-    public function setInvoiceDetails(array $invoiceDetails): static
+    public function setInvoiceDetails(?array $invoiceDetails): static
     {
         return $this->set('invoiceDetails', $invoiceDetails);
     }
@@ -260,7 +263,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param InvoiceSummary $invoiceSummary Περίληψη Παραστατικού
+     * @param  InvoiceSummary  $invoiceSummary  Περίληψη Παραστατικού
      */
     public function setInvoiceSummary(InvoiceSummary $invoiceSummary): static
     {
@@ -270,39 +273,35 @@ class Invoice extends Type
     /**
      * "Squashes" similar invoice lines and sums up their values.
      *
-     * @param array{clsLineNumber?: bool, vatAmountTolerance?: float|null} $options Squashing options.
-     * If 'clsLineNumber' == true the process will add line numbers to classifications.
-     * If 'vatAmountTolerance' is set, rows with the same categories are squashed into as many
-     * rows as needed to keep each row's vat amount within the tolerance of its net value times
-     * its vat rate (myDATA allows 1.00). Null squashes them into a single row.
-     *
-     * @return $this
+     * @param  array{clsLineNumber?: bool, vatAmountTolerance?: float|null}  $options  Squashing options.
+     *                                                                                 If 'clsLineNumber' == true the process will add line numbers to classifications.
+     *                                                                                 If 'vatAmountTolerance' is set, rows with the same categories are squashed into as many
+     *                                                                                 rows as needed to keep each row's vat amount within the tolerance of its net value times
+     *                                                                                 its vat rate (myDATA allows 1.00). Null squashes them into a single row.
      */
     public function squashInvoiceRows(array $options = []): static
     {
         $this->originalInvoiceRows = $this->getInvoiceDetails();
 
-        $squash = new SquashInvoiceRows();
-        $this->setInvoiceDetails($squash->handle($this->getInvoiceDetails(), $options));
+        $squash = new SquashInvoiceRows;
+        $this->setInvoiceDetails($squash->handle($this->getInvoiceDetails() ?? [], $options));
+
         return $this;
     }
 
     /**
-     * Returns the original invoice rows before squashing.
-     *
-     * @return Invoice
+     * Restores the original invoice rows before squashing.
      */
     public function unSquashInvoiceRows(): static
     {
         $this->setInvoiceDetails($this->originalInvoiceRows);
         $this->originalInvoiceRows = null;
+
         return $this;
     }
 
     /**
-     * Check if the invoice rows have been squashed.
-     *
-     * @return bool
+     * Whether the invoice rows have been squashed.
      */
     public function isSquashed(): bool
     {
@@ -310,8 +309,7 @@ class Invoice extends Type
     }
 
     /**
-     * @param array{enableClassificationIds: bool} $options
-     * @return static
+     * @param  array{enableClassificationIds?: bool}  $options
      */
     public function summarizeInvoice(array $options = []): static
     {
@@ -327,11 +325,11 @@ class Invoice extends Type
      * χρήστης κάνει χρήση αυτού του στοιχείου, δε θα μπορεί να εισάγει φόρους εκτός
      * του ΦΠΑ σε κάθε γραμμή του παραστατικού ξεχωριστά.
      *
-     * @return TaxesTotals|null
+     * @return TaxesTotals|null Σύνολα Φόρων, null όταν δεν έχουν δηλωθεί
      */
     public function getTaxesTotals(): ?TaxesTotals
     {
-        return $this->get('taxesTotals') ?? new TaxesTotals();
+        return $this->get('taxesTotals');
     }
 
     /**
@@ -339,21 +337,18 @@ class Invoice extends Type
      */
     public function addTaxesTotals(TaxTotals $taxTotals): static
     {
-        $taxesTotals = $this->getTaxesTotals();
+        $taxesTotals = $this->getTaxesTotals() ?? new TaxesTotals;
         $taxesTotals->add($taxTotals);
+
         return $this->set('taxesTotals', $taxesTotals);
     }
 
     /**
-     * @param TaxTotals[]|null $taxTotals
+     * @param  TaxesTotals|list<TaxTotals>|null  $taxTotals  Σύνολα Φόρων
      */
     public function setTaxesTotals(TaxesTotals|array|null $taxTotals): static
     {
-        if ($taxTotals === null || $taxTotals instanceof TaxesTotals) {
-            return $this->set('taxesTotals', $taxTotals);
-        }
-
-        return $this->set('taxesTotals', new TaxesTotals($taxTotals));
+        return $this->set('taxesTotals', $taxTotals);
     }
 
     /**
@@ -370,48 +365,10 @@ class Invoice extends Type
     }
 
     /**
-     * @return TransportDetail[]|null Λοιπές Λεπτομέρειες Διακίνησης (Ορισμός - Αλλαγή Μτφ Μέσων)
-     *
-     * @version 1.0.7
-     *
-     * @deprecated Since version v2.0.1 of myDATA. Do not use.
-     */
-    public function getOtherTransportDetails(): ?array
-    {
-        return $this->get('otherTransportDetails');
-    }
-
-    /**
-     * Προσθήκη Λεπτομέρειες Διακίνησης (Ορισμός - Αλλαγή Μτφ Μέσων).
-     *
-     * @param TransportDetail $transportDetailType Λεπτομέρειες Διακίνησης
-     *
-     * @version 1.0.7
-     *
-     * @deprecated Since version v2.0.1 of myDATA. Do not use.
-     */
-    public function addOtherTransportDetail(TransportDetail $transportDetailType): static
-    {
-        return $this->push('otherTransportDetails', $transportDetailType);
-    }
-
-    /**
-     * @param TransportDetail[]|null $transportDetails
-     * @return $this
-     *
-     * @deprecated Since version v2.0.1 of myDATA. Do not use.
-     */
-    public function setOtherTransportDetails(?array $transportDetails): static
-    {
-        return $this->set('otherTransportDetails', $transportDetails);
-    }
-
-    /**
      * URL όπου ο λήπτης του παραστατικού με κλήση αυτού και ορισμό παραμέτρου θα μπορεί να λαμβάνει το παραστατικό
      * Αυτό το url θα πρέπει να χρησιμοποιείται για τη δημιουργία του QR Code που τυπώνεται στα παραστατικά που εκδίδονται μέσω παρόχων
      * Έγκυρο μόνο στην περίπτωση διαβίβασης μέσω κανάλι παρόχου
      *
-     * @return string|null
      * @version 1.0.12
      */
     public function getDownloadingInvoiceUrl(): ?string
@@ -420,11 +377,9 @@ class Invoice extends Type
     }
 
     /**
-     * @param string $downloadingInvoiceUrl
-     * @return $this
      * @version 1.0.12
      */
-    public function setDownloadingInvoiceUrl(string $downloadingInvoiceUrl): Invoice
+    public function setDownloadingInvoiceUrl(string $downloadingInvoiceUrl): static
     {
         return $this->set('downloadingInvoiceUrl', $downloadingInvoiceUrl);
     }
@@ -442,25 +397,25 @@ class Invoice extends Type
     /**
      * Έγκυρο μόνο για παραστατικά διακίνησης.
      *
-     * @param PackagingDetail[]|null $packingsDeclarations Δηλώσεις Συσκευασιών Διακίνησης
-     * @return $this
+     * @param  PackagingDetail[]|null  $packingsDeclarations  Δηλώσεις Συσκευασιών Διακίνησης
      *
      * @version 2.0.1
      */
     public function setPackingsDeclarations(?array $packingsDeclarations): static
     {
-        return $this->set('packingsDeclarations', $packingsDeclarations ? new PackingsDeclaration($packingsDeclarations) : null);
+        return $this->set('packingsDeclarations', $packingsDeclarations ?: null);
     }
 
     /**
-     * Προσθήκη Δήλωση Συσκευασίας Διακίνησης.
-     * @param PackagingDetail $packagingDetailType Δήλωση Συσκευασίας Διακίνησης
-     * @return $this
+     * Προσθήκη Δήλωσης Συσκευασίας Διακίνησης.
+     *
+     * @param  PackagingDetail  $packagingDetail  Δήλωση Συσκευασίας Διακίνησης
      */
-    public function addPackagingDeclaration(PackagingDetail $packagingDetailType): static
+    public function addPackagingDeclaration(PackagingDetail $packagingDetail): static
     {
-        $packingsDeclaration = $this->get('packingsDeclarations') ?? new PackingsDeclaration();
-        $packingsDeclaration->add($packagingDetailType);
+        $packingsDeclaration = $this->get('packingsDeclarations') ?? new PackingsDeclaration;
+        $packingsDeclaration->add($packagingDetail);
+
         return $this->set('packingsDeclarations', $packingsDeclaration);
     }
 
@@ -468,6 +423,7 @@ class Invoice extends Type
      * Είναι read-only - παρέχεται από το myDATA κατά την ανάκτηση του.
      *
      * @return DeliveryStatus|null Κατάσταση Παραστατικού Δελτίου Διακίνησης
+     *
      * @version 2.0.1
      */
     public function getInvoiceDeliveryStatus(): ?DeliveryStatus
@@ -477,7 +433,9 @@ class Invoice extends Type
 
     /**
      * Είναι read-only - παρέχεται από το myDATA κατά την ανάκτηση του.
-     * @return DeliveryEvent[]|null Το σύνολο των γεγονότων του κύκλου ζωής (lifecycle) του παραστατικού διακίνησης.
+     *
+     * @return DeliveryLifecycle|null Το σύνολο των γεγονότων του κύκλου ζωής (lifecycle) του παραστατικού διακίνησης.
+     *
      * @version 2.0.1
      */
     public function getDeliveryLifecycle(): ?DeliveryLifecycle
@@ -485,18 +443,9 @@ class Invoice extends Type
         return $this->get('deliveryLifecycle');
     }
 
-    public function set($key, $value): static
-    {
-        if (($key === 'invoiceDetails' || $key === 'otherTransportDetails') && ! is_array($value)) {
-            return $this->push($key, $value);
-        }
-
-        return parent::set($key, $value);
-    }
-
     public function toXml(bool $asInvoicesDoc = false): string
     {
-        $writer = new InvoicesDocWriter();
+        $writer = new InvoicesDocWriter;
         $fullXml = $writer->asXML(new InvoicesDoc($this));
 
         if ($asInvoicesDoc) {
@@ -504,13 +453,19 @@ class Invoice extends Type
         }
 
         $doc = $writer->getDomDocument();
-        return $doc->saveXML($doc->getElementsByTagName('invoice')->item(0));
+
+        return Dom::save($doc, $doc->getElementsByTagName('invoice')->item(0));
     }
 
+    /**
+     * Validates the invoice against the myDATA XSD.
+     *
+     * @return list<array{field: string|null, message: string|null}> The validation errors, empty when the invoice is valid
+     */
     public function validate(): array
     {
-        $xml = (new InvoicesDocWriter())->asXML(new InvoicesDoc($this));
+        $xml = (new InvoicesDocWriter)->asXML(new InvoicesDoc($this));
 
-        return $this->validateSchema($xml, 'InvoicesDoc-' . self::VERSION . '.xsd');
+        return $this->validateSchema($xml, 'InvoicesDoc-'.self::VERSION.'.xsd');
     }
 }

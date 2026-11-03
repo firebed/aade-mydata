@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
 /**
@@ -19,7 +21,7 @@ trait HasExtraFields
     }
 
     /**
-     * @param array<string, mixed>|null $extraFields
+     * @param  array<string, mixed>|null  $extraFields
      */
     public function setExtraFields(?array $extraFields): static
     {

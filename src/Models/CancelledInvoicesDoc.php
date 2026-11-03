@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
-/**
- * @extends TypeArray<CancelledInvoice>
- */
-class CancelledInvoicesDoc extends TypeArray
-{
-    protected array $casts = [
-        'cancelledInvoice' => CancelledInvoice::class,
-    ];
+use Firebed\AadeMyData\Casts\Arr;
 
-    public function __construct()
+/**
+ * @extends ModelCollection<CancelledInvoice>
+ */
+class CancelledInvoicesDoc extends ModelCollection
+{
+    protected function casts(): array
     {
-        parent::__construct('cancelledInvoice');
+        return [
+            'cancelledInvoice' => Arr::of(CancelledInvoice::class),
+        ];
     }
 }

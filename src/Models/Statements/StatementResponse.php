@@ -1,21 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\Statements;
 
 use Firebed\AadeMyData\Models\Errors;
-use Firebed\AadeMyData\Models\Type;
+use Firebed\AadeMyData\Models\Model;
 use Firebed\AadeMyData\Traits\HasFactory;
 
 /**
  * @version 1.0.12
  */
-class StatementResponse extends Type
+class StatementResponse extends Model
 {
     use HasFactory;
 
-    protected array $casts = [
-        'errors' => Errors::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'errors' => Errors::class,
+        ];
+    }
 
     /**
      * @return int|null Αριθμός Σειράς Οντότητας εντός του υποβληθέντος xml
@@ -48,9 +53,9 @@ class StatementResponse extends Type
      * <li>TechnicalError</li>
      * <li>XMLSyntaxError</li>
      * </ul>
+     *
      * @return string|null Κωδικός Αποτελέσματος
      */
-
     public function getStatementId(): ?string
     {
         return $this->get('statementId');
@@ -68,7 +73,7 @@ class StatementResponse extends Type
 
     public function hasErrors(): bool
     {
-        return ! is_null($this->getErrors()) && count($this->getErrors()) > 0;
+        return $this->getErrors()?->isNotEmpty() ?? false;
     }
 
     /**

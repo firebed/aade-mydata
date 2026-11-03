@@ -1,16 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
-use Firebed\AadeMyData\Models\Type;
+use Firebed\AadeMyData\Models\Model;
 
 /**
  * @version 2.0.1
  */
-class GroupQrCodeResponse extends Type
+class GroupQrCodeResponse extends Model
 {
     /**
      * @return string|null Το αποτέλεσμα της επεξεργασίας.
+     *
      * @version 2.0.1
      */
     public function getStatusCode(): ?string
@@ -20,6 +23,7 @@ class GroupQrCodeResponse extends Type
 
     /**
      * @return string|null Το νέο, ομαδικό URL του QR Code.
+     *
      * @version 2.0.1
      */
     public function getGroupQrUrl(): ?string
@@ -30,7 +34,6 @@ class GroupQrCodeResponse extends Type
     /**
      * Extract the groupId from the groupQrUrl query parameter.
      *
-     * @return string|null
      * @version 2.0.1
      */
     public function getGroupId(): ?string
@@ -43,17 +46,19 @@ class GroupQrCodeResponse extends Type
 
         $queryString = parse_url($groupQrUrl, PHP_URL_QUERY);
 
-        if ($queryString === null) {
+        if (! is_string($queryString)) {
             return null;
         }
 
         parse_str($queryString, $queryParams);
+        $groupId = $queryParams['groupId'] ?? null;
 
-        return $queryParams['groupId'] ?? null;
+        return is_string($groupId) ? $groupId : null;
     }
 
     /**
      * @return int|null Το πλήθος των ΔΑ που περιλαμβάνονται στην ομάδα.
+     *
      * @version 2.0.1
      */
     public function getQrUrlsCount(): ?int
@@ -63,6 +68,7 @@ class GroupQrCodeResponse extends Type
 
     /**
      * @return string|null Η ημερομηνία και ώρα λήξης του ομαδικού QR Code.
+     *
      * @version 2.0.1
      */
     public function getExpiresAt(): ?string

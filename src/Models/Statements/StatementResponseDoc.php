@@ -1,22 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\Statements;
 
-use Firebed\AadeMyData\Models\TypeArray;
+use Firebed\AadeMyData\Casts\Arr;
+use Firebed\AadeMyData\Models\ModelCollection;
 
 /**
- * @extends TypeArray<StatementResponse>
+ * @extends ModelCollection<StatementResponse>
  *
  * @version 1.0.12
  */
-class StatementResponseDoc extends TypeArray
+class StatementResponseDoc extends ModelCollection
 {
-    protected array $casts = [
-        'response' => StatementResponse::class,
-    ];
-
-    public function __construct()
+    protected function casts(): array
     {
-        parent::__construct('response');
+        return [
+            'response' => Arr::of(StatementResponse::class),
+        ];
     }
 }

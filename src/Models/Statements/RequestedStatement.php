@@ -1,19 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\Statements;
 
-use Firebed\AadeMyData\Models\Type;
+use Firebed\AadeMyData\Models\Model;
 
 /**
  * @version 1.0.12
  */
-class RequestedStatement extends Type
+class RequestedStatement extends Model
 {
-
-    protected array $casts = [
-        'statement' => Statement::class,
-        'recallStatement' => RecallStatementDoc::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'statement' => Statement::class,
+            'recallStatement' => RecallStatementDoc::class,
+        ];
+    }
 
     protected array $expectedOrder = [
         'statement',

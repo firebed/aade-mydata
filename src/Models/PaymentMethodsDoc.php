@@ -1,21 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
+
+use Firebed\AadeMyData\Casts\Arr;
 
 /**
  * This class is used to store payment methods and is part of
  * <code>RequestedDoc</code> class.
  *
- * @extends TypeArray<PaymentMethod>
+ * @extends ModelCollection<PaymentMethod>
  */
-class PaymentMethodsDoc extends TypeArray
+class PaymentMethodsDoc extends ModelCollection
 {
-    protected array $casts = [
-        'paymentMethods' => PaymentMethod::class,
-    ];
-
-    public function __construct(PaymentMethod|array $paymentMethods = [])
+    protected function casts(): array
     {
-        parent::__construct('paymentMethods', $paymentMethods);
+        return [
+            'paymentMethods' => Arr::of(PaymentMethod::class),
+        ];
     }
 }

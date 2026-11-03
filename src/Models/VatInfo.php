@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
 /**
  * @version 1.0.8
  */
-class VatInfo extends Type
+class VatInfo extends Model
 {
     /**
      * @return string|null Το ΜΑΡΚ του παραστατικού
+     *
      * @version 1.0.8
      */
     public function getMark(): ?string
@@ -18,6 +21,7 @@ class VatInfo extends Type
 
     /**
      * @return bool Αν το παραστατικό είναι ακυρωμένο
+     *
      * @version 1.0.8
      */
     public function isCancelled(): bool
@@ -27,6 +31,7 @@ class VatInfo extends Type
 
     /**
      * @return string Ημερομηνία έκδοσης παραστατικού
+     *
      * @version 1.0.8
      */
     public function getIssueDate(): string
@@ -36,7 +41,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 301
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat301(): ?float
@@ -46,7 +51,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 302
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat302(): ?float
@@ -56,7 +61,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 303
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat303(): ?float
@@ -66,7 +71,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 304
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat304(): ?float
@@ -76,7 +81,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 305
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat305(): ?float
@@ -86,7 +91,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 306
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat306(): ?float
@@ -96,7 +101,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 331
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat331(): ?float
@@ -106,7 +111,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 332
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat332(): ?float
@@ -116,7 +121,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 333
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat333(): ?float
@@ -126,7 +131,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 334
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat334(): ?float
@@ -136,7 +141,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 335
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat335(): ?float
@@ -146,7 +151,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 336
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat336(): ?float
@@ -156,7 +161,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 361
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat361(): ?float
@@ -166,7 +171,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 362
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat362(): ?float
@@ -176,7 +181,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 363
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat363(): ?float
@@ -186,7 +191,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 364
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat364(): ?float
@@ -196,7 +201,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 365
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat365(): ?float
@@ -206,7 +211,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 366
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat366(): ?float
@@ -216,7 +221,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 381
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat381(): ?float
@@ -226,7 +231,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 382
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat382(): ?float
@@ -236,7 +241,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 383
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat383(): ?float
@@ -246,7 +251,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 384
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat384(): ?float
@@ -256,7 +261,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 385
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat385(): ?float
@@ -266,7 +271,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 386
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat386(): ?float
@@ -276,7 +281,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 342
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat342(): ?float
@@ -286,7 +291,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 345
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat345(): ?float
@@ -296,7 +301,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 348
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat348(): ?float
@@ -306,7 +311,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 349
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat349(): ?float
@@ -316,7 +321,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 310
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat310(): ?float
@@ -326,7 +331,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 402
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat402(): ?float
@@ -336,7 +341,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 407
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat407(): ?float
@@ -346,7 +351,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 411
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat411(): ?float
@@ -356,7 +361,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 423
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat423(): ?float
@@ -366,7 +371,7 @@ class VatInfo extends Type
 
     /**
      * Ποσό ΦΠΑ πεδίου 422
-     * @return float|null
+     *
      * @version 1.0.8
      */
     public function getVat422(): ?float

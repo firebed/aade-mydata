@@ -1,29 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Casts\Arr;
 use Firebed\AadeMyData\Traits\HasFactory;
 
 /**
  * This class is used to store payment methods and is part of
  * <code>Invoice</code> class.
  *
- * @extends TypeArray<PaymentMethodDetail>
+ * @extends ModelCollection<PaymentMethodDetail>
  */
-class PaymentMethods extends TypeArray
+class PaymentMethods extends ModelCollection
 {
     use HasFactory;
 
-    protected array $casts = [
-        'paymentMethodDetails' => PaymentMethodDetail::class,
-    ];
-
-    /**
-     * @param PaymentMethodDetail|PaymentMethodDetail[] $paymentMethods
-     */
-    public function __construct(PaymentMethodDetail|array $paymentMethods = [])
+    protected function casts(): array
     {
-        parent::__construct('paymentMethodDetails', $paymentMethods);
+        return [
+            'paymentMethodDetails' => Arr::of(PaymentMethodDetail::class),
+        ];
     }
 
     public function getTotalPaymentAmount(): float

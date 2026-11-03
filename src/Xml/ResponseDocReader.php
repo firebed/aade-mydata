@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Xml;
 
 use DOMDocument;
@@ -14,18 +16,18 @@ class ResponseDocReader extends XMLReader
 
     public function parseXML(string $xmlString): ResponseDoc
     {
-        $doc = new ResponseDoc();
+        $doc = new ResponseDoc;
         $this->loadXML($xmlString, $doc);
 
         return $doc;
     }
 
     /**
-     * @param DOMDocument $document Loaded without whitespace nodes (preserveWhiteSpace = false)
+     * @param  DOMDocument  $document  Loaded without whitespace nodes (preserveWhiteSpace = false)
      */
     public function parseDocument(DOMDocument $document): ResponseDoc
     {
-        $doc = new ResponseDoc();
+        $doc = new ResponseDoc;
         $this->loadDocument($document, $doc);
 
         return $doc;

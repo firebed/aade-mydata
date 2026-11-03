@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
-use Firebed\AadeMyData\Models\Type;
+use Firebed\AadeMyData\Models\Model;
 
 /**
  * @version 2.0.1
  */
-class RejectionDetails extends Type
+class RejectionDetails extends Model
 {
     protected array $expectedOrder = [
         'reason',
@@ -24,6 +26,7 @@ class RejectionDetails extends Type
 
     /**
      * @return string|null Αιτιολογία απόρριψης
+     *
      * @version 2.0.1
      */
     public function getReason(): ?string
@@ -32,8 +35,8 @@ class RejectionDetails extends Type
     }
 
     /**
-     * @param string $reason Αιτιολογία απόρριψης
-     * @return RejectionDetails
+     * @param  string  $reason  Αιτιολογία απόρριψης
+     *
      * @version 2.0.1
      */
     public function setReason(string $reason): static

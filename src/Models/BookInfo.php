@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
 use Firebed\AadeMyData\Enums\InvoiceDetailType;
@@ -26,12 +28,15 @@ use Firebed\AadeMyData\Enums\InvoiceType;
  * διαφορετικές γραμμές, με την αντίστοιχη τιμή στο συγκεκριμένο πεδίο.</li>
  * </ol>
  */
-class BookInfo extends Type
+class BookInfo extends Model
 {
-    protected array $casts = [
-        'invType' => InvoiceType::class,
-        'invoiceDetailType' => InvoiceDetailType::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'invType' => InvoiceType::class,
+            'invoiceDetailType' => InvoiceDetailType::class,
+        ];
+    }
 
     /**
      * @return string ΑΦΜ λήπτη

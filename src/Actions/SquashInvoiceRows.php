@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Actions;
 
 use Firebed\AadeMyData\Enums\VatCategory;
@@ -20,23 +22,24 @@ class SquashInvoiceRows
     private array $squashedRows = [];
 
     /**
-     * @var array Variable to store squashed income classifications.
+     * @var array<int, array<string, IncomeClassification>> Variable to store squashed income classifications, per group.
      */
     private array $squashedIcls = [];
 
     /**
-     * @var array Variable to store squashed expenses classifications.
+     * @var array<int, array<string, ExpensesClassification>> Variable to store squashed expenses classifications, per group.
      */
     private array $squashedEcls = [];
 
+    /** @var array{clsLineNumber?: bool, vatAmountTolerance?: float|null} */
     private array $options = [];
 
     /**
      * Groups similar rows and returns a new array with the rows summed.
      *
-     * @param InvoiceDetails[]|null $invoiceRows An array of invoice rows.
-     * @param array $options Additional options.
-     * @return array|null An array of squashed invoice rows.
+     * @param  InvoiceDetails[]|null  $invoiceRows  An array of invoice rows.
+     * @param  array{clsLineNumber?: bool, vatAmountTolerance?: float|null}  $options  Additional options.
+     * @return InvoiceDetails[]|null An array of squashed invoice rows.
      */
     public function handle(?array $invoiceRows, array $options = []): ?array
     {
@@ -54,6 +57,7 @@ class SquashInvoiceRows
             if ($group[0]->getRecType() !== null) {
                 // Cloned, since the output rows are renumbered and the caller keeps the originals.
                 $this->rowsWithRecType[] = clone $group[0];
+
                 continue;
             }
 
@@ -75,8 +79,8 @@ class SquashInvoiceRows
      * rows first, then each row with a recType, which is not squashed and forms a
      * group of its own.
      *
-     * @param InvoiceDetails[] $invoiceRows An array of invoice rows.
-     * @param array $options The squashing options; only 'vatAmountTolerance' affects grouping.
+     * @param  InvoiceDetails[]  $invoiceRows  An array of invoice rows.
+     * @param  array{clsLineNumber?: bool, vatAmountTolerance?: float|null}  $options  The squashing options; only 'vatAmountTolerance' affects grouping.
      * @return InvoiceDetails[][]
      */
     public function groups(array $invoiceRows, array $options = []): array
@@ -89,11 +93,13 @@ class SquashInvoiceRows
         foreach ($invoiceRows as $row) {
             if ($row->getRecType() !== null) {
                 $rowsWithRecType[] = [$row];
+
                 continue;
             }
 
             if ($tolerance === null) {
                 $groups[$this->generateRowKey($row)][] = $row;
+
                 continue;
             }
 
@@ -114,10 +120,7 @@ class SquashInvoiceRows
      * vat amount is more than 1.00 away from its net value times its vat rate (error 229),
      * so many rows with tiny rounding differences cannot be squashed into a single row.
      *
-     * @param InvoiceDetails $row
-     * @param float $tolerance
-     * @param array<string, array{0: float, 1: float}> $groupTotals The net value and vat amount of each group so far.
-     * @return string
+     * @param  array<string, array{0: float, 1: float}>  $groupTotals  The net value and vat amount of each group so far.
      */
     private function toleratedGroupKey(InvoiceDetails $row, float $tolerance, array $groupTotals): string
     {
@@ -140,11 +143,6 @@ class SquashInvoiceRows
      * Returns how far the vat amount is from the net value times the vat rate, both
      * rounded to cents the way the squashed row is sent. myDATA rounds the expected
      * vat half to even: 0.75 at 6% expects 0.04, not 0.05.
-     *
-     * @param VatCategory|null $vatCategory
-     * @param float $netValue
-     * @param float $vatAmount
-     * @return float
      */
     private function vatAmountDeviation(?VatCategory $vatCategory, float $netValue, float $vatAmount): float
     {
@@ -155,9 +153,6 @@ class SquashInvoiceRows
 
     /**
      * Generates a unique key for each row based on its categories.
-     *
-     * @param InvoiceDetails $row
-     * @return string
      */
     private function generateRowKey(InvoiceDetails $row): string
     {
@@ -176,8 +171,7 @@ class SquashInvoiceRows
     /**
      * Extracts data from the row for initializing a new squashed row.
      *
-     * @param InvoiceDetails $row
-     * @return array
+     * @return array<string, mixed>
      */
     private function extractConcreteData(InvoiceDetails $row): array
     {
@@ -195,10 +189,6 @@ class SquashInvoiceRows
 
     /**
      * Aggregates data from one row into another.
-     *
-     * @param InvoiceDetails $target
-     * @param InvoiceDetails $source
-     * @return void
      */
     private function aggregateRowData(InvoiceDetails $target, InvoiceDetails $source): void
     {
@@ -214,9 +204,7 @@ class SquashInvoiceRows
     /**
      * Aggregates income classifications for a given group.
      *
-     * @param int $groupIndex
-     * @param IncomeClassification[]|null $classifications
-     * @return void
+     * @param  IncomeClassification[]|null  $classifications
      */
     private function aggregateIncomeClassifications(int $groupIndex, ?array $classifications): void
     {
@@ -242,9 +230,7 @@ class SquashInvoiceRows
     /**
      * Aggregates expense classifications for a given group.
      *
-     * @param int $groupIndex
-     * @param ExpensesClassification[]|null $classifications
-     * @return void
+     * @param  ExpensesClassification[]|null  $classifications
      */
     private function aggregateExpenseClassifications(int $groupIndex, ?array $classifications): void
     {
@@ -275,7 +261,7 @@ class SquashInvoiceRows
     /**
      * Merges results from squashed rows, classifications, and rows with RecType.
      *
-     * @return array
+     * @return InvoiceDetails[]
      */
     private function mergeAndRoundResults(): array
     {
@@ -306,9 +292,10 @@ class SquashInvoiceRows
     }
 
     /**
-     * @param ExpensesClassification[]|IncomeClassification[] $classifications
-     * @param int $lineNumber
-     * @return array
+     * @template TClassification of IncomeClassification|ExpensesClassification
+     *
+     * @param  array<string, TClassification>  $classifications
+     * @return list<TClassification>
      */
     private function mapClassifications(array $classifications, int &$lineNumber = 1): array
     {
@@ -316,6 +303,7 @@ class SquashInvoiceRows
         if (isset($this->options['clsLineNumber']) && $this->options['clsLineNumber'] === true) {
             return array_map(function ($cls) use (&$lineNumber) {
                 $cls->setId($lineNumber++);
+
                 return $cls;
             }, array_values($classifications));
         }
@@ -325,9 +313,6 @@ class SquashInvoiceRows
 
     /**
      * Rounds the values of a row.
-     *
-     * @param InvoiceDetails $row
-     * @return void
      */
     private function roundRow(InvoiceDetails $row): void
     {

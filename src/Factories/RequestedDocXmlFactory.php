@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Factories;
 
 use Firebed\AadeMyData\Models\Invoice;
@@ -10,6 +12,7 @@ use Firebed\AadeMyData\Xml\RequestedDocReader;
 
 class RequestedDocXmlFactory
 {
+    /** @var list<Invoice> */
     private array $invoices = [];
 
     public function addInvoice(Invoice $invoice): void
@@ -20,13 +23,14 @@ class RequestedDocXmlFactory
     public function toRequestedDoc(): RequestedDoc
     {
         // First we need to transform the Invoice object to an XML string
-        $writer = new InvoicesDocWriter();
+        $writer = new InvoicesDocWriter;
         $invoicesDocXmlString = $writer->asXML(new InvoicesDoc($this->invoices));
 
         $invoicesDocXmlString = str_replace('InvoicesDoc', 'RequestedDoc', $invoicesDocXmlString);
 
         // Then we need to transform the XML string to RequestedDoc object
-        $reader = new RequestedDocReader();
+        $reader = new RequestedDocReader;
+
         return $reader->parseXML($invoicesDocXmlString);
     }
 }

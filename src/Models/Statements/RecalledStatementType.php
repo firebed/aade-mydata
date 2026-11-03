@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\Statements;
 
 use Firebed\AadeMyData\Enums\Statements\RecallStatus;
-use Firebed\AadeMyData\Models\Type;
+use Firebed\AadeMyData\Models\Model;
 
 /**
  * @version 1.0.12
  */
-class RecalledStatementType extends Type
+class RecalledStatementType extends Model
 {
     protected array $expectedOrder = [
         'statementID',
@@ -20,9 +22,12 @@ class RecalledStatementType extends Type
         'recallVatNumber',
     ];
 
-    protected array $casts = [
-        'recallStatus' => RecallStatus::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'recallStatus' => RecallStatus::class,
+        ];
+    }
 
     /**
      * @return int|null Μοναδικός Κωδικός Αρχικής Δήλωσης που έχει ανακληθεί

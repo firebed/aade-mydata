@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Factories;
 
 use Firebed\AadeMyData\Models\TaxesTotals;
@@ -13,7 +15,7 @@ class TaxesTotalsFactory extends Factory
     public function definition(): array
     {
         return [
-            'taxes' => TaxTotals::factory()
+            'taxes' => TaxTotals::factory(),
         ];
     }
 }

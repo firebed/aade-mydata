@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Enums\DigitalGoodsMovement\PackagingType;
-use Firebed\AadeMyData\Models\Type;
+use Firebed\AadeMyData\Models\Model;
 use Firebed\AadeMyData\Traits\HasFactory;
 
 /**
  * @version 2.0.1
  */
-class PackagingDetail extends Type
+class PackagingDetail extends Model
 {
     use HasFactory;
 
@@ -19,9 +21,12 @@ class PackagingDetail extends Type
         'otherPackagingTypeTitle',
     ];
 
-    protected array $casts = [
-        'packagingType' => PackagingType::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'packagingType' => PackagingType::class,
+        ];
+    }
 
     public function __construct(?PackagingType $packagingType = null, ?int $quantity = null)
     {
@@ -38,6 +43,7 @@ class PackagingDetail extends Type
 
     /**
      * @return PackagingType|null Είδος Συσκευασίας
+     *
      * @version 2.0.1
      */
     public function getPackagingType(): ?PackagingType
@@ -46,7 +52,8 @@ class PackagingDetail extends Type
     }
 
     /**
-     * @param PackagingType $packagingType Είδος Συσκευασίας
+     * @param  PackagingType  $packagingType  Είδος Συσκευασίας
+     *
      * @version 2.0.1
      */
     public function setPackagingType(PackagingType $packagingType): static
@@ -56,6 +63,7 @@ class PackagingDetail extends Type
 
     /**
      * @return int|null Ποσότητα Συσκευασίας
+     *
      * @version 2.0.1
      */
     public function getQuantity(): ?int
@@ -64,7 +72,8 @@ class PackagingDetail extends Type
     }
 
     /**
-     * @param int $quantity Ποσότητα Συσκευασίας
+     * @param  int  $quantity  Ποσότητα Συσκευασίας
+     *
      * @version 2.0.1
      */
     public function setQuantity(int $quantity): static
@@ -74,6 +83,7 @@ class PackagingDetail extends Type
 
     /**
      * @return string|null Τίτλος για Λοιπά Είδη Συσκευασίας
+     *
      * @version 2.0.1
      */
     public function getOtherPackagingTypeTitle(): ?string
@@ -82,7 +92,8 @@ class PackagingDetail extends Type
     }
 
     /**
-     * @param string|null $otherPackagingTypeTitle Τίτλος για Λοιπά Είδη Συσκευασίας (max 150 χαρακτήρες)
+     * @param  string|null  $otherPackagingTypeTitle  Τίτλος για Λοιπά Είδη Συσκευασίας (max 150 χαρακτήρες)
+     *
      * @version 2.0.1
      */
     public function setOtherPackagingTypeTitle(?string $otherPackagingTypeTitle): static

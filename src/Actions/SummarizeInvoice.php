@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Actions;
 
 use Firebed\AadeMyData\Models\Invoice;
@@ -7,19 +9,22 @@ use Firebed\AadeMyData\Models\InvoiceSummary;
 
 class SummarizeInvoice
 {
+    /**
+     * @param  array{enableClassificationIds?: bool}  $options
+     */
     public function handle(Invoice $invoice, array $options = []): InvoiceSummary
     {
-        $summary = new InvoiceSummary();
+        $summary = new InvoiceSummary;
 
-        $sumInvoiceRows = new SummarizeInvoiceRows();
+        $sumInvoiceRows = new SummarizeInvoiceRows;
         $sumInvoiceRows->handle($invoice->getInvoiceDetails(), $options);
         $sumInvoiceRows->saveTotals($summary);
 
-        $sumInvoiceTaxes = new SummarizeInvoiceTaxes();
+        $sumInvoiceTaxes = new SummarizeInvoiceTaxes;
         $sumInvoiceTaxes->handle($invoice->getTaxesTotals(), $options);
         $sumInvoiceTaxes->saveTotals($summary);
 
-        $classificationsGroup = new GroupClassifications();
+        $classificationsGroup = new GroupClassifications;
         [$icls, $ecls] = $classificationsGroup->handle($invoice->getInvoiceDetails(), $options);
 
         $summary->setIncomeClassifications($icls);

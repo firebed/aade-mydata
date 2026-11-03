@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Models\HasSchemaValidation;
@@ -14,14 +16,16 @@ class DeliveryOutcome extends OutcomeDetails implements ValidatesSchema
 {
     use HasSchemaValidation;
 
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-        array_unshift($this->expectedOrder, 'qrUrl');
-    }
+    protected array $expectedOrder = [
+        'qrUrl',
+        'outcome',
+        'deliveredWithoutRecipient',
+        'deliveredPackaging',
+    ];
 
     /**
      * @return string|null Το URL του QR code του Δελτίου Αποστολής ή του Ομαδικού QR Code
+     *
      * @version 2.0.1
      */
     public function getQrUrl(): ?string
@@ -30,9 +34,8 @@ class DeliveryOutcome extends OutcomeDetails implements ValidatesSchema
     }
 
     /**
-     * @param string $qrUrl Το URL του QR code του Δελτίου Αποστολής ή του Ομαδικού QR Code
+     * @param  string  $qrUrl  Το URL του QR code του Δελτίου Αποστολής ή του Ομαδικού QR Code
      *
-     * @return static
      * @version 2.0.1
      */
     public function setQrUrl(string $qrUrl): static
@@ -42,13 +45,13 @@ class DeliveryOutcome extends OutcomeDetails implements ValidatesSchema
 
     public function toXml(): string
     {
-        return (new DeliveryOutcomeWriter())->asXml($this);
+        return (new DeliveryOutcomeWriter)->asXml($this);
     }
 
     public function validate(): array
     {
-        $xml = (new DeliveryOutcomeWriter())->asXml($this);
+        $xml = (new DeliveryOutcomeWriter)->asXml($this);
 
-        return $this->validateSchema($xml, 'ConfirmDeliveryOutcome-' . Invoice::VERSION . '.xsd');
+        return $this->validateSchema($xml, 'ConfirmDeliveryOutcome-'.Invoice::VERSION.'.xsd');
     }
 }

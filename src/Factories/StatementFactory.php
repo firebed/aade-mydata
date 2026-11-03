@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Factories;
 
+use Firebed\AadeMyData\Enums\Statements\LiableUserCategory;
 use Firebed\AadeMyData\Enums\Statements\ProviderType;
 use Firebed\AadeMyData\Models\Statements\Statement;
 
@@ -19,7 +22,7 @@ class StatementFactory extends Factory
             'statementId' => fake()->randomNumber(3),
             'submissionDateTime' => fake()->dateTimeBetween('-2 years', 'now')->format('Y-m-d\TH:i:s'),
             'entityVatNumber' => fake()->numerify('#########'),
-            'liableUserCategory' => fake()->randomElement(ProviderType::cases()),
+            'liableUserCategory' => fake()->randomElement(LiableUserCategory::cases()),
             'providerType' => fake()->randomElement(ProviderType::cases()),
             'isB2BTransactions' => fake()->boolean(),
             'isB2CTransactions' => fake()->boolean(),

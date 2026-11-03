@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Models\HasSchemaValidation;
 use Firebed\AadeMyData\Models\Invoice;
-use Firebed\AadeMyData\Models\Type;
+use Firebed\AadeMyData\Models\Model;
 use Firebed\AadeMyData\Models\ValidatesSchema;
 use Firebed\AadeMyData\Xml\DigitalGoodsMovement\DeliveryRejectionWriter;
 
-class DeliveryRejection extends Type implements ValidatesSchema
+class DeliveryRejection extends Model implements ValidatesSchema
 {
     use HasSchemaValidation;
 
@@ -23,7 +25,7 @@ class DeliveryRejection extends Type implements ValidatesSchema
         parent::__construct();
 
         if (is_numeric($qrUrlOrMark)) {
-            $this->setInvoiceMark($qrUrlOrMark);
+            $this->setInvoiceMark((int) $qrUrlOrMark);
         } elseif (is_string($qrUrlOrMark)) {
             $this->setQrUrl($qrUrlOrMark);
         }
@@ -35,6 +37,7 @@ class DeliveryRejection extends Type implements ValidatesSchema
 
     /**
      * @return string|null Το URL του QR code του Δελτίου Αποστολής ή του Ομαδικού QR Code
+     *
      * @version 2.0.1
      */
     public function getQrUrl(): ?string
@@ -43,9 +46,8 @@ class DeliveryRejection extends Type implements ValidatesSchema
     }
 
     /**
-     * @param string $qrUrl Το URL του QR code του Δελτίου Αποστολής ή του Ομαδικού QR Code
+     * @param  string  $qrUrl  Το URL του QR code του Δελτίου Αποστολής ή του Ομαδικού QR Code
      *
-     * @return static
      * @version 2.0.1
      */
     public function setQrUrl(string $qrUrl): static
@@ -62,8 +64,7 @@ class DeliveryRejection extends Type implements ValidatesSchema
     }
 
     /**
-     * @param int $mark Μοναδικός Αριθμός Καταχώρησης Παραστατικού
-     * @return $this
+     * @param  int  $mark  Μοναδικός Αριθμός Καταχώρησης Παραστατικού
      */
     public function setInvoiceMark(int $mark): static
     {
@@ -72,6 +73,7 @@ class DeliveryRejection extends Type implements ValidatesSchema
 
     /**
      * @return string|null Αιτιολογία απόρριψης
+     *
      * @version 2.0.1
      */
     public function getRejectionReason(): ?string
@@ -80,8 +82,8 @@ class DeliveryRejection extends Type implements ValidatesSchema
     }
 
     /**
-     * @param string $rejectionReason Αιτιολογία απόρριψης
-     * @return static
+     * @param  string  $rejectionReason  Αιτιολογία απόρριψης
+     *
      * @version 2.0.1
      */
     public function setRejectionReason(string $rejectionReason): static
@@ -91,14 +93,14 @@ class DeliveryRejection extends Type implements ValidatesSchema
 
     public function toXml(): string
     {
-        return (new DeliveryRejectionWriter())->asXml($this);
+        return (new DeliveryRejectionWriter)->asXml($this);
     }
 
     public function validate(): array
     {
-        $xml = (new DeliveryRejectionWriter())->asXml($this);
+        $xml = (new DeliveryRejectionWriter)->asXml($this);
 
-        return $this->validateSchema($xml, 'RejectDeliveryNote-' . Invoice::VERSION . '.xsd');
+        return $this->validateSchema($xml, 'RejectDeliveryNote-'.Invoice::VERSION.'.xsd');
 
     }
 }

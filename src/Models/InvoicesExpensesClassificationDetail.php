@@ -1,17 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
-class InvoicesExpensesClassificationDetail extends Type
+use Firebed\AadeMyData\Casts\Arr;
+
+class InvoicesExpensesClassificationDetail extends Model
 {
     protected array $expectedOrder = [
         'lineNumber',
         'expensesClassificationDetailData',
     ];
 
-    protected array $casts = [
-        'expensesClassificationDetailData' => ExpensesClassification::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'expensesClassificationDetailData' => Arr::of(ExpensesClassification::class),
+        ];
+    }
 
     /**
      * @return int|null Αριθμός Γραμμής
@@ -24,7 +31,7 @@ class InvoicesExpensesClassificationDetail extends Type
     /**
      * Αναφέρεται στον αντίστοιχο αριθμό γραμμής του αρχικού παραστατικού με Μοναδικός Αριθμός Καταχώρησης αυτό του πεδίου mark.
      *
-     * @param int $lineNumber Αριθμός Γραμμής
+     * @param  int  $lineNumber  Αριθμός Γραμμής
      */
     public function setLineNumber(int $lineNumber): static
     {
@@ -45,19 +52,10 @@ class InvoicesExpensesClassificationDetail extends Type
     }
 
     /**
-     * @param ExpensesClassification[] $expensesClassificationDetailData
+     * @param  ExpensesClassification[]  $expensesClassificationDetailData
      */
     public function setExpensesClassificationDetailData(array $expensesClassificationDetailData): static
     {
         return $this->set('expensesClassificationDetailData', $expensesClassificationDetailData);
-    }
-
-    public function set($key, $value): static
-    {
-        if ($key === 'expensesClassificationDetailData' && $value !== null && ! is_array($value)) {
-            return $this->push($key, $value);
-        }
-
-        return parent::set($key, $value);
     }
 }

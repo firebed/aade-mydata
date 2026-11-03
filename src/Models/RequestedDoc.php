@@ -1,7 +1,8 @@
 <?php
 
-namespace Firebed\AadeMyData\Models;
+declare(strict_types=1);
 
+namespace Firebed\AadeMyData\Models;
 
 /**
  * <p>Στις περιπτώσεις που ο χρήστης καλέσει μια εκ των δυο μεθόδων λήψης δεδομένων
@@ -17,16 +18,19 @@ namespace Firebed\AadeMyData\Models;
  * χρησιμοποιούνται στην επόμενη κλήση της ίδιας μεθόδου που είχε καλεστεί από
  * τον χρήστη.</p>
  */
-class RequestedDoc extends Type
+class RequestedDoc extends Model implements Paginated
 {
-    protected array $casts = [
-        'continuationToken' => ContinuationToken::class,
-        'invoicesDoc' => InvoicesDoc::class,
-        'cancelledInvoicesDoc' => CancelledInvoicesDoc::class,
-        'incomeClassificationsDoc' => IncomeClassificationsDoc::class,
-        'expensesClassificationsDoc' => ExpensesClassificationsDoc::class,
-        'paymentMethodsDoc' => PaymentMethodsDoc::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'continuationToken' => ContinuationToken::class,
+            'invoicesDoc' => InvoicesDoc::class,
+            'cancelledInvoicesDoc' => CancelledInvoicesDoc::class,
+            'incomeClassificationsDoc' => IncomeClassificationsDoc::class,
+            'expensesClassificationsDoc' => ExpensesClassificationsDoc::class,
+            'paymentMethodsDoc' => PaymentMethodsDoc::class,
+        ];
+    }
 
     /**
      * @return ContinuationToken|null Στοιχείο για την τμηματική λήψη αποτελεσμάτων
@@ -70,6 +74,7 @@ class RequestedDoc extends Type
 
     /**
      * @return PaymentMethodsDoc|null Λίστα Τρόπων Πληρωμής
+     *
      * @version 1.0.8
      */
     public function getPaymentMethods(): ?PaymentMethodsDoc

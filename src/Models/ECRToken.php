@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
 /**
  * @version 1.0.8
  */
-class ECRToken extends Type
+class ECRToken extends Model
 {
     protected array $expectedOrder = [
         'SigningAuthor',
@@ -17,7 +19,7 @@ class ECRToken extends Type
         if ($signingAuthor !== null || $sessionNumber !== null) {
             parent::__construct([
                 'SigningAuthor' => $signingAuthor,
-                'SessionNumber' => $sessionNumber
+                'SessionNumber' => $sessionNumber,
             ]);
         }
     }
@@ -35,7 +37,7 @@ class ECRToken extends Type
     /**
      * Μέγιστο επιτρεπτό μήκος 20
      *
-     * @param string $signingAuthor ECR id: Αριθμός μητρώου του φορολογικού μηχανισμού.
+     * @param  string  $signingAuthor  ECR id: Αριθμός μητρώου του φορολογικού μηχανισμού.
      *
      * @version 1.0.8
      */
@@ -57,7 +59,7 @@ class ECRToken extends Type
     /**
      * Μοναδικός 6-ψήφιος κωδικός που χαρακτηρίζει την κάθε συναλλαγή.
      *
-     * @param string $sessionNumber Υπογραφή
+     * @param  string  $sessionNumber  Υπογραφή
      *
      * @version 1.0.8
      */

@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Xml\DigitalGoodsMovement;
 
-use Firebed\AadeMyData\Models\DigitalGoodsMovement\Transport;
+use Firebed\AadeMyData\Models\DigitalGoodsMovement\DeliveryOutcome;
+use Firebed\AadeMyData\Xml\Dom;
 use Firebed\AadeMyData\Xml\XMLWriter;
 
 /**
- * @extends XMLWriter<Transport>
+ * @extends XMLWriter<DeliveryOutcome>
+ *
  * @version 2.0.1
  */
 class DeliveryOutcomeWriter extends XMLWriter
@@ -14,13 +18,8 @@ class DeliveryOutcomeWriter extends XMLWriter
     /** @noinspection PhpUnhandledExceptionInspection */
     public function asXml($data): string
     {
-        $rootNode = $this->document->createElement('ConfirmDeliveryOutcomeRequest');
-        $this->document->appendChild($rootNode);
+        $this->buildModel($this->document, 'ConfirmDeliveryOutcomeRequest', $data);
 
-        foreach ($data->sortedAttributes() as $key => $value) {
-            $this->build($rootNode, $key, $value);
-        }
-
-        return $this->document->saveXML();
+        return Dom::save($this->document);
     }
 }

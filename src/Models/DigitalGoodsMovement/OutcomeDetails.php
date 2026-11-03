@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
+use Firebed\AadeMyData\Casts\Arr;
 use Firebed\AadeMyData\Enums\DigitalGoodsMovement\DeliveryOutcomeType;
-use Firebed\AadeMyData\Models\Type;
+use Firebed\AadeMyData\Models\Model;
 
 /**
  * @version 2.0.1
  */
-class OutcomeDetails extends Type
+class OutcomeDetails extends Model
 {
     protected array $expectedOrder = [
         'outcome',
@@ -16,13 +19,17 @@ class OutcomeDetails extends Type
         'deliveredPackaging',
     ];
 
-    protected array $casts = [
-        'outcome' => DeliveryOutcomeType::class,
-        'deliveredPackaging' => PackagingDetail::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'outcome' => DeliveryOutcomeType::class,
+            'deliveredPackaging' => Arr::of(PackagingDetail::class),
+        ];
+    }
 
     /**
      * @return DeliveryOutcomeType|null Το αποτέλεσμα της παράδοσης
+     *
      * @version 2.0.1
      */
     public function getOutcome(): ?DeliveryOutcomeType
@@ -31,8 +38,8 @@ class OutcomeDetails extends Type
     }
 
     /**
-     * @param DeliveryOutcomeType $outcome Το αποτέλεσμα της παράδοσης
-     * @return static
+     * @param  DeliveryOutcomeType  $outcome  Το αποτέλεσμα της παράδοσης
+     *
      * @version 2.0.1
      */
     public function setOutcome(DeliveryOutcomeType $outcome): static
@@ -41,7 +48,8 @@ class OutcomeDetails extends Type
     }
 
     /**
-     * @return PackagingDetail|null Έχει τιμή true αν η παράδοση έγινε χωρίς την παρουσία του παραλήπτη
+     * @return bool|null Έχει τιμή true αν η παράδοση έγινε χωρίς την παρουσία του παραλήπτη
+     *
      * @version 2.0.1
      */
     public function getDeliveredWithoutRecipient(): ?bool
@@ -50,8 +58,8 @@ class OutcomeDetails extends Type
     }
 
     /**
-     * @param bool $deliveredWithoutRecipient Ένδειξη αν η παράδοση έγινε χωρίς την παρουσία του παραλήπτη
-     * @return static
+     * @param  bool  $deliveredWithoutRecipient  Ένδειξη αν η παράδοση έγινε χωρίς την παρουσία του παραλήπτη
+     *
      * @version 2.0.1
      */
     public function setDeliveredWithoutRecipient(bool $deliveredWithoutRecipient): static
@@ -61,6 +69,7 @@ class OutcomeDetails extends Type
 
     /**
      * @return PackagingDetail[]|null Λίστα με τις παραδοθείσες συσκευασίες
+     *
      * @version 2.0.1
      */
     public function getDeliveredPackaging(): ?array
@@ -69,8 +78,8 @@ class OutcomeDetails extends Type
     }
 
     /**
-     * @param PackagingDetail[]|null $deliveredPackaging Λίστα με τις παραδοθείσες συσκευασίες
-     * @return static
+     * @param  PackagingDetail[]  $deliveredPackaging  Λίστα με τις παραδοθείσες συσκευασίες
+     *
      * @version 2.0.1
      */
     public function setDeliveredPackaging(array $deliveredPackaging): static
@@ -82,15 +91,4 @@ class OutcomeDetails extends Type
     {
         return $this->push('deliveredPackaging', $packagingDetail);
     }
-
-    public function set($key, $value): static
-    {
-        if ($key === 'deliveredPackaging' && ! is_array($value)) {
-            return $this->push('deliveredPackaging', $value);
-        }
-
-        return parent::set($key, $value);
-    }
-
-
 }

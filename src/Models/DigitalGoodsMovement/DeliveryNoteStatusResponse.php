@@ -1,22 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
+use Firebed\AadeMyData\Casts\Arr;
 use Firebed\AadeMyData\Enums\DigitalGoodsMovement\DeliveryStatus;
-use Firebed\AadeMyData\Models\Type;
+use Firebed\AadeMyData\Models\Model;
 
 /**
  * @version 2.0.1
  */
-class DeliveryNoteStatusResponse extends Type
+class DeliveryNoteStatusResponse extends Model
 {
-    protected array $casts = [
-        'status' => DeliveryStatus::class,
-        'lifecycleHistory' => DeliveryEvent::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'status' => DeliveryStatus::class,
+            'lifecycleHistory' => Arr::of(DeliveryEvent::class),
+        ];
+    }
 
     /**
      * @return string|null Μοναδικός Αριθμός Καταχώρησης Συμβάντος (παράγεται από το myDATA)
+     *
      * @version 2.0.1
      */
     public function getInvoiceMark(): ?string
@@ -26,6 +33,7 @@ class DeliveryNoteStatusResponse extends Type
 
     /**
      * @return DeliveryStatus|null Κωδικός Αποτελέσματος
+     *
      * @version 2.0.1
      */
     public function getStatus(): ?DeliveryStatus
@@ -35,6 +43,7 @@ class DeliveryNoteStatusResponse extends Type
 
     /**
      * @return string|null Ημερομηνία και Ώρα Εκκίνησης/Μεταφόρτωσης Διακίνησης (μορφή ISO 8601)
+     *
      * @version 2.0.1
      */
     public function getDispatchTimestamp(): ?string
@@ -44,25 +53,11 @@ class DeliveryNoteStatusResponse extends Type
 
     /**
      * @return DeliveryEvent[]|null Ιστορικό Γεγονότων Διακίνησης
+     *
      * @version 2.0.1
      */
     public function getLifecycleHistory(): ?array
     {
         return $this->get('lifecycleHistory');
-    }
-
-    public function set($key, $value): static
-    {
-        if ($key === 'lifecycleHistory' && ! is_array($value)) {
-            return $this->push($key, $value);
-        }
-
-        // Workaround to account for the bug where mydata returns the
-        // status as a string instead of an integer.
-        if ($key === 'status' && is_string($value) && ! is_numeric($value)) {
-            return $this->set($key, DeliveryStatus::tryFromName($value));
-        }
-
-        return parent::set($key, $value);
     }
 }

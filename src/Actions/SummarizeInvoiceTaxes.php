@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Actions;
 
 use Firebed\AadeMyData\Actions\Traits\SummarizesInvoiceTaxes;
@@ -11,9 +13,7 @@ class SummarizeInvoiceTaxes
     use SummarizesInvoiceTaxes;
 
     /**
-     * @param TaxesTotals|null $taxes
-     * @param array $options
-     * @return void
+     * @param  array<string, mixed>  $options  Unused, accepted for symmetry with the other summarizers
      */
     public function handle(?TaxesTotals $taxes, array $options = []): void
     {

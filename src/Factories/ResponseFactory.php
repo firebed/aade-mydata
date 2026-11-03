@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Factories;
 
 use Firebed\AadeMyData\Models\Response;
@@ -15,16 +17,16 @@ class ResponseFactory extends Factory
             'index' => 1,
             'invoiceUid' => strtoupper(fake()->sha1()),
             'authenticationCode' => strtoupper(fake()->sha1()),
-            'invoiceMark' => fake()->numerify("900000#########"),
-            'paymentMethodMark' => fake()->numerify("900000#########"),
-            'classificationMark' => fake()->numerify("900000#########"),
+            'invoiceMark' => fake()->numerify('900000#########'),
+            'paymentMethodMark' => fake()->numerify('900000#########'),
+            'classificationMark' => fake()->numerify('900000#########'),
             'qrUrl' => fake()->url(),
             'statusCode' => 'Success',
             'receptionEmails' => [
                 'email' => [
                     fake()->email(),
                     fake()->email(),
-                ]
+                ],
             ],
         ];
     }
@@ -32,13 +34,13 @@ class ResponseFactory extends Factory
     public function cancelled(): self
     {
         return $this->state([
-            'cancellationMark' => fake()->numerify("900000#########")
+            'cancellationMark' => fake()->numerify('900000#########'),
         ])->except([
             'index',
             'invoiceUid',
             'invoiceMark',
             'paymentMethodMark',
-            'qrUrl'
+            'qrUrl',
         ]);
     }
 }

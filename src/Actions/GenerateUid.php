@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Actions;
 
 use Firebed\AadeMyData\Enums\InvoiceType;
@@ -7,9 +9,7 @@ use Firebed\AadeMyData\Enums\InvoiceVariationType;
 
 class GenerateUid
 {
-    private const NORMALIZE_SERIES = true;
-
-    public function handle(string $vatNumber, string $issueDate, int|null $branchId, InvoiceType|string $invoiceType, string $series, int|string $number, InvoiceVariationType|int|null $invoiceVariationType = null): string
+    public function handle(string $vatNumber, string $issueDate, ?int $branchId, InvoiceType|string $invoiceType, string $series, int|string $number, InvoiceVariationType|int|null $invoiceVariationType = null): string
     {
         $attributes = [
             $vatNumber,
@@ -32,8 +32,6 @@ class GenerateUid
      */
     private function normalizeSeries(string $series): string
     {
-        return self::NORMALIZE_SERIES
-            ? mb_convert_encoding($series, 'ISO-8859-7', 'UTF-8')
-            : $series;
+        return mb_convert_encoding($series, 'ISO-8859-7', 'UTF-8');
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
 use Firebed\AadeMyData\Enums\EntityTypes;
@@ -8,7 +10,7 @@ use Firebed\AadeMyData\Traits\HasFactory;
 /**
  * @version 1.0.7
  */
-class EntityType extends Type
+class EntityType extends Model
 {
     use HasFactory;
 
@@ -17,10 +19,13 @@ class EntityType extends Type
         'entityData',
     ];
 
-    protected array $casts = [
-        'type' => EntityTypes::class,
-        'entityData' => Party::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'type' => EntityTypes::class,
+            'entityData' => Party::class,
+        ];
+    }
 
     /**
      * @return EntityTypes|null Κατηγορία Οντότητας
@@ -35,7 +40,7 @@ class EntityType extends Type
     /**
      * Κατηγορία Οντότητας
      *
-     * @param EntityTypes|int $type Κατηγορία Οντότητας
+     * @param  EntityTypes|int  $type  Κατηγορία Οντότητας
      *
      * @version 1.0.7
      */
@@ -45,8 +50,6 @@ class EntityType extends Type
     }
 
     /**
-     * @return Party
-     *
      * @version 1.0.7
      */
     public function getEntityData(): Party
@@ -55,9 +58,6 @@ class EntityType extends Type
     }
 
     /**
-     * @param Party $entityData
-     *
-     * @return EntityType
      * @version 1.0.7
      */
     public function setEntityData(Party $entityData): static

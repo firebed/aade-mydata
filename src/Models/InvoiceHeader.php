@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
 
+use Firebed\AadeMyData\Casts\Arr;
 use Firebed\AadeMyData\Enums\CurrencyCode;
 use Firebed\AadeMyData\Enums\InvoiceType;
 use Firebed\AadeMyData\Enums\InvoiceVariationType;
@@ -11,7 +14,7 @@ use Firebed\AadeMyData\Enums\ReverseDeliveryNotePurpose;
 use Firebed\AadeMyData\Enums\SpecialInvoiceCategory;
 use Firebed\AadeMyData\Traits\HasFactory;
 
-class InvoiceHeader extends Type
+class InvoiceHeader extends Model
 {
     use HasFactory;
 
@@ -49,16 +52,21 @@ class InvoiceHeader extends Type
         'withoutDigitalTransportTracking',
     ];
 
-    protected array $casts = [
-        'invoiceType' => InvoiceType::class,
-        'movePurpose' => MovePurpose::class,
-        'specialInvoiceCategory' => SpecialInvoiceCategory::class,
-        'invoiceVariationType' => InvoiceVariationType::class,
-        'otherCorrelatedEntities' => EntityType::class,
-        'otherDeliveryNoteHeader' => OtherDeliveryNoteHeader::class,
-        'reverseDeliveryNotePurpose' => ReverseDeliveryNotePurpose::class,
-        'receivingNotePurpose' => ReceivingNotePurpose::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'invoiceType' => InvoiceType::class,
+            'movePurpose' => MovePurpose::class,
+            'specialInvoiceCategory' => SpecialInvoiceCategory::class,
+            'invoiceVariationType' => InvoiceVariationType::class,
+            'otherCorrelatedEntities' => Arr::of(EntityType::class),
+            'otherDeliveryNoteHeader' => OtherDeliveryNoteHeader::class,
+            'reverseDeliveryNotePurpose' => ReverseDeliveryNotePurpose::class,
+            'receivingNotePurpose' => ReceivingNotePurpose::class,
+            'correlatedInvoices' => Arr::of('int'),
+            'multipleConnectedMarks' => Arr::of('int'),
+        ];
+    }
 
     /**
      * @return string|null Σειρά παραστατικού
@@ -71,7 +79,7 @@ class InvoiceHeader extends Type
     /**
      * Σε περίπτωση μή έκδοσης σειράς παραστατικού, το πεδίο series πρέπει να έχει την τιμή 0
      *
-     * @param string $series Σειρά παραστατικού
+     * @param  string  $series  Σειρά παραστατικού
      */
     public function setSeries(string $series): static
     {
@@ -87,9 +95,9 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param string $aa ΑΑ Παραστατικού, μέγιστο επιτρεπτό μήκος 50
+     * @param  string  $aa  ΑΑ Παραστατικού, μέγιστο επιτρεπτό μήκος 50
      */
-    public function setAa(string $aa): static
+    public function setAa(string|int $aa): static
     {
         return $this->set('aa', $aa);
     }
@@ -103,7 +111,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param string $issueDate Ημερομηνία Έκδοσης Παραστατικού (Y-m-d)
+     * @param  string  $issueDate  Ημερομηνία Έκδοσης Παραστατικού (Y-m-d)
      */
     public function setIssueDate(string $issueDate): static
     {
@@ -123,7 +131,7 @@ class InvoiceHeader extends Type
      * never written to the InvoicesDoc XML, yet it stays on the model (toArray(), make()).
      * Gateways that transmit through an e-invoicing provider read it to build the issue datetime.
      *
-     * @param string|null $issueTime Ώρα Έκδοσης Παραστατικού hh:mm:ss
+     * @param  string|null  $issueTime  Ώρα Έκδοσης Παραστατικού hh:mm:ss
      */
     public function setIssueTime(?string $issueTime): static
     {
@@ -139,7 +147,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param InvoiceType|string $invoiceType Είδος Παραστατικού
+     * @param  InvoiceType|string  $invoiceType  Είδος Παραστατικού
      */
     public function setInvoiceType(InvoiceType|string $invoiceType): static
     {
@@ -155,7 +163,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param bool|null $vatPaymentSuspension Αναστολή Καταβολής ΦΠΑ
+     * @param  bool|null  $vatPaymentSuspension  Αναστολή Καταβολής ΦΠΑ
      */
     public function setVatPaymentSuspension(?bool $vatPaymentSuspension): static
     {
@@ -173,15 +181,10 @@ class InvoiceHeader extends Type
     /**
      * Ο κωδικός νομισμάτων προέρχεται από την αντίστοιχη λίστα σύμφωνα με το πρότυπο ISO4217.
      *
-     * @param CurrencyCode|string|null $currency Νόμισμα
-     * @return InvoiceHeader
+     * @param  CurrencyCode|string|null  $currency  Νόμισμα
      */
     public function setCurrency(CurrencyCode|string|null $currency): static
     {
-        if ($currency instanceof CurrencyCode) {
-            $currency = $currency->value;
-        }
-
         return $this->set('currency', $currency);
     }
 
@@ -198,7 +201,8 @@ class InvoiceHeader extends Type
      * Πρέπει να συμπληρώνεται μόνο όταν το νόμισμα δεν έχει τιμή EUR.</p>
      * <p>Ελάχιστη τιμή = 0</p>
      * <p>Δεκαδικά ψηφία = 5</p>
-     * @param float|null $exchangeRate Ισοτιμία
+     *
+     * @param  float|null  $exchangeRate  Ισοτιμία
      */
     public function setExchangeRate(?float $exchangeRate): static
     {
@@ -206,7 +210,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @return array|null Συσχετιζόμενα Παραστατικά (ΜΑΡΚ)
+     * @return list<int>|null Συσχετιζόμενα Παραστατικά (ΜΑΡΚ)
      */
     public function getCorrelatedInvoices(): ?array
     {
@@ -214,7 +218,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param int $correlatedInvoice Συσχετιζόμενο Παραστατικό (ΜΑΡΚ)
+     * @param  int  $correlatedInvoice  Συσχετιζόμενο Παραστατικό (ΜΑΡΚ)
      */
     public function addCorrelatedInvoice(int $correlatedInvoice): static
     {
@@ -222,7 +226,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param int[]|null $correlatedInvoices Συσχετιζόμενα Παραστατικά (ΜΑΡΚ)
+     * @param  int[]|null  $correlatedInvoices  Συσχετιζόμενα Παραστατικά (ΜΑΡΚ)
      */
     public function setCorrelatedInvoices(?array $correlatedInvoices): static
     {
@@ -238,7 +242,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param bool|null $selfPricing Ένδειξη Αυτοτιμολόγησης
+     * @param  bool|null  $selfPricing  Ένδειξη Αυτοτιμολόγησης
      */
     public function setSelfPricing(?bool $selfPricing): static
     {
@@ -254,7 +258,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param string|null $dispatchDate Ημερομηνία Έναρξης Αποστολής (Προγραμματισμένη - Σχεδιασμένη - Εκτιμώμενη) Y-m-d
+     * @param  string|null  $dispatchDate  Ημερομηνία Έναρξης Αποστολής (Προγραμματισμένη - Σχεδιασμένη - Εκτιμώμενη) Y-m-d
      */
     public function setDispatchDate(?string $dispatchDate): static
     {
@@ -270,7 +274,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param string|null $dispatchTime Ώρα Έναρξης Αποστολής hh:mm:ss
+     * @param  string|null  $dispatchTime  Ώρα Έναρξης Αποστολής hh:mm:ss
      */
     public function setDispatchTime(?string $dispatchTime): static
     {
@@ -286,7 +290,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param string|null $vehicleNumber Αριθμός Μεταφορικού Μέσου (Προγραμματισμένο - Σχεδιασμένο)
+     * @param  string|null  $vehicleNumber  Αριθμός Μεταφορικού Μέσου (Προγραμματισμένο - Σχεδιασμένο)
      */
     public function setVehicleNumber(?string $vehicleNumber): static
     {
@@ -302,7 +306,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param MovePurpose|string|null $movePurpose Σκοπός Διακίνησης
+     * @param  MovePurpose|string|null  $movePurpose  Σκοπός Διακίνησης
      */
     public function setMovePurpose(MovePurpose|string|null $movePurpose): static
     {
@@ -320,7 +324,7 @@ class InvoiceHeader extends Type
     /**
      * Το πεδίο fuelInvoice ορίζει αν πρόκειται για παραστατικό πώλησης υγρών καυσίμων
      *
-     * @param bool|null $fuelInvoice Ένδειξη Παραστατικό καυσίμων
+     * @param  bool|null  $fuelInvoice  Ένδειξη Παραστατικό καυσίμων
      */
     public function setFuelInvoice(?bool $fuelInvoice): static
     {
@@ -339,7 +343,7 @@ class InvoiceHeader extends Type
      * Οι πιθανές τιμές του πεδίου specialInvoiceCategory περιγράφονται αναλυτικά στον
      * αντίστοιχα πίνακα του Παραρτήματος.
      *
-     * @param SpecialInvoiceCategory|int|null $specialInvoiceCategory Ελάχιστη τιμή = 1, Μέγιστη τιμή = 10
+     * @param  SpecialInvoiceCategory|int|null  $specialInvoiceCategory  Ελάχιστη τιμή = 1, Μέγιστη τιμή = 10
      */
     public function setSpecialInvoiceCategory(SpecialInvoiceCategory|int|null $specialInvoiceCategory): static
     {
@@ -359,7 +363,8 @@ class InvoiceHeader extends Type
      * αντίστοιχα πίνακα του Παραρτήματος. Επίσης, λεπτομέρειες σχετικά με τον τρόπο
      * χρήσης τους από επιχειρησιακής σκοπιάς περιγράφονται στο σχετικό επιχειρησιακό
      * έγγραφο. (Δεν επιτρέπεται στην περίπτωση αποστολής μέσω παρόχων)
-     * @param InvoiceVariationType|int|null $invoiceVariationType Ελάχιστη τιμή = 1, Μέγιστη τιμή = 4
+     *
+     * @param  InvoiceVariationType|int|null  $invoiceVariationType  Ελάχιστη τιμή = 1, Μέγιστη τιμή = 4
      */
     public function setInvoiceVariationType(InvoiceVariationType|int|null $invoiceVariationType): static
     {
@@ -377,7 +382,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param EntityType $entityType Λοιπές συσχετιζόμενες οντότητες
+     * @param  EntityType  $entityType  Λοιπές συσχετιζόμενες οντότητες
      *
      * @version 1.0.7
      */
@@ -387,7 +392,7 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param EntityType[]|null $entities Λοιπές συσχετιζόμενες οντότητες
+     * @param  EntityType[]|null  $entities  Λοιπές συσχετιζόμενες οντότητες
      *
      * @version 1.0.7
      */
@@ -397,7 +402,8 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @return  OtherDeliveryNoteHeader|null Λοιπά Γενικά Στοιχεία Διακίνησης.
+     * @return OtherDeliveryNoteHeader|null Λοιπά Γενικά Στοιχεία Διακίνησης.
+     *
      * @version 1.0.8
      */
     public function getOtherDeliveryNoteHeader(): ?OtherDeliveryNoteHeader
@@ -406,7 +412,8 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param OtherDeliveryNoteHeader|null $otherDeliveryNoteHeader Λοιπά Γενικά Στοιχεία Διακίνησης.
+     * @param  OtherDeliveryNoteHeader|null  $otherDeliveryNoteHeader  Λοιπά Γενικά Στοιχεία Διακίνησης.
+     *
      * @version 1.0.8
      */
     public function setOtherDeliveryNoteHeader(?OtherDeliveryNoteHeader $otherDeliveryNoteHeader): static
@@ -416,6 +423,7 @@ class InvoiceHeader extends Type
 
     /**
      * @return bool Ένδειξη Παραστατικού Διακίνησης
+     *
      * @version 1.0.8
      */
     public function getIsDeliveryNote(): bool
@@ -429,7 +437,8 @@ class InvoiceHeader extends Type
      * ένδειξη isDeliveryNote = true, τότε είναι και δελτίο διακίνησης και θα πρέπει να
      * αποσταλούν και επιπλέον στοιχεία διακίνησης).
      *
-     * @param bool|null $isDeliveryNote Ένδειξη Παραστατικού Διακίνησης
+     * @param  bool|null  $isDeliveryNote  Ένδειξη Παραστατικού Διακίνησης
+     *
      * @version 1.0.8
      */
     public function setIsDeliveryNote(?bool $isDeliveryNote): static
@@ -439,6 +448,7 @@ class InvoiceHeader extends Type
 
     /**
      * @return string|null Τίτλος της Λοιπής Αιτίας Διακίνησης
+     *
      * @version 1.0.8
      */
     public function getOtherMovePurposeTitle(): ?string
@@ -450,7 +460,8 @@ class InvoiceHeader extends Type
      * Το πεδίο otherMovePurposeTitle συμπληρώνεται όταν έχει επιλεγεί ως
      * movePurpose = 19 (Λοιπές Διακινήσεις) και ορίζει τον τίτλο της άλλης διακίνησης.
      *
-     * @param string|null $otherMovePurposeTitle Τίτλος της Λοιπής Αιτίας Διακίνησης
+     * @param  string|null  $otherMovePurposeTitle  Τίτλος της Λοιπής Αιτίας Διακίνησης
+     *
      * @version 1.0.8
      */
     public function setOtherMovePurposeTitle(?string $otherMovePurposeTitle): static
@@ -460,6 +471,7 @@ class InvoiceHeader extends Type
 
     /**
      * @return bool Ένδειξη Είσπραξης Τρίτων
+     *
      * @version 1.0.8
      */
     public function getThirdPartyCollection(): bool
@@ -474,7 +486,8 @@ class InvoiceHeader extends Type
      * ποσά συναλλαγής για λογαριασμό τρίτων (περίπτωση παραστατικού 8.5 - Απόδειξη
      * Επιστροφής POS).
      *
-     * @param bool|null $thirdPartyCollection Ένδειξη Είσπραξης Τρίτων
+     * @param  bool|null  $thirdPartyCollection  Ένδειξη Είσπραξης Τρίτων
+     *
      * @version 1.0.8
      */
     public function setThirdPartyCollection(?bool $thirdPartyCollection): static
@@ -483,7 +496,8 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @return array|null Πολλαπλά Συνδεόμενα MARKs
+     * @return list<int>|null Πολλαπλά Συνδεόμενα MARKs
+     *
      * @version 1.0.9
      */
     public function getMultipleConnectedMarks(): ?array
@@ -492,9 +506,8 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param int $multipleConnectedMark Πολλαπλά Συνδεόμενα MARKs
+     * @param  int  $multipleConnectedMark  Πολλαπλά Συνδεόμενα MARKs
      *
-     * @return $this
      * @version 1.0.9
      */
     public function addMultipleConnectedMark(int $multipleConnectedMark): static
@@ -509,8 +522,8 @@ class InvoiceHeader extends Type
      *
      * Δεν είναι αποδεκτό για τα παραστατικά των τύπων 1.6, 2.4 και 5.1.
      *
-     * @param array|null $multipleConnectedMarks Πολλαπλά Συνδεόμενα MARKs
-     * @return $this
+     * @param  list<int>|null  $multipleConnectedMarks  Πολλαπλά Συνδεόμενα MARKs
+     *
      * @version 1.0.9
      */
     public function setMultipleConnectedMarks(?array $multipleConnectedMarks): static
@@ -520,6 +533,7 @@ class InvoiceHeader extends Type
 
     /**
      * @return string|null ΑΑ Τραπεζιού
+     *
      * @version 1.0.9
      */
     public function getTableAA(): ?string
@@ -531,8 +545,8 @@ class InvoiceHeader extends Type
      * Αποδεκτό μόνο για παραστατικό τύπου 8.6.
      * Μέγιστο επιτρεπτό μήκος 50
      *
-     * @param string|null $tableAA ΑΑ Τραπεζιού
-     * @return $this
+     * @param  string|null  $tableAA  ΑΑ Τραπεζιού
+     *
      * @version 1.0.9
      */
     public function setTableAA(?string $tableAA): static
@@ -542,6 +556,7 @@ class InvoiceHeader extends Type
 
     /**
      * @return bool|null Ένδειξη συνολικής αναίρεσης Δελτίων Παραγγελίας
+     *
      * @version 1.0.9
      */
     public function getTotalCancelDeliveryOrders(): ?bool
@@ -559,8 +574,8 @@ class InvoiceHeader extends Type
      * περίπτωση αυτή το παραστατικό πρέπει να διαβιβάζεται με μια μόνο γραμμή με
      * μηδενικές αξίες και κατηγορία ΦΠΑ την 8 (Εγγραφές χωρίς ΦΠΑ).
      *
-     * @param bool|null $totalCancelDeliveryOrders Ένδειξη συνολικής αναίρεσης Δελτίων Παραγγελίας
-     * @return $this
+     * @param  bool|null  $totalCancelDeliveryOrders  Ένδειξη συνολικής αναίρεσης Δελτίων Παραγγελίας
+     *
      * @version 1.0.9
      */
     public function setTotalCancelDeliveryOrders(?bool $totalCancelDeliveryOrders): static
@@ -570,6 +585,7 @@ class InvoiceHeader extends Type
 
     /**
      * @return bool|null Αντίστροφη Διακίνηση
+     *
      * @version 1.0.12
      */
     public function getReverseDeliveryNote(): ?bool
@@ -581,8 +597,8 @@ class InvoiceHeader extends Type
      * Το πεδίο reverseDeliveryNote ορίζει αν πρόκειται για αντίστροφη διακίνηση
      * στην περίπτωση παραστατικού τύπου 9.3 (Δελτίου Αποστολής)
      *
-     * @param bool|null $reverseDeliveryNote Αντίστροφη Διακίνηση
-     * @return $this
+     * @param  bool|null  $reverseDeliveryNote  Αντίστροφη Διακίνηση
+     *
      * @version 1.0.12
      */
     public function setReverseDeliveryNote(?bool $reverseDeliveryNote): static
@@ -592,6 +608,7 @@ class InvoiceHeader extends Type
 
     /**
      * @return ReverseDeliveryNotePurpose|null Αντίστροφη Διακίνηση
+     *
      * @version 1.0.12
      */
     public function getReverseDeliveryNotePurpose(): ?ReverseDeliveryNotePurpose
@@ -603,8 +620,8 @@ class InvoiceHeader extends Type
      * Το πεδίο reverseDeliveryNotePurpose συμπληρώνεται όταν έχει επιλεγεί ως reverseDeliveryNote = true
      * (ένδειξη αντίστροφης διακίνησης) και ορίζει την αιτία
      *
-     * @param ReverseDeliveryNotePurpose|int|null $reverseDeliveryNotePurpose Αιτία Αντίστροφης Διακίνησης
-     * @return $this
+     * @param  ReverseDeliveryNotePurpose|int|null  $reverseDeliveryNotePurpose  Αιτία Αντίστροφης Διακίνησης
+     *
      * @version 1.0.12
      */
     public function setReverseDeliveryNotePurpose(ReverseDeliveryNotePurpose|int|null $reverseDeliveryNotePurpose): static
@@ -614,6 +631,7 @@ class InvoiceHeader extends Type
 
     /**
      * @return bool|null Ένδειξη Προς Ζύγιση
+     *
      * @version 2.0.1
      */
     public function getToWeigh(): ?bool
@@ -622,8 +640,8 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param bool|null $toWeigh Ένδειξη Προς Ζύγιση
-     * @return $this
+     * @param  bool|null  $toWeigh  Ένδειξη Προς Ζύγιση
+     *
      * @version 2.0.1
      */
     public function setToWeigh(?bool $toWeigh): static
@@ -633,6 +651,7 @@ class InvoiceHeader extends Type
 
     /**
      * @return ReceivingNotePurpose|null Αιτία Έκδοσης Δελτίου Ποσοτικής Παραλαβής
+     *
      * @version 2.0.2
      */
     public function getReceivingNotePurpose(): ?ReceivingNotePurpose
@@ -644,8 +663,8 @@ class InvoiceHeader extends Type
      * Συμπληρώνεται υποχρεωτικά όταν ο τύπος παραστατικού είναι 10.1 ή 10.2
      * (Δελτίο Ποσοτικής Παραλαβής).
      *
-     * @param ReceivingNotePurpose|int|null $receivingNotePurpose Αιτία Έκδοσης Δελτίου Ποσοτικής Παραλαβής
-     * @return $this
+     * @param  ReceivingNotePurpose|int|null  $receivingNotePurpose  Αιτία Έκδοσης Δελτίου Ποσοτικής Παραλαβής
+     *
      * @version 2.0.2
      */
     public function setReceivingNotePurpose(ReceivingNotePurpose|int|null $receivingNotePurpose): static
@@ -655,6 +674,7 @@ class InvoiceHeader extends Type
 
     /**
      * @return string|null Τίτλος της Λοιπής Περίπτωσης της Αιτίας Έκδοσης Δελτίου Ποσοτικής Παραλαβής
+     *
      * @version 2.0.2
      */
     public function getOtherReceivingNotePurposeTitle(): ?string
@@ -665,8 +685,8 @@ class InvoiceHeader extends Type
     /**
      * Συμπληρώνεται μόνο όταν receivingNotePurpose = 7 (ΛΟΙΠΕΣ ΠΕΡΙΠΤΩΣΕΙΣ). Μέγιστο μήκος 150 χαρακτήρες.
      *
-     * @param string|null $otherReceivingNotePurposeTitle Τίτλος Λοιπής Περίπτωσης
-     * @return $this
+     * @param  string|null  $otherReceivingNotePurposeTitle  Τίτλος Λοιπής Περίπτωσης
+     *
      * @version 2.0.2
      */
     public function setOtherReceivingNotePurposeTitle(?string $otherReceivingNotePurposeTitle): static
@@ -676,6 +696,7 @@ class InvoiceHeader extends Type
 
     /**
      * @return bool|null Μη Υπόχρεος Λήπτης (Αφορά Παραστατικό Διακίνησης)
+     *
      * @version 2.0.2
      */
     public function isNonObligatedRecipient(): ?bool
@@ -684,8 +705,8 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param bool|null $nonObligatedRecipient Μη Υπόχρεος Λήπτης (Αφορά Παραστατικό Διακίνησης)
-     * @return $this
+     * @param  bool|null  $nonObligatedRecipient  Μη Υπόχρεος Λήπτης (Αφορά Παραστατικό Διακίνησης)
+     *
      * @version 2.0.2
      */
     public function setNonObligatedRecipient(?bool $nonObligatedRecipient): static
@@ -695,6 +716,7 @@ class InvoiceHeader extends Type
 
     /**
      * @return bool|null Χωρίς Ψηφιακή Παρακολούθηση Διακίνησης
+     *
      * @version 2.0.2
      */
     public function isWithoutDigitalTransportTracking(): ?bool
@@ -703,21 +725,12 @@ class InvoiceHeader extends Type
     }
 
     /**
-     * @param bool|null $withoutDigitalTransportTracking Χωρίς Ψηφιακή Παρακολούθηση Διακίνησης
-     * @return $this
+     * @param  bool|null  $withoutDigitalTransportTracking  Χωρίς Ψηφιακή Παρακολούθηση Διακίνησης
+     *
      * @version 2.0.2
      */
     public function setWithoutDigitalTransportTracking(?bool $withoutDigitalTransportTracking): static
     {
         return $this->set('withoutDigitalTransportTracking', $withoutDigitalTransportTracking);
-    }
-
-    public function set($key, $value): static
-    {
-        if (in_array($key, ['correlatedInvoices', 'otherCorrelatedEntities', 'multipleConnectedMarks']) && ! is_array($value)) {
-            return $this->push($key, $value);
-        }
-
-        return parent::set($key, $value);
     }
 }

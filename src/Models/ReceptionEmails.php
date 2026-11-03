@@ -1,22 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Models;
+
+use Firebed\AadeMyData\Casts\Arr;
 
 /**
  * This class is used to store reception email and is part of
  * <code>Response</code> class.
  *
- * @extends TypeArray<string>
+ * @extends ModelCollection<string>
  */
-class ReceptionEmails extends TypeArray
+class ReceptionEmails extends ModelCollection
 {
-    public function __construct()
+    protected function casts(): array
     {
-        parent::__construct('email');
-    }
-
-    public function set($key, $value): static
-    {
-        return $this->push('email', $value);
+        return [
+            'email' => Arr::of('string'),
+        ];
     }
 }

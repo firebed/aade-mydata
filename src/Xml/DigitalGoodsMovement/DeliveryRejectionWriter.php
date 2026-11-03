@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Firebed\AadeMyData\Xml\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\DeliveryRejection;
+use Firebed\AadeMyData\Xml\Dom;
 use Firebed\AadeMyData\Xml\XMLWriter;
 
 /**
  * @extends XMLWriter<DeliveryRejection>
+ *
  * @version 2.0.1
  */
 class DeliveryRejectionWriter extends XMLWriter
@@ -14,13 +18,8 @@ class DeliveryRejectionWriter extends XMLWriter
     /** @noinspection PhpUnhandledExceptionInspection */
     public function asXml($data): string
     {
-        $rootNode = $this->document->createElement('RejectDeliveryNoteRequest');
-        $this->document->appendChild($rootNode);
+        $this->buildModel($this->document, 'RejectDeliveryNoteRequest', $data);
 
-        foreach ($data->sortedAttributes() as $key => $value) {
-            $this->build($rootNode, $key, $value);
-        }
-
-        return $this->document->saveXML();
+        return Dom::save($this->document);
     }
 }
