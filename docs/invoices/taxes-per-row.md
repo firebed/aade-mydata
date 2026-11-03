@@ -44,17 +44,17 @@ $header->setCurrency('EUR');
 $header->setDispatchDate('2020-04-08');
 $header->setDispatchTime('12:20:00');
 $header->setVehicleNumber('ΕΚΑ 5485');
-$header->setMovePurpose(MovePurpose::TYPE_1);
+$header->setMovePurpose(MovePurpose::SALE);
 ```
 
 ## Αρχικοποίηση των τρόπων πληρωμής
 
 ```php
 use Firebed\AadeMyData\Models\PaymentMethodDetail;
-use Firebed\AadeMyData\Enums\PaymentMethod;
+use Firebed\AadeMyData\Enums\PaymentType;
 
 $payment = new PaymentMethodDetail();
-$payment->setType(PaymentMethod::METHOD_3);
+$payment->setType(PaymentType::CASH);
 $payment->setAmount(1760.00);
 $payment->setPaymentMethodInfo('Payment Method Info...');
 ```
@@ -71,7 +71,7 @@ use Firebed\AadeMyData\Enums\WithheldPercentCategory;
 $row1 = new InvoiceDetails();
 $row1->setLineNumber(1);
 $row1->setNetValue(1000);
-$row1->setVatCategory(VatCategory::VAT_1);
+$row1->setVatCategory(VatCategory::RATE_24);
 $row1->setVatAmount(240);
 $row1->setDiscountOption(true);
 $row1->addIncomeClassification(
@@ -83,11 +83,11 @@ $row1->addIncomeClassification(
 $row2 = new InvoiceDetails();
 $row2->setLineNumber(2);
 $row2->setNetValue(500);
-$row2->setVatCategory(VatCategory::VAT_1);
+$row2->setVatCategory(VatCategory::RATE_24);
 $row2->setVatAmount(120);
 $row2->setDiscountOption(true);
 $row2->setWithheldAmount(100.00);
-$row2->setWithheldPercentCategory(WithheldPercentCategory::TAX_2);
+$row2->setWithheldPercentCategory(WithheldPercentCategory::ROYALTIES_20);
 $row2->addIncomeClassification(
     IncomeClassificationType::E3_561_001,
     IncomeClassificationCategory::CATEGORY_1_3,

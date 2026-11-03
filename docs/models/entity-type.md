@@ -17,7 +17,7 @@ use Firebed\AadeMyData\Models\Party;
 use Firebed\AadeMyData\Enums\EntityTypes;
 
 $entity = new EntityType();
-$entity->setType(EntityTypes::TYPE_3); // Μεταφορέας
+$entity->setType(EntityTypes::CARRIER); // Μεταφορέας
 
 $party = new Party();
 $party->setVatNumber('123456789');

@@ -52,10 +52,10 @@ $header->addCorrelatedInvoice(400000017716190);
 
 ```php
 use Firebed\AadeMyData\Models\PaymentMethodDetail;
-use Firebed\AadeMyData\Enums\PaymentMethod;
+use Firebed\AadeMyData\Enums\PaymentType;
 
 $payment = new PaymentMethodDetail();
-$payment->setType(PaymentMethod::METHOD_3);
+$payment->setType(PaymentType::CASH);
 $payment->setAmount(1760.00);
 $payment->setPaymentMethodInfo('Payment Method Info...');
 ```
@@ -74,7 +74,7 @@ use Firebed\AadeMyData\Enums\WithheldPercentCategory;
 $row1 = new InvoiceDetails();
 $row1->setLineNumber(1);
 $row1->setNetValue(1000);
-$row1->setVatCategory(VatCategory::VAT_1);
+$row1->setVatCategory(VatCategory::RATE_24);
 $row1->setVatAmount(240);
 $row1->addIncomeClassification(
     IncomeClassificationType::E3_561_001, 
@@ -85,7 +85,7 @@ $row1->addIncomeClassification(
 $row2 = new InvoiceDetails();
 $row2->setLineNumber(2);
 $row2->setNetValue(500);
-$row2->setVatCategory(VatCategory::VAT_1);
+$row2->setVatCategory(VatCategory::RATE_24);
 $row2->setVatAmount(120);
 $row2->setDiscountOption(true);
 $row2->addIncomeClassification(

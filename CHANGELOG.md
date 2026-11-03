@@ -5,6 +5,57 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [6.0.0] - Unreleased
+
+### Upgrading
+
+See the [upgrade guide](docs/upgrade-guide.md) and, for coding assistants, the
+[AI upgrade guide](docs/upgrade-guide-ai.md), which lists every rename and behaviour change
+with find/replace rules.
+
+### Breaking
+
+- Requires PHP 8.3. The library declares `strict_types` everywhere.
+- Requires Guzzle 7.8 or newer (`guzzlehttp/guzzle: ^7.8 || ^8.0`).
+- `Models\Type` is `Models\Model` and `Models\TypeArray` is `Models\ModelCollection`.
+- The enum `Enums\PaymentMethod` is `Enums\PaymentType` (the `Models\PaymentMethod` model keeps its name).
+- Enum cases have descriptive names (`PaymentType::CASH`, `VatCategory::RATE_24`, `TaxType::WITHHELD_TAX`, …) and the old code-like names (`METHOD_3`, `VAT_1`, …) are removed. `InvoiceType` keeps its names (`TYPE_1_1`, …). Backing values are unchanged; the appendix pages list the new name of every code and the AI upgrade guide has the full mapping.
+- Model casts are declared by a `casts()` method instead of the `$casts` property, and list attributes with `Arr::of()` (`'invoiceDetails' => Arr::of(InvoiceDetails::class)`, `'correlatedInvoices' => Arr::of('int')`). The base model collects repeated XML elements itself, so every `set()` override is gone, and `ModelCollection` subclasses no longer take the child key in their constructor.
+- An invalid enum value or a wrong type set on a cast attribute throws `InvalidAttributeException` instead of silently storing `null`. Readers parse myDATA XML in `Model::lenient()` mode, where unknown values still read as `null`.
+- Scalar attributes are cast from their getter's return type, so values read from XML come back typed (`getIndex()` returns `1`, not `'1'`), in `toArray()` and `toJson()` too. An empty string means no value.
+- `Invoice::getTaxesTotals()` returns `null` when no taxes totals exist. Empty wrapper elements (`<paymentMethods/>`, `<taxesTotals/>`, `<packingsDeclarations/>`) are no longer written.
+- `ModelCollection::set()` with a single value appends it; a list replaces the items; `null` clears them.
+- Removed: `TransportDetail` and `Invoice::{get,add,set}OtherTransportDetails()` (dropped by myDATA 2.0.1), `InvoiceSummary::{get,set}TotalInformationalTaxAmount()`, `WithheldPercentCategory::affectsTotalGrossValue()`, the `HasIterator` trait (`RequestedBookInfo` is no longer iterable; use `getBookInfo()`).
+- `MyDataRequest` keeps its static configuration API, but it now configures a `Connection` object (`MyDataRequest::defaultConnection()`); the private static properties are gone. The environment must be `dev` or `prod` (or the `Environment` enum).
+- `XMLWriter::buildType()` is `buildModel()`, `XMLReader::createType()` is `createModel()`.
+- The docs folder `docs/types` is `docs/models`.
+
+### Added
+
+- `Http\Connection`: credentials, environment, channel, Guzzle options, gateway and retry policy as an immutable object with a cached Guzzle client. `MyDataRequest::using($connection)` carries one request over it; `MyDataRequest::defaultConnection()` / `setDefaultConnection()` expose the default.
+- `MyData` client bound to a connection, with a method per myDATA call (`sendInvoices()`, `requestDocs()`, `cancelInvoice()`, …), `request()` to bind any request and `lastRequest()` for its XML. Built for multi-tenant code.
+- Retries with exponential backoff on 429, 502, 503, 504 and connection failures, honouring `Retry-After`: `Connection::withRetries()` and `MyDataRequest::setRetries()`. Timeouts are never retried.
+- Rate-limit awareness: `RateLimitExceededException::getRetryAfter()` / `getRetryAt()` read myDATA's `Retry-After` header or its "Try again in N seconds" message; a 429 is retried only when the wait is at most 10 seconds, otherwise it is thrown at once instead of hammering a throttled key. `Connection::withThrottle()` / `MyDataRequest::setThrottle()` space the requests of a connection, and `Connection::withRateLimitWait()` / `MyDataRequest::setRateLimitWait()` sit out the wait and resend. The README documents the limits measured on the sandbox.
+- Pagination generators that follow the continuation token: `pages()` on `RequestDocs`, `RequestTransmittedDocs`, `RequestMyIncome`, `RequestMyExpenses`, `RequestVatInfo` and `RequestE3Info`, and `invoices()` on the document requests, all resumable from a continuation token (`nextPartitionKey`, `nextRowKey`).
+- `Http\Environment` enum.
+- `Model::fromArray()`, `toJson()`, `JsonSerializable`, `unset()`, `cast()`, `Model::lenient()`; `ModelCollection::last()`, `map()`, `filter()`, `childKey()` and `$collection[] = $item`.
+- `Casts\Arr`, `Casts\Cast`, `Exceptions\InvalidAttributeException`.
+- PHPStan (level 7) and Laravel Pint, run in CI with `composer analyse` and `composer lint`.
+
+### Changed
+
+- Guzzle 8 is supported next to Guzzle 7, and both are tested in CI. On Guzzle 8 a timeout before or after the response headers is a `MyDataTimeoutException` (never retried, myDATA may have processed the request) and a connect timeout, where the request never left, is a `MyDataConnectionException` (retried like any other connection failure). On Guzzle 7 every cURL timeout (error 28) is a `MyDataTimeoutException`; 5.x only recognised the ones reported as `RequestException`, so a timeout reported as `ConnectException` could be retried. Guzzle 7 support will be dropped in the next major.
+- The Guzzle client is created once per connection instead of once per request.
+- Casts, child keys and getter types are resolved once per model class and cached.
+- `InvoiceHeader::setAa()` accepts `string|int`; `CancelInvoice`, `CancelDeliveryNote` and `CancelReceivingNote` accept `string|int` marks and VAT numbers.
+- `TaxTotals::getTaxCategory()` returns `?int`, the category code; `setTaxCategory()` still accepts the category enums.
+- `HasLabels::labels()` returns the labels keyed by case value.
+- Request XML is no longer pretty-printed by default; `getRequestXml()` and `getResponseXML()` format on demand.
+- `Connection::make()` and `MyData::connect()` default to the development environment.
+- `ModelCollection::push()` appends one item; `set()` with a list replaces the items.
+- Enums that can be resolved from a case name implement `Enums\TryFromName` (`DeliveryStatus`), which the casts fall back to.
+- Dev dependencies: PHPUnit 11/12, symfony/var-dumper 7. CI tests PHP 8.3, 8.4 and 8.5.
+
 ## [5.14.2] - 2026-11-01
 
 ### Fixed

@@ -37,10 +37,10 @@
 ```php
 use Firebed\AadeMyData\Models\PaymentMethodDetail;
 use Firebed\AadeMyData\Models\ECRToken;
-use Firebed\AadeMyData\Enums\PaymentMethod;
+use Firebed\AadeMyData\Enums\PaymentType;
 
 $pmd = new PaymentMethodDetail();
-$pmd->setType(PaymentMethod::METHOD_6); // Web Banking
+$pmd->setType(PaymentType::WEB_BANKING); // Web Banking
 $pmd->setAmount(50.5);
 $pmd->setPaymentMethodInfo('GR1234567890');
 $pmd->setTipAmount(4.5);
@@ -51,10 +51,10 @@ $pmd->setTipAmount(4.5);
 ```php
 use Firebed\AadeMyData\Models\PaymentMethodDetail;
 use Firebed\AadeMyData\Models\ECRToken;
-use Firebed\AadeMyData\Enums\PaymentMethod;
+use Firebed\AadeMyData\Enums\PaymentType;
 
 $pmd = new PaymentMethodDetail();
-$pmd->setType(PaymentMethod::METHOD_7);
+$pmd->setType(PaymentType::POS);
 $pmd->setTid('example-id');
 $pmd->setAmount(50);
 

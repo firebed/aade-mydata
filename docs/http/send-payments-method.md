@@ -28,7 +28,7 @@ use Firebed\AadeMyData\Models\PaymentMethod;
 use Firebed\AadeMyData\Models\PaymentMethodDetail;
 use Firebed\AadeMyData\Models\ECRToken;
 use Firebed\AadeMyData\Http\SendPaymentsMethod;
-use Firebed\AadeMyData\Enums\PaymentMethod as Payments;
+use Firebed\AadeMyData\Enums\PaymentType as Payments;
 
 try {
     $ecrToken = new ECRToken('signing-author-id', 'session-number');

@@ -70,7 +70,7 @@ $header->setSeries('A');
 $header->setAa(101);
 $header->setIssueDate('2020-04-08');
 $header->setInvoiceType(InvoiceType::TYPE_9_3);
-$header->setMovePurpose(MovePurpose::TYPE_1);
+$header->setMovePurpose(MovePurpose::SALE);
 $header->setOtherDeliveryNoteHeader($otherDeliveryNoteHeader);
 ```
 
@@ -92,9 +92,9 @@ $row1->setLineNumber(1);
 $row1->setItemCode('#KDF11');
 $row1->setItemDescr('Spigen Liquid Crystal Back Cover');
 $row1->setQuantity('1');
-$row1->setMeasurementUnit(UnitMeasurement::UNIT_1);
+$row1->setMeasurementUnit(UnitMeasurement::PIECES);
 $row1->setNetValue(0);
-$row1->setVatCategory(VatCategory::VAT_8);
+$row1->setVatCategory(VatCategory::WITHOUT_VAT);
 $row1->setVatAmount(0);
 $row1->addIncomeClassification(
     NULL, 
@@ -107,9 +107,9 @@ $row2->setLineNumber(2);
 $row2->setItemCode('#KDF22');
 $row2->setItemDescr('Spigen Liquid Air Matte Black');
 $row2->setQuantity('1');
-$row2->setMeasurementUnit(UnitMeasurement::UNIT_1);
+$row2->setMeasurementUnit(UnitMeasurement::PIECES);
 $row2->setNetValue(0);
-$row2->setVatCategory(VatCategory::VAT_8);
+$row2->setVatCategory(VatCategory::WITHOUT_VAT);
 $row2->setVatAmount(0);
 $row2->addIncomeClassification(
     NULL, 

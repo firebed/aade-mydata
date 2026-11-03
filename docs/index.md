@@ -3,6 +3,7 @@
 | Εισαγωγή                  | ΑΑΔΕ myDATA REST API                  | getting-started                         |
 | Εισαγωγή                  | Εγκατάσταση                           | installation                            |
 | Εισαγωγή                  | Αναβάθμιση                            | upgrade-guide                           |
+| Εισαγωγή                  | Αναβάθμιση με AI                      | upgrade-guide-ai                        |
 | Εισαγωγή                  | Σύνοψη Γραμμών                        | squashing-invoice-rows                  |
 | Εισαγωγή                  | Χαρακτηρισμοί / Classifications       | classifications                         |
 | Εισαγωγή                  | Σφάλματα                              | exceptions                              |
@@ -32,26 +33,26 @@
 | Παραδείγματα παραστατικών | Πιστωτικό Στοιχείο Λιανικής           | invoices/credit-retail-invoice          |
 | Παραδείγματα παραστατικών | Ενδοκοινοτικό Τιμολόγιο               | invoices/foreign-invoice                |
 | Παραδείγματα παραστατικών | Ολοκληρωμένο Παράδειγμα               | invoices/complete-example               |
-| Τύποι δεδομένων           | Invoice                               | types/invoice-type                      |
-| Τύποι δεδομένων           | Party                                 | types/party-type                        |
-| Τύποι δεδομένων           | Address                               | types/address-type                      |
-| Τύποι δεδομένων           | PaymentMethodDetail                   | types/payment-method-detail-type        |
-| Τύποι δεδομένων           | ProvidersSignature                    | types/providers-signature-type          |
-| Τύποι δεδομένων           | ECRToken                              | types/ecr-token-type                    |
-| Τύποι δεδομένων           | InvoiceHeader                         | types/invoice-header-type               |
-| Τύποι δεδομένων           | InvoiceRow                            | types/invoice-row-type                  |
-| Τύποι δεδομένων           | InvoiceSummary                        | types/invoice-summary-type              |
-| Τύποι δεδομένων           | EntityType                            | types/entity-type                       |
-| Τύποι δεδομένων           | OtherDeliveryNoteHeader               | types/other-delivery-note-header-type   |
-| Τύποι δεδομένων           | Ship                                  | types/ship-type                         |
-| Τύποι δεδομένων           | TransportDetail                       | types/transport-detail-type             |
-| Τύποι δεδομένων           | IncomeClassification                  | types/income-classification-type        |
-| Τύποι δεδομένων           | ExpensesClassification                | types/expenses-classification-type      |
-| Τύποι δεδομένων           | TaxTotals                             | types/tax-totals-type                   |
-| Τύποι δεδομένων           | Response                              | types/response-type                     |
-| Τύποι δεδομένων           | RequestedDoc                          | types/requested-doc-type                |
-| Τύποι δεδομένων           | BookInfo                              | types/book-info-type                    |
-| Τύποι δεδομένων           | VatInfo                               | types/vat-info-type                     |
+| Μοντέλα                   | Invoice                               | models/invoice-type                      |
+| Μοντέλα                   | Party                                 | models/party-type                        |
+| Μοντέλα                   | Address                               | models/address-type                      |
+| Μοντέλα                   | PaymentMethodDetail                   | models/payment-method-detail-type        |
+| Μοντέλα                   | ProvidersSignature                    | models/providers-signature-type          |
+| Μοντέλα                   | ECRToken                              | models/ecr-token-type                    |
+| Μοντέλα                   | InvoiceHeader                         | models/invoice-header-type               |
+| Μοντέλα                   | InvoiceRow                            | models/invoice-row-type                  |
+| Μοντέλα                   | InvoiceSummary                        | models/invoice-summary-type              |
+| Μοντέλα                   | EntityType                            | models/entity-type                       |
+| Μοντέλα                   | OtherDeliveryNoteHeader               | models/other-delivery-note-header-type   |
+| Μοντέλα                   | Ship                                  | models/ship-type                         |
+| Μοντέλα                   | TransportDetail                       | models/transport-detail-type             |
+| Μοντέλα                   | IncomeClassification                  | models/income-classification-type        |
+| Μοντέλα                   | ExpensesClassification                | models/expenses-classification-type      |
+| Μοντέλα                   | TaxTotals                             | models/tax-totals-type                   |
+| Μοντέλα                   | Response                              | models/response-type                     |
+| Μοντέλα                   | RequestedDoc                          | models/requested-doc-type                |
+| Μοντέλα                   | BookInfo                              | models/book-info-type                    |
+| Μοντέλα                   | VatInfo                               | models/vat-info-type                     |
 | Παράρτημα                 | Είδη παραστατικών                     | appendix/invoice-types                  |
 | Παράρτημα                 | Κατηγορίες ΦΠΑ                        | appendix/vat-categories                 |
 | Παράρτημα                 | Κατηγορίες εξαίρεσης ΦΠΑ              | appendix/vat-exemption-categories       |

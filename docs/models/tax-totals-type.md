@@ -16,11 +16,11 @@
 
 - Το πεδίο `taxType` περιέχει τον κωδικό του φόρου. Μπορεί να πάρει κάθε τιμή
   από τον αντίστοιχο πίνακα του Παραρτήματος.
-  - `TaxType::TYPE_1` για τον [Παρακρατούμενο Φόρο](../appendix/withheld-percent-categories)
-  - `TaxType::TYPE_2` για τα [Τέλη](../appendix/fees-percent-categories)
-  - `TaxType::TYPE_3` για τους [Λοιπούς Φόρους](../appendix/other-taxes-percent-categories)
-  - `TaxType::TYPE_4` για το [Ψηφιακό Τέλος Συναλλαγής](../appendix/stamp-categories)
-  - `TaxType::TYPE_5` για τις Κρατήσεις
+  - `TaxType::WITHHELD_TAX` για τον [Παρακρατούμενο Φόρο](../appendix/withheld-percent-categories)
+  - `TaxType::FEES` για τα [Τέλη](../appendix/fees-percent-categories)
+  - `TaxType::OTHER_TAXES` για τους [Λοιπούς Φόρους](../appendix/other-taxes-percent-categories)
+  - `TaxType::STAMP_DUTY` για το [Ψηφιακό Τέλος Συναλλαγής](../appendix/stamp-categories)
+  - `TaxType::DEDUCTIONS` για τις Κρατήσεις
 - Το πεδίο `taxCategory` μπορεί να πάρει κάθε φορά οποιαδήποτε τιμή από τον
   αντίστοιχο πίνακα του Παραρτήματος του φόρου που αναφέρεται στο πεδίο
   `taxType`.
@@ -39,10 +39,10 @@ use \Firebed\AadeMyData\Enums\WithheldPercentCategory;
 $tax = new TaxTotals();
 
 // Παρακρατούμενος Φόρος
-$tax->setTaxType(TaxType::TYPE_1);
+$tax->setTaxType(TaxType::WITHHELD_TAX);
 
 // Περιπτ. δ’ - Αμοιβές Συμβουλών Διοίκησης - 20%
-$tax->setTaxCategory(WithheldPercentCategory::TAX_3);
+$tax->setTaxCategory(WithheldPercentCategory::MANAGEMENT_CONSULTING_FEES_20);
 
 $tax->setTaxAmount(100);
 ```
@@ -57,10 +57,10 @@ use \Firebed\AadeMyData\Enums\FeesPercentCategory;
 $tax = new TaxTotals();
 
 // Τέλη
-$tax->setTaxType(TaxType::TYPE_2);
+$tax->setTaxType(TaxType::FEES);
 
 // Τέλος στη συνδρομητική τηλεόραση
-$tax->setTaxCategory(FeesPercentCategory::TYPE_6);
+$tax->setTaxCategory(FeesPercentCategory::SUBSCRIPTION_TV_10);
 
 $tax->setTaxAmount(52.66);
 ```
@@ -76,10 +76,10 @@ use \Firebed\AadeMyData\Enums\OtherTaxesPercentCategory;
 $tax = new TaxTotals();
 
 // Λοιποί Φόροι
-$tax->setTaxType(TaxType::TYPE_3);
+$tax->setTaxType(TaxType::OTHER_TAXES);
 
 // Ασφάλιστρα κλάδου ζωής 4%
-$tax->setTaxCategory(OtherTaxesPercentCategory::TAX_3);
+$tax->setTaxCategory(OtherTaxesPercentCategory::LIFE_INSURANCE_PREMIUMS_4);
 
 $tax->setTaxAmount(133.56);
 ```
@@ -96,7 +96,7 @@ use \Firebed\AadeMyData\Enums\TaxType;
 $tax = new TaxTotals();
 
 // Λοιποί Φόροι
-$tax->setTaxType(TaxType::TYPE_5);
+$tax->setTaxType(TaxType::DEDUCTIONS);
 
 $tax->setTaxAmount(20);
 ```

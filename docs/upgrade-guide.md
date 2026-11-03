@@ -1,5 +1,148 @@
 # Οδηγός Αναβάθμισης
 
+## Upgrade guide from 5.x to 6.x
+
+> [!TIP]
+> Αν χρησιμοποιείτε AI assistant (Claude, Copilot, Cursor, ChatGPT) για την αναβάθμιση, δώστε του τον
+> [οδηγό αναβάθμισης για AI](./upgrade-guide-ai): περιέχει κάθε μετονομασία και κάθε αλλαγή συμπεριφοράς
+> με κανόνες find/replace και παραδείγματα πριν/μετά.
+
+### Ενημέρωση composer
+
+Η έκδοση 6 απαιτεί **PHP 8.3** ή νεότερη.
+
+```json
+{
+  "require": {
+    "firebed/aade-mydata": "^6.0"
+  }
+}
+```
+
+### Breaking changes
+
+- **PHP ^8.3.** Η υποστήριξη για PHP 8.1 και 8.2 σταμάτησε.
+- **Guzzle ^7.8 || ^8.0.** Υποστηρίζεται και το Guzzle 8· το Guzzle 7 παραμένει υποστηριζόμενο μέχρι την επόμενη major έκδοση.
+- **Μετονομασίες.** `Models\Type` → `Models\Model`, `Models\TypeArray` → `Models\ModelCollection`,
+  enum `Enums\PaymentMethod` → `Enums\PaymentType` (το μοντέλο `Models\PaymentMethod` δεν αλλάζει).
+  Ο φάκελος τεκμηρίωσης `types` έγινε `models`.
+- **Περιγραφικά ονόματα στα enums.** Π.χ. `PaymentType::CASH` αντί για `PaymentType::METHOD_3`,
+  `TaxType::WITHHELD_TAX` αντί για `TaxType::TYPE_1`. Τα παλιά ονόματα αφαιρέθηκαν. Το `InvoiceType` κρατά τα ονόματα
+  `TYPE_1_1`, `TYPE_1_2`, …. Οι τιμές (backing values) δεν άλλαξαν. Η στήλη «Enum» στις σελίδες του
+  [Παραρτήματος](./appendix/invoice-types) δείχνει το νέο όνομα κάθε κωδικού, και ο [οδηγός για AI](./upgrade-guide-ai)
+  περιέχει τον πλήρη πίνακα παλιό → νέο.
+- **Casts στα μοντέλα.** Η ιδιότητα `protected array $casts` αντικαταστάθηκε από τη μέθοδο `casts()`, και οι λίστες
+  δηλώνονται με `Arr::of()`. Η βασική κλάση συλλέγει πλέον μόνη της τα επαναλαμβανόμενα στοιχεία του XML, οπότε
+  αφαιρέθηκαν όλα τα overrides της `set()`. Αφορά μόνο όσους επεκτείνουν τα μοντέλα του πακέτου:
+
+  ```php
+  use Firebed\AadeMyData\Casts\Arr;
+
+  protected function casts(): array
+  {
+      return [
+          'invoiceHeader'      => InvoiceHeader::class,
+          'invoiceDetails'     => Arr::of(InvoiceDetails::class),
+          'correlatedInvoices' => Arr::of('int'),
+          'invoiceType'        => InvoiceType::class,
+      ];
+  }
+  ```
+
+  Οι `ModelCollection` δεν δέχονται πλέον το όνομα του παιδιού στον constructor: το δηλώνει η μοναδική
+  εγγραφή `Arr::of()` της `casts()`.
+- **Λάθος τιμές πετούν εξαίρεση.** Μια τιμή που δεν αντιστοιχεί σε case του enum (π.χ. `setVatCategory(99)`)
+  ή λάθος τύπος για ένα cast πετάει `Firebed\AadeMyData\Exceptions\InvalidAttributeException` αντί να
+  αποθηκεύεται σιωπηλά ως `null`. Η ανάγνωση XML από το myDATA δεν επηρεάζεται: οι readers τρέχουν σε
+  `Model::lenient()` και οι άγνωστες τιμές διαβάζονται ως `null` όπως πριν.
+- **Τυποποιημένες τιμές μετά την ανάγνωση XML.** Οι getters επιστρέφουν `int`/`float`/`bool` σύμφωνα με τον
+  τύπο επιστροφής τους (π.χ. `getIndex()` δίνει `1` και όχι `'1'`), και το ίδιο ισχύει για `toArray()`/`toJson()`.
+  Ελέγξτε συγκρίσεις με `===` σε strings.
+- **Το κενό string σημαίνει «χωρίς τιμή»** σε κάθε cast attribute (`setClassificationType('')` αποθηκεύει `null`).
+- **`Invoice::getTaxesTotals()` επιστρέφει `null`** όταν δεν έχουν δηλωθεί σύνολα φόρων (πριν επέστρεφε ένα
+  κενό `TaxesTotals` που δεν ήταν συνδεδεμένο με το παραστατικό).
+- **Κενά wrapper elements δεν γράφονται** στο XML (π.χ. δεν παράγεται `<paymentMethods/>`), και το XML δεν μορφοποιείται πλέον
+  με κενά και αλλαγές γραμμής εξ ορισμού (οι `getRequestXml()` / `getResponseXML()` το μορφοποιούν κατ' απαίτηση).
+- **`TaxTotals::getTaxCategory()` επιστρέφει `?int`** (τον κωδικό της κατηγορίας) και η `HasLabels::labels()` επιστρέφει
+  `[τιμή => ετικέτα]`.
+- **`Connection::make()` / `MyData::connect()` προεπιλέγουν το δοκιμαστικό περιβάλλον** αν δεν δοθεί `'prod'`.
+- **Αφαιρέθηκαν:** `TransportDetail` και οι `Invoice::getOtherTransportDetails()/addOtherTransportDetail()/setOtherTransportDetails()`
+  (καταργήθηκαν από το myDATA 2.0.1), `InvoiceSummary::getTotalInformationalTaxAmount()/setTotalInformationalTaxAmount()`,
+  `WithheldPercentCategory::affectsTotalGrossValue()`, το trait `HasIterator` (το `RequestedBookInfo` δεν είναι πλέον
+  iterable· χρησιμοποιήστε `getBookInfo()`).
+- **`MyDataRequest`.** Η στατική ρύθμιση (`init()`, `setCredentials()`, `setEnvironment()`, `verifyClient()`, `setTimeout()`,
+  `setConnectionTimeout()`, `setRequestOptions()`, `setGateway()`, `setHandler()`) λειτουργεί όπως πριν, αλλά πλέον
+  ρυθμίζει ένα αντικείμενο `Connection` (`MyDataRequest::defaultConnection()`). Κώδικας που διάβαζε τις ιδιωτικές
+  στατικές ιδιότητες με reflection πρέπει να αλλάξει. Το περιβάλλον δέχεται μόνο `dev`/`prod` (ή το enum `Environment`).
+
+### Features
+
+#### Σύνδεση ανά tenant και client
+
+```php
+use Firebed\AadeMyData\Http\Connection;
+use Firebed\AadeMyData\MyData;
+
+$mydata = MyData::connect($userId, $subscriptionKey, 'prod');
+
+// ή με πλήρη ρύθμιση
+$mydata = new MyData(
+    Connection::make($userId, $subscriptionKey, 'prod')
+        ->asProvider()
+        ->withTimeout(30)
+        ->withRetries(3)
+);
+
+$response = $mydata->sendInvoices($invoice);
+$xml = $mydata->lastRequest()->getRequestXml();
+
+// Οποιοδήποτε request μπορεί να δεθεί σε μια σύνδεση
+(new SendInvoices)->using($connection)->handle($invoice);
+```
+
+Κάθε `Connection` είναι immutable (οι `with*()` επιστρέφουν αντίγραφο) και κρατά τον δικό της Guzzle client,
+που δημιουργείται μία φορά και επαναχρησιμοποιείται.
+
+#### Αυτόματες επαναλήψεις (retries)
+
+```php
+MyDataRequest::setRetries(3, 500);               // στατική ρύθμιση
+Connection::make(...)->withRetries(3, 500);      // ανά σύνδεση
+```
+
+Επαναλαμβάνονται οι κλήσεις που αποτυγχάνουν με 429, 502, 503, 504 ή αδυναμία σύνδεσης, με διπλασιασμό της
+καθυστέρησης σε κάθε προσπάθεια και σεβασμό του header `Retry-After`. Τα timeouts δεν επαναλαμβάνονται ποτέ,
+γιατί το myDATA μπορεί να έχει ήδη επεξεργαστεί το αίτημα.
+
+#### Όρια κλήσεων
+
+Το myDATA περιορίζει τις κλήσεις ανά παράθυρο περίπου πέντε λεπτών (δείτε [Εγκατάσταση › Όρια κλήσεων](./installation#όρια-κλήσεων-rate-limits)).
+Η `RateLimitExceededException` δίνει πλέον `getRetryAfter()` / `getRetryAt()`, και οι συνδέσεις δέχονται
+`withThrottle(ms)` και `withRateLimitWait(seconds)` (στατικά `setThrottle()`, `setRateLimitWait()`).
+
+#### Αυτόματη σελιδοποίηση
+
+```php
+foreach ((new RequestDocs)->pages(mark: '0', dateFrom: '01/01/2026', dateTo: '31/01/2026') as $page) {
+    // RequestedDoc ανά σελίδα, το continuationToken ακολουθείται αυτόματα
+}
+
+foreach ((new RequestTransmittedDocs)->invoices('0') as $invoice) {
+    // κάθε Invoice κάθε σελίδας
+}
+```
+
+Διαθέσιμο και στα `RequestMyIncome`, `RequestMyExpenses`, `RequestVatInfo`, `RequestE3Info` (`pages()`).
+
+#### Μοντέλα
+
+- `Model::fromArray()`, `toJson()`, `JsonSerializable`, `unset()`, `cast()`, `Model::lenient()`.
+- `ModelCollection::last()`, `map()`, `filter()`, `childKey()`, `$collection[] = $item`.
+
+#### Εργαλεία
+
+Το πακέτο περνά από **PHPStan (level 7)** και **Laravel Pint** στο CI (`composer analyse`, `composer lint`).
+
 ## Upgrade guide within 5.x (Gateway)
 
 ### Breaking changes
@@ -139,7 +282,7 @@ Classifications::expenseClassificationExists('1.1', 'category2_1', 'E3_102_001')
 
 ```php
 use Firebed\AadeMyData\Enums\InvoiceType;
-use Firebed\AadeMyData\Enums\PaymentMethod;
+use Firebed\AadeMyData\Enums\PaymentType;
 use Firebed\AadeMyData\Enums\VatCategory;
 use Firebed\AadeMyData\Enums\CountryCode;
 
@@ -149,17 +292,17 @@ echo InvoiceType::TYPE_1_1->label();
 echo InvoiceType::TYPE_1_2->label();
 // Outputs: Τιμολόγιο Πώλησης / Ενδοκοινοτικές Παραδόσεις
 
-echo PaymentMethod::METHOD_5->label();
+echo PaymentType::ON_CREDIT->label();
 // Outputs: Επί Πιστώσει
 
-echo VatCategory::VAT_1->label();
+echo VatCategory::RATE_24->label();
 // Outputs: ΦΠΑ συντελεστής 24%
 
 echo CountryCode::BE->label();
 // Outputs: Βέλγιο
 
 var_dump(InvoiceType::labels());
-var_dump(PaymentMethod::labels());
+var_dump(PaymentType::labels());
 var_dump(VatCategory::labels());
 var_dump(CountryCode::labels());
 ````
@@ -209,7 +352,7 @@ use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
 new InvoiceDetails([
   'lineNumber' => 1,
   'netValue' => 5,
-  'recType' => RecType::TYPE_2,
+  'recType' => RecType::FEES_LINE_WITH_VAT,
   'incomeClassification' => [
       [
           'classificationType' => IncomeClassificationType::E3_561_001,

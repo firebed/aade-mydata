@@ -32,7 +32,7 @@ https://mydataapidev.aade.gr/RequestTransmittedDocs
 
 > [!TIP]
 > Το αποτέλεσμα της κλήσης επιστρέφει έναν πίνακα από αντικείμενα τύπου
-> [**\Firebed\AadeMyData\Models\RequestedDoc**](../types/requested-doc-type).
+> [**\Firebed\AadeMyData\Models\RequestedDoc**](../models/requested-doc-type).
 > 
 Η κλήση επιστρέφει όσα στοιχεία αφορούν τον χρήστη και έχουν ως αναγνωριστικό
 Μοναδικό Αριθμό Καταχώρησης μεγαλύτερο της παραμέτρου.

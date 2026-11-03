@@ -31,7 +31,7 @@ dateTo. Προαιρετικά η αναζήτηση μπορεί να πραγ�
 
 > [!TIP]
 > Το αποτέλεσμα της κλήσης επιστρέφει έναν πίνακα από αντικείμενα τύπου
-> [**\Firebed\AadeMyData\Models\BookInfo**](../types/book-info-type).
+> [**\Firebed\AadeMyData\Models\BookInfo**](../models/book-info-type).
 
 ## Παρατηρήσεις
 

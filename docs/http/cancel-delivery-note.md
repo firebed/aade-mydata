@@ -34,7 +34,7 @@ try{
 
 > [!TIP]
 > Το αποτέλεσμα της κλήσης επιστρέφει έναν πίνακα από αντικείμενα τύπου
-> [**\Firebed\AadeMyData\Models\Response**](../types/response-type).
+> [**\Firebed\AadeMyData\Models\Response**](../models/response-type).
 
 ```php
 use Firebed\AadeMyData\Http\CancelDeliveryNote;

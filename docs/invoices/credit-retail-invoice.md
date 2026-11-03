@@ -34,10 +34,10 @@ $header->setCurrency('EUR');
 
 ```php
 use Firebed\AadeMyData\Models\PaymentMethodDetail;
-use Firebed\AadeMyData\Enums\PaymentMethod;
+use Firebed\AadeMyData\Enums\PaymentType;
 
 $payment = new PaymentMethodDetail();
-$payment->setType(PaymentMethod::METHOD_3); 
+$payment->setType(PaymentType::CASH); 
 $payment->setAmount(1000);                
 ```
 
@@ -52,7 +52,7 @@ use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
 $row = new InvoiceDetails();
 $row->setLineNumber(1);
 $row->setNetValue(1000);         
-$row->setVatCategory(VatCategory::VAT_1); 
+$row->setVatCategory(VatCategory::RATE_24); 
 $row->setVatAmount(240);
 $row->addIncomeClassification(
     IncomeClassificationType::E3_561_003,     

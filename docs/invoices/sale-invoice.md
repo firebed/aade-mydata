@@ -46,10 +46,10 @@ $header->setCurrency('EUR');
 
 ```php
 use Firebed\AadeMyData\Models\PaymentMethodDetail;
-use Firebed\AadeMyData\Enums\PaymentMethod;
+use Firebed\AadeMyData\Enums\PaymentType;
 
 $payment = new PaymentMethodDetail();
-$payment->setType(PaymentMethod::METHOD_3);
+$payment->setType(PaymentType::CASH);
 $payment->setAmount(1760);
 $payment->setPaymentMethodInfo('Payment Method Info...');
 ```
@@ -65,7 +65,7 @@ use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
 $row1 = new InvoiceDetails();
 $row1->setLineNumber(1);
 $row1->setNetValue(1000);
-$row1->setVatCategory(VatCategory::VAT_1);
+$row1->setVatCategory(VatCategory::RATE_24);
 $row1->setVatAmount(240);
 $row1->setDiscountOption(true);
 $row1->addIncomeClassification(
@@ -77,7 +77,7 @@ $row1->addIncomeClassification(
 $row2 = new InvoiceDetails();
 $row2->setLineNumber(2);
 $row2->setNetValue(500);
-$row2->setVatCategory(VatCategory::VAT_1);
+$row2->setVatCategory(VatCategory::RATE_24);
 $row2->setVatAmount(120);
 $row2->setDiscountOption(true);
 $row2->addIncomeClassification(
@@ -95,9 +95,9 @@ use Firebed\AadeMyData\Enums\TaxType;
 use Firebed\AadeMyData\Enums\WithheldPercentCategory;
 
 $tax = new TaxTotals();
-$tax->setTaxType(TaxType::TYPE_1);
+$tax->setTaxType(TaxType::WITHHELD_TAX);
 $tax->setUnderlyingValue(500);
-$tax->setTaxCategory(WithheldPercentCategory::TAX_2);
+$tax->setTaxCategory(WithheldPercentCategory::ROYALTIES_20);
 $tax->setTaxAmount(100);
 ```
 

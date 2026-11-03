@@ -50,10 +50,10 @@ $header->setCurrency('EUR');
 
 ```php
 use Firebed\AadeMyData\Models\PaymentMethodDetail;
-use Firebed\AadeMyData\Enums\PaymentMethod;
+use Firebed\AadeMyData\Enums\PaymentType;
 
 $payment = new PaymentMethodDetail();
-$payment->setType(PaymentMethod::METHOD_1);
+$payment->setType(PaymentType::DOMESTIC_PAYMENTS_ACCOUNT);
 $payment->setAmount(10000.00);
 $payment->setPaymentMethodInfo('GR1234567890123456789012345');
 ```
@@ -70,9 +70,9 @@ use Firebed\AadeMyData\Enums\VatExemption;
 $row = new InvoiceDetails();
 $row->setLineNumber(1);
 $row->setNetValue(10000.00);
-$row->setVatCategory(VatCategory::VAT_7);
+$row->setVatCategory(VatCategory::EXEMPT);
 $row->setVatAmount(0);
-$row->setVatExemptionCategory(VatExemption::TYPE_14);
+$row->setVatExemptionCategory(VatExemption::ARTICLE_33);
 $row->addIncomeClassification(
     IncomeClassificationType::E3_561_005, // Πωλήσεις αγαθών και υπηρεσιών Εξωτερικού 
     IncomeClassificationCategory::CATEGORY_1_1, // Έσοδα από Πώληση Εμπορευμάτων 

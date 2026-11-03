@@ -12,9 +12,9 @@ composer require firebed/aade-mydata
 ```json
 {
     "require": {
-      "php": "^8.1",
+      "php": "^8.3",
       "ext-dom": "*",
-      "guzzlehttp/guzzle": "^7.0.1"
+      "guzzlehttp/guzzle": "^7.8 || ^8.0"
     }
 }
 ```
@@ -64,6 +64,71 @@ MyDataRequest::init($user_id, $subscription_key, $env);
 MyDataRequest::verifyClient(false);
 ```
 
+### Σύνδεση ανά tenant (`Connection` και `MyData`)
+
+Οι παραπάνω στατικές μέθοδοι ρυθμίζουν την προεπιλεγμένη σύνδεση της διεργασίας. Αν η ίδια εφαρμογή
+εξυπηρετεί πολλούς πελάτες (tenants) ή προτιμάτε ένα αντικείμενο, δημιουργήστε μια `Connection` και έναν
+client `MyData` πάνω της. Η σύνδεση είναι immutable, κρατά τον δικό της HTTP client και την πολιτική επαναλήψεων:
+
+```php
+use Firebed\AadeMyData\Http\Connection;
+use Firebed\AadeMyData\MyData;
+
+$mydata = MyData::connect($user_id, $subscription_key, $env);
+
+// ή με πλήρη ρύθμιση
+$mydata = new MyData(
+    Connection::make($user_id, $subscription_key, $env)
+        ->withTimeout(30)
+        ->withRetries(3)
+);
+
+$responses = $mydata->sendInvoices($invoices);
+
+// Οποιοδήποτε request μπορεί να δεθεί σε μια σύνδεση
+(new SendInvoices())->using($connection)->handle($invoices);
+```
+
+### Επαναλήψεις (retries)
+
+```php
+MyDataRequest::setRetries(3, 500);           // προεπιλεγμένη σύνδεση
+Connection::make(...)->withRetries(3, 500);  // ανά σύνδεση
+```
+
+Επαναλαμβάνονται οι κλήσεις που αποτυγχάνουν με 429, 502, 503, 504 ή αδυναμία σύνδεσης, με διπλασιασμό της
+καθυστέρησης (σε ms) σε κάθε προσπάθεια. Τα timeouts δεν επαναλαμβάνονται ποτέ.
+
+### Όρια κλήσεων (rate limits)
+
+Το myDATA περιορίζει κάθε subscription key με βάση τον **αριθμό κλήσεων σε παράθυρο περίπου πέντε λεπτών**.
+Μετρήσεις στο δοκιμαστικό περιβάλλον (Νοέμβριος 2026): οι `RequestDocs` και `RequestTransmittedDocs` μοιράζονται
+έναν μετρητή **11 κλήσεων ανά παράθυρο 300 δευτερολέπτων** (μετρήθηκε δύο φορές, με και χωρίς
+απόσταση μεταξύ κλήσεων)· μετά, κάθε κλήση τους απαντά HTTP 429 με header `Retry-After`
+και μήνυμα `Rate limit is exceeded. Try again in 298 seconds.` μέχρι να λήξει το παράθυρο. Οι `RequestVatInfo`,
+`RequestMyIncome`, `RequestE3Info` συνέχισαν να απαντούν κανονικά, άρα οι μετρητές είναι ανά ομάδα λειτουργιών.
+Τα όρια του παραγωγικού περιβάλλοντος δεν δημοσιεύονται και μπορεί να διαφέρουν· η βιβλιοθήκη διαβάζει το `Retry-After`.
+
+- Μικρές αναμονές (έως 10 δευτερόλεπτα) επαναλαμβάνονται με `withRetries()`. Μεγαλύτερες **δεν** επαναλαμβάνονται
+  τυφλά: η κλήση αποτυγχάνει με `RateLimitExceededException`, της οποίας οι `getRetryAfter()` / `getRetryAt()`
+  λένε πότε γίνεται ξανά δεκτό το κλειδί.
+- `withRateLimitWait(600)`: περιμένει το `Retry-After` (έως τόσα δευτερόλεπτα) και ξαναστέλνει την κλήση.
+- `withThrottle(28000)`: κρατά τουλάχιστον τόσα ms ανάμεσα σε δύο κλήσεις της σύνδεσης, ώστε μια μεγάλη λήψη
+  να μένει κάτω από το όριο.
+
+```php
+$connection = Connection::make($user_id, $subscription_key, $env)
+    ->withThrottle(28_000)
+    ->withRateLimitWait(600);
+
+foreach ((new RequestTransmittedDocs)->using($connection)->invoices(mark: $lastMark) as $invoice) {
+    $lastMark = max($lastMark, (int) $invoice->getMark());
+}
+```
+
+Κρατήστε το τελευταίο mark που επεξεργαστήκατε και ζητάτε μόνο τα νεότερα παραστατικά. Αν σταματήσετε στην
+εξαίρεση, συνεχίστε αργότερα από το `continuationToken` της τελευταίας σελίδας (`pages(..., nextPartitionKey:, nextRowKey:)`).
+Στατικά: `MyDataRequest::setThrottle()` και `MyDataRequest::setRateLimitWait()`.
 ## Διαθέσιμες λειτουργίες
 - Λήψη Βασικών Στοιχείων Μητρώου ΑΦΜ ([SearchVat](./http/search-vat))
 - Αποστολή παραστατικών ([SendInvoices](./http/send-invoices))

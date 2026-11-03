@@ -34,7 +34,7 @@ https://mydataapidev.aade.gr/RequestDocs
 
 > [!TIP]
 > Το αποτέλεσμα της κλήσης επιστρέφει έναν πίνακα από αντικείμενα τύπου
-> [**\Firebed\AadeMyData\Models\RequestedDoc**](../types/requested-doc-type).
+> [**\Firebed\AadeMyData\Models\RequestedDoc**](../models/requested-doc-type).
 
 Η κλήση επιστρέφει όσα στοιχεία αφορούν τον χρήστη και έχουν ως αναγνωριστικό
 Μοναδικό Αριθμό Καταχώρησης μεγαλύτερο της παραμέτρου.
@@ -80,6 +80,26 @@ try {
   );
 } catch (MyDataException $e) {
     echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
+}
+```
+
+### Αυτόματη σελιδοποίηση
+
+Η `pages()` ακολουθεί μόνη της το `continuationToken` και επιστρέφει κάθε σελίδα (lazy), ενώ η `invoices()`
+επιστρέφει κάθε παραστατικό κάθε σελίδας. Δέχονται τις ίδιες παραμέτρους με την `handle()` εκτός από τα
+`nextPartitionKey` / `nextRowKey`:
+
+```php
+use Firebed\AadeMyData\Http\RequestDocs;
+
+foreach ((new RequestDocs())->pages(mark: "1234567890", dateFrom: "01/01/2026", dateTo: "31/01/2026") as $page) {
+    foreach ($page->getInvoices() ?? [] as $invoice) {
+        // ...
+    }
+}
+
+foreach ((new RequestDocs())->invoices(mark: "1234567890") as $invoice) {
+    // ...
 }
 ```
 

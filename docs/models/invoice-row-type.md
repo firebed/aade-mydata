@@ -110,7 +110,7 @@ use Firebed\AadeMyData\Enums\IncomeClassificationType;
 $row = new InvoiceDetails();
 $row->setLineNumber(1); // ΑΑ Γραμμής
 $row->setNetValue(100.00); // Καθαρή Αξία
-$row->setVatCategory(VatCategory::VAT_1); // Κατηγορία ΦΠΑ 24%
+$row->setVatCategory(VatCategory::RATE_24); // Κατηγορία ΦΠΑ 24%
 $row->setVatAmount(24.00); // Ποσό ΦΠΑ
 
 // Χαρακτηρισμών Εσόδων

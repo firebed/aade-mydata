@@ -1,11 +1,11 @@
 # Είδος Ποσότητας - Μονάδες Μέτρησης
 
-| Κωδικός | Περιγραφή          |
-|---------|--------------------|
-| 1       | Τεμάχια            |
-| 2       | Κιλά               |
-| 3       | Λίτρα              |
-| 4       | Μέτρα              |
-| 5       | Τετραγωνικά Μέτρα  |
-| 6       | Κυβικά Μέτρα       |
-| 7       | Λοιπές Περιπτώσεις |
+| Κωδικός | Enum | Περιγραφή          |
+|---------|------|--------------------|
+| 1 | `UnitMeasurement::PIECES` | Τεμάχια            |
+| 2 | `UnitMeasurement::KILOGRAMS` | Κιλά               |
+| 3 | `UnitMeasurement::LITERS` | Λίτρα              |
+| 4 | `UnitMeasurement::METERS` | Μέτρα              |
+| 5 | `UnitMeasurement::SQUARE_METERS` | Τετραγωνικά Μέτρα  |
+| 6 | `UnitMeasurement::CUBIC_METERS` | Κυβικά Μέτρα       |
+| 7 | `UnitMeasurement::PIECES_OTHER_CASES` | Λοιπές Περιπτώσεις |

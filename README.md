@@ -27,11 +27,12 @@ To use this package, you will need first a `aade id` and a `Subscription key`. Y
 
 - Development: [Sign up to mydata development api](https://mydata-dev-register.azurewebsites.net/)
 - Production: [Sign up to mydata production api](https://www.aade.gr/mydata)
-- guzzlehttp/guzzle >= 7.0
+- guzzlehttp/guzzle ^7.8 || ^8.0
 
 | Version | PHP | myDATA  | Support |
 |---------|-----|---------|---------|
-| ^v5.x   | 8.1 | v2.0.2  | Active  |
+| ^v6.x   | 8.3 | v2.0.2  | Active  |
+| ^v5.x   | 8.1 | v2.0.2  | Security fixes |
 | ^v5.x   | 8.1 | v2.0.1  | Ended   |
 | ^v5.x   | 8.1 | v1.0.12 | Ended   |
 | ^v4.x   | 8.1 | v1.0.8  | Ended   |
@@ -46,6 +47,12 @@ To install through Composer, run the following command:
 ```
 composer require firebed/aade-mydata
 ```
+
+## Upgrading
+
+Upgrading from 5.x? Read the [upgrade guide](docs/upgrade-guide.md). If a coding assistant does the
+upgrade for you, hand it the [AI upgrade guide](docs/upgrade-guide-ai.md), which lists every rename
+and behaviour change with find/replace rules.
 
 ## Setup
 
@@ -64,6 +71,51 @@ For development, you may need to disable client verification if you are not usin
 
 ```php
 MyDataRequest::verifyClient(false);
+```
+
+### Connections and the `MyData` client
+
+The static setters above configure the process-wide default connection. When one process serves
+several tenants, or you simply prefer an object, build a `Connection` and a `MyData` client on it.
+A connection is immutable, keeps its own Guzzle client and carries the retry policy:
+
+```php
+use Firebed\AadeMyData\Http\Connection;
+use Firebed\AadeMyData\MyData;
+
+$mydata = MyData::connect($user_id, $subscription_key, 'prod');
+
+// or fully configured
+$mydata = new MyData(
+    Connection::make($user_id, $subscription_key, 'prod')
+        ->asProvider()          // myDataProvider channel
+        ->withTimeout(30)
+        ->withRetries(3)        // retry 429 / 502 / 503 / 504 / connection failures with backoff
+);
+
+$responses = $mydata->sendInvoices($invoices);
+$xml = $mydata->lastRequest()->getRequestXml();
+
+// Any request can be bound to a connection
+(new SendInvoices())->using($connection)->handle($invoices);
+```
+
+Retries are also available on the default connection with `MyDataRequest::setRetries(3)`. Timeouts
+are never retried, because myDATA may have processed the request already.
+
+### Pagination
+
+Requests that page their results (`RequestDocs`, `RequestTransmittedDocs`, `RequestMyIncome`,
+`RequestMyExpenses`, `RequestVatInfo`, `RequestE3Info`) can follow the continuation token for you:
+
+```php
+foreach ((new RequestTransmittedDocs())->invoices(mark: '0') as $invoice) {
+    // every Invoice of every page, fetched lazily
+}
+
+foreach ((new RequestDocs())->pages(mark: '0', dateFrom: '01/01/2026', dateTo: '31/01/2026') as $page) {
+    // a RequestedDoc per page
+}
 ```
 
 ## Transmitting through a provider (Gateway)
@@ -100,6 +152,44 @@ and the attributes a provider needs that myDATA has no field for: the issue time
 
 To write a gateway for another provider, see [Custom gateway](docs/getting-started.md#custom-gateway).
 
+### Rate limits
+
+myDATA throttles each subscription key by the **number of calls in a window of about five
+minutes**, not by calls per second. Measured on the sandbox in November 2026: `RequestDocs`
+and `RequestTransmittedDocs` share one counter of **11 calls per 300-second window** (measured twice,
+with and without spacing between calls), after which
+every call to either of them answers HTTP 429 with a `Retry-After` header and the body
+`{"statusCode":429,"message":"Rate limit is exceeded. Try again in 298 seconds."}` until the
+window ends. `RequestVatInfo`, `RequestMyIncome` and `RequestE3Info` kept answering while the
+document requests were throttled, so the counters are per operation group. The production
+limits are not published and may differ; the library reads whatever `Retry-After` says.
+
+What the library does with a 429:
+
+- **Short waits are retried** (`withRetries()`): a `Retry-After` of up to 10 seconds is waited
+  out like any other retry. A longer one is **not** retried blindly: the request fails with
+  `RateLimitExceededException`, whose `getRetryAfter()` / `getRetryAt()` say when the key is
+  accepted again, so a queue job can release itself until then.
+- **`withRateLimitWait(600)`** sits out a `Retry-After` of up to the given seconds and sends the
+  request again. For a sync job in a worker, waiting five minutes beats failing.
+- **`withThrottle(28000)`** keeps at least that many milliseconds between two requests of the
+  connection, which keeps a long run under the window in the first place.
+
+```php
+$connection = Connection::make($user_id, $subscription_key, 'prod')
+    ->withThrottle(28_000)        // one document call every 28 s stays under ~11 per 5 min
+    ->withRateLimitWait(600);     // and if myDATA still says "try again in N seconds", wait
+
+foreach ((new RequestTransmittedDocs)->using($connection)->invoices(mark: $lastMark) as $invoice) {
+    $lastMark = max($lastMark, (int) $invoice->getMark());
+}
+```
+
+Keep the last mark you processed and ask for documents after it: that is the single
+biggest saver of calls. If you stop on the exception instead, resume later with the last
+page's continuation token: `pages(..., nextPartitionKey: $token->getNextPartitionKey(),
+nextRowKey: $token->getNextRowKey())`. The static equivalents are `MyDataRequest::setThrottle()`
+and `MyDataRequest::setRateLimitWait()`.
 ## Send invoice example
 
 ```php
