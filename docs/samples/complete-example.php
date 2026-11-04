@@ -1,60 +1,52 @@
 <?php
 
-use Firebed\AadeMyData\Models\Issuer;
+use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
+use Firebed\AadeMyData\Enums\IncomeClassificationType;
+use Firebed\AadeMyData\Enums\InvoiceType;
+use Firebed\AadeMyData\Enums\PaymentType;
+use Firebed\AadeMyData\Enums\TaxType;
+use Firebed\AadeMyData\Enums\VatCategory;
+use Firebed\AadeMyData\Enums\WithheldPercentCategory;
 use Firebed\AadeMyData\Models\Address;
 use Firebed\AadeMyData\Models\Counterpart;
-use Firebed\AadeMyData\Models\InvoiceHeader;
-use Firebed\AadeMyData\Models\PaymentMethodDetail;
-use Firebed\AadeMyData\Models\InvoiceDetails;
-use Firebed\AadeMyData\Models\TaxTotals;
 use Firebed\AadeMyData\Models\Invoice;
-use Firebed\AadeMyData\Enums\PaymentType;
-use Firebed\AadeMyData\Enums\InvoiceType;
-use Firebed\AadeMyData\Enums\VatCategory;
-use Firebed\AadeMyData\Enums\IncomeClassificationType;
-use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
-use Firebed\AadeMyData\Enums\TaxType;
-use Firebed\AadeMyData\Enums\WithheldPercentCategory;
+use Firebed\AadeMyData\Models\InvoiceDetails;
+use Firebed\AadeMyData\Models\InvoiceHeader;
+use Firebed\AadeMyData\Models\Issuer;
+use Firebed\AadeMyData\Models\PaymentMethodDetail;
+use Firebed\AadeMyData\Models\TaxTotals;
 
-// Αρχικοποίηση του εκδότη παραστατικού
+// Issuer (you)
 $issuer = new Issuer();
 $issuer->setVatNumber('888888888');
 $issuer->setCountry('GR');
-$issuer->setBranch(1);
+$issuer->setBranch(0);
 
-// Αρχικοποίηση της διεύθυνσης του λήπτη παραστατικού
+// Recipient
 $address = new Address();
 $address->setPostalCode('22222');
 $address->setCity('IRAKLIO');
 
-// Αρχικοποίηση του λήπτη παραστατικού
 $counterpart = new Counterpart();
 $counterpart->setVatNumber('999999999');
 $counterpart->setCountry('GR');
 $counterpart->setBranch(0);
 $counterpart->setAddress($address);
 
-// Αρχικοποίηση της επικεφαλίδας παραστατικού
+// Header
 $header = new InvoiceHeader();
 $header->setSeries('A');
 $header->setAa(101);
-$header->setIssueDate('2020-04-08');
+$header->setIssueDate(date('Y-m-d'));
 $header->setInvoiceType(InvoiceType::TYPE_1_1);
 $header->setCurrency('EUR');
 
-// Αρχικοποίηση των τρόπων πληρωμής
-$payment = new PaymentMethodDetail();
-$payment->setType(PaymentType::CASH);
-$payment->setAmount(1760);
-$payment->setPaymentMethodInfo('Payment Method Info...');
-
-// Αρχικοποίηση των προϊόντων
+// Lines
 $row1 = new InvoiceDetails();
 $row1->setLineNumber(1);
 $row1->setNetValue(1000);
 $row1->setVatCategory(VatCategory::RATE_24);
 $row1->setVatAmount(240);
-$row1->setDiscountOption(true);
 $row1->addIncomeClassification(
     IncomeClassificationType::E3_561_001,
     IncomeClassificationCategory::CATEGORY_1_2,
@@ -66,31 +58,34 @@ $row2->setLineNumber(2);
 $row2->setNetValue(500);
 $row2->setVatCategory(VatCategory::RATE_24);
 $row2->setVatAmount(120);
-$row2->setDiscountOption(true);
 $row2->addIncomeClassification(
     IncomeClassificationType::E3_561_001,
     IncomeClassificationCategory::CATEGORY_1_3,
     500
 );
 
-// Αρχικοποίηση φόρων παραστατικού
+// Withholding tax for the whole invoice: 20% of line 2
 $tax = new TaxTotals();
 $tax->setTaxType(TaxType::WITHHELD_TAX);
-$tax->setUnderlyingValue(500);
 $tax->setTaxCategory(WithheldPercentCategory::ROYALTIES_20);
+$tax->setUnderlyingValue(500);
 $tax->setTaxAmount(100);
 
-// Ολοκλήρωση του παραστατικού
+// Payment: net + VAT - withheld = 1500 + 360 - 100
+$payment = new PaymentMethodDetail();
+$payment->setType(PaymentType::CASH);
+$payment->setAmount(1760);
+
 $invoice = new Invoice();
 $invoice->setIssuer($issuer);
 $invoice->setCounterpart($counterpart);
 $invoice->setInvoiceHeader($header);
-$invoice->addPaymentMethod($payment);
 $invoice->addInvoiceDetails($row1);
 $invoice->addInvoiceDetails($row2);
 $invoice->addTaxesTotals($tax);
+$invoice->addPaymentMethod($payment);
 
-// Αρχικοποιεί το σύνοψη του παραστατικού
+// Calculates the invoice summary (totals) from the lines and taxes
 $invoice->summarizeInvoice();
 
 return $invoice;

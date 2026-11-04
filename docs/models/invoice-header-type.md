@@ -1,117 +1,73 @@
-# Τύπος InvoiceHeader
+# InvoiceHeader
 
-Ο τύπος `InvoiceHeader` περιγράφει τα στοιχεία της επικεφαλίδας του τιμολογίου.
-
-## Το αντικείμενο αυτό περιέχει τα εξής πεδία:
-
-| Πεδίο                                                                | Υποχρεωτικό | Περιγραφή                                                            |
-|----------------------------------------------------------------------|-------------|----------------------------------------------------------------------|
-| series                                                               | **Ναι**     | Σειρά παραστατικού                                                   |
-| aa                                                                   | **Ναι**     | ΑΑ Παραστατικού                                                      |
-| issueDate                                                            | **Ναι**     | Ημ. Έκδοσης Παραστατικού (yyyy-mm-dd)                                |
-| [**invoiceType**](../appendix/invoice-types)                         | **Ναι**     | Είδος Παραστατικού                                                   |
-| vatPaymentSuspension                                                 | Όχι         | Αναστολή Καταβολής ΦΠΑ                                               |
-| currency                                                             | Όχι         | Νόμισμα                                                              |
-| exchangeRate                                                         | Όχι         | Ισοτιμία (ελάχιστη τιμή 0, δεκαδικά 5)                               |
-| correlatedInvoices[]                                                 | Όχι         | Συσχετιζόμενα Παραστατικά                                            |
-| selfPricing                                                          | Όχι         | Ένδειξη Αυτοτιμολόγησης (bool)                                       |
-| dispatchDate                                                         | Όχι         | Ημερομηνία Έναρξης Αποστολή (yyyy-mm-dd)                             |
-| dispatchTime                                                         | Όχι         | Ώρα Έναρξης Αποστολής                                                |
-| vehicleNumber                                                        | Όχι         | Αριθμός Μεταφορικού Μέσου                                            |
-| [**movePurpose**](../appendix/move-purpose)                          | Όχι         | Σκοπός Διακίνησης                                                    |
-| fuelInvoice                                                          | Όχι         | Ένδειξη παραστατικού καυσίμων (bool)                                 |
-| [**specialInvoiceCategory**](../appendix/special-invoice-categories) | Όχι         | Ειδική Κατηγορία Παραστατικού                                        |
-| [**invoiceVariationType**](../appendix/invoice-variation-types)      | Όχι         | Τύπος Απόκλισης (Διαφοροποίησης) Παραστατικού                        |
-| [**otherCorrelatedEntities[]**](entity-type)                         | Όχι         | Λοιπές συσχετιζόμενες οντότητες                                      |
-| [**otherDeliveryNoteHeader**](other-delivery-note-header-type)       | Όχι         | Λοιπά Γενικά Στοιχεία Διακίνησης                                     |
-| isDeliveryNote                                                       | Όχι         | Ένδειξη παραστατικού διακίνησης (bool)                               |
-| otherMovePurposeTitle                                                | Όχι         | Τίτλος της Λοιπής Αιτίας Διακίνησης                                  |
-| thirdPartyCollection                                                 | Όχι         | Ένδειξη είσπραξης τρίτων                                             |
-| multipleConnectedMarks                                               | Όχι         | Δεν είναι αποδεκτό για τα παραστατικά των τύπων 1.6, 2.4 και 5.1     |
-| tableAA                                                              | Ναι         | Αποδεκτό μόνο για παραστατικό τύπου 8.6 - Μέγιστο επιτρεπτό μήκος 50 |
-| totalCancelDeliveryOrders                                            | Όχι         | Αποδεκτό μόνο για παραστατικό τύπου 8.6                              |
-| reverseDeliveryNote                                                  | Όχι         | Αντίστροφη Διακίνηση (bool) <sub><sup>v1.0.12</sup></sub>            |
-| reverseDeliveryNotePurpose                                           | Όχι         | Αιτία Αντίστροφης Διακίνησης <sub><sup>v1.0.12</sup></sub>           |
-| toWeigh                                                              | Όχι         | Ένδειξη Προς Ζύγιση (bool) <sub><sup>v2.0.1</sup></sub>              |
-| [**receivingNotePurpose**](../appendix/receiving-note-purpose)       | Όχι         | Αιτία Έκδοσης Δελτίου Ποσοτικής Παραλαβής <sub><sup>v2.0.2</sup></sub> |
-| otherReceivingNotePurposeTitle                                       | Όχι         | Τίτλος Λοιπής Περίπτωσης (max 150) <sub><sup>v2.0.2</sup></sub>      |
-| nonObligatedRecipient                                                | Όχι         | Μη Υπόχρεος Λήπτης (bool) <sub><sup>v2.0.2</sup></sub>               |
-| withoutDigitalTransportTracking                                      | Όχι         | Χωρίς Ψηφιακή Παρακολούθηση Διακίνησης (bool) <sub><sup>v2.0.2</sup></sub> |
-
-## Παρατηρήσεις
-
-- To πεδίο `exchangeRate` είναι η ισοτιμία του νομίσματος σε σχέση με το ευρώ.
-  Πρέπει να συμπληρώνεται μόνο όταν το νόμισμα δεν έχει τιμή EUR.
-- Ο κωδικός νομισμάτων προέρχεται από την αντίστοιχη λίστα σύμφωνα με το
-  πρότυπο `ISO4217`.
-- Το στοιχείο `correlatedInvoices` είναι λίστα και περιέχει τα ΜΑΡΚ των
-  συσχετιζόμενων παραστατικών.
-- Σε περίπτωση μή έκδοσης σειράς παραστατικού, το πεδίο `series` πρέπει να έχει την
-  τιμή `0`.
-- Το πεδίο `selfPricing` ορίζει αν πρόκειται για Τιμολόγιο Αυτοτιμολόγησης.
-- Το πεδίο `fuelInvoice` ορίζει αν πρόκειται για παραστατικό πώλησης υγρών
-  καυσίμων και επιτρέπεται η αποστολή μόνο για την περίπτωση των παρόχων.
-- Οι πιθανές τιμές του πεδίου `invoiceVariationType` περιγράφονται αναλυτικά στον
-  [**αντίστοιχο πίνακα**](../appendix/invoice-variation-types) του Παραρτήματος. Λεπτομέρειες σχετικά με τον τρόπο
-  χρήσης τους από επιχειρησιακής σκοπιάς περιγράφονται στο σχετικό επιχειρησιακό
-  έγγραφο.
-- Το πεδίο `otherCorrelatedEntities` (Λοιπές συσχετιζόμενες οντότητες) είναι λίστα
-  τύπου [**EntityType**](entity-type).
-- Το πεδίο `isDeliveryNote` ορίζει αν πρόκειται για τιμολόγιο που είναι και δελτίο
-  αποστολής (π.χ το παραστατικό τύπου `1.1` - Τιμολόγιο Πώλησης, εφόσον φέρει την
-  ένδειξη `isDeliveryNote = true`, τότε είναι και δελτίο διακίνησης και θα πρέπει να
-  αποσταλούν και επιπλέον στοιχεία διακίνησης).
-- Το πεδίο `otherMovePurposeTitle` συμπληρώνεται όταν έχει επιλεγεί ως
-  `movePurpose = 19` (Λοιπές Διακινήσεις) και ορίζει τον τίτλο της άλλης διακίνησης.
-- Το πεδίο `thirdPartyCollection` ορίζει αν η επιχείρηση που κάνει χρήση Μέσων
-  Πληρωμών ως Χρήστης υπηρεσιών πληρωμών και εισπράττει για λογαριασμό
-  τρίτων (περίπτωση παραστατικού 8.4 - Απόδειξη Είσπραξης POS) ή αν επιστρέφει
-  ποσά συναλλαγής για λογαριασμό τρίτων (περίπτωση παραστατικού `8.5` - Απόδειξη
-  Επιστροφής POS).
-- Το πεδίο `multipleConnectedMarks` είναι λίστα που περιέχει πολλαπλά συνδεόμενα
-  ΜΑΡΚs (π.χ μπορεί να χρησιμοποιηθεί κατά έκδοση τιμολογίου/απόδειξης για
-  πολλά δελτία παραγγελιών εστίασης).
-- Το πεδίο `totalCancelDeliveryOrders` είναι έγκυρο μόνο για παραστατικά τύπου 8.6
-  (δελτίο παραγγελίας εστίασης) και ορίζει αν το παραστατικό αναιρεί («ακυρώνει»)
-  συνολικά τα MARKs των δελτίων παραγγελιών εστίασης που έχουν δηλωθεί στο
-  πεδίο `multipleConnectedMarks` (σε αυτήν την περίπτωση στο πεδίο
-  `multipleConnectedMarks` πρέπει να δηλωθούν MARKs των δελτίων παραγγελίας
-  εστίασης – τύπου 8.6 – για τα οποία θα γίνει συνολική αναίρεση τους). Στην
-  περίπτωση αυτή το παραστατικό πρέπει να διαβιβάζεται με μια μόνο γραμμή με
-  μηδενικές αξίες και κατηγορία ΦΠΑ την 8 (Εγγραφές χωρίς ΦΠΑ).
-- Το πεδίο `reverseDeliveryNote` ορίζει αν πρόκειται για αντίστροφη διακίνηση
-  στην περίπτωση παραστατικού τύπου `9.3` (Δελτίου Αποστολής).
-- Το πεδίο `reverseDeliveryNotePurpose` συμπληρώνεται όταν έχει επιλεγεί ως
-  `reverseDeliveryNote = true` και ορίζει την αιτία της αντίστροφης διακίνησης.
-- Το πεδίο `toWeigh` είναι ένδειξη προς ζύγιση για παραστατικά διακίνησης <sub><sup>v2.0.1</sup></sub>.
-- Το πεδίο `receivingNotePurpose` ορίζει την αιτία έκδοσης Δελτίου Ποσοτικής
-  Παραλαβής και είναι **υποχρεωτικό** για παραστατικά τύπου `10.1` και `10.2` <sub><sup>v2.0.2</sup></sub>.
-- Το πεδίο `otherReceivingNotePurposeTitle` συμπληρώνεται μόνο όταν
-  `receivingNotePurpose = 7` (ΛΟΙΠΕΣ ΠΕΡΙΠΤΩΣΕΙΣ) <sub><sup>v2.0.2</sup></sub>.
-- Τα πεδία `nonObligatedRecipient` και `withoutDigitalTransportTracking` αφορούν
-  παραστατικά διακίνησης και δεν επιτρέπεται να είναι ταυτόχρονα `true` (σφάλμα 290) <sub><sup>v2.0.2</sup></sub>.
-
-## Απλό παράδειγμα δόμησης τύπου `InvoiceHeader`
+`InvoiceHeader` holds the header of the invoice: series, number, date, type and the delivery details.
 
 ```php
-use Firebed\AadeMyData\Models\InvoiceHeader;
 use Firebed\AadeMyData\Enums\InvoiceType;
+use Firebed\AadeMyData\Models\InvoiceHeader;
 
-$invoiceHeader = new InvoiceHeader();
+$header = new InvoiceHeader();
+$header->setSeries('A');
+$header->setAa(1);
+$header->setIssueDate('2024-02-03');
+$header->setInvoiceType(InvoiceType::TYPE_1_1);
+$header->setCurrency('EUR');
 
-// Σειρά παραστατικού, Σε περίπτωση μή έκδοσης σειράς παραστατικού,
-// το πεδίο series πρέπει να έχει την τιμή 0
-$invoiceHeader->setSeries('0');
-
-// ΑΑ Παραστατικού, μέγιστο επιτρεπτό μήκος 50
-$invoiceHeader->setAa('1');
-
-// Ημερομηνία Έκδοσης Παραστατικού
-$invoiceHeader->setIssueDate('2024-02-03');
-
-// Είδος Παραστατικού Τιμολόγιο Πώλησης
-$invoiceHeader->setInvoiceType(InvoiceType::TYPE_1_1);
-
-// Νόμισμα
-$invoiceHeader->setCurrency('EUR'); 
+$invoice->setInvoiceHeader($header);
 ```
+
+Each field has a setter and a getter named after it (`series` → `setSeries()`, `getSeries()`). The table shows the getter
+only when its name is different.
+
+| Field                           | Type                                                                          | Required | Description |
+|---------------------------------|-------------------------------------------------------------------------------|----------|-------------|
+| series                          | `string`                                                                      | Yes      | Series (max 50). Use `0` when you have no series |
+| aa                              | `string` or `int`                                                             | Yes      | Invoice number (max 50). The getter returns `string` |
+| issueDate                       | `string`                                                                      | Yes      | Issue date (`Y-m-d`) |
+| invoiceType                     | [`InvoiceType`](../appendix/invoice-types)                                    | Yes      | Invoice type |
+| vatPaymentSuspension            | `bool`                                                                        | No       | VAT payment suspension. Getter `isVatPaymentSuspension()` |
+| currency                        | `CurrencyCode` or `string`                                                    | No       | Currency, ISO 4217. The getter returns `string` |
+| exchangeRate                    | `float`                                                                       | No       | Exchange rate to EUR (min 0, 5 decimals). Only when currency is not EUR |
+| correlatedInvoices              | `int[]`                                                                       | No       | MARKs of correlated invoices. Add one with `addCorrelatedInvoice()` |
+| selfPricing                     | `bool`                                                                        | No       | Self-billing invoice. Getter `isSelfPricing()` |
+| dispatchDate                    | `string`                                                                      | No       | Dispatch start date (`Y-m-d`) |
+| dispatchTime                    | `string`                                                                      | No       | Dispatch start time (`H:i:s`) |
+| vehicleNumber                   | `string`                                                                      | No       | Vehicle number (max 150) |
+| movePurpose                     | [`MovePurpose`](../appendix/move-purpose)                                     | No       | Purpose of the movement |
+| fuelInvoice                     | `bool`                                                                        | No       | Liquid fuel sale invoice, provider channel only. Getter `isFuelInvoice()` |
+| specialInvoiceCategory          | [`SpecialInvoiceCategory`](../appendix/special-invoice-categories)            | No       | Special invoice category |
+| invoiceVariationType            | [`InvoiceVariationType`](../appendix/invoice-variation-types)                 | No       | Invoice variation type |
+| otherCorrelatedEntities         | [`EntityType[]`](entity-type)                                                 | No       | Other related entities. Add one with `addOtherCorrelatedEntities()` |
+| otherDeliveryNoteHeader         | [OtherDeliveryNoteHeader](other-delivery-note-header-type)                    | No       | General delivery details |
+| isDeliveryNote                  | `bool`                                                                        | No       | The invoice is also a delivery note. Getter `getIsDeliveryNote()` |
+| otherMovePurposeTitle           | `string`                                                                      | No       | Title of the other movement purpose (max 150) |
+| thirdPartyCollection            | `bool`                                                                        | No       | Collection on behalf of third parties |
+| multipleConnectedMarks          | `int[]`                                                                       | No       | Connected MARKs. Add one with `addMultipleConnectedMark()`. Not allowed on types 1.6, 2.4 and 5.1 |
+| tableAA                         | `string`                                                                      | No       | Table number (max 50). Only for type 8.6 |
+| totalCancelDeliveryOrders       | `bool`                                                                        | No       | Cancels all orders in `multipleConnectedMarks`. Only for type 8.6 |
+| reverseDeliveryNote             | `bool`                                                                        | No       | Reverse delivery note |
+| reverseDeliveryNotePurpose      | [`ReverseDeliveryNotePurpose`](../appendix/reverse-delivery-note-purpose)     | No       | Purpose of the reverse delivery note |
+| toWeigh                         | `bool`                                                                        | No       | Goods to be weighed |
+| receivingNotePurpose            | [`ReceivingNotePurpose`](../appendix/receiving-note-purpose)                  | No       | Purpose of the receiving note. Required for types 10.1 and 10.2 |
+| otherReceivingNotePurposeTitle  | `string`                                                                      | No       | Title of the other receiving purpose (max 150) |
+| nonObligatedRecipient           | `bool`                                                                        | No       | Recipient not obliged. Getter `isNonObligatedRecipient()` |
+| withoutDigitalTransportTracking | `bool`                                                                        | No       | No digital transport tracking. Getter `isWithoutDigitalTransportTracking()` |
+
+`issueTime` (`setIssueTime('14:30:00')`) is not a myDATA field and never goes into the XML. Gateways that send through an
+e-invoicing provider read it to build the issue date and time.
+
+## Notes
+
+- `correlatedInvoices` is a list of MARKs.
+- `isDeliveryNote = true` makes an invoice (e.g. type `1.1`) also a delivery note. Then you must send the delivery
+  details too.
+- Fill `otherMovePurposeTitle` when `movePurpose` is `MovePurpose::OTHER_MOVEMENTS` (19).
+- `thirdPartyCollection` marks a business that collects (type `8.4`, POS receipt) or refunds (type `8.5`, POS refund)
+  payments on behalf of third parties.
+- `multipleConnectedMarks` lists many connected MARKs, e.g. one invoice or receipt for many restaurant order slips.
+- With `totalCancelDeliveryOrders = true`, a type `8.6` document cancels all order slips (also type `8.6`) listed in
+  `multipleConnectedMarks`. Send it with a single row, zero amounts and VAT category 8 (`VatCategory::WITHOUT_VAT`).
+- `reverseDeliveryNote` marks a reverse delivery note on type `9.3`. Fill `reverseDeliveryNotePurpose` with it.
+- Fill `otherReceivingNotePurposeTitle` only when `receivingNotePurpose` is `ReceivingNotePurpose::OTHER_CASES` (7).
+- `nonObligatedRecipient` and `withoutDigitalTransportTracking` apply to delivery notes. They cannot both be `true`
+  (error 290).

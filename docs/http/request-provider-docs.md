@@ -1,50 +1,90 @@
-# Λήψη διαβιβασθέντων παραστατικών παρόχου - RequestProviderDocs
+# RequestProviderDocs <Badge type="tip" text="Provider only" />
 
 ```shell
 # production
 https://mydatapi.aade.gr/myDataProvider/RequestTransmittedDocs?issuervat={issuervat}&mark={mark}
 
 # development
-https://mydataapidev.aade.gr/myDATAProvider/RequestTransmittedDocs?issuervat={issuervat}&mark={mark}
+https://mydataapidev.aade.gr/myDataProvider/RequestTransmittedDocs?issuervat={issuervat}&mark={mark}
 ```
 
-> [!WARNING]
-> Μόνο για παρόχους ηλεκτρονικής τιμολόγησης. Η `RequestTransmittedDocs` του ERP καναλιού (`Firebed\AadeMyData\Http\RequestTransmittedDocs`)
-> δεν δέχεται πλέον σύνδεση παρόχου και πετά `UnsupportedChannelException`.
+Lists the invoices the provider sent for one issuer, with a MARK greater than `mark`.
+For each invoice you get the issuer VAT number, the MARK, the UID and the authentication code. You do not get
+the invoice itself: a provider cannot read the issuer's invoices without the issuer's own myDATA credentials.
 
-Ο πάροχος δεν έχει πρόσβαση στα παραστατικά της επιχείρησης (θα χρειαζόταν τα δικά της διαπιστευτήρια myDATA). Με την
-`Firebed\AadeMyData\Http\RequestProviderDocs` λαμβάνει, για έναν εκδότη, τη σύνοψη όσων παραστατικών έχει διαβιβάσει ο
-ίδιος με ΜΑΡΚ μεγαλύτερο της παραμέτρου: ΑΦΜ εκδότη, ΜΑΡΚ, UID και authentication code.
+> [!WARNING]
+> Provider channel only. This is the provider version of `RequestTransmittedDocs`. The ERP
+> [RequestTransmittedDocs](./request-transmitted-docs) class throws `UnsupportedChannelException` on a provider connection.
+
+```php
+use Firebed\AadeMyData\Http\MyDataRequest;
+use Firebed\AadeMyData\Http\RequestProviderDocs;
+
+MyDataRequest::init($userId, $subscriptionKey, 'dev', is_provider: true);
+
+$doc = (new RequestProviderDocs)->handle(issuerVat: '123456789', mark: $lastKnownMark);
+
+foreach ($doc->getInvoices() as $invoice) {
+    $invoice->getIssuerVAT();
+    $invoice->getInvoiceProviderMark(); // int
+    $invoice->getInvoiceUid();
+    $invoice->getAuthenticationCode();
+}
+```
+
+With the `MyData` client:
 
 ```php
 use Firebed\AadeMyData\MyData;
 
-$mydata = MyData::connect($user_id, $subscription_key, 'prod', provider: true);
+$mydata = MyData::connect($userId, $subscriptionKey, 'dev', provider: true);
 
 $doc = $mydata->requestProviderDocs(issuerVat: '123456789', mark: $lastKnownMark);
-
-foreach ($doc->getInvoices() as $invoice) {
-    $invoice->getIssuerVAT();           // ΑΦΜ εκδότη
-    $invoice->getInvoiceProviderMark(); // ΜΑΡΚ (int)
-    $invoice->getInvoiceUid();
-    $invoice->getAuthenticationCode();
-}
-
-// Όλα τα ΜΑΡΚ ενός UID· περισσότερα από ένα σημαίνει ότι το myDATA κατέγραψε το παραστατικό δύο φορές
-$doc->findByUid($uid);
 ```
 
-Για όλες τις σελίδες (continuation token):
+## Parameters
+
+| Parameter          | Required | Description                                                         |
+|--------------------|----------|---------------------------------------------------------------------|
+| `issuerVat`        | Yes      | VAT number of the issuer                                            |
+| `mark`             | Yes      | Return invoices with a MARK greater than this. Default `0`          |
+| `nextPartitionKey` | No       | Pagination (continuation token)                                     |
+| `nextRowKey`       | No       | Pagination (continuation token)                                     |
+
+## Result
+
+`handle()` returns a `RequestedProviderDoc`.
+
+| Method                   | Returns                   | Description                                         |
+|--------------------------|---------------------------|-----------------------------------------------------|
+| `getInvoices()`          | `list<ProviderInvoice>`   | The invoices of this page                           |
+| `findByUid($uid)`        | `list<ProviderInvoice>`   | The invoices with this UID                          |
+| `getContinuationToken()` | `?ContinuationToken`      | Set when there are more pages                       |
+
+`findByUid()` returning more than one invoice means myDATA registered the same invoice twice.
+
+## All pages
+
+`invoices()` follows the continuation token and yields every `ProviderInvoice` of every page.
+`pages()` yields each `RequestedProviderDoc` page.
 
 ```php
 use Firebed\AadeMyData\Http\RequestProviderDocs;
 
+foreach ((new RequestProviderDocs)->invoices('123456789', $lastKnownMark) as $invoice) {
+    // ...
+}
+
+// With the MyData client
 foreach ($mydata->request(new RequestProviderDocs)->invoices('123456789', $lastKnownMark) as $invoice) {
-    // κάθε ProviderInvoice κάθε σελίδας
+    // ...
 }
 ```
 
-> [!IMPORTANT]
-> Το myDATA αποθηκεύει τις υποβολές από ουρά. Ένα παραστατικό εμφανίζεται εδώ μόνο αφού αποθηκευτεί, κάτι που στο
-> παραγωγικό περιβάλλον μπορεί να πάρει ώρες μετά την απάντηση της `SendInvoices`. Η απουσία ενός παραστατικού δεν
-> σημαίνει ότι δεν καταχωρήθηκε.
+## Things to know
+
+- myDATA stores submissions from a queue. An invoice shows up here only after it is stored. In production this can
+  take hours after `SendInvoices` answered. A missing invoice may still be on its way.
+- Invoices sent with [SendUnsignedInvoices](./send-unsigned-invoices) are not listed.
+- On the sandbox, `mark: 0` listed every invoice, while a mark with fewer digits than the issuer's marks listed none.
+  Pass `0` or a MARK that myDATA returned.

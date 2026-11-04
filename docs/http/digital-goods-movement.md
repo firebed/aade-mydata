@@ -1,11 +1,40 @@
-# Ψηφιακή Διακίνηση Αγαθών - Digital Goods Movement
+# Digital Goods Movement
 
-Το σύστημα Digital Goods Movement του ΑΑΔΕ myDATA επιτρέπει την παρακολούθηση και διαχείριση της διακίνησης αγαθών σε πραγματικό χρόνο. Οι λειτουργίες αυτές είναι διαθέσιμες **μόνο για το ERP channel** και **δεν** υποστηρίζονται από παρόχους ηλεκτρονικής τιμολόγησης.
+Track a delivery note from dispatch to delivery. The carrier, the recipient and the issuer each report their step
+to myDATA. RequestDeliveryNoteStatus returns the note's status and history.
 
 > [!WARNING]
-> Όλες οι λειτουργίες Digital Goods Movement υποστηρίζονται μόνο για τον εκδότη (ERP channel).
+> ERP channel only. On a provider connection every call on this page throws `UnsupportedChannelException`
+> and sends nothing.
 
-## RegisterTransfer - Καταχώρηση Μεταφοράς
+| Call                                                    | Called by            | Note status after                                  |
+|---------------------------------------------------------|----------------------|----------------------------------------------------|
+| [RegisterTransfer](#registertransfer)                   | Carrier              | `IN_TRANSIT`                                       |
+| [ConfirmDeliveryOutcome](#confirmdeliveryoutcome)       | Carrier or recipient | `DELIVERED_BY_CARRIER`, `COMPLETED` or `FAILED_DELIVERY` |
+| [ConfirmDeliveryReturn](#confirmdeliveryreturn)         | Issuer               | `COMPLETED`                                        |
+| [RejectDeliveryNote](#rejectdeliverynote)               | Recipient            | `REJECTED`                                         |
+| [RequestDeliveryNoteStatus](#requestdeliverynotestatus) | -                    | -                                                  |
+| [GenerateGroupQrCode](#generategroupqrcode)             | Issuer or carrier    | -                                                  |
+| [RequestGroupQrDetails](#requestgroupqrdetails)         | -                    | -                                                  |
+
+Every call has a method on the `MyData` client too:
+
+```php
+use Firebed\AadeMyData\MyData;
+
+$mydata = MyData::connect($userId, $subscriptionKey, 'dev');
+
+$mydata->registerTransfer($transport);
+$mydata->confirmDeliveryOutcome($outcome);
+$mydata->confirmDeliveryReturn($return);
+$mydata->rejectDeliveryNote($rejection);
+$mydata->requestDeliveryNoteStatus($mark);
+$mydata->requestDeliveryNoteStatusByQrUrl($qrUrl);
+$mydata->generateGroupQrCode($groupQrCode);
+$mydata->requestGroupQrDetails($groupId);
+```
+
+## RegisterTransfer
 
 ```shell
 # production
@@ -15,118 +44,49 @@ https://mydatapi.aade.gr/myDATA/RegisterTransfer
 https://mydataapidev.aade.gr/RegisterTransfer
 ```
 
-Καταχωρεί τα στοιχεία μεταφοράς για ένα δελτίο αποστολής που βρίσκεται σε διακίνηση. Η μέθοδος καλείται από τον μεταφορέα για να δηλώσει την παραλαβή των αγαθών και την έναρξη της διακίνησης, ή την παραλαβή από προηγούμενο μεταφορέα (μεταφόρτωση).
-
-### Παράδειγμα χρήσης
+The carrier declares that it picked up the goods and the movement started, or that it took them over from a
+previous carrier (transshipment). The note moves to `IN_TRANSIT`. Returns a [ResponseDoc](#responses) with the
+`transferMark`.
 
 ```php
+use Firebed\AadeMyData\Enums\DigitalGoodsMovement\TransportType;
 use Firebed\AadeMyData\Http\DigitalGoodsMovement\RegisterTransfer;
+use Firebed\AadeMyData\Models\DigitalGoodsMovement\Location;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\Transport;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\TransportDetails;
-use Firebed\AadeMyData\Models\DigitalGoodsMovement\Location;
-use Firebed\AadeMyData\Enums\DigitalGoodsMovement\TransportType;
-use Firebed\AadeMyData\Exceptions\MyDataException;
 
-// Δημιουργία στοιχείων μεταφοράς
-$details = new TransportDetails();
-$details->setVehicleNumber('AHN0011');
-$details->setTransportType(TransportType::PRIVATE_USE_TRUCK);
-$details->setCarrierVatNumber('777777777');
-$details->setTrailorNumber('P22345'); // Αριθμός κυκλοφορίας "P" (προαιρετικό)
-$details->setLocation(new Location(41.303921, -81.901693)); // latitude, longitude
+$details = (new TransportDetails)
+    ->setVehicleNumber('AHN0011')
+    ->setTransportType(TransportType::PRIVATE_USE_TRUCK)
+    ->setCarrierVatNumber('777777777')
+    ->setTrailorNumber('P22345')                      // optional
+    ->setLocation(new Location(40.640063, 22.944419)); // optional: latitude, longitude
 
-$transport = new Transport();
-$transport->setQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_qr_url');
-$transport->setTransportDetail($details);
+$transport = (new Transport)
+    ->setQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=...')
+    ->setTransportDetail($details);
 
-$registerTransfer = new RegisterTransfer();
+$response = (new RegisterTransfer)->handle($transport)->first();
 
-try {
-    $response = $registerTransfer->handle($transport);
-
-    if ($response->first()->isSuccessful()) {
-        echo "Η μεταφορά καταχωρήθηκε με επιτυχία." . PHP_EOL;
-        echo "Transfer Mark: " . $response->first()->getTransferMark();
-    }
-} catch (MyDataException $e) {
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
+if ($response->isSuccessful()) {
+    echo $response->getTransferMark();
 }
 ```
 
-### Πεδία TransportDetails
+`qrUrl` can also be a [group QR URL](#generategroupqrcode), to update every note of the group at once.
 
-| Πεδίο              | Τύπος         | Υποχρεωτικό | Περιγραφή                                                  |
-|--------------------|---------------|-------------|------------------------------------------------------------|
-| `vehicleNumber`    | string        | Ναι         | Αριθμός Μεταφορικού Μέσου (max 50 χαρακτήρες)              |
-| `transportType`    | TransportType | Ναι         | Είδος Μεταφορικού Μέσου (1-7)                              |
-| `carrierVatNumber` | string        | Ναι         | ΑΦΜ Μεταφορικής Εταιρείας (max 20 χαρακτήρες)              |
-| `pNumber`          | string        | Όχι         | Αριθμός κυκλοφορίας "P" ρυμουλκούμενου (max 50 χαρακτήρες) |
-| `location`         | Location      | Όχι         | Τοποθεσία Μεταφόρτωσης (longitude, latitude)               |
-| `packingsDeclaration` | PackagingDetail[] | Όχι     | Δήλωση Συσκευασιών από τον μεταφορέα <sub><sup>v2.0.2</sup></sub> |
+### TransportDetails fields
 
-### Τύποι Μεταφορικού Μέσου (TransportType)
+| Field                 | Required | Description                                                              |
+|-----------------------|----------|--------------------------------------------------------------------------|
+| `vehicleNumber`       | Yes      | Vehicle plate, ship name, route or flight code. Max 50 characters        |
+| `transportType`       | Yes      | [TransportType](#transporttype)                                          |
+| `carrierVatNumber`    | Yes      | VAT number of the carrier. Max 20 characters                             |
+| `pNumber`             | No       | Trailer plate ("P" number). Max 50 characters. Setter: `setTrailorNumber()` |
+| `location`            | No       | Transshipment location. `new Location($latitude, $longitude)`            |
+| `packingsDeclaration` | No       | Packages declared by the carrier, a list of `PackagingDetail` (v2.0.2). Add with `addPackingsDeclaration()` |
 
-- `PUBLIC_USE_TRUCK` (1) - Φορτηγό Δημόσιας Χρήσης
-- `PRIVATE_USE_TRUCK` (2) - Φορτηγό Ιδιωτικής Χρήσης
-- `SHIP` (3) - Πλοίο
-- `TRAIN` (4) - Τρένο
-- `AIRPLANE` (5) - Αεροπλάνο
-- `OTHER_TRANSPORT_MEANS` (6) - Λοιπά Μεταφορικά Μέσα
-- `WITHOUT` (7) - Άνευ
-
-## GenerateGroupQrCode - Δημιουργία Ομαδικού QR Code
-
-```shell
-# production
-https://mydatapi.aade.gr/myDATA/GenerateGroupQRCode
-
-# development
-https://mydataapidev.aade.gr/GenerateGroupQRCode
-```
-
-Δημιουργεί ένα ομαδικό QR code που συνδυάζει πολλαπλά QR codes από διαφορετικά δελτία αποστολής. Απαιτούνται τουλάχιστον 2 QR URLs.
-
-### Παράδειγμα χρήσης
-
-```php
-use Firebed\AadeMyData\Http\DigitalGoodsMovement\GenerateGroupQrCode;
-use Firebed\AadeMyData\Models\DigitalGoodsMovement\GroupQrCode;
-use Firebed\AadeMyData\Exceptions\MyDataException;
-
-$groupQrCode = new GroupQrCode();
-$groupQrCode->addQrUrl("https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url_1");
-$groupQrCode->addQrUrl("https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url_2");
-
-$generate = new GenerateGroupQrCode();
-
-try {
-    $response = $generate->handle($groupQrCode);
-
-    echo "Group QR URL: " . $response->getGroupQrUrl() . PHP_EOL;
-    echo "Group ID: " . $response->getGroupId() . PHP_EOL;
-    echo "QR URLs Count: " . $response->getQrUrlsCount() . PHP_EOL;
-    echo "Created at: " . $response->getCreatedAt() . PHP_EOL;
-    echo "Expires at: " . $response->getExpiresAt() . PHP_EOL;
-} catch (MyDataException $e) {
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
-}
-```
-
-### Helper method
-
-Εναλλακτικά, μπορείτε να χρησιμοποιήσετε τη μέθοδο `generateFromQrUrls`:
-
-```php
-$qrUrls = [
-    "https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url_1",
-    "https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url_2",
-];
-
-$generate = new GenerateGroupQrCode();
-$response = $generate->generateFromQrUrls($qrUrls);
-```
-
-## ConfirmDeliveryOutcome - Επιβεβαίωση Παράδοσης
+## ConfirmDeliveryOutcome
 
 ```shell
 # production
@@ -136,68 +96,50 @@ https://mydatapi.aade.gr/myDATA/ConfirmDeliveryOutcome
 https://mydataapidev.aade.gr/ConfirmDeliveryOutcome
 ```
 
-Επιβεβαιώνει την παράδοση αγαθών και καταχωρεί τα στοιχεία παράδοσης. Μπορεί να δηλώσει πλήρη, μερική ή καμία παράδοση.
+The carrier declares the delivery outcome, or the recipient confirms receipt. Returns a [ResponseDoc](#responses)
+with the `deliveryOutcomeMark`.
 
-### Παράδειγμα χρήσης
+| Called by                   | Note status after      |
+|-----------------------------|------------------------|
+| Carrier, B2B transaction    | `DELIVERED_BY_CARRIER` |
+| Carrier, B2C transaction    | `COMPLETED`            |
+| Recipient                   | `COMPLETED`            |
+| Anyone, with outcome `NONE` | `FAILED_DELIVERY`      |
 
 ```php
+use Firebed\AadeMyData\Enums\DigitalGoodsMovement\DeliveryOutcomeType;
+use Firebed\AadeMyData\Enums\DigitalGoodsMovement\PackagingType;
 use Firebed\AadeMyData\Http\DigitalGoodsMovement\ConfirmDeliveryOutcome;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\DeliveryOutcome;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\PackagingDetail;
-use Firebed\AadeMyData\Enums\DigitalGoodsMovement\DeliveryOutcomeType;
-use Firebed\AadeMyData\Enums\DigitalGoodsMovement\PackagingType;
-use Firebed\AadeMyData\Exceptions\MyDataException;
 
-$outcome = new DeliveryOutcome();
-$outcome->setQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url');
-$outcome->setOutcome(DeliveryOutcomeType::FULL);
+$outcome = (new DeliveryOutcome)
+    ->setQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=...')
+    ->setOutcome(DeliveryOutcomeType::FULL)
+    ->setDeliveredWithoutRecipient(false)                            // optional
+    ->addDeliveredPackaging(new PackagingDetail(PackagingType::CRATE, 10)) // optional
+    ->addDeliveredPackaging(new PackagingDetail(PackagingType::BOX, 2));
 
-// Προαιρετικά: Δήλωση συσκευασιών που παραδόθηκαν
-$outcome->addDeliveredPackaging(new PackagingDetail(PackagingType::CRATE, 10));
-$outcome->addDeliveredPackaging(new PackagingDetail(PackagingType::BOX, 2));
+$response = (new ConfirmDeliveryOutcome)->handle($outcome)->first();
 
-// Προαιρετικά: Ένδειξη παράδοσης χωρίς παρουσία παραλήπτη
-$outcome->setDeliveredWithoutRecipient(false);
-
-$confirm = new ConfirmDeliveryOutcome();
-
-try {
-    $response = $confirm->handle($outcome);
-
-    if ($response->first()->isSuccessful()) {
-        echo "Η παράδοση επιβεβαιώθηκε με επιτυχία." . PHP_EOL;
-        echo "Delivery Outcome Mark: " . $response->first()->getDeliveryOutcomeMark();
-    }
-} catch (MyDataException $e) {
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
+if ($response->isSuccessful()) {
+    echo $response->getDeliveryOutcomeMark();
 }
 ```
 
-### Πεδία DeliveryOutcome
+### DeliveryOutcome fields
 
-| Πεδίο                       | Τύπος               | Υποχρεωτικό | Περιγραφή                                |
-|-----------------------------|---------------------|-------------|------------------------------------------|
-| `qrUrl`                     | string              | Ναι         | Το URL του QR code του Δελτίου           |
-| `outcome`                   | DeliveryOutcomeType | Ναι         | Αποτέλεσμα παράδοσης (FULL/PARTIAL/NONE) |
-| `deliveredWithoutRecipient` | boolean             | Όχι         | Παράδοση χωρίς φυσική παρουσία παραλήπτη |
-| `deliveredPackaging`        | PackagingDetail[]   | Όχι         | Λίστα με συσκευασίες που παραδόθηκαν     |
+| Field                       | Required | Description                                             |
+|-----------------------------|----------|---------------------------------------------------------|
+| `qrUrl`                     | Yes      | QR URL of the note, or a group QR URL                   |
+| `outcome`                   | Yes      | [DeliveryOutcomeType](#deliveryoutcometype)             |
+| `deliveredWithoutRecipient` | No       | Delivered without the recipient being there             |
+| `deliveredPackaging`        | No       | Packages delivered, a list of `PackagingDetail`         |
 
-### Τύποι Αποτελέσματος Παράδοσης (DeliveryOutcomeType)
+`PackagingDetail` takes a [PackagingType](#packagingtype) and a quantity. For `PackagingType::OTHER`, also call
+`setOtherPackagingTypeTitle()` (max 150 characters).
 
-- `FULL` - Πλήρης Παράδοση
-- `PARTIAL` - Μερική Παράδοση
-- `NONE` - Καμία Παράδοση
-
-### Τύποι Συσκευασίας (PackagingType)
-
-- `PALLET` (1) - Παλέτα
-- `BOX` (2) - Κούτα
-- `CRATE` (3) - Κιβώτιο
-- `BARREL` (4) - Βαρέλι
-- `SACK` (5) - Σάκος
-- `OTHER` (6) - Λοιπά (απαιτεί `otherPackagingTypeTitle`)
-
-## ConfirmDeliveryReturn - Δήλωση Επιστροφής Διακίνησης <sub><sup>v2.0.2</sup></sub>
+## ConfirmDeliveryReturn
 
 ```shell
 # production
@@ -207,38 +149,28 @@ https://mydatapi.aade.gr/myDATA/ConfirmDeliveryReturn
 https://mydataapidev.aade.gr/ConfirmDeliveryReturn
 ```
 
-Καλείται από τον **εκδότη** του δελτίου για να δηλώσει ολοκλήρωση της διακίνησης επί επιστροφής (ο μεταφορέας δεν παρέδωσε το σύνολο των αγαθών). Με την επιτυχή κλήση το δελτίο μεταβαίνει σε κατάσταση `Completed` και επιστρέφεται το `deliveryReturnMark`.
-
-### Παράδειγμα χρήσης
+Added in v2.0.2. The issuer declares that the movement ended in a return: the carrier did not deliver all the goods
+and brings them back. The note moves to `COMPLETED`. Returns a [ResponseDoc](#responses) with the
+`deliveryReturnMark`.
 
 ```php
 use Firebed\AadeMyData\Http\DigitalGoodsMovement\ConfirmDeliveryReturn;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\DeliveryReturn;
-use Firebed\AadeMyData\Exceptions\MyDataException;
 
-$return = new DeliveryReturn('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url');
+$return = new DeliveryReturn('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=...');
 
-$confirm = new ConfirmDeliveryReturn();
+$response = (new ConfirmDeliveryReturn)->handle($return)->first();
 
-try {
-    $response = $confirm->handle($return);
-
-    if ($response->first()->isSuccessful()) {
-        echo "Η επιστροφή δηλώθηκε με επιτυχία." . PHP_EOL;
-        echo "Delivery Return Mark: " . $response->first()->getDeliveryReturnMark();
-    }
-} catch (MyDataException $e) {
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
+if ($response->isSuccessful()) {
+    echo $response->getDeliveryReturnMark();
 }
 ```
 
-### Πεδία DeliveryReturn
+| Field   | Required | Description                             |
+|---------|----------|-----------------------------------------|
+| `qrUrl` | Yes      | QR URL of the note, or a group QR URL   |
 
-| Πεδίο   | Τύπος  | Υποχρεωτικό | Περιγραφή                                                   |
-|---------|--------|-------------|-------------------------------------------------------------|
-| `qrUrl` | string | Ναι         | Το URL του QR code του δελτίου ή του Ομαδικού QR Code        |
-
-## RejectDeliveryNote - Απόρριψη Δελτίου Αποστολής
+## RejectDeliveryNote
 
 ```shell
 # production
@@ -248,66 +180,43 @@ https://mydatapi.aade.gr/myDATA/RejectDeliveryNote
 https://mydataapidev.aade.gr/RejectDeliveryNote
 ```
 
-Απορρίπτει ένα δελτίο αποστολής με συγκεκριμένο λόγο απόρριψης. Μπορεί να γίνει με χρήση mark ή QR URL.
+The recipient rejects all the goods of the note. Only the recipient can call it. The note moves to `REJECTED`,
+a final status. Returns a [ResponseDoc](#responses) with the `rejectMark`.
 
-### Απόρριψη με χρήση mark
+`DeliveryRejection` takes the QR URL or the MARK of the note, and an optional reason.
 
 ```php
 use Firebed\AadeMyData\Http\DigitalGoodsMovement\RejectDeliveryNote;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\DeliveryRejection;
-use Firebed\AadeMyData\Exceptions\MyDataException;
 
-$rejection = new DeliveryRejection(111111111111111, 'Damaged goods');
+// By MARK
+$rejection = new DeliveryRejection(400001234567890, 'Damaged goods');
 
-$reject = new RejectDeliveryNote();
+// Or by QR URL
+$rejection = new DeliveryRejection('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=...', 'Damaged goods');
 
-try {
-    $response = $reject->handle($rejection);
+$response = (new RejectDeliveryNote)->handle($rejection)->first();
 
-    if ($response->first()->isSuccessful()) {
-        echo "Το δελτίο απορρίφθηκε με επιτυχία." . PHP_EOL;
-        echo "Reject Mark: " . $response->first()->getRejectMark();
-    }
-} catch (MyDataException $e) {
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
+if ($response->isSuccessful()) {
+    echo $response->getRejectMark();
 }
 ```
 
-### Απόρριψη με χρήση QR URL
+Shortcuts:
 
 ```php
-$rejection = new DeliveryRejection(
-    'https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url',
-    'Damaged goods'
-);
+$reject = new RejectDeliveryNote;
 
-$reject = new RejectDeliveryNote();
-$response = $reject->handle($rejection);
+$reject->rejectUsingMark(400001234567890, 'Damaged goods');
+$reject->rejectUsingQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=...', 'Damaged goods');
 ```
 
-### Helper methods
+| Field                    | Required | Description                                   |
+|--------------------------|----------|-----------------------------------------------|
+| `qrUrl` or `invoiceMark` | Yes      | QR URL or MARK of the note                    |
+| `rejectionReason`        | No       | Reason for the rejection. Max 150 characters  |
 
-```php
-$reject = new RejectDeliveryNote();
-
-// Απόρριψη με mark
-$response = $reject->rejectUsingMark(400002969517846, 'Damaged goods');
-
-// Απόρριψη με QR URL
-$response = $reject->rejectUsingQrUrl(
-    'https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url',
-    'Damaged goods'
-);
-```
-
-### Πεδία DeliveryRejection
-
-| Πεδίο                   | Τύπος        | Υποχρεωτικό | Περιγραφή                            |
-|-------------------------|--------------|-------------|--------------------------------------|
-| `qrUrl` ή `invoiceMark` | string ή int | Ναι         | Το URL του QR ή το MARK του δελτίου  |
-| `rejectionReason`       | string       | Όχι         | Λόγος απόρριψης (max 150 χαρακτήρες) |
-
-## RequestDeliveryNoteStatus - Αναζήτηση Κατάστασης Δελτίου
+## RequestDeliveryNoteStatus
 
 ```shell
 # production
@@ -317,91 +226,76 @@ https://mydatapi.aade.gr/myDATA/GetDeliveryNoteStatus
 https://mydataapidev.aade.gr/GetDeliveryNoteStatus
 ```
 
-Αναζητά την τρέχουσα κατάσταση ενός δελτίου αποστολής και το πλήρες ιστορικό των συμβάντων του (lifecycle history). Η αναζήτηση μπορεί να γίνει με `mark` ή, από την v2.0.2, εναλλακτικά με `qrUrl`.
-
-### Παράδειγμα χρήσης
+Returns the current status of a delivery note and its full history of events. Search by MARK, or by QR URL (v2.0.2).
+Returns a [DeliveryNoteStatusResponse](#deliverynotestatusresponse).
 
 ```php
 use Firebed\AadeMyData\Http\DigitalGoodsMovement\RequestDeliveryNoteStatus;
-use Firebed\AadeMyData\Enums\DigitalGoodsMovement\DeliveryStatus;
-use Firebed\AadeMyData\Exceptions\MyDataException;
 
-$request = new RequestDeliveryNoteStatus();
+$status = (new RequestDeliveryNoteStatus)->handle(400001234567890);
 
-try {
-    $response = $request->handle(111111111111111); // mark του δελτίου
+// Or by QR URL
+$status = (new RequestDeliveryNoteStatus)->handleUsingQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=...');
 
-    echo "Status: " . $response->getStatus()->label() . PHP_EOL;
-    echo "Invoice Mark: " . $response->getInvoiceMark() . PHP_EOL;
+echo $status->getStatus()?->label();
 
-    if ($response->getDispatchTimestamp()) {
-        echo "Dispatch Time: " . $response->getDispatchTimestamp() . PHP_EOL;
-    }
+foreach ($status->getLifecycleHistory() ?? [] as $event) {
+    echo $event->getEventType()?->label().' '.$event->getEventTimestamp().' '.$event->getActorVat().PHP_EOL;
 
-    // Εμφάνιση ιστορικού συμβάντων
-    $history = $response->getLifecycleHistory();
-    if ($history) {
-        echo "\nΙστορικό Συμβάντων:" . PHP_EOL;
-        foreach ($history as $event) {
-            echo "- Event: " . $event->getEventType()->label() . PHP_EOL;
-            echo "  Timestamp: " . $event->getEventTimestamp() . PHP_EOL;
-            echo "  Actor VAT: " . $event->getActorVat() . PHP_EOL;
-
-            if ($event->getMark()) {
-                echo "  Mark: " . $event->getMark() . PHP_EOL;
-            }
-
-            // Έλεγχος για λεπτομέρειες μεταφοράς
-            if ($event->getTransportDetails()) {
-                $transport = $event->getTransportDetails();
-                echo "  Vehicle: " . $transport->getVehicleNumber() . PHP_EOL;
-            }
-
-            // Έλεγχος για λεπτομέρειες παράδοσης
-            if ($event->getOutcomeDetails()) {
-                $outcome = $event->getOutcomeDetails();
-                echo "  Outcome: " . $outcome->getOutcome()->label() . PHP_EOL;
-            }
-
-            // Έλεγχος για λεπτομέρειες απόρριψης
-            if ($event->getRejectionDetails()) {
-                $rejection = $event->getRejectionDetails();
-                echo "  Rejection Reason: " . $rejection->getReason() . PHP_EOL;
-            }
-        }
-    }
-} catch (MyDataException $e) {
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
+    $event->getMark();
+    $event->getTransportDetails()?->getVehicleNumber(); // RegisterTransfer events
+    $event->getOutcomeDetails()?->getOutcome();         // ConfirmOutcome events
+    $event->getRejectionDetails()?->getReason();        // Rejection events
 }
 ```
 
-### Αναζήτηση με QR URL <sub><sup>v2.0.2</sup></sub>
+| Parameter         | Required | Description                                                          |
+|-------------------|----------|----------------------------------------------------------------------|
+| `mark`            | Yes*     | MARK of the note. `handle()`                                         |
+| `issuerVatNumber` | No       | VAT number of the issuer. `handle()` only                            |
+| `qrUrl`           | Yes*     | QR URL of the note. `handleUsingQrUrl()`                             |
 
-```php
-$request = new RequestDeliveryNoteStatus();
-$response = $request->handleUsingQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url');
+\* Send `mark` or `qrUrl`. myDATA answers HTTP 400 when `issuerVatNumber` comes with `qrUrl`, so
+`handleUsingQrUrl()` never sends it. Pass the QR URL as myDATA gave it: the library decodes it once so it is not
+encoded twice.
+
+## GenerateGroupQrCode
+
+```shell
+# production
+https://mydatapi.aade.gr/myDATA/GenerateGroupQRCode
+
+# development
+https://mydataapidev.aade.gr/GenerateGroupQRCode
 ```
 
-### Πιθανές καταστάσεις δελτίου (DeliveryStatus)
+Combines the QR codes of two or more delivery notes into one group QR code. Use the group QR URL in
+`RegisterTransfer`, `ConfirmDeliveryOutcome` and `RejectDeliveryNote` to update every note of the group at once.
+The group QR URL expires: see `getExpiresAt()`. Returns a [GroupQrCodeResponse](#groupqrcoderesponse).
 
-- `REGISTERED` (1) - Εκδόθηκε
-- `CANCELLED` (2) - Ακυρώθηκε
-- `IN_TRANSIT` (3) - Σε διακίνηση
-- `REJECTED` (4) - Απορρίφθηκε
-- `DELIVERED_BY_CARRIER` (5) - Παραδόθηκε από τον μεταφορέα
-- `FAILED_DELIVERY` (7) - Αποτυχία παράδοσης
-- `COMPLETED` (8) - Ολοκληρώθηκε
-- `IN_TRANSIT_RETURN` (9) - Σε διακίνηση (Επιστροφή) <sub><sup>v2.0.2</sup></sub>
+```php
+use Firebed\AadeMyData\Http\DigitalGoodsMovement\GenerateGroupQrCode;
+use Firebed\AadeMyData\Models\DigitalGoodsMovement\GroupQrCode;
 
-### Τύποι Συμβάντων (DeliveryEventType)
+$group = (new GroupQrCode)
+    ->addQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=...1')
+    ->addQrUrl('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=...2');
 
-- `RegisterTransfer` - Έναρξη διακίνησης / Μεταφόρτωση
-- `ConfirmOutcome` - Επιβεβαίωση παραλαβής
-- `Rejection` - Απόρριψη
-- `ConfirmReturn` - Επιβεβαίωση επιστροφής <sub><sup>v2.0.2</sup></sub>
-- `RegisterTransferReturn` - Επιστροφή διακίνησης <sub><sup>v2.0.2</sup></sub>
+$response = (new GenerateGroupQrCode)->handle($group);
 
-## RequestGroupQrDetails - Αναζήτηση Στοιχείων Ομαδικού QR
+// Or from an array of QR URLs
+$response = (new GenerateGroupQrCode)->generateFromQrUrls([$qrUrl1, $qrUrl2]);
+
+$response->getGroupQrUrl();
+$response->getGroupId();
+$response->getExpiresAt();
+```
+
+| Field    | Required | Description                     |
+|----------|----------|---------------------------------|
+| `qrUrls` | Yes      | QR URLs of the notes, at least 2 |
+
+## RequestGroupQrDetails
 
 ```shell
 # production
@@ -411,114 +305,142 @@ https://mydatapi.aade.gr/myDATA/RequestGroupQRDetails
 https://mydataapidev.aade.gr/RequestGroupQRDetails
 ```
 
-Αναζητά τα στοιχεία ενός ομαδικού QR code που έχει δημιουργηθεί προηγουμένως.
-
-### Παράδειγμα χρήσης
+Returns the QR URLs inside a group QR code, their count, the creator's VAT number and the expiry date.
+Returns a [GroupQrDetailsResponse](#groupqrdetailsresponse).
 
 ```php
 use Firebed\AadeMyData\Http\DigitalGoodsMovement\RequestGroupQrDetails;
-use Firebed\AadeMyData\Exceptions\MyDataException;
 
-$request = new RequestGroupQrDetails();
+$details = (new RequestGroupQrDetails)->handle('9946C6AA9DB3658C85CC3BF43DB726FE25BBC555');
 
-try {
-    $response = $request->handle('9946C6AA9DB3658C85CC3BF43DB726FE25BBC555');
-
-    echo "Group ID: " . $response->getGroupId() . PHP_EOL;
-    echo "Creator VAT: " . $response->getGroupQrCreatorVatNumber() . PHP_EOL;
-    echo "Created at: " . $response->getCreatedAt() . PHP_EOL;
-    echo "Expires at: " . $response->getExpiresAt() . PHP_EOL;
-    echo "QR URLs Count: " . $response->getQrUrlsCount() . PHP_EOL;
-
-    echo "\nQR URLs:" . PHP_EOL;
-    foreach ($response->getQrUrls() as $qrUrl) {
-        echo "  - " . $qrUrl . PHP_EOL;
-    }
-} catch (MyDataException $e) {
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
+foreach ($details->getQrUrls() ?? [] as $qrUrl) {
+    echo $qrUrl.PHP_EOL;
 }
 ```
 
-## Απόκριση και Επεξεργασία Αποτελεσμάτων
+| Parameter | Required | Description                                                    |
+|-----------|----------|----------------------------------------------------------------|
+| `groupId` | Yes      | ID of the group. `GroupQrCodeResponse::getGroupId()` gives it  |
 
-### Response Objects
+## Responses
 
-Οι μέθοδοι `RegisterTransfer`, `ConfirmDeliveryOutcome`, `ConfirmDeliveryReturn` και `RejectDeliveryNote` επιστρέφουν `ResponseDoc` (συλλογή από αντικείμενα `Response` - `Firebed\AadeMyData\Models\DigitalGoodsMovement\Response`).
+### ResponseDoc
 
-Κάθε `Response` περιέχει:
-- `index`: Αριθμός Σειράς Οντότητας
-- `statusCode`: Κωδικός Αποτελέσματος (`Success` ή άλλο)
-- `transferMark`: Μοναδικός Αριθμός Εκκίνησης/Μεταφόρτωσης (μόνο για `RegisterTransfer`)
-- `rejectMark`: Μοναδικός Αριθμός Απόρριψης (μόνο για `RejectDeliveryNote`)
-- `deliveryOutcomeMark`: Μοναδικός Αριθμός Καταχώρησης (μόνο για `ConfirmDeliveryOutcome`)
-- `deliveryReturnMark`: Μοναδικός Αριθμός Δήλωσης Επιστροφής (μόνο για `ConfirmDeliveryReturn`) <sub><sup>v2.0.2</sup></sub>
-- `errors`: Λίστα Σφαλμάτων (αν υπάρχουν)
+`RegisterTransfer`, `ConfirmDeliveryOutcome`, `ConfirmDeliveryReturn` and `RejectDeliveryNote` return a
+`Firebed\AadeMyData\Models\DigitalGoodsMovement\ResponseDoc`, a list of
+`Firebed\AadeMyData\Models\DigitalGoodsMovement\Response`.
 
-```php
-// Έλεγχος επιτυχίας
-if ($response->first()->isSuccessful()) {
-    echo "Success!" . PHP_EOL;
-
-    // Ανάλογα με τη μέθοδο που καλέσατε:
-    echo "Transfer Mark: " . $response->first()->getTransferMark() . PHP_EOL;          // RegisterTransfer
-    echo "Reject Mark: " . $response->first()->getRejectMark() . PHP_EOL;              // RejectDeliveryNote
-    echo "Outcome Mark: " . $response->first()->getDeliveryOutcomeMark() . PHP_EOL;    // ConfirmDeliveryOutcome
-}
-
-// Έλεγχος αποτυχίας
-if ($response->first()->isFailed()) {
-    echo "Errors: " . PHP_EOL;
-    foreach ($response->first()->getErrors() as $error) {
-        echo "- " . $error->getMessage() . PHP_EOL;
-    }
-}
-
-// Διατρέχοντας όλα τα αποτελέσματα
-foreach ($response as $item) {
-    if ($item->isSuccessful()) {
-        echo "Item {$item->getIndex()}: Success";
-    }
-}
-```
-
-### GroupQrCodeResponse
-
-Η μέθοδος `GenerateGroupQrCode` επιστρέφει αντικείμενο `GroupQrCodeResponse`:
+| Method                     | Returns   | Description                                  |
+|----------------------------|-----------|----------------------------------------------|
+| `isSuccessful()`           | `bool`    | `statusCode` is `Success`                    |
+| `isFailed()`               | `bool`    | Has errors                                   |
+| `getStatusCode()`          | `?string` | Result code                                  |
+| `getIndex()`               | `?int`    | Position of the entity in the request        |
+| `getTransferMark()`        | `?int`    | RegisterTransfer                             |
+| `getDeliveryOutcomeMark()` | `?int`    | ConfirmDeliveryOutcome                       |
+| `getDeliveryReturnMark()`  | `?int`    | ConfirmDeliveryReturn (v2.0.2)               |
+| `getRejectMark()`          | `?string` | RejectDeliveryNote                           |
+| `getErrors()`              | `?Errors` | Errors, each with `getCode()` and `getMessage()` |
 
 ```php
-$groupQrUrl = $response->getGroupQrUrl();      // URL του ομαδικού QR
-$groupId = $response->getGroupId();            // Μοναδικό ID
-$qrUrlsCount = $response->getQrUrlsCount();    // Πλήθος QR URLs
-$expiresAt = $response->getExpiresAt();        // Ημερομηνία λήξης
-$statusCode = $response->getStatusCode();      // Κωδικός κατάστασης
+foreach ($responseDoc as $response) {
+    if ($response->isFailed()) {
+        foreach ($response->getErrors() as $error) {
+            echo $error->getCode().': '.$error->getMessage().PHP_EOL;
+        }
+    }
+}
 ```
 
 ### DeliveryNoteStatusResponse
 
-Η μέθοδος `RequestDeliveryNoteStatus` επιστρέφει αντικείμενο `DeliveryNoteStatusResponse`:
+| Method                  | Returns                | Description                         |
+|-------------------------|------------------------|-------------------------------------|
+| `getInvoiceMark()`      | `?string`              | MARK of the note                    |
+| `getStatus()`           | `?DeliveryStatus`      | [DeliveryStatus](#deliverystatus)   |
+| `getDispatchTimestamp()`| `?string`              | Dispatch time                       |
+| `getLifecycleHistory()` | `?DeliveryEvent[]`     | History of events                   |
 
-```php
-$invoiceMark = $response->getInvoiceMark();           // Mark δελτίου
-$status = $response->getStatus();                     // DeliveryStatus enum
-$dispatchTime = $response->getDispatchTimestamp();    // Χρόνος αποστολής
-$history = $response->getLifecycleHistory();          // Array από DeliveryEvent
-```
+`DeliveryEvent`: `getEventType()` ([DeliveryEventType](#deliveryeventtype)), `getEventTimestamp()`, `getActorVat()`,
+`getMark()`, and one of `getTransportDetails()`, `getOutcomeDetails()`, `getRejectionDetails()`.
+
+### GroupQrCodeResponse
+
+| Method              | Returns   | Description                                |
+|---------------------|-----------|--------------------------------------------|
+| `getStatusCode()`   | `?string` | Result code                                |
+| `getGroupQrUrl()`   | `?string` | The group QR URL                           |
+| `getGroupId()`      | `?string` | The `groupId` read from the group QR URL   |
+| `getQrUrlsCount()`  | `?int`    | Number of notes in the group               |
+| `getExpiresAt()`    | `?string` | When the group QR URL expires              |
 
 ### GroupQrDetailsResponse
 
-Η μέθοδος `RequestGroupQrDetails` επιστρέφει αντικείμενο `GroupQrDetailsResponse`:
+| Method                        | Returns   | Description                         |
+|-------------------------------|-----------|-------------------------------------|
+| `getGroupId()`                | `?string` | ID of the group                     |
+| `getQrUrls()`                 | `?QrUrls` | The QR URLs, a list of strings      |
+| `getQrUrlsCount()`            | `?int`    | Number of QR URLs                   |
+| `getGroupQrCreatorVatNumber()`| `?string` | VAT number of the creator           |
+| `getCreatedAt()`              | `?string` | Creation time                       |
+| `getExpiresAt()`              | `?string` | Expiry time                         |
+| `getStatusCode()`             | `?string` | Result code                         |
+| `getMessage()`                | `?string` | Message                             |
 
-```php
-$groupId = $response->getGroupId();
-$creatorVat = $response->getGroupQrCreatorVatNumber();
-$createdAt = $response->getCreatedAt();
-$expiresAt = $response->getExpiresAt();
-$qrUrls = $response->getQrUrls();                     // Array από URLs
-$qrUrlsCount = $response->getQrUrlsCount();
-```
+## Code lists
 
-> [!TIP]
-> Όλες οι μέθοδοι που επιστρέφουν `Response` αντικείμενα υποστηρίζουν τις μεθόδους `isSuccessful()` και `isFailed()` για εύκολο έλεγχο κατάστασης.
+Enums in `Firebed\AadeMyData\Enums\DigitalGoodsMovement`. `label()` returns the Greek label.
 
-> [!NOTE]
-> Η σειρά των παραμέτρων στον constructor του `Location` είναι: `latitude` (γεωγραφικό πλάτος), `longitude` (γεωγραφικό μήκος).
+### TransportType
+
+| Code | Case                    | Label                    | English                     |
+|------|-------------------------|--------------------------|-----------------------------|
+| 1    | `PUBLIC_USE_TRUCK`      | Φορτηγό Δημόσιας Χρήσης  | Public use truck            |
+| 2    | `PRIVATE_USE_TRUCK`     | Φορτηγό Ιδιωτικής Χρήσης | Private use truck           |
+| 3    | `SHIP`                  | Πλοίο                    | Ship                        |
+| 4    | `TRAIN`                 | Τρένο                    | Train                       |
+| 5    | `AIRPLANE`              | Αεροπλάνο                | Airplane                    |
+| 6    | `OTHER_TRANSPORT_MEANS` | Λοιπά Μεταφορικά Μέσα    | Other means of transport    |
+| 7    | `WITHOUT`               | Άνευ                     | None                        |
+
+### DeliveryOutcomeType
+
+| Code      | Case      | Label           | English          |
+|-----------|-----------|-----------------|------------------|
+| `FULL`    | `FULL`    | Πλήρης Παράδοση | Full delivery    |
+| `PARTIAL` | `PARTIAL` | Μερική Παράδοση | Partial delivery |
+| `NONE`    | `NONE`    | Καμία Παράδοση  | No delivery      |
+
+### PackagingType
+
+| Code | Case     | Label   | English                                   |
+|------|----------|---------|-------------------------------------------|
+| 1    | `PALLET` | Παλέτα  | Pallet                                    |
+| 2    | `BOX`    | Κούτα   | Box                                       |
+| 3    | `CRATE`  | Κιβώτιο | Crate                                     |
+| 4    | `BARREL` | Βαρέλι  | Barrel                                    |
+| 5    | `SACK`   | Σάκος   | Sack                                      |
+| 6    | `OTHER`  | Λοιπά   | Other. Needs `otherPackagingTypeTitle`    |
+
+### DeliveryStatus
+
+| Code | Case                   | Label                        | English                    |
+|------|------------------------|------------------------------|----------------------------|
+| 1    | `REGISTERED`           | Εκδόθηκε                     | Issued                     |
+| 2    | `CANCELLED`            | Ακυρώθηκε                    | Cancelled                  |
+| 3    | `IN_TRANSIT`           | Σε διακίνηση                 | In transit                 |
+| 4    | `REJECTED`             | Απορρίφθηκε                  | Rejected                   |
+| 5    | `DELIVERED_BY_CARRIER` | Παραδόθηκε από τον μεταφορέα | Delivered by the carrier   |
+| 7    | `FAILED_DELIVERY`      | Αποτυχία παράδοσης           | Failed delivery            |
+| 8    | `COMPLETED`            | Ολοκληρώθηκε                 | Completed                  |
+| 9    | `IN_TRANSIT_RETURN`    | Σε διακίνηση (Επιστροφή)     | In transit (return), v2.0.2 |
+
+### DeliveryEventType
+
+| Code                     | Case                       | Label                  | English                        |
+|--------------------------|----------------------------|------------------------|--------------------------------|
+| `RegisterTransfer`       | `REGISTER_TRANSFER`        | Έναρξη διακίνησης      | Movement start / transshipment |
+| `ConfirmOutcome`         | `CONFIRM_OUTCOME`          | Επιβεβαίωση παραλαβής  | Receipt confirmed              |
+| `Rejection`              | `REJECTION`                | Απόρριψη               | Rejection                      |
+| `ConfirmReturn`          | `CONFIRM_RETURN`           | Επιβεβαίωση επιστροφής | Return confirmed, v2.0.2       |
+| `RegisterTransferReturn` | `REGISTER_TRANSFER_RETURN` | Επιστροφή διακίνησης   | Return movement, v2.0.2        |

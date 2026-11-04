@@ -1,4 +1,4 @@
-# Διαβίβαση παραστατικών - SendInvoices
+# SendInvoices
 
 ```shell
 # production
@@ -6,145 +6,132 @@ https://mydatapi.aade.gr/myDATA/SendInvoices
 
 # development
 https://mydataapidev.aade.gr/SendInvoices
+
+# production, provider channel
+https://mydatapi.aade.gr/myDataProvider/SendInvoices
+
+# development, provider channel
+https://mydataapidev.aade.gr/myDataProvider/SendInvoices
 ```
 
-## Αποστολή παραστατικών
-
-Υπάρχουν διάφοροι τρόποι για τη διαβίβαση παραστατικών στο σύστημα του ΑΑΔΕ myDATA.
-Για την αποστολή παραστατικών στο σύστημα του ΑΑΔΕ myDATA, χρησιμοποιήστε η κλάση `Firebed\AadeMyData\Http\SendInvoices`.
-Η κλάση αυτή δέχεται ως παράμετρο:
-
-- είτε ένα αντικείμενο `Firebed\AadeMyData\Models\InvoicesDoc`
-- είτε ένα αντικείμενο `Firebed\AadeMyData\Models\Invoice`
-- είτε έναν πίνακα από αντικείμενα `Firebed\AadeMyData\Models\Invoice`
-
-> [!NOTE]
-> Στα παρακάτω παραδείγματα δημιουργούμε κενά αντικείμενα `Firebed\AadeMyData\Models\Invoice` για χάριν συντομίας. Κανονικά θα πρέπει να
-> συμπληρώσουμε όλα τα απαραίτητα πεδία του παραστατικού πριν την αποστολή του.
->
-> [**Δείτε περισσότερα**](../invoices/examples)
-
-### Αποστολή ενός μόνο παραστατικού
-
-Η διαβίβαση ενός μόνο παραστατικού είναι μια από τις πιο συχνές περιπτώσεις χρήσης. Στο παρακάτω παράδειγμα, δημιουργούμε ένα αντικείμενο `Firebed\AadeMyData\Models\Invoice` και το διαβιβάζουμε στο σύστημα του ΑΑΔΕ myDATA.
+Sends one or more invoices to myDATA. Works on the ERP and the provider channel.
 
 ```php
-use Firebed\AadeMyData\Http\SendInvoices;
-use Firebed\AadeMyData\Models\InvoicesDoc;
-use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Http\SendInvoices;
+use Firebed\AadeMyData\Models\Invoice;
 
 $invoice = new Invoice();
-$request = new SendInvoices();
 
 try {
-    $response = $request->handle($invoice);
+    $responses = (new SendInvoices())->handle($invoice);
 } catch (MyDataException $e) {
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
+    echo "Connection error: " . $e->getMessage();
 }
 ```
 
-### Αποστολή πολλών παραστατικών με τη χρήση πίνακα αντικειμένων `Invoice`
-
-Αρκετές φορές χρειαζόμαστε να διαβιβάσουμε πολλά παραστατικά ταυτόχρονα. Στο παρακάτω παράδειγμα,
-δημιουργούμε τρία αντικείμενα `Firebed\AadeMyData\Models\Invoice` και τα διαβιβάζουμε ταυτόχρονα στο σύστημα του ΑΑΔΕ myDATA.
+With the `MyData` client:
 
 ```php
-$invoice1 = new Invoice();
-$invoice2 = new Invoice();
-$invoice3 = new Invoice();
+use Firebed\AadeMyData\MyData;
 
-$request = new SendInvoices();    
-try {
-    $response = $request->handle([$invoice1, $invoice2, $invoice3]);
-} catch (MyDataException $e) {
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
-}
+$mydata = MyData::connect($userId, $subscriptionKey, 'dev');
+
+$responses = $mydata->sendInvoices($invoice);
 ```
 
-### Αποστολή πολλών παραστατικών με τη χρήση ενός αντικειμένου `InvoicesDoc`
+> [!NOTE]
+> The examples send empty `Invoice` objects to stay short. A real invoice needs all its fields.
+> See the [invoice examples](../invoices/examples).
 
-Μπορούμε επίσης να δημιουργήσουμε ένα αντικείμενο `Firebed\AadeMyData\Models\InvoicesDoc` και να προσθέσουμε πολλά παραστατικά σε αυτό.
-Στο παρακάτω παράδειγμα, δημιουργούμε ένα αντικείμενο `Firebed\AadeMyData\Models\InvoicesDoc` με 3 παραστατικά στον κατασκευαστή (constructor)
-και έπειτα προσθέτουμε άλλα 2 αντικείμενα `Firebed\AadeMyData\Models\Invoice` σε αυτό. Σύνολο 5 παραστατικά.
+## Parameters
+
+`handle()` takes one argument, in one of these forms:
+
+| Argument | Description |
+|---|---|
+| `Invoice` | One invoice |
+| `Invoice[]` | A list of invoices |
+| `InvoicesDoc` | A collection of invoices |
+
+All classes are in `Firebed\AadeMyData\Models`.
+
+### Many invoices
 
 ```php
+$responses = (new SendInvoices())->handle([$invoice1, $invoice2, $invoice3]);
+```
+
+Or build an `InvoicesDoc`:
+
+```php
+use Firebed\AadeMyData\Models\InvoicesDoc;
+
 $doc = new InvoicesDoc([new Invoice(), new Invoice(), new Invoice()]);
 $doc->add(new Invoice());
 $doc->add(new Invoice());
 
-$request = new SendInvoices();
-$response = $request->handle($doc);
-
-try {
-    $response = $request->handle($doc);
-} catch (MyDataException $e) {
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
-}
+// 5 invoices
+$responses = (new SendInvoices())->handle($doc);
 ```
 
 > [!NOTE]
-> Στην περίπτωση που η αποστολή παραστατικών αποτύχει λόγω σφάλματος επικοινωνίας,
-> η εξαίρεση `Firebed\AadeMyData\Exceptions\MyDataException` θα περιέχει το μήνυμα λάθους.
-> Σε τέτοιες περιπτώσεις **κανένα παραστατικό** δε θα διαβιβαστεί στο σύστημα του ΑΑΔΕ myDATA.
+> If the request fails with a connection error, `MyDataException` is thrown and no invoice is sent.
 
-## Λήψη αποτελεσμάτων
+## Results
 
-Το αποτέλεσμα της αποστολής παραστατικών είναι ένα αντικείμενο `Firebed\AadeMyData\Models\ResponseDoc` το οποίο περιέχει τόσα αντικείμενα
-[**Firebed\AadeMyData\Models\Response**](../models/response-type) όσα και τα παραστατικά που διαβιβάστηκαν. Κάθε αντικείμενο `Firebed\AadeMyData\Models\Response` περιέχει το αποτέλεσμα της αποστολής ενός παραστατικού.
+`handle()` returns a `ResponseDoc`: a list with one [Response](../models/response-type) per invoice sent.
 
-Κάθε `Response` περιέχει ένα πεδίο `index` (***με αρχή το 1***) το οποίο αντιστοιχεί στη θέση του παραστατικού στον πίνακα παραστατικών που διαβιβάστηκαν.
-Δηλαδή, αν έχουμε διαβιβάσει τρία παραστατικά, το πεδίο `index` του πρώτου `Response` θα είναι 1, του δεύτερου 2 και του τρίτου 3 και αυτά θα
-αντιστοιχούν στις θέσεις 0 για το πρώτο, 1 για το δεύτερο και 2 για τρίτο στον πίνακα των παραστατικών που διαβιβάστηκαν.
-
-Το πεδίο `status` περιέχει το αποτέλεσμα της αποστολής του παραστατικού. Αν το πεδίο `status` είναι `Success` τότε η αποστολή ήταν επιτυχής.
-Διαφορετικά, στην περίπτωση αποτυχίας, η αποστολή θα περιέχει επίσης και το πεδίο `message` για το μήνυμα λάθους.
+- `getIndex()` is the position of the invoice in the list you sent. It starts at 1, so the invoice is `$invoices[$index - 1]`.
+- `isSuccessful()` is true when `getStatusCode()` is `Success`.
+- On failure, `getErrors()` holds the errors.
 
 ```php
+use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Http\SendInvoices;
 use Firebed\AadeMyData\Models\Invoice;
-use Firebed\AadeMyData\Exceptions\MyDataException;
 
-// Create the request and send 2 invoices
-$invoicesToBeSent = [new Invoice(), new Invoice()];
-$sendInvoices = new SendInvoices();
+$invoices = [new Invoice(), new Invoice()];
 
 try {
-    $responses = $sendInvoices->handle($invoicesToBeSent);
-    
+    $responses = (new SendInvoices())->handle($invoices);
+
     $errors = [];
     foreach ($responses as $response) {
-        if ($response->isSuccessful()) { // $response->getStatusCode() === 'Success';   
-            // This invoice was successfully registered.     
-            // Each response has an index value which corresponds
-            // to the index (-1) of the $invoicesToBeSent array.
-            
-            $index = $response->getIndex(); // $sentInvoice = $invoicesToBeSent[$index - 1];
+        if ($response->isSuccessful()) {
+            $index = $response->getIndex();          // $invoices[$index - 1]
             $uid = $response->getInvoiceUid();
             $mark = $response->getInvoiceMark();
-            $cancelledByMark = $response->getCancellationMark();
             $qrUrl = $response->getQrUrl();
-    
-            // Typically, you should have an invoice object of your
-            // own and an invoice reference from myDATA, and you
-            // will have to relate these together. 
-            // Retrieve the invoice's uid, mark, qr and other values
-            // from the response, then establish the correlation
-            // with your local invoice and persist these details in your database.
-            print_r(compact('index', 'uid', 'mark', 'cancelledByMark', 'qrUrl'));
+            $authCode = $response->getAuthenticationCode(); // provider channel only
+
+            // Save uid, mark and qrUrl with your own invoice.
         } else {
-            // There were some errors for this specific invoice. See errors for details.
             foreach ($response->getErrors() as $error) {
                 $errors[$response->getIndex()][] = $error->getCode() . ': ' . $error->getMessage();
             }
         }
     }
 } catch (MyDataException $e) {
-    // There was a communication error. None of the invoices were sent.
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
+    // Connection error. No invoice was sent.
+    echo "Connection error: " . $e->getMessage();
 }
 ```
 
 > [!CAUTION]
-> **Στην περίπτωση διαβίβασης πολλαπλών παραστατικών ταυτόχρονα, θα πρέπει να ελέγξουμε το αποτέλεσμα της αποστολής κάθε παραστατικού ξεχωριστά.
-> Υπάρχει περίπτωση να έχουμε επιτυχία σε ένα παραστατικό και αποτυχία σε ένα άλλο.**
+> When you send many invoices at once, check each response. Some invoices can succeed while others fail.
+
+## Sent twice
+
+If an answer is lost (e.g. a timeout) and you send the same invoice again, myDATA rejects it with error 228.
+`getDuplicate()` reads the MARK of the invoice myDATA already holds:
+
+```php
+$response = $responses->first();
+
+if ($duplicate = $response->getDuplicate()) {
+    $duplicate->mark;
+    $duplicate->authenticationCode; // null until myDATA has stored the invoice
+    $duplicate->toResponse();       // the successful Response it stands for
+}
+```

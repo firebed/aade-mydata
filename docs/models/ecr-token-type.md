@@ -1,25 +1,22 @@
-# Τύπος ECRToken
+# ECRToken
 
-Ο τύπος `ECRToken` περιγράφει την υπογραφή του παραστατικού από το σύστημα λογισμικού (ERP).
-
-## Το αντικείμενο αυτό περιέχει τα εξής πεδία:
-
-| Πεδίο         | Υποχρεωτικό | Περιγραφή                                          |
-|---------------|-------------|----------------------------------------------------|
-| SigningAuthor | **Ναι**     | ECR id: Αριθμός μητρώου του φορολογικού μηχανισμού |
-| SessionNumber | **Ναι**     | Υπογραφή                                           |
-
-## Παρατηρήσεις
-
-- Λεπτομέρειες `SessionNumber` στην υπ’ αριθμ. Α. 1155/09-10-2023 απόφαση
-  (ΦΕΚ 5992 Β΄/13.10.2023), όπως ισχύει.
-
-## Παραδείγματα
+`ECRToken` is the signature of a POS payment when you send the invoice from an ERP. It belongs to a
+[PaymentMethodDetail](payment-method-detail-type) with type `PaymentType::POS`.
 
 ```php
 use Firebed\AadeMyData\Models\ECRToken;
 
+$ecrToken = new ECRToken('ABC1234567', '123456');
+
+// or
 $ecrToken = new ECRToken();
-$ecrToken->setSigningAuthor('1234567890');
+$ecrToken->setSigningAuthor('ABC1234567');
 $ecrToken->setSessionNumber('123456');
 ```
+
+| Field         | Type     | Required | Description                                          |
+|---------------|----------|----------|------------------------------------------------------|
+| SigningAuthor | `string` | Yes      | ECR id: registry number of the fiscal device (max 15) |
+| SessionNumber | `string` | Yes      | Unique 6-digit code of the transaction               |
+
+Details of `SessionNumber` in decision A.1155/09-10-2023 (FEK B 5992/13.10.2023).

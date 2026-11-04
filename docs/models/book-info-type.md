@@ -1,63 +1,45 @@
-# Τύπος BookInfo
+# BookInfo
 
-Ο τύπος `BookInfo` αντιπροσωπεύει ένα αντικείμενο που περιέχει πληροφορίες για τα έσοδα/έξοδα του χρήστη.
-
-## Το αντικείμενο αυτό περιέχει τα εξής πεδία:
-
-| Πεδίο             | Περιγραφή                       |
-|-------------------|---------------------------------|
-| counterVatNumber  | ΑΦΜ λήπτη                       |
-| issueDate         | Ημερομηνία έκδοσης Παραστατικού |
-| invType           | Τύπος Παραστατικού              |
-| selfpricing       | Αυτοτιμολόγηση                  |
-| invoiceDetailType | Επισήμανση                      |
-| netValue          | Καθαρή αξία                     |
-| vatAmount         | Ποσό ΦΠΑ                        |
-| withheldAmount    | Ποσό Παρακράτησης Φόρου         |
-| otherTaxesAmount  | Ποσό Λοιπών Φόρων               |
-| stampDutyAmount   | Ποσό Ψηφιακού Τέλους Συναλλαγής |
-| feesAmount        | Ποσό Τελών                      |
-| deductionsAmount  | Ποσό Κρατήσεων                  |
-| thirdPartyAmount  | Ποσό Περί Τρίτων                |
-| grossValue        | Συνολική Αξία                   |
-| count             | Πλήθος                          |
-| minMark           | Ελάχιστο ΜΑΡΚ πλήθους           |
-| maxMark           | Μέγιστο ΜΑΡΚ πλήθους            |
-
-## Παρατηρήσεις
-
-- Κάθε γραμμή αντιστοιχεί σε ένα μοναδικό σύνολο τιμών για τα πεδία
-  `counterVatNumber`, `issueDate`, `invTyp` και τον ΑΦΜ αναφοράς.
-- Οι παράμετροι `minMark` και `maxMark` αντιστοιχούν στον ελάχιστο και μέγιστο mark που
-  απαρτίζουν το σύνολο των παραστατικών που αντιστοιχούν για τη συγκεκριμένη
-  γραμμή.
-- Τα παραστατικά που έχουν αυτοτιμολόγηση ανακτώνται σε διαφορετική γραμμή, με
-  την αντίστοιχη τιμή στο συγκεκριμένο πεδίο.
-- Οι γραμμές των παραστατικών 1.5 (Εκκαθάριση – Αμοιβή Τρίτων) ανακτώνται σε
-  διαφορετικές γραμμές, με την αντίστοιχη τιμή στο συγκεκριμένο πεδίο
-
-Κάθε πεδίο είναι διαθέσιμο στο τύπο `BookInfo` και μπορεί να ανακτηθεί με την αντίστοιχη `get` μέθοδο.
+`RequestMyIncome` and `RequestMyExpenses` return a `RequestedBookInfo`. Its `getBookInfo()` returns a list of
+`BookInfo` rows, or `null` when there are none.
 
 ```php
-use Firebed\AadeMyData\Models\BookInfo;
+use Firebed\AadeMyData\Http\RequestMyIncome;
 
-$bookInfo = new BookInfo();
-$counterVatNumber = $bookInfo->getCounterVatNumber();
-$issueDate = $bookInfo->getIssueDate();
-// ...
+$result = (new RequestMyIncome())->handle(dateFrom: '01/01/2026', dateTo: '31/01/2026');
+
+foreach ($result->getBookInfo() ?? [] as $row) {
+    echo $row->getInvType()?->label();
+    echo $row->getNetValue();
+    echo $row->getVatAmount();
+}
+
+$token = $result->getContinuationToken(); // next page, see ContinuationToken
 ```
 
+| Field             | Getter                   | Type                                                   | Description |
+|-------------------|--------------------------|--------------------------------------------------------|-------------|
+| counterVatNumber  | `getCounterVatNumber()`  | `string`                                               | VAT number of the counterpart |
+| issueDate         | `getIssueDate()`         | `string`                                               | Issue date |
+| invType           | `getInvType()`           | [`InvoiceType`](../appendix/invoice-types)             | Invoice type |
+| selfpricing       | `getSelfPricing()`       | `bool`                                                 | Self-billing |
+| invoiceDetailType | `getInvoiceDetailType()` | [`InvoiceDetailType`](../appendix/invoice-detail-types) | Marking |
+| netValue          | `getNetValue()`          | `string`                                               | Net value |
+| vatAmount         | `getVatAmount()`         | `string`                                               | VAT amount |
+| withheldAmount    | `getWithheldAmount()`    | `string`                                               | Withholding tax amount |
+| otherTaxesAmount  | `getOtherTaxesAmount()`  | `string`                                               | Other taxes amount |
+| stampDutyAmount   | `getStampDutyAmount()`   | `string`                                               | Stamp duty amount |
+| feesAmount        | `getFeesAmount()`        | `string`                                               | Fees amount |
+| deductionsAmount  | `getDeductionsAmount()`  | `string`                                               | Deductions amount |
+| thirdPartyAmount  | `getThirdPartyAmount()`  | `string`                                               | Amount on behalf of third parties |
+| grossValue        | `getGrossValue()`        | `string`                                               | Gross value |
+| count             | `getCount()`             | `string`                                               | Number of invoices in the row |
+| minMark           | `getMinMark()`           | `string`                                               | Smallest MARK in the row |
+| maxMark           | `getMaxMark()`           | `string`                                               | Largest MARK in the row |
 
+## Notes
 
-
-
-
-
-
-
-
-
-
-
-
-
+- Each row is one unique set of `counterVatNumber`, `issueDate`, `invType` and the reference VAT number.
+- `minMark` and `maxMark` are the smallest and largest MARK of the invoices in the row.
+- Self-billing invoices come in a separate row, with `selfpricing` set.
+- Rows of type 1.5 invoices (settlement, third-party fees) come in separate rows.

@@ -1,85 +1,50 @@
-# Τύπος Response
+# Response
 
-Στις περιπτώσεις που ο χρήστης χρησιμοποιήσει κάποια μέθοδο υποβολής στοιχείων ή
-ακύρωση (`SendInvoices`, `SendIncomeClassification`, `SendExpensesClassification`,
-`CancelInvoice`) θα λαμβάνει ως απάντηση ένα αντικείμενο `ResponseDoc`. Το
-αντικείμενο περιλαμβάνει μια λίστα από στοιχεία τύπου `Response`, ένα για κάθε οντότητα
-που υποβλήθηκε.
-
-## Περιγραφή
-
-| Πεδίο              | Περιγραφή                                                                                           |
-|--------------------|-----------------------------------------------------------------------------------------------------|
-| index              | Αριθμός Σειράς Οντότητας εντός του υποβληθέντος xml                                                 |
-| statusCode         | Κωδικός Αποτελέσματος Success, ValidationError, TechnicalError, XMLSyntaxError                      |
-| invoiceUid         | Αναγνωριστικό Παραστατικού Μήκος = 40                                                               |
-| invoiceMark        | Μοναδικός Αριθμός Καταχώρησης Παραστατικού                                                          |
-| classificationMark | Μοναδικός Αριθμός Παραλαβής Χαρακτηρισμού                                                           |
-| authenticationCode | Συμβολοσειρά Αυθεντικοποίησης                                                                       |
-| cancellationMark   | Μοναδικός Αριθμός Ακύρωσης                                                                          |
-| qrUrl              | Κωδικοποιημένο αλφαριθμητικό Χρησιμοποιείται από τα προγράμματα για τη δημιουργία QR Code τύπου Url |
-| errors             | Λίστα Σφαλμάτων                                                                                     |
-
-### Παρατηρήσεις
-
-- Το είδος της απάντησης (πετυχημένη ή αποτυχημένη διαδικασία) καθορίζεται από την
-  τιμή του πεδίου statusCode.
-- Σε περίπτωση επιτυχίας το πεδίο statusCode έχει τιμή Success και η απάντηση
-  περιλαμβάνει τις αντίστοιχες τιμές για τα πεδία invoiceUid, invoiceMark,
-  classificationMark και cancellationMark, ανάλογα με την οντότητα που υποβλήθηκε.
-- Σε περίπτωση αποτυχίας το πεδίο statusCode έχει τιμή αντίστοιχη του είδους του
-  σφάλματος και η απάντηση περιλαμβάνει μια λίστα στοιχείων σφάλματος τύπου
-  ErrorType για κάθε οντότητα που η υποβολή της απέτυχε. Όλα τα στοιχεία σφάλματος
-  ανά οντότητα είναι υποχρεωτικά της ίδιας κατηγορίας που χαρακτηρίζει την απάντηση.
-- Το πεδίο invoiceUid επιστρέφει μόνο στην περίπτωση που η υποβολή αφορούσε
-  παραστατικό.
-- Το πεδίο classificationMark επιστρέφει μόνο στην περίπτωση που η υποβολή
-  αφορούσε χαρακτηρισμό.
-- Το πεδίο authenticationCode επιστρέφει στην περίπτωση που η υποβολή έγινε μέσω
-  παρόχου.
-- Το πεδίο cancellationMark επιστρέφει μόνο στην περίπτωση που η υποβολή αφορούσε
-  ακύρωση παραστατικού.
-- Το πεδίο invoiceMark περιέχει το mark του υποβληθέντος παραστατικού στην
-  περίπτωση που υποβλήθηκαν παραστατικά και το mark του παραστατικού που
-  αφορούσαν οι υποβληθέντες χαρακτηρισμοί, στην περίπτωση υποβολής
-  χαρακτηρισμών
-- Το πεδίο qrUrl επιστρέφει μόνο στις υποβολές παραστατικών τύπου από 1.1 έως 11.5
-
-### `Firebed\AadeMyData\Models\Response`
+Every send or cancel call (`SendInvoices`, `SendIncomeClassification`, `SendExpensesClassification`,
+`SendPaymentsMethod`, `CancelInvoice`, ...) returns a `ResponseDoc`. It holds one `Response` per entity you sent,
+in the same order.
 
 ```php
-use Firebed\AadeMyData\Models\Response;
+use Firebed\AadeMyData\Http\SendInvoices;
 
-$response = new Response();
+$responses = (new SendInvoices())->handle($invoices);
 
-// Αριθμός Σειράς Οντότητας εντός του υποβληθέντος τύπου
-$index = $response->getIndex();
-
-// Κωδικός Αποτελέσματος Success, ValidationError, TechnicalError, XMLSyntaxError
-$statusCode = $response->getStatusCode();
-
-// Επιστρέφει μόνο στην περίπτωση που η υποβολή αφορούσε παραστατικό.
-$invoiceUid = $response->getInvoiceUid();
-
-// Περιέχει το mark του υποβληθέντος παραστατικού στην περίπτωση που υποβλήθηκαν
-// παραστατικά και το mark του παραστατικού που αφορούσαν οι υποβληθέντες
-// χαρακτηρισμοί, στην περίπτωση υποβολής χαρακτηρισμών.
-$invoiceMark = $response->getInvoiceMark();
-
-// Επιστρέφει μόνο στην περίπτωση που η υποβολή αφορούσε χαρακτηρισμό.
-$classificationMark = $response->getClassificationMark();
-
-// Επιστρέφει στην περίπτωση που η υποβολή έγινε μέσω παρόχου.
-$authenticationCode = $response->getAuthenticationCode();
-
-// Επιστρέφει μόνο στην περίπτωση που η υποβολή αφορούσε ακύρωση παραστατικού.
-$cancellationMark = $response->getCancellationMark();
-
-// Κωδικοποιημένο αλφαριθμητικό Χρησιμοποιείται από τα προγράμματα για τη
-// δημιουργία QR Code τύπου Url.
-// Το πεδίο qrUrl επιστρέφει μόνο στις υποβολές παραστατικών τύπου από 1.1 έως 11.5
-$qrUrl = $response->getQrUrl();
-
-// Λίστα Σφαλμάτων
-$errors = $response->getErrors();
+foreach ($responses as $response) {
+    if ($response->isSuccessful()) {
+        $mark = $response->getInvoiceMark();
+        $uid = $response->getInvoiceUid();
+        $qrUrl = $response->getQrUrl();
+    } else {
+        foreach ($response->getErrors() ?? [] as $error) {
+            echo $error->getCode() . ': ' . $error->getMessage();
+        }
+    }
+}
 ```
+
+| Field              | Getter                     | Type                                        | Description |
+|--------------------|----------------------------|---------------------------------------------|-------------|
+| index              | `getIndex()`               | `int`                                       | Position of the entity in the request |
+| statusCode         | `getStatusCode()`          | `string`                                    | `Success`, `ValidationError`, `TechnicalError` or `XMLSyntaxError` |
+| invoiceUid         | `getInvoiceUid()`          | `string`                                    | Invoice uid (40 characters). Only when you sent an invoice |
+| invoiceMark        | `getInvoiceMark()`         | `string`                                    | MARK of the invoice you sent, or of the invoice your classifications belong to |
+| classificationMark | `getClassificationMark()`  | `string`                                    | MARK of the classification. Only when you sent classifications |
+| cancellationMark   | `getCancellationMark()`    | `string`                                    | MARK of the cancellation. Only when you cancelled an invoice |
+| paymentMethodMark  | `getPaymentMethodMark()`   | `string`                                    | MARK of the payment methods. Only when you sent payment methods |
+| authenticationCode | `getAuthenticationCode()`  | `string`                                    | Authentication code. Provider channel only |
+| qrUrl              | `getQrUrl()`               | `string`                                    | URL for the invoice QR code. Only for invoice types 1.1 to 11.5 |
+| receptionProviders | `getReceptionProviders()`  | `ReceptionProviders`                        | Providers of the recipient, see [ReceiverInfoDoc](receiver-info-doc-type). Provider channel |
+| receptionEmails    | `getReceptionEmails()`     | `ReceptionEmails`                           | Emails of the recipient, see [ReceiverInfoDoc](receiver-info-doc-type). Provider channel |
+| errors             | `getErrors()`              | [`Errors`](error-type)                      | List of errors |
+
+| Method            | Description |
+|-------------------|-------------|
+| `isSuccessful()`  | `statusCode` is `Success` |
+| `hasErrors()`     | The response has at least one error |
+| `getDuplicate()`  | The invoice myDATA already holds under this uid (error 228), else `null`. See [Duplicate](duplicate-type) |
+
+## Notes
+
+- `statusCode` tells you if the entity was accepted. On success you get the fields that match what you sent:
+  `invoiceUid` and `invoiceMark`, `classificationMark` or `cancellationMark`.
+- On failure, `statusCode` is the error kind and `errors` lists the errors. All errors of one entity have the same kind.

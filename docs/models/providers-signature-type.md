@@ -1,25 +1,21 @@
-# Τύπος ProviderSignature
+# ProvidersSignature
 
-Ο τύπος `ProvidersSignature` χρησιμοποιείται για την αναπαράσταση των στοιχείων της υπογραφής των παρόχων.
-
-## Το αντικείμενο αυτό περιέχει τα εξής πεδία:
-
-| Πεδίο         | Υποχρεωτικό | Περιγραφή                                |
-|---------------|-------------|------------------------------------------|
-| SigningAuthor | **Ναι**     | Αριθμός Απόφασης έγκρισης ΥΠΑΗΕΣ Παρόχου |
-| Signature     | **Ναι**     | Υπογραφή                                 |
-
-## Παρατηρήσεις
-
-- Λεπτομέρειες `Signature`  στην υπ’ αριθμ. Α. 1155/09-10-2023 απόφαση
-  (ΦΕΚ 5992 Β΄/13.10.2023), όπως ισχύει.
-
-## Παραδείγματα
+`ProvidersSignature` is the signature of a payment when the invoice goes through the provider channel. It belongs to a
+[PaymentMethodDetail](payment-method-detail-type).
 
 ```php
 use Firebed\AadeMyData\Models\ProvidersSignature;
 
-$providerSignature = new ProvidersSignature();
-$providerSignature->setSigningAuthor('1234567890');
-$providerSignature->setSignature('123456');
+$signature = new ProvidersSignature('2023_123', 'signature-string');
+
+// IRIS payment: add the payment request id
+$signature->setEndToEndReferenceID('E2E-REF-0001');
 ```
+
+| Field               | Type     | Required | Description                                           |
+|---------------------|----------|----------|-------------------------------------------------------|
+| SigningAuthor       | `string` | Yes      | Approval decision number of the provider (max 20)     |
+| Signature           | `string` | Yes      | Signature                                             |
+| EndToEndReferenceID | `string` | No       | Unique id of the payment request, for IRIS payments (`PaymentType::IRIS`) |
+
+Details of `Signature` in decision A.1155/09-10-2023 (FEK B 5992/13.10.2023).

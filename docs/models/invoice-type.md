@@ -1,160 +1,120 @@
-# Τύπος Invoice
+# Invoice
 
-Ο τύπος `Invoice` αντιπροσωπεύει ένα αντικείμενο που περιέχει πληροφορίες
-για τα παραστατικά που θα διαβιβαστούν ή έχουν διαβιβαστεί στο σύστημα του ΑΑΔΕ myDATA.
-
-| Πεδίο                                                | Υποχρεωτικό | Περιγραφή                                                                                                                                              |
-|------------------------------------------------------|-------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
-| uid                                                  | Όχι         | Αναγνωριστικό Παραστατικού                                                                                                                             |
-| mark                                                 | Όχι         | Μοναδικός Αριθμός Καταχώρησης Παραστατικού                                                                                                             |
-| cancelledByMark                                      | Όχι         | Μοναδικός Αριθμός Καταχώρησης Ακυρωτικού                                                                                                               |
-| authenticationCode                                   | Όχι         | Συμβολοσειρά Αυθεντικοποίησης                                                                                                                          |
-| transmissionFailure                                  | Όχι         | Αδυναμία Επικοινωνίας Παρόχου ή Αδυναμία Διαβίβασης Δεδομένων από ERP                                                                                  |
-| [**issuer**](party-type)                             | Όχι         | Εκδότης Παραστατικού                                                                                                                                   |
-| [**counterpart**](party-type)                        | Όχι         | Λήπτης Παραστατικού                                                                                                                                    |
-| [**paymentMethods[]**](payment-method-detail-type)   | Όχι         | Τρόποι Πληρωμής                                                                                                                                        |
-| [**invoiceHeader**](invoice-header-type)             | **Ναι**     | Επικεφαλίδα Παραστατικού                                                                                                                               |
-| [**invoiceDetails[]**](invoice-row-type)             | **Ναι**     | Γραμμές Παραστατικού                                                                                                                                   |
-| [**taxesTotals[]**](tax-totals-type)                 | Όχι         | Σύνολα Φόρων                                                                                                                                           |
-| [**invoiceSummary**](invoice-summary-type)           | **Ναι**     | Περίληψη Παραστατικού                                                                                                                                  |
-| qrCodeUrl                                            | Όχι         | Κωδικοποιημένο αλφαριθμητικό για να χρησιμοποιηθεί από τα προγράμματα για τη δημιουργία QR Code τύπου Url                                              |
-| downloadingInvoiceUrl                                | Όχι         | URL για λήψη παραστατικού (έγκυρο μόνο στην περίπτωση διαβίβασης μέσω παρόχου) <sub><sup>v1.0.12</sup></sub>                                          |
-| packingsDeclarations[]                               | Όχι         | Δηλώσεις Συσκευασιών Διακίνησης (έγκυρο μόνο για παραστατικά διακίνησης) <sub><sup>v2.0.1</sup></sub>                                                 |
-| invoiceDeliveryStatus                                | Όχι         | Κατάσταση Παραστατικού Δελτίου Διακίνησης (read-only, παρέχεται από το myDATA κατά την ανάκτηση) <sub><sup>v2.0.1</sup></sub>                         |
-| deliveryLifecycle                                    | Όχι         | Το σύνολο των γεγονότων του κύκλου ζωής του παραστατικού διακίνησης (read-only, παρέχεται από το myDATA κατά την ανάκτηση) <sub><sup>v2.0.1</sup></sub> |
-
-> [!NOTE]
-> Τα πεδία `uid`, `mark`, `cancelledByMark` και `authenticationCode` συμπληρώνονται από την υπηρεσία.
-
-## Παρατηρήσεις
-
-- Το uid αποτελεί το αναγνωριστικό κάθε παραστατικού και συμπληρώνεται από την Υπηρεσία.
-  Γενικά υπολογίζεται από το SHA-1 hash των ακόλουθων πεδίων του παραστατικού τα οποία είναι :
-    - ΑΦΜ Eκδότη
-    - Ημερομηνία Έκδοσης
-    - Αριθμός Εγκατάστασης στο Μητρώο του Taxis
-    - Τύπος Παραστατικού
-    - Σειρά
-    - ΑΑ
-    - Τύπος Απόκλισης Παραστατικού (εφόσον υπάρχει)
-      Ειδικά για τα παραστατικά των κατηγοριών Β1 (Μη Αντικριζόμενα Παραστατικά
-      Λήπτη ημεδαπής / αλλοδαπής) και Β2 (Αντικριζόμενα Παραστατικά Λήπτη
-      ημεδαπής / αλλοδαπής) στον υπολογισμό του uid συμμετέχει και το ΑΦΜ του
-      λήπτη. Κατά τη χρήση του αλγόριθμου SHA-1 χρησιμοποιείται κωδικοποίηση ISO-8859-7.
-- Το `mark` αποτελεί τον Μοναδικό Αριθμό Καταχώρησης του παραστατικού (Μ.ΑΡ.Κ)
-- Στο στοιχείο `taxesTotals` θα περιλαμβάνονται φόροι όλων των κατηγοριών, εκτός
-  του ΦΠΑ, οι οποίοι αφορούν όλο το παραστατικό σαν σύνολο. Σε περίπτωση που ο
-  χρήστης κάνει χρήση αυτού του στοιχείου, δε θα μπορεί να εισάγει φόρους εκτός
-  του ΦΠΑ σε κάθε γραμμή του παραστατικού ξεχωριστά.
-- Ο Μοναδικός Αριθμός Καταχώρησης Ακυρωτικού εμφανίζεται κατά τη λήψη μόνο
-  εφόσον το εν λόγω παραστατικό έχει ακυρωθεί και συμπληρώνεται με το ΜΑΡΚ της
-  ακύρωσης.
-- Το authenticationCode αποτελεί τη συμβολοσειρά αυθεντικοποίησης κάθε
-  παραστατικού και συμπληρώνεται από την Υπηρεσία για την περίπτωση που η
-  αποστολή γίνεται μέσω Παρόχου Ηλεκτρονικής Τιμολόγησης. Υπολογίζεται από το
-  SHA-1 hash 8 πεδίων του παραστατικού τα οποία είναι :
-    - ΑΦΜ Eκδότη
-    - Ημερομηνία Έκδοσης
-    - Αριθμός Εγκατάστασης στο Μητρώο του Taxis
-    - Τύπος Παραστατικού
-    - Σειρά
-    - ΑΑ
-    - Μ.ΑΡ.Κ Παραστατικού
-    - Συνολική Αξία Παραστατικού
-    - Σύνολο Αξίας Φ.Π.Α. Παραστατικού
-    - ΑΦΜ Λήπτη
-- Το πεδίο qrCodeUrl περιέχει ένα url του οποίου το query string είναι
-  κωδικοποιημένο, προκειμένου να χρησιμοποιηθεί από τις εφαρμογές για την
-  παραγωγή/εισαγωγή στα παραστατικά QR Code τύπου url, το οποίο θα οδηγεί
-  (κατά την ανάγνωση του) σε σελίδα της Υπηρεσίας για την επισκόπηση του
-  παραστατικού.
-- Επιτρεπτές τιμές για το πεδίο `transmissionFailure` είναι:
-    - **1**. Στην περίπτωση αδυναμίας επικοινωνίας οντότητας με τον πάροχο κατά την έκδοση/διαβίβαση παραστατικού (μόνο για παρόχους).
-    - **2**. Στην περίπτωση αδυναμίας επικοινωνίας του παρόχου με το myDATA κατά την έκδοση/διαβίβαση παραστατικού (μόνο για παρόχους).
-    - **3**. Απώλεια διασύνδεσης (είναι επιτρεπτή μόνο για περίπτωση αποστολής από ERP).
-
-## Νέα Πεδία v2.0.1 - Ψηφιακή Διακίνηση Αγαθών
-
-### packingsDeclarations
-
-Το πεδίο `packingsDeclarations` είναι λίστα από αντικείμενα `PackagingDetail` που περιέχει δηλώσεις συσκευασιών για παραστατικά διακίνησης.
-
-Οι συσκευασίες γράφονται ως στοιχεία `Packages` μέσα σε ένα `packingsDeclarations`, αφού το myDATA δέχεται μία μόνο δήλωση ανά παραστατικό. Το myDATA απορρίπτει ποσότητα 0 ή μικρότερη, καθώς και `otherPackagingTypeTitle` που λείπει από `PackagingType::OTHER` ή δηλώνεται με άλλο είδος. Η βιβλιοθήκη δεν τα ελέγχει.
+`Invoice` is one invoice: the one you send with `SendInvoices` and the one you read back with `RequestDocs` or
+`RequestTransmittedDocs`.
 
 ```php
-use Firebed\AadeMyData\Models\DigitalGoodsMovement\PackagingDetail;
-use Firebed\AadeMyData\Enums\DigitalGoodsMovement\PackagingType;
+use Firebed\AadeMyData\Models\Invoice;
 
 $invoice = new Invoice();
+$invoice->setIssuer($issuer);
+$invoice->setCounterpart($counterpart);
+$invoice->setInvoiceHeader($header);
+$invoice->addPaymentMethod($payment);
+$invoice->addInvoiceDetails($row);
+$invoice->summarizeInvoice();
+```
 
-// Προσθήκη δήλωσης συσκευασίας
+See the [invoice examples](../invoices/examples) for complete invoices.
+
+| Field                 | Type                                                     | Required | Description |
+|-----------------------|----------------------------------------------------------|----------|-------------|
+| uid                   | `string`                                                 | No       | Invoice id. Set by myDATA |
+| mark                  | `string`                                                 | No       | MARK of the invoice. Set by myDATA |
+| cancelledByMark       | `string`                                                 | No       | MARK of the cancellation. Set by myDATA, only on cancelled invoices |
+| authenticationCode    | `string`                                                 | No       | Authentication code. Set by myDATA, provider channel only |
+| transmissionFailure   | `TransmissionFailure` or `int`                           | No       | Connection failure code, see below. The getter returns `int` |
+| issuer                | [Issuer](party-type)                                     | No       | Issuer |
+| counterpart           | [Counterpart](party-type)                                | No       | Recipient |
+| invoiceHeader         | [InvoiceHeader](invoice-header-type)                     | Yes      | Header |
+| paymentMethods        | [`PaymentMethodDetail[]`](payment-method-detail-type)    | No       | Payments. Add one with `addPaymentMethod()`. The getter returns a `PaymentMethods` collection |
+| invoiceDetails        | [`InvoiceDetails[]`](invoice-row-type)                   | Yes      | Rows. Add one with `addInvoiceDetails()` |
+| taxesTotals           | [`TaxTotals[]`](tax-totals-type)                         | No       | Invoice-level taxes. Add one with `addTaxesTotals()`. The getter returns a `TaxesTotals` collection or `null` |
+| invoiceSummary        | [InvoiceSummary](invoice-summary-type)                   | Yes      | Totals |
+| qrCodeUrl             | `string`                                                 | No       | URL for the invoice QR code. Set by myDATA |
+| downloadingInvoiceUrl | `string`                                                 | No       | URL where the recipient downloads the invoice. Provider channel only |
+| packingsDeclarations  | `PackagingDetail[]`                                      | No       | Packaging declarations. Delivery notes only |
+| invoiceDeliveryStatus | `DeliveryStatus`                                         | No       | Status of the delivery note. Read only, set by myDATA |
+| deliveryLifecycle     | `DeliveryLifecycle`                                      | No       | Events of the delivery note. Read only, set by myDATA |
+
+`extraFields` (`setExtraFields(array)`, `addExtraField($key, $value)`) is not a myDATA field and never goes into the
+XML. Gateways that send through an e-invoicing provider forward it as the provider's extra fields.
+
+## Helpers
+
+| Method                          | Description |
+|---------------------------------|-------------|
+| `summarizeInvoice()`            | Builds the [InvoiceSummary](invoice-summary-type) from the rows and taxes |
+| `squashInvoiceRows()`           | Merges similar rows, see [Squashing invoice rows](../squashing-invoice-rows) |
+| `getTotalPaymentAmount()`       | Sum of the payment amounts |
+| `guessUid()`                    | Computes the uid from the issuer and header. It leaves out the recipient VAT number, so it does not match for categories B1 and B2 |
+| `validate()`                    | Checks the invoice against the myDATA XSD. Returns a list of errors, empty when valid |
+| `toXml()`                       | The invoice as XML. `toXml(true)` wraps it in `InvoicesDoc` |
+
+## Notes
+
+- myDATA computes `uid` as the SHA-1 hash of: issuer VAT number, issue date, branch, invoice type, series,
+  number and variation type (when present). For categories B1 and B2 (domestic or foreign recipient) the
+  recipient VAT number is also part of it. The hash uses ISO-8859-7 encoding.
+- myDATA computes `authenticationCode` as the SHA-1 hash of: issuer VAT number, issue date, branch, invoice type,
+  series, number, MARK, total gross value, total VAT and recipient VAT number.
+- `qrCodeUrl` points to an AADE page that shows the invoice. Print it as a QR code.
+- `taxesTotals` holds taxes of all kinds except VAT that apply to the whole invoice. When you use it, you cannot
+  put taxes other than VAT on the rows.
+- `transmissionFailure` values (`Firebed\AadeMyData\Enums\TransmissionFailure`):
+
+| Value | Case                                  | When |
+|-------|---------------------------------------|------|
+| 1     | `ERP_CONNECTION_FAILURE`              | The entity could not reach the provider (provider channel) |
+| 2     | `MYDATA_CONNECTION_FAILURE`           | The provider could not reach myDATA (provider channel) |
+| 3     | `CONNECTION_LOSS`                     | Connection loss (ERP only) |
+| 4     | `UTILITY_SUPPLIER_CONNECTION_FAILURE` | Invoices of entities in art. 5 par. 2 (c) of law 1138/2020, e.g. electricity and gas suppliers, water company |
+
+## Digital Goods Movement fields
+
+`packingsDeclarations` declares the packages of a delivery note. myDATA accepts one declaration per invoice, so the
+library writes all packages in a single `packingsDeclarations` element.
+
+```php
+use Firebed\AadeMyData\Enums\DigitalGoodsMovement\PackagingType;
+use Firebed\AadeMyData\Models\DigitalGoodsMovement\PackagingDetail;
+
 $invoice->addPackagingDeclaration(new PackagingDetail(PackagingType::PALLET, 10));
 $invoice->addPackagingDeclaration(new PackagingDetail(PackagingType::BOX, 50));
 
-// Ή ορισμός όλων μαζί
+// or all at once
 $invoice->setPackingsDeclarations([
     new PackagingDetail(PackagingType::CRATE, 5),
     new PackagingDetail(PackagingType::BARREL, 2),
 ]);
 ```
 
-### invoiceDeliveryStatus
+myDATA rejects a quantity of 0 or less. It also rejects `PackagingType::OTHER` without `otherPackagingTypeTitle`,
+and an `otherPackagingTypeTitle` with any other type. The library does not check these.
 
-Το πεδίο `invoiceDeliveryStatus` είναι **read-only** και επιστρέφεται από το myDATA κατά την ανάκτηση παραστατικών διακίνησης. Περιέχει την τρέχουσα κατάσταση του δελτίου αποστολής.
-
-```php
-$invoice = $myData->requestDocs(...);
-
-if ($invoice->getInvoiceDeliveryStatus()) {
-    $status = $invoice->getInvoiceDeliveryStatus();
-    echo "Delivery Status: " . $status->label();
-
-    // Πιθανές τιμές:
-    // - REGISTERED (1): Εκδόθηκε
-    // - CANCELLED (2): Ακυρώθηκε
-    // - IN_TRANSIT (3): Σε διακίνηση
-    // - REJECTED (4): Απορρίφθηκε
-    // - DELIVERED_BY_CARRIER (5): Παραδόθηκε από τον μεταφορέα
-    // - FAILED_DELIVERY (7): Αποτυχία παράδοσης
-    // - COMPLETED (8): Ολοκληρώθηκε
-}
-```
-
-### deliveryLifecycle
-
-Το πεδίο `deliveryLifecycle` είναι **read-only** και επιστρέφεται από το myDATA κατά την ανάκτηση παραστατικών διακίνησης. Περιέχει το πλήρες ιστορικό γεγονότων του κύκλου ζωής του δελτίου αποστολής.
+`invoiceDeliveryStatus` and `deliveryLifecycle` come back when you read delivery notes:
 
 ```php
-$invoice = $myData->requestDocs(...);
+use Firebed\AadeMyData\Http\RequestDocs;
 
-if ($invoice->getDeliveryLifecycle()) {
-    $lifecycle = $invoice->getDeliveryLifecycle();
+$doc = (new RequestDocs())->handle(mark: '0', dateFrom: '01/01/2026', dateTo: '31/01/2026');
 
-    foreach ($lifecycle as $event) {
-        echo "Event: " . $event->getEventType()->label() . "\n";
-        echo "Timestamp: " . $event->getEventTimestamp() . "\n";
-        echo "Actor VAT: " . $event->getActorVat() . "\n";
+foreach ($doc->getInvoices() ?? [] as $invoice) {
+    echo $invoice->getInvoiceDeliveryStatus()?->label();
 
-        // Έλεγχος για λεπτομέρειες μεταφοράς
-        if ($event->getTransportDetails()) {
-            $transport = $event->getTransportDetails();
-            echo "Vehicle: " . $transport->getVehicleNumber() . "\n";
-        }
-
-        // Έλεγχος για λεπτομέρειες παράδοσης
-        if ($event->getOutcomeDetails()) {
-            $outcome = $event->getOutcomeDetails();
-            echo "Outcome: " . $outcome->getOutcome()->label() . "\n";
-        }
-
-        // Έλεγχος για λεπτομέρειες απόρριψης
-        if ($event->getRejectionDetails()) {
-            $rejection = $event->getRejectionDetails();
-            echo "Rejection Reason: " . $rejection->getReason() . "\n";
-        }
+    foreach ($invoice->getDeliveryLifecycle() ?? [] as $event) {
+        echo $event->getEventType()?->label();
+        echo $event->getEventTimestamp();
+        echo $event->getActorVat();
+        echo $event->getTransportDetails()?->getVehicleNumber();
+        echo $event->getOutcomeDetails()?->getOutcome()?->label();
+        echo $event->getRejectionDetails()?->getReason();
     }
 }
 ```
 
+`DeliveryStatus` cases: `REGISTERED` (1), `CANCELLED` (2), `IN_TRANSIT` (3), `REJECTED` (4),
+`DELIVERED_BY_CARRIER` (5), `FAILED_DELIVERY` (7), `COMPLETED` (8), `IN_TRANSIT_RETURN` (9).
+
 > [!TIP]
-> Για περισσότερες πληροφορίες σχετικά με την Ψηφιακή Διακίνηση Αγαθών, δείτε την [τεκμηρίωση Digital Goods Movement](../http/digital-goods-movement).
+> See [Digital Goods Movement](../http/digital-goods-movement) for the transfer, delivery and return calls.

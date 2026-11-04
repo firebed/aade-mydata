@@ -1,58 +1,61 @@
-# Ακύρωση Δελτίου Ποσοτικής Παραλαβής - CancelReceivingNote
+# CancelReceivingNote <Badge type="tip" text="Provider only" />
 
 ```shell
 # production
 https://mydatapi.aade.gr/myDataProvider/CancelReceivingNote?mark={mark}&entityVatNumber={entityVatNumber}
 
 # development
-https://mydataapidev.aade.gr/myDATAProvider/CancelReceivingNote?mark={mark}&entityVatNumber={entityVatNumber}
+https://mydataapidev.aade.gr/myDataProvider/CancelReceivingNote?mark={mark}&entityVatNumber={entityVatNumber}
 ```
+
+Cancels a receiving note (invoice types 10.1 and 10.2). There is no request body.
 
 > [!WARNING]
-> Η ακύρωση Δελτίων Ποσοτικής Παραλαβής (τύπου 10.1 / 10.2) υποστηρίζεται μόνο για παρόχους ηλεκτρονικής τιμολόγησης.
-
-Για την ακύρωση ενός Δελτίου Ποσοτικής Παραλαβής στο σύστημα του ΑΑΔΕ myDATA, χρησιμοποιήστε την κλάση `Firebed\AadeMyData\Http\CancelReceivingNote`.
-Η ακύρωση γίνεται παρέχοντας το mark του δελτίου που θέλουμε να ακυρώσουμε και το ΑΦΜ του εκδότη.
+> Provider channel only. On an ERP connection the call throws `UnsupportedChannelException` and sends nothing.
 
 ```php
 use Firebed\AadeMyData\Http\CancelReceivingNote;
-use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Http\MyDataRequest;
 
-$cancel = new CancelReceivingNote();
+MyDataRequest::init($userId, $subscriptionKey, 'dev', is_provider: true);
 
-try{
-    $responses = $cancel->handle("1234567890", "888888888");
-} catch (MyDataException $e) {
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
-}
+$responses = (new CancelReceivingNote)->handle(mark: '400001234567890', entityVatNumber: '888888888');
 ```
 
-## Λήψη αποτελεσμάτων
-Σε περίπτωση επιτυχίας η ακύρωση ως πράξη λαμβάνει το δικό της mark το οποίο
-επιστρέφεται στον χρήστη και το δελτίο θεωρείται ακυρωμένο. Σε περίπτωση
-αποτυχίας επιστρέφεται το αντίστοιχο μήνυμα λάθους.
+With the `MyData` client:
+
+```php
+use Firebed\AadeMyData\MyData;
+
+$mydata = MyData::connect($userId, $subscriptionKey, 'dev', provider: true);
+
+$responses = $mydata->cancelReceivingNote('400001234567890', '888888888');
+```
+
+## Parameters
+
+| Parameter         | Required | Description                                      |
+|-------------------|----------|--------------------------------------------------|
+| `mark`            | Yes      | MARK of the receiving note to cancel             |
+| `entityVatNumber` | Yes      | VAT number of the entity that issued the note    |
+
+## Result
+
+`handle()` returns a `ResponseDoc`, a list of [Response](../models/response-type) objects.
+On success the cancellation gets its own MARK and the receiving note is cancelled.
+On failure the response holds the errors.
+
+```php
+$response = $responses->first();
+
+if ($response->isSuccessful()) {
+    echo $response->getCancellationMark();
+} else {
+    foreach ($response->getErrors() ?? [] as $error) {
+        echo $error->getCode().': '.$error->getMessage().PHP_EOL;
+    }
+}
+```
 
 > [!TIP]
-> Το αποτέλεσμα της κλήσης επιστρέφει έναν πίνακα από αντικείμενα τύπου
-> [**\Firebed\AadeMyData\Models\Response**](../models/response-type).
-
-```php
-use Firebed\AadeMyData\Http\CancelReceivingNote;
-use Firebed\AadeMyData\Exceptions\MyDataException;
-
-try {
-    $cancel = new CancelReceivingNote();
-    $responses = $cancel->handle("1234567890", "888888888");
-
-    $response = $responses->first();
-
-    if ($response->isSuccessful()) {
-        echo "Το δελτίο ακυρώθηκε με επιτυχία." . PHP_EOL;
-        echo "Το mark ακύρωσης του δελτίου είναι: " . $response->getCancellationMark();
-    } else {
-        echo "Η ακύρωση απέτυχε. Λόγος: " . $response->getMessage();
-    }
-} catch (MyDataException $e) {
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
-}
-```
+> To cancel a delivery note use [CancelDeliveryNote](./cancel-delivery-note).

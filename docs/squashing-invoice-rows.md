@@ -1,60 +1,101 @@
-# Σύνοψη Γραμμών Παραστατικού
+# Squashing invoice rows
 
-Ο Πάροχος ηλεκτρονικής τιμολόγησης και τα ERP διαβιβάζουν υποχρεωτικά μόνο τη σύνοψη 
-γραμμών και χαρακτηρισμών των παραστατικών. Οι λεπτομέρειες των γραμμών παραστατικού
-θα πρέπει να ομαδοποιηθούν και να αθροιστούν κατάλληλα πριν την αποστολή στο myDATA.
+E-invoicing providers and ERPs only have to send a summary of the invoice lines and their
+classifications to myDATA, not every line. `squashInvoiceRows()` groups the lines and sums them for you.
 
-Η σύνοψη γραμμών παραστατικού είναι μια σύνθετη διαδικασία και αναλύεται βάση της:
-- κατηγορίας ΦΠΑ γραμμής
-- κατηγορίας εξαίρεσης ΦΠΑ γραμμής
-- κατηγορίας παρακρατούμενων φόρων γραμμής
-- κατηγορίας λοιπών φόρων γραμμής
-- κατηγορίας Ψηφιακού Τέλους Συναλλαγής γραμμής
-- κατηγορίας τελών γραμμής
-- τύπου (recType) γραμμής
+Lines are grouped when they have the same:
 
-Μετά τη σύνοψη γραμμών παραστατικού, το API υπολογίζει αυτόματα τους χαρακτηρισμών ανά γραμμή.
+- VAT category
+- VAT exemption category
+- withholding tax category
+- fees category
+- other taxes category
+- stamp duty category
+- `notVAT195`
+- invoice detail type (`invoiceDetailType`)
 
-### Σύνοψη Γραμμών
+Lines with a `recType` are not squashed. They stay as they are, after the squashed lines.
 
-Για τη σύνοψη των γραμμών του παραστατικού αρκεί να καλέσετε τη μέθοδο `squashInvoiceRows` της κλάσης `Invoice`.
-Η διαδικασία σύνοψης θα αντικαταστήσει τις γραμμές με τις συνολικές τους τιμές.
+In each group, the amounts are summed (net value, VAT, withholding tax, fees, other taxes, stamp duty,
+deductions) and rounded to 2 decimals. Income classifications with the same category and type are summed.
+Expense classifications are summed when they also have the same VAT category and VAT exemption category.
+The lines are numbered again from 1.
+
+## Squash the rows
 
 ```php
+use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
+use Firebed\AadeMyData\Enums\IncomeClassificationType;
+use Firebed\AadeMyData\Enums\VatCategory;
 use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\InvoiceDetails;
 
 $invoice = new Invoice();
-$invoice->addInvoiceDetails(new InvoiceDetails(...));
-$invoice->addInvoiceDetails(new InvoiceDetails(...));
-$invoice->addInvoiceDetails(new InvoiceDetails(...));
-$invoice->addInvoiceDetails(new InvoiceDetails(...));
-// ... set more details
+
+$invoice->addInvoiceDetails(
+    (new InvoiceDetails())
+        ->setLineNumber(1)
+        ->setNetValue(4.03)
+        ->setVatCategory(VatCategory::RATE_24)
+        ->setVatAmount(0.97)
+        ->addIncomeClassification(IncomeClassificationType::E3_561_001, IncomeClassificationCategory::CATEGORY_1_1, 4.03)
+);
+
+foreach ([2, 3] as $line) {
+    $invoice->addInvoiceDetails(
+        (new InvoiceDetails())
+            ->setLineNumber($line)
+            ->setNetValue(4.03)
+            ->setVatCategory(VatCategory::RATE_24)
+            ->setVatAmount(0.97)
+            ->addIncomeClassification(IncomeClassificationType::E3_561_001, IncomeClassificationCategory::CATEGORY_1_1, 2.02)
+            ->addIncomeClassification(IncomeClassificationType::E3_561_007, IncomeClassificationCategory::CATEGORY_1_1, 2.01)
+    );
+}
 
 $invoice->squashInvoiceRows();
-$invoice->summarizeInvoice();
+$invoice->summarizeInvoice(); // after squashing
 
-print_r($invoice->toXml());
+echo $invoice->toXml();
 ```
 
-### Ανοχή ποσού ΦΠΑ
+Call `summarizeInvoice()` after `squashInvoiceRows()`, so the summary matches the lines you send.
 
-Το myDATA απορρίπτει μια γραμμή όταν το ποσό ΦΠΑ της απέχει περισσότερο από 1.00 από την καθαρή αξία
-επί τον συντελεστή ΦΠΑ (σφάλμα 229). Μικρές διαφορές στρογγυλοποίησης σε πολλές γραμμές μπορεί να
-ξεπεράσουν αυτό το όριο όταν αθροιστούν σε μία γραμμή. Με την επιλογή `vatAmountTolerance` η σύνοψη
-ξεκινά νέα γραμμή με τις ίδιες κατηγορίες πριν το ποσό ΦΠΑ ξεπεράσει την ανοχή.
+| Method | Does |
+|---|---|
+| `squashInvoiceRows($options = [])` | Replaces the lines with the squashed lines |
+| `unSquashInvoiceRows()` | Puts the original lines back |
+| `isSquashed()` | `true` after `squashInvoiceRows()` |
+
+### Options
+
+| Option | Default | Description |
+|---|---|---|
+| `clsLineNumber` | `false` | `true` adds an `id` to each classification of a squashed line (1, 2, ...) |
+| `vatAmountTolerance` | `null` | See below |
+
+```php
+$invoice->squashInvoiceRows(['clsLineNumber' => true, 'vatAmountTolerance' => 1.00]);
+```
+
+### VAT amount tolerance
+
+myDATA rejects a line when its VAT amount is more than 1.00 away from its net value times the VAT rate
+(error 229). Small rounding differences on many lines can go over this limit once they are summed into
+one line. With `vatAmountTolerance`, squashing starts a new line with the same categories before the
+VAT amount goes over the tolerance.
 
 ```php
 $invoice->squashInvoiceRows(['vatAmountTolerance' => 1.00]);
 ```
 
-Χωρίς την επιλογή (`null`), οι γραμμές με τις ίδιες κατηγορίες συνοψίζονται πάντα σε μία γραμμή.
+Without it (`null`), lines with the same categories always become one line.
 
-### Ομάδες γραμμών
+### Row groups
 
-Η μέθοδος `groups` της κλάσης `SquashInvoiceRows` επιστρέφει τις αρχικές γραμμές που συνοψίζονται σε κάθε
-γραμμή, χωρίς να τις αθροίζει, με την ίδια σειρά που τις επιστρέφει η σύνοψη. Είναι χρήσιμη για έλεγχο μιας
-συνοψισμένης γραμμής πριν την αποστολή και για αντιστοίχισή της στις αρχικές γραμμές.
+`SquashInvoiceRows::groups()` returns the original lines of each squashed line, without summing them,
+in the same order as the squashed lines. Use it to check a squashed line before sending, or to map it
+back to your own lines.
 
 ```php
 use Firebed\AadeMyData\Actions\SquashInvoiceRows;
@@ -62,22 +103,22 @@ use Firebed\AadeMyData\Actions\SquashInvoiceRows;
 $groups = (new SquashInvoiceRows())->groups($invoice->getInvoiceDetails(), ['vatAmountTolerance' => 1.00]);
 
 foreach ($groups as $group) {
-    // $group: οι αρχικές γραμμές (InvoiceDetails) μίας συνοψισμένης γραμμής
+    // $group: the original InvoiceDetails of one squashed line
 }
 ```
 
 > [!CAUTION]
-> Η σύνοψη γραμμών δεν πρέπει να εφαρμοστεί για όλα τα είδη των παραστατικών.
-> Για παράδειγμα, τα δελτία αποστολής δε χρειάζονται σύνοψη γραμμών. 
+> Don't squash every type of invoice. For example, delivery notes don't need it.
 
-## Παράδειγμα
+## Example
 
-### XML παραστατικού πριν τη σύνοψη
+### Invoice XML before squashing
 
 ```xml
 <invoice>
   ...
   <invoiceDetails>
+    <lineNumber>1</lineNumber>
     <netValue>4.03</netValue>
     <vatCategory>1</vatCategory>
     <vatAmount>0.97</vatAmount>
@@ -88,6 +129,7 @@ foreach ($groups as $group) {
     </incomeClassification>
   </invoiceDetails>
   <invoiceDetails>
+    <lineNumber>2</lineNumber>
     <netValue>4.03</netValue>
     <vatCategory>1</vatCategory>
     <vatAmount>0.97</vatAmount>
@@ -103,6 +145,7 @@ foreach ($groups as $group) {
     </incomeClassification>
   </invoiceDetails>
   <invoiceDetails>
+    <lineNumber>3</lineNumber>
     <netValue>4.03</netValue>
     <vatCategory>1</vatCategory>
     <vatAmount>0.97</vatAmount>
@@ -119,14 +162,17 @@ foreach ($groups as $group) {
   </invoiceDetails>
   ...
 </invoice>
-  ```
+```
 
-### XML παραστατικού μετά τη σύνοψη
+### Invoice XML after squashing
+
+With `['clsLineNumber' => true]`. Without it, there is no `icls:id`.
 
 ```xml
 <invoice>
   ...
   <invoiceDetails>
+    <lineNumber>1</lineNumber>
     <netValue>12.09</netValue>
     <vatCategory>1</vatCategory>
     <vatAmount>2.91</vatAmount>

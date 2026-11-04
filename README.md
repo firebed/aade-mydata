@@ -12,7 +12,7 @@ If you find this project useful, you can show your appreciation and support by g
 
 ## Introduction
 
-This package provides an expressive, fluent interface to ΑΑΔΕ myDATA invoicing REST API. It handles all the boilerplate code for sending, cancelling and requesting invoices.
+This package provides an expressive, fluent interface to AADE myDATA invoicing REST API. It handles all the boilerplate code for sending, cancelling and requesting invoices.
 
 ## Documentation
 
@@ -83,11 +83,11 @@ A connection is immutable, keeps its own Guzzle client and carries the retry pol
 use Firebed\AadeMyData\Http\Connection;
 use Firebed\AadeMyData\MyData;
 
-$mydata = MyData::connect($user_id, $subscription_key, 'prod');
+$mydata = MyData::connect($user_id, $subscription_key, 'dev');
 
 // or fully configured
 $mydata = new MyData(
-    Connection::make($user_id, $subscription_key, 'prod')
+    Connection::make($user_id, $subscription_key, 'dev')
         ->asProvider()          // myDataProvider channel
         ->withTimeout(30)
         ->withRetries(3)        // retry 429 / 502 / 503 / 504 / connection failures with backoff
@@ -120,7 +120,7 @@ foreach ((new RequestDocs())->pages(mark: '0', dateFrom: '01/01/2026', dateTo: '
 
 ## Transmitting through a provider (Gateway)
 
-ΑΑΔΕ is retiring the ERP transmission channel: invoices have to be transmitted through a
+AADE is retiring the ERP transmission channel: invoices have to be transmitted through a
 licensed e-invoicing provider. Since 5.11 every request travels through a `Gateway`, so you
 can switch the transport without changing the code that builds and sends your invoices.
 
@@ -145,7 +145,7 @@ OxygenProvider::register(token: 'your-company-api-token');
 ```
 
 Everything else — requesting documents, classifications, and so on — keeps talking to
-ΑΑΔΕ directly. The bridge's README documents what is routed, the responses you get back,
+AADE directly. The bridge's README documents what is routed, the responses you get back,
 and the attributes a provider needs that myDATA has no field for: the issue time
 (`setIssueTime()`, required), the unit price (`setUnitPrice()`), the line discount
 (`setDiscount()`) and free extra fields.
@@ -176,7 +176,7 @@ What the library does with a 429:
   connection, which keeps a long run under the window in the first place.
 
 ```php
-$connection = Connection::make($user_id, $subscription_key, 'prod')
+$connection = Connection::make($user_id, $subscription_key, 'dev')
     ->withThrottle(28_000)        // one document call every 28 s stays under ~11 per 5 min
     ->withRateLimitWait(600);     // and if myDATA still says "try again in N seconds", wait
 
@@ -201,7 +201,7 @@ names the failing fields, instead of costing a call that myDATA answers with an 
 ```php
 use Firebed\AadeMyData\Exceptions\SchemaValidationException;
 
-$mydata = new MyData(Connection::make($user_id, $subscription_key, 'prod')->withValidation());
+$mydata = new MyData(Connection::make($user_id, $subscription_key, 'dev')->withValidation());
 
 try {
     $mydata->sendInvoices($invoices);
@@ -223,7 +223,7 @@ code rather than attached, since its message and previous exceptions can carry t
 `withLogger()` again replaces the logger; `withLogger(null)` stops logging.
 
 ```php
-$connection = Connection::make($user_id, $subscription_key, 'prod')
+$connection = Connection::make($user_id, $subscription_key, 'dev')
     ->withRetries(3)
     ->withLogger($logger);
 ```
@@ -236,7 +236,7 @@ and the time it took. `beforeRetry()` is called before each retry:
 use Firebed\AadeMyData\Http\Exchange;
 use Firebed\AadeMyData\Http\Retry;
 
-$connection = Connection::make($user_id, $subscription_key, 'prod')
+$connection = Connection::make($user_id, $subscription_key, 'dev')
     ->afterSending(fn (Exchange $e) => AuditLog::create([
         'action' => $e->action(),          // 'SendInvoices'
         'request' => $e->requestBody,      // the XML sent
@@ -307,7 +307,7 @@ try {
     }
 } catch (MyDataException $e) {
     // There was a communication error. None of the invoices were sent.
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
+    echo "Communication error: " . $e->getMessage();
 }
 ```
 
@@ -324,14 +324,16 @@ try {
 | [RequestMyExpenses](http://docs.invoicemaker.gr/http/request-my-expenses)                   | :white_check_mark: |
 | [RequestVatInfo](http://docs.invoicemaker.gr/http/request-vat-info)                         | :white_check_mark: |
 | [RequestE3Info](http://docs.invoicemaker.gr/http/request-e3-info)                           | :white_check_mark: |
+| [RequestBookInfo](http://docs.invoicemaker.gr/http/request-book-info)                       | :white_check_mark: |
 | [SendPaymentsMethod](http://docs.invoicemaker.gr/http/send-payments-method)                 | :white_check_mark: |
 | [SendIncomeClassification](http://docs.invoicemaker.gr/http/send-income-classification)     | :white_check_mark: |
 | [SendExpensesClassification](http://docs.invoicemaker.gr/http/send-expenses-classification) | :white_check_mark: |
-| [CancelDeliveryNote](http://docs.invoicemaker.gr/http/cancel-delivery-note) (Για παρόχους)  | :white_check_mark: |
-| [CancelReceivingNote](http://docs.invoicemaker.gr/http/cancel-receiving-note) (Για παρόχους) | :white_check_mark: |
-| [RequestProviderDocs](http://docs.invoicemaker.gr/http/request-provider-docs) (Για παρόχους) | :white_check_mark: |
-| [RequestReceiverInfo](http://docs.invoicemaker.gr/http/request-receiver-info) (Για παρόχους) | :white_check_mark: |
-| [SendUnsignedInvoices](http://docs.invoicemaker.gr/http/send-unsigned-invoices) (Για παρόχους) | :white_check_mark: |
+| [CancelDeliveryNote](http://docs.invoicemaker.gr/http/cancel-delivery-note) (providers)  | :white_check_mark: |
+| [CancelReceivingNote](http://docs.invoicemaker.gr/http/cancel-receiving-note) (providers) | :white_check_mark: |
+| [RequestProviderDocs](http://docs.invoicemaker.gr/http/request-provider-docs) (providers) | :white_check_mark: |
+| [RequestReceiverInfo](http://docs.invoicemaker.gr/http/request-receiver-info) (providers) | :white_check_mark: |
+| [SendUnsignedInvoices](http://docs.invoicemaker.gr/http/send-unsigned-invoices) (providers) | :white_check_mark: |
+| [SendStatement, RecallStatement, RequestStatements](http://docs.invoicemaker.gr/http/statements) (providers) | :white_check_mark: |
 
 ### Provider channel
 
@@ -357,7 +359,7 @@ it was accepted. Two submissions sent at the same moment can both be accepted (s
 returns every mark of a uid. On the sandbox, a resend dated a past day was rejected for its issue date (error 238)
 alone, without a 228 naming the mark.
 
-## Digital Goods Movement (Ψηφιακή Διακίνηση Αγαθών)
+## Digital Goods Movement
 
 Digital Goods Movement methods allow real-time tracking and management of goods in transit. These methods are available **only for the ERP channel** and are **not** supported by invoice service providers.
 
@@ -398,10 +400,8 @@ For detailed documentation and examples of all methods, see the [Digital Goods M
 
 ## Digital Client (Car rental, parking/wash, workshops)
 
-The **Digital Client** API is specifically designed to serve businesses in industries such as car rentals, parking services, vehicle washing and workshops.
-
-Please refer to the [ΑΑΔΕ Digital Client](https://github.com/oxygensuite/digital-client-list), developed by [Oxygen Invoicing Provider](https://github.com/oxygensuite/).
-It provides a robust, seamless and complete solution for managing customer and vehicle data while enabling smooth and uninterrupted data exchange between ERP systems and Greece's Independent Authority for Public Revenue (Ανεξάρτητη Αρχή Δημοσίων Εσόδων, ΑΑΔΕ).
+The **Digital Client** API is for car rentals, parking, car washes and workshops. This package does not cover it.
+Use [AADE Digital Client](https://github.com/oxygensuite/digital-client-list) by [Oxygen Invoicing Provider](https://github.com/oxygensuite/).
 
 ## Upgrade Guide
 

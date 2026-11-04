@@ -1,51 +1,66 @@
-# ΑΑΔΕ myDATA REST API
+# AADE myDATA REST API
 
-Το invoicemaker.gr παρέχει μια εκφραστική, ευέλικτη διεπαφή που έχει αναπτυχθεί με τη χρήση της γλώσσας **PHP** για την επικοινωνία με την εφαρμογή myDATA της Ανεξάρτητης Αρχής Δημοσίων Εσόδων (ΑΑΔΕ).
-Παρέχει μια εύκολη και γρήγορη λύση για την αποστολή και λήψη παραστατικών, ακύρωση παραστατικών, χαρακτηρισμός και λήψη εσόδων και εξόδων και λήψη αναφορών ΦΠΑ.
+`firebed/aade-mydata` is a PHP client for the myDATA REST API of AADE (the Greek tax authority).
+It sends, cancels and requests invoices, sends income and expense classifications and payments,
+and reads VAT and E3 reports. It writes and reads the XML for you, in the field order the XSD expects.
 
-## Σε ποιούς απευθύνεται;
-Το invoicemaker.gr απευθύνεται σε όλους τους φορείς που έχουν υποχρέωση να αποστέλλουν παραστατικά στην εφαρμογή myDATA της ΑΑΔΕ, όπως επιχειρήσεις, ελεύθερους επαγγελματίες, οργανισμούς και άλλους φορείς που εκδίδουν παραστατικά.
+It is free and open source. To set it up, see [Installation](./installation).
 
-Το invoicemaker.gr απευθύνεται επίσης στους προγραμματιστές (developers) που θέλουν να ενσωματώσουν την υποστήριξη του myDATA στις εφαρμογές τους εντελώς δωρεάν.
+```php
+use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
+use Firebed\AadeMyData\Enums\IncomeClassificationType;
+use Firebed\AadeMyData\Enums\InvoiceType;
+use Firebed\AadeMyData\Enums\PaymentType;
+use Firebed\AadeMyData\Enums\VatCategory;
+use Firebed\AadeMyData\Http\MyDataRequest;
+use Firebed\AadeMyData\Http\SendInvoices;
+use Firebed\AadeMyData\Models\Invoice;
+use Firebed\AadeMyData\Models\InvoiceDetails;
+use Firebed\AadeMyData\Models\InvoiceHeader;
+use Firebed\AadeMyData\Models\Issuer;
+use Firebed\AadeMyData\Models\PaymentMethodDetail;
+
+MyDataRequest::init('your-user-id', 'your-subscription-key', 'dev');
+
+$invoice = (new Invoice())
+    ->setIssuer((new Issuer())->setVatNumber('888888888')->setCountry('GR')->setBranch(0))
+    ->setInvoiceHeader((new InvoiceHeader())
+        ->setSeries('A')
+        ->setAa(101)
+        ->setIssueDate('2026-11-04')
+        ->setInvoiceType(InvoiceType::TYPE_11_1)
+        ->setCurrency('EUR'))
+    ->addPaymentMethod((new PaymentMethodDetail())->setType(PaymentType::CASH)->setAmount(12.40))
+    ->addInvoiceDetails((new InvoiceDetails())
+        ->setLineNumber(1)
+        ->setNetValue(10)
+        ->setVatCategory(VatCategory::RATE_24)
+        ->setVatAmount(2.40)
+        ->addIncomeClassification(IncomeClassificationType::E3_561_003, IncomeClassificationCategory::CATEGORY_1_1, 10))
+    ->summarizeInvoice(); // fills in the invoice summary
+
+$response = (new SendInvoices())->handle($invoice)->first();
+
+if ($response->isSuccessful()) {
+    echo $response->getInvoiceMark();
+} else {
+    foreach ($response->getErrors() as $error) {
+        echo $error->getCode().': '.$error->getMessage();
+    }
+}
+```
+
+More invoice types: [Examples](./invoices/examples). Errors: [Exceptions](./exceptions).
 
 > [!NOTE]
-> Αν είστε ελεύθερος επαγγελματίας ή επιχείρηση και θέλετε να αποστέλλετε τιμολόγια στο myDATA, μπορείτε να εγγραφείτε στο invoicemaker.gr και να ξεκινήσετε αμέσως.
->
-> <a class='button' href='https://www.invoicemaker.gr'>Δείτε περισσότερα</a>
- 
-## Γιατί το invoicemaker.gr;
-Το invoicemaker.gr παρέχει μια εύκολη και γρήγορη λύση για την αποστολή και λήψη δεδομένων από το myDATA.
-
-### Open source
-Το invoicemaker.gr είναι μια ανοικτού κώδικα λύση, που σημαίνει ότι αν είστε προγραμματιστής μπορείτε να το χρησιμοποιήσετε εντελώς δωρεάν.
-
-### Seamless integration
-
-Το invoicemaker.gr διαχειρίζεται τη μετατροπή δεδομένων σε XML και από XML, επιτρέποντας την αποστολή και λήψη δεδομένων με τη χρήση αυτής της μορφής. 
-Αυτό επιτρέπει την αλληλεπίδραση των δεδομένων με το myDATA με ευκολία και αξιοπιστία.
-
-### XML Structure
-Η σωστή δομή και σειρά των πεδίων στο XML είναι απαραίτητες για το myDATA.
-Πριν από την έκδοση 4, η σειρά των πεδίων στο XML αντιστοιχούσε με τη σειρά που ο χρήστης συμπλήρωνε τα απαραίτητα πεδία. 
-Ωστόσο, αυτό προϋποθέτει ότι ο χρήστης πρέπει να γνωρίζει εξαρχής με ποια σειρά πρέπει να συμπληρώσει τα πεδία ή να
-ανατρέχει συνεχώς στις οδηγίες για να εντοπίσει την απαιτούμενη κατάταξη πεδίων.
-
-Από την έκδοση 4 και μετά, το invoicemaker.gr αναλαμβάνει αυτόματα τη σωστή δόμηση του XML,
-εξαλείφοντας την ανάγκη για επίπονη χειρονακτική παρέμβαση. Με αυτόν τον τρόπο, δε χρειάζεται να ανησυχείτε για τη
-δομή του XML ή τη σειρά των πεδίων.
-
-### Code completion
-Το invoicemaker.gr παρέχει έναν πλήρη κατάλογο με όλες τις διαθέσιμες μεθόδους, τα οποία μπορείτε να χρησιμοποιήσετε για να αλληλεπιδράσετε με το myDATA.
-Κάθε μέθοδος είναι πλήρως τεκμηριωμένη κατά τις οδηγίες του myDATA, παρέχοντας πλήρη κατανόηση της λειτουργίας της.
-
-<img src="/images/code-completion.webp" alt="invoicemaker.gr code completion example">
+> Not a developer? You can issue invoices to myDATA at [invoicemaker.gr](https://www.invoicemaker.gr).
 
 ## Custom gateway
 
-Every request is carried to the remote system by a `Firebed\AadeMyData\Http\Gateway`.
-The default `GuzzleGateway` talks to the AADE myDATA REST API. Register your own
-to route requests elsewhere (for example through an e-invoicing provider) without
-touching the code that builds them:
+Every request reaches the remote system through a `Firebed\AadeMyData\Http\Gateway`.
+The default `GuzzleGateway` calls the AADE myDATA REST API. Register your own gateway
+to send requests somewhere else (for example to an e-invoicing provider) without
+changing the code that builds them:
 
 ```php
 use Firebed\AadeMyData\Http\MyDataRequest;
@@ -54,24 +69,25 @@ MyDataRequest::setGateway(new MyGateway()); // implements Gateway
 MyDataRequest::setGateway(null);            // back to the default
 ```
 
-`setGateway()` is process-global and stays in place until it is replaced, so in a
-long-running worker (Octane, queue daemon) a gateway registered for one flow keeps
-carrying every later request in that process. When the gateway is chosen per tenant
-or per flow, override a single request instead and leave the global one alone:
+`setGateway()` is global to the process and stays until you replace it. In a long-running
+worker (Octane, a queue daemon) a gateway set for one flow carries every later request of that
+process. If the gateway depends on the tenant or the flow, set it on the request instead:
 
 ```php
 $response = (new SendInvoices())->usingGateway(new MyGateway())->handle($invoice);
 ```
 
-A gateway receives the request object and the XML body. For `SendInvoices` and
-`SendPaymentsMethod` the models are also available through `SendInvoices::getInvoicesDoc()`
-and `SendPaymentsMethod::getPaymentMethodsDoc()`, so a provider gateway can read
-attributes that never reach the myDATA XML. myDATA carries only the issue date and the
-line's net value, while a provider needs more, so these stay on the models and off the XML:
+`Connection::withGateway($gateway)` does the same for every request of a connection.
 
-- `InvoiceHeader::setIssueTime('hh:mm:ss')` — the issue time;
-- `InvoiceDetails::setUnitPrice(3.333333)` — the price per unit;
-- `InvoiceDetails::setDiscount(DiscountType::PERCENTAGE, 10.0)` (or `DiscountType::AMOUNT`) —
-  the line discount, read back with `getDiscountType()` and `getDiscountValue()`;
-- `setExtraFields(['key' => 'value'])` / `addExtraField('key', 'value')` on `Invoice`,
-  `InvoiceDetails` and `PaymentMethodDetail` — free key/value pairs for the provider.
+A gateway gets the request object and the XML body. For `SendInvoices` and `SendPaymentsMethod`
+it can also read the models, with `SendInvoices::getInvoicesDoc()` and
+`SendPaymentsMethod::getPaymentMethodsDoc()`. So a provider gateway can read attributes that
+never reach the myDATA XML. myDATA only takes the issue date and the line's net value, but a
+provider needs more. These stay on the models and are left out of the XML:
+
+| Method | Value |
+|---|---|
+| `InvoiceHeader::setIssueTime('hh:mm:ss')` | Issue time |
+| `InvoiceDetails::setUnitPrice(3.333333)` | Price per unit |
+| `InvoiceDetails::setDiscount(DiscountType::PERCENTAGE, 10.0)` (or `DiscountType::AMOUNT`) | Line discount, read back with `getDiscountType()` and `getDiscountValue()` |
+| `setExtraFields(['key' => 'value'])`, `addExtraField('key', 'value')` on `Invoice`, `InvoiceDetails` and `PaymentMethodDetail` | Free key/value pairs for the provider |

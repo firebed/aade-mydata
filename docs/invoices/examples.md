@@ -1,141 +1,108 @@
-# Παραδείγματα Παραστατικών
+# Invoice examples
 
-Σε όλα τα ακόλουθα παραδείγματα θα χρησιμοποιήσουμε το ΑΦΜ `888888888` για τον εκδότη του
-παραστατικού και το ΑΦΜ `999999999` για τον λήπτη του παραστατικού.
+Each page builds one invoice, calls `summarizeInvoice()` and shows how to send it.
+The issuer VAT number is `888888888` and the recipient is `999999999`.
 
-> [!CAUTION]
-> Κατά τη διαβίβαση των παραστατικών σας στο myDATA, είτε είστε στο παραγωγικό είτε
-> στο δοκιμαστικό περιβάλλον, θα πρέπει να χρησιμοποιήσετε **έγκυρα ΑΦΜ** εκδότη,
-> λήπτη ή άλλων οντοτήτων.
+> [!WARNING]
+> Use valid VAT numbers for the issuer, the recipient and any other party, in production and in the sandbox.
 
-Συνιστάται πάντα να ελέγχετε τα παραδείγματα πριν την πραγματική χρήση τους. Η αποστολή των
-παραστατικών γίνεται με την κλάση `Firebed\AadeMyData\Http\SendInvoices`. Ύστερα
-από την αποστολή, θα έχετε στη διάθεση σας:
+| Example | Type | Shows |
+|---|---|---|
+| [Sales invoice](./sale-invoice) | `1.1` | Two lines, withholding tax per invoice |
+| [Service invoice](./service-invoice) | `2.1` | Services, withholding tax |
+| [Taxes per line](./taxes-per-row) | `1.1` | Withholding tax on the line |
+| [Invoice and delivery note](./delivery-note-invoice) | `1.1` | `isDeliveryNote`, loading and delivery addresses |
+| [Delivery note](./delivery-invoice) | `9.3` | Goods movement, zero values, `category3` |
+| [Credit invoice (correlated)](./credit-invoice) | `5.1` | Credit linked to an invoice MARK |
+| [Credit invoice (not correlated)](./credit-invoice-uncorrelated) | `5.2` | Credit with no MARK |
+| [Retail receipt](./retail-invoice) | `11.1` | No counterpart |
+| [Retail service receipt](./retail-service-invoice) | `11.2` | Services, no counterpart |
+| [Retail credit note](./credit-retail-invoice) | `11.4` | Refund on a retail receipt |
+| [Intra-community invoice](./foreign-invoice) | `1.2` | EU recipient, VAT exemption |
+| [Export invoice](./export-invoice) | `1.3` | Non-EU recipient, VAT exemption |
+| [Climate resilience fee](./climate-resilience-fee) | `8.2` | Zero net value, fee in other taxes |
+| [Restaurant order slip](./restaurant-order-slip) | `8.6` | Provider only, VAT-exempt line, closing and cancelling slips |
+| [Complete example](./complete-example) | `1.1` | The sales invoice in one file |
 
-- ένα πίνακα αντικειμένων `Firebed\AadeMyData\Models\Response`,
-- το XML που χρησιμοποιήθηκε για την αποστολή,
-- και το XML που επέστρεψε το myDATA.
+Check every example against your own case before you use it.
 
-## Αποθήκευση των XML δεδομένων
+## Keep the request and response XML
 
-Το σύστημα παράγει ένα XML για την αίτηση αποστολής και διαθέτει το XML που επιστρέφει το myDATA.
-Η μορφή του XML είναι θα είναι τύπου `DOMDocument`. Αυτό μας δίνει την ευελιξία να διαχειριστούμε
-τα XML όπως επιθυμούμε.
+`SendInvoices` keeps the XML it sent and the XML myDATA returned, as `DOMDocument` or as a string.
 
 > [!TIP]
-> **Στο παραγωγικό περιβάλλον είναι σημαντικό να αποθηκεύσετε τα παραγόμενα XML, είτε σε αρχεία είτε στη βάση
-> δεδομένων σας, για τυχόν αποσφαλμάτωση.**
+> In production, save both XML documents (in files or in your database). You will need them to debug a rejected invoice.
 
-### Αντιστοίχιση του XML με ένα παραστατικό
-
-Όταν πρόκειται για αποστολή ενός μόνο παραστατικού, είναι εύκολο να αντιστοιχίσετε το XML με το παραστατικό,
-καθώς όλο τα XML αφορούν μόνο το παραστατικό που αποστέλλεται.
+### One invoice
 
 ```php
 use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Http\SendInvoices;
-use Firebed\AadeMyData\Models\Invoice;
 
 try {
-    $invoice = new Invoice();
-    
     $request = new SendInvoices();
     $responses = $request->handle($invoice);
-        
-    // Ανάκτηση του XML αίτησης (προαιρετικό)
-    $requestDom = $request->getRequestDom();
-    $requestXml = $requestDom->saveXML();
-    // ή
-    $requestXml = $request->getRequestXml();
-        
-    // Ανάκτηση του XML απάντησης (προαιρετικό)
-    $responseDom = $request->getResponseDom();
-    $responseXml = $responseDom->saveXML();
-    // ή
-    $responseXml = $request->getResponseXML();
-    
-    // Ανάκτηση και εξέταση της πρώτης απάντησης
-    $response = $responses->first();    
+
+    $requestXml = $request->getRequestXml();   // or $request->getRequestDom()
+    $responseXml = $request->getResponseXML(); // or $request->getResponseDom()
+
+    $response = $responses->first();
     if ($response->isSuccessful()) {
         $uid = $response->getInvoiceUid();
         $mark = $response->getInvoiceMark();
         $qrUrl = $response->getQrUrl();
-        
-        // Αντιστοίχηση και αποθήκευση των XML στη βάση δεδομένων
+
         // INSERT INTO invoices (..., uid, mark, qr_url, request_xml, response_xml)
     } else {
-        // Το παραστατικό δεν καταχωρήθηκε, αν επιθυμείτε μπορείτε
-        // να αποθηκεύσετε τα σφάλματα στη βάση δεδομένων για ανάλυση
-        $errors = $response->getErrors();
-        
-        // INSERT INTO logs (..., request_xml, response_xml)
+        $errors = $response->getErrors()->toArray();
+
+        // INSERT INTO logs (..., errors, request_xml, response_xml)
     }
 } catch (MyDataException $e) {
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
+    echo 'Communication error: '.$e->getMessage();
 }
 ```
 
-### Αντιστοίχιση του XML με πολλά παραστατικά
+### Many invoices
 
-Στις περιπτώσεις που γίνεται ταυτόχρονη αποστολή πολλών παραστατικών, το myDATA επιστρέφει
-**ένα XML** που περιέχει τις απαντήσεις **για όλα τα παραστατικά**. Σε αυτή την περίπτωση, δε θα ήταν 
-σωστό να αντιστοιχίσουμε ένα παραστατικό με το σύνολο των απαντήσεων.
-
-Για τη σωστή αντιστοίχηση των παραστατικών με το XML αιτήματος και με το XML απάντησης θα πρέπει
-να εξάγουμε από τα αντίστοιχα XML τα σχετικά μέρη που αντιστοιχούν σε κάθε παραστατικό. 
-Αυτό μπορεί να γίνει σχετικά εύκολα όπως φαίνεται στο παρακάτω παράδειγμα.
+When you send many invoices in one request, myDATA returns one XML with a response for each invoice.
+Use the response index (it starts at 1) to find the invoice and its part of each XML.
 
 ```php
 use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Http\SendInvoices;
-use Firebed\AadeMyData\Models\Invoice;
 
 try {
-    // Αρχικοποίηση τριών (3) παραστατικών
-    $invoicesArray = [new Invoice(), new Invoice(), new Invoice()
-    
-    // Αποστολή των παραστατικών
+    $invoices = [$invoice1, $invoice2, $invoice3];
+
     $request = new SendInvoices();
-    $responses = $request->handle($invoicesArray);
-        
-    // Ανάκτηση του XML αίτησης (προαιρετικό)
-    $requestDom = $request->getRequestDom();
-        
-    // Ανάκτηση του XML απάντησης (προαιρετικό)
-    $responseDom = $request->getResponseDom();
-        
-    // Η απάντηση $responses περιέχει τα αποτελέσματα και για τα 3 παραστατικά
+    $responses = $request->handle($invoices);
+
     foreach ($responses as $response) {
         $index = $response->getIndex() - 1;
-        
-        // Ανάκτηση του σχετικού παραστατικού
-        $relatedInvoice = $invoicesArray[$index];
-        
-        // Ανάκτηση του σχετικού XML αιτήματος με χρήση του index
-        $relatedRequestDom = $requestDom->getElementsByTagName('invoice')->item($index);
-        $relatedRequestXml = $requestDom->saveXML($relatedRequestDom);
-        
-        // Ανάκτηση του σχετικού XML απάντησης με χρήση του index
-        $relatedResponseDom = $responseDom->getElementsByTagName('response')->item($index);
-        $relatedResponseXml = $responseDom->saveXML($relatedResponseDom);
-            
-        // Εξέταση της απάντησης
+
+        $invoice = $invoices[$index];
+        $requestXml = $request->getRequestElement('invoice', $index);
+        $responseXml = $request->getResponseElement('response', $index);
+
         if ($response->isSuccessful()) {
             $uid = $response->getInvoiceUid();
             $mark = $response->getInvoiceMark();
             $qrUrl = $response->getQrUrl();
-            
-            // Αντιστοίχηση και αποθήκευση των XML στη βάση δεδομένων
-            // INSERT INTO invoices (..., uid, mark, qr_url, related_request_xml, related_response_xml)
+
+            // INSERT INTO invoices (..., uid, mark, qr_url, request_xml, response_xml)
         } else {
-            // Το παραστατικό δεν καταχωρήθηκε, αν επιθυμείτε μπορείτε
-            // να αποθηκεύσετε τα σφάλματα στη βάση δεδομένων για ανάλυση
             $errors = $response->getErrors()->toArray();
-            
-            // INSERT INTO logs (..., errors, related_request_xml, related_response_xml)            
+
+            // INSERT INTO logs (..., errors, request_xml, response_xml)
         }
     }
 } catch (MyDataException $e) {
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
+    echo 'Communication error: '.$e->getMessage();
 }
 ```
+
+> [!WARNING]
+> Check each response. In one request some invoices can succeed and others fail.
+
+More on sending: [SendInvoices](../http/send-invoices).

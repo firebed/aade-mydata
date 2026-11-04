@@ -1,78 +1,36 @@
-# Τύπος VatInfo
+# VatInfo
 
-Ο τύπος `BookInfo` αντιπροσωπεύει ένα αντικείμενο που περιέχει πληροφορίες για τα έσοδα/έξοδα του χρήστη.
-
-## Το αντικείμενο αυτό περιέχει τα εξής πεδία:
-
-| Πεδίο       | Περιγραφή                         |
-|-------------|-----------------------------------|
-| Mark        | Το ΜΑΡΚ του παραστατικού          |
-| IsCancelled | Αν το παραστατικό είναι ακυρωμένο |
-| IssueDate   | Ημερομηνία έκδοσης παραστατικού   |
-| Vat301      | Ποσό ΦΠΑ πεδίου 301               |
-| Vat302      | Ποσό ΦΠΑ πεδίου 302               |
-| Vat303      | Ποσό ΦΠΑ πεδίου 303               |
-| Vat304      | Ποσό ΦΠΑ πεδίου 304               |
-| Vat305      | Ποσό ΦΠΑ πεδίου 305               |
-| Vat306      | Ποσό ΦΠΑ πεδίου 306               |
-| Vat331      | Ποσό ΦΠΑ πεδίου 331               |
-| Vat332      | Ποσό ΦΠΑ πεδίου 332               |
-| Vat333      | Ποσό ΦΠΑ πεδίου 333               |
-| Vat334      | Ποσό ΦΠΑ πεδίου 334               |
-| Vat335      | Ποσό ΦΠΑ πεδίου 335               |
-| Vat336      | Ποσό ΦΠΑ πεδίου 336               |
-| Vat361      | Ποσό ΦΠΑ πεδίου 361               |
-| Vat362      | Ποσό ΦΠΑ πεδίου 362               |
-| Vat363      | Ποσό ΦΠΑ πεδίου 363               |
-| Vat364      | Ποσό ΦΠΑ πεδίου 364               |
-| Vat365      | Ποσό ΦΠΑ πεδίου 365               |
-| Vat366      | Ποσό ΦΠΑ πεδίου 366               |
-| Vat381      | Ποσό ΦΠΑ πεδίου 381               |
-| Vat382      | Ποσό ΦΠΑ πεδίου 382               |
-| Vat383      | Ποσό ΦΠΑ πεδίου 383               |
-| Vat384      | Ποσό ΦΠΑ πεδίου 384               |
-| Vat385      | Ποσό ΦΠΑ πεδίου 385               |
-| Vat386      | Ποσό ΦΠΑ πεδίου 386               |
-| Vat342      | Ποσό ΦΠΑ πεδίου 342               |
-| Vat345      | Ποσό ΦΠΑ πεδίου 345               |
-| Vat348      | Ποσό ΦΠΑ πεδίου 348               |
-| Vat349      | Ποσό ΦΠΑ πεδίου 349               |
-| Vat310      | Ποσό ΦΠΑ πεδίου 310               |
-| Vat402      | Ποσό ΦΠΑ πεδίου 402               |
-| Vat407      | Ποσό ΦΠΑ πεδίου 407               |
-| Vat411      | Ποσό ΦΠΑ πεδίου 411               |
-| Vat423      | Ποσό ΦΠΑ πεδίου 423               |
-| Vat422      | Ποσό ΦΠΑ πεδίου 422               |
-
-## Παρατηρήσεις
-
-- Το κάθε πεδίο περιέχει το ποσό ΦΠΑ που αναλογεί στο αντίστοιχο πεδίο του πίνακα
-  εισροών – εκροών ΦΠΑ.
-
-Κάθε πεδίο είναι διαθέσιμο στο τύπο `VatInfo` και μπορεί να ανακτηθεί με την αντίστοιχη `get` μέθοδο.
+`RequestVatInfo` returns a `RequestedVatInfo`. Its `getVatInfo()` returns a list of `VatInfo`, one per invoice
+(or per day with `groupedPerDay: true`), or `null` when there are none.
 
 ```php
-use Firebed\AadeMyData\Models\VatInfo;
+use Firebed\AadeMyData\Http\RequestVatInfo;
 
-$vatInfo = new VatInfo();
-$mark = $vatInfo->getMark();
-$isCancelled = $vatInfo->isCancelled();
-$issueDate = $vatInfo->getIssueDate();
-$vat422 = $vatInfo->getVat422();
-// ...
+$result = (new RequestVatInfo())->handle(dateFrom: '01/01/2026', dateTo: '31/01/2026');
+
+foreach ($result->getVatInfo() ?? [] as $info) {
+    echo $info->getMark();
+    echo $info->isCancelled() ? 'cancelled' : 'active';
+    echo $info->getVat301();
+}
+
+$token = $result->getContinuationToken(); // next page, see ContinuationToken
 ```
 
+| Field              | Getter                     | Type     | Description |
+|--------------------|----------------------------|----------|-------------|
+| Mark               | `getMark()`                | `string` | MARK of the invoice |
+| IsCancelled        | `isCancelled()`            | `bool`   | The invoice is cancelled |
+| IssueDate          | `getIssueDate()`           | `string` | Issue date |
+| Vat301 ... Vat306  | `getVat301()` ...          | `float`  | VAT amount of field 301 ... 306 |
+| Vat331 ... Vat336  | `getVat331()` ...          | `float`  | VAT amount of field 331 ... 336 |
+| Vat361 ... Vat366  | `getVat361()` ...          | `float`  | VAT amount of field 361 ... 366 |
+| Vat381 ... Vat386  | `getVat381()` ...          | `float`  | VAT amount of field 381 ... 386 |
+| Vat342, Vat345, Vat348, Vat349 | `getVat342()` ... | `float`  | VAT amount of field 342, 345, 348, 349 |
+| Vat310             | `getVat310()`              | `float`  | VAT amount of field 310 |
+| Vat402, Vat407, Vat411 | `getVat402()` ...      | `float`  | VAT amount of field 402, 407, 411 |
+| Vat422, Vat423     | `getVat422()`, `getVat423()` | `float` | VAT amount of field 422, 423 |
+| VatUnclassified361 | `getVatUnclassified361()`  | `float`  | VAT of field 361 not yet classified |
+| VatUnclassified381 | `getVatUnclassified381()`  | `float`  | VAT of field 381 not yet classified |
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+Each `Vat...` field is the VAT amount for that field of the VAT return (input and output).

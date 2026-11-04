@@ -1,38 +1,27 @@
-# Αναζήτηση Βασικών Στοιχείων Μητρώου Επιχειρήσεων
+# VAT number lookup
 
-## Εγκατάσταση
+Look up a business by VAT number, to check its tax and business status. This is a separate package.
 
 ```bash
 composer require firebed/vat-registry
 ```
 [View Vat Registry on GitHub](https://github.com/firebed/vat-registry)
 
-Με τη χρήση αυτής της υπηρεσίας, τα νομικά πρόσωπα, οι νομικές οντότητες,
-και τα φυσικά πρόσωπα με εισόδημα από επιχειρηματική δραστηριότητα μπορούν
-να αναζητήσουν βασικές πληροφορίες, προκειμένου να διακριβώσουν τη φορολογική 
-ή την επαγγελματική υπόσταση άλλων νομικών προσώπων ή νομικών οντοτήτων ή
-φορολογουμένων/φυσικών προσώπων που ασκούν επιχειρηματική δραστηριότητα.
+There are two services:
 
-Το σύστημα παρέχει 2 τρόπους αναζήτησης βασικών στοιχείων μητρώου επιχειρήσεων:
+| Service | Covers | Needs credentials |
+|---|---|---|
+| AADE business registry (`TaxisNet`) | Every Greek VAT number | Yes |
+| VIES (`VIES`) | VAT numbers of every EU member state, fewer details | No |
 
-- Μέσω της Υπηρεσίας Αναζήτησης Βασικών Στοιχείων Μητρώου Επιχειρήσεων
-- Μέσω της Υπηρεσίας Vat Information Exchange System (VIES)
+## AADE business registry
 
-## Μέσω της Υπηρεσίας Αναζήτησης Βασικών Στοιχείων Μητρώου Επιχειρήσεων
+You need a `username` and a `password`:
 
-Η υπηρεσία αυτή επιτρέπει την αναζήτηση όλων των Ελληνικών ΑΦΜ. Για την αναζήτηση
-θα χρειαστείτε ένα `username` και ένα `password`.
+1. Register for the [service](https://www1.aade.gr/webtax/wspublicreg/faces/pages/wspublicreg/menu.xhtml) with your TAXISnet credentials.
+2. Get special access codes from [Special Codes Management](https://www1.aade.gr/sgsisapps/tokenservices/protected/displayConsole.htm).
 
-Διαδικασία εγγραφής:
-
-- Εγγραφή στην [υπηρεσία](https://www1.aade.gr/webtax/wspublicreg/faces/pages/wspublicreg/menu.xhtml) κάνοντας χρήση των κωδικών TAXISnet.
-- Απόκτηση ειδικών κωδικών πρόσβασης μέσω της εφαρμογής [Διαχείριση Ειδικών Κωδικών](https://www1.aade.gr/sgsisapps/tokenservices/protected/displayConsole.htm).
-
-Για περισσότερες λεπτομέρειες και για την εγγραφή επισκεφτείτε
-την [Επίσημη Σελίδα του ΑΑΔΕ](https://www.aade.gr/anazitisi-basikon-stoiheion-mitrooy-epiheiriseon).
-
-Μετά την εγγραφή, θα έχετε τα `username` και `password` που θα χρειαστείτε για την
-χρήση της υπηρεσίας.
+More on the [AADE page](https://www.aade.gr/anazitisi-basikon-stoiheion-mitrooy-epiheiriseon).
 
 ```php
 use Firebed\VatRegistry\TaxisNet;
@@ -48,11 +37,11 @@ try {
     
     dd($response);
 } catch (VatException $exception) {
-    echo "Σφάλμα: " . $exception->getMessage();
+    echo "Error: " . $exception->getMessage();
 }
 ```
 
-Το αποτέλεσμα της παραπάνω κλήσης:
+Result:
 
 ```php
 Firebed\VatRegistry\VatEntity {
@@ -90,35 +79,31 @@ Firebed\VatRegistry\VatEntity {
 }
 ```
 
-Σε περίπτωση που το ΑΦΜ δεν είναι έγκυρο επιστρέφεται τιμή `null`. Αν υπήρξε κάποιο άλλο πρόβλημα το `VatException` θα
-περιέχει το σχετικό μήνυμα σφάλματος.
+The values come from AADE, so they are in Greek.
 
-## Μέσω της Υπηρεσίας Vat Information Exchange System (VIES)
+An invalid VAT number returns `null`. Any other problem throws `VatException` with the error message.
 
-Με τη χρήση της Υπηρεσία VIES μπορείτε να επαληθεύσετε την εγκυρότητα του ΑΦΜ, 
-που χορηγείται απο οποιοδήποτε κράτος μέλος της Ευρωπαϊκής Ένωσης. Οι λεπτομέρειες
-που παρέχει είναι πιο περιορισμένες σε σχέση με την υπηρεσία της ΑΑΔΕ.
+## VIES
 
-Η Υπηρεσία παρέχεται δωρεάν χωρίς εγγραφή σε κάποιο φορέα. Δέχεται 2 παραμέτρους:
-- Τον κωδικό της χώρας (π.χ. EL για Ελλάδα)
-- Τον ΑΦΜ που θέλετε να επαληθεύσετε.
+VIES checks a VAT number of any EU member state. It is free and needs no registration.
+Pass the country code (e.g. `EL` for Greece) and the VAT number.
 
 ```php
 use Firebed\VatRegistry\VIES;
 use Firebed\VatRegistry\VatException;
 
-$taxis = new VIES();
+$vies = new VIES();
 
 try {
-    $response = $taxis->handle('EL', '094014201');
+    $response = $vies->handle('EL', '094014201');
     
     dd($response);
 } catch (VatException $exception) {
-    echo "Σφάλμα: " . $exception->getMessage();
+    echo "Error: " . $exception->getMessage();
 }
 ```
 
-Το αποτέλεσμα της παραπάνω κλήσης:
+Result:
 
 ```php
 Firebed\VatRegistry\VatEntity {
@@ -143,21 +128,21 @@ Firebed\VatRegistry\VatEntity {
 }
 ```
 
-Σε περίπτωση που το ΑΦΜ δεν είναι έγκυρο, η υπηρεσία επιστρέφει `null`.
+An invalid VAT number returns `null`.
 
 ## Helper methods
 
-### Έλεγχος Φυσικού Προσώπου / Εταιρείας
+### Natural person or company
 
 ```php
 $entity->isNaturalPerson();
 $entity->isCompany();
 ```
 
-### Έλεγχος διατήρησης δραστηριότητας
+### Active business
 
 ```php
-// Επιστρέφει true αν η επιχείρηση είναι ενεργή
-// Επιστρέφει false αν η επιχείρηση έχει διακοπεί
+// true: the business is active
+// false: the business has stopped
 $entity->isActive();
 ```

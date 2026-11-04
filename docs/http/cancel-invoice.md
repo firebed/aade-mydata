@@ -1,4 +1,4 @@
-# Ακύρωση παραστατικού - CancelInvoice
+# CancelInvoice
 
 ```shell
 # production
@@ -8,86 +8,75 @@ https://mydatapi.aade.gr/myDATA/CancelInvoice
 https://mydataapidev.aade.gr/CancelInvoice
 ```
 
-Για την ακύρωση ενός παραστατικού στο σύστημα του ΑΑΔΕ myDATA, χρησιμοποιήστε την κλάση `Firebed\AadeMyData\Http\CancelInvoice`.
-Η ακύρωση παραστατικού γίνεται παρέχοντας το mark του παραστατικού που θέλουμε να ακυρώσουμε.
+Cancels an invoice by its MARK, without sending a new one. One invoice per call.
 
 ```php
-use Firebed\AadeMyData\Http\CancelInvoice;
 use Firebed\AadeMyData\Exceptions\MyDataException;
-
-$cancel = new CancelInvoice();
-
-try{
-    $responses = $cancel->handle("1234567890");
-} catch (MyDataException $e) {
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
-}
-```
-
-Για την περίπτωση εκείνη και μόνο που η μέθοδος κληθεί από τρίτο πρόσωπο (όπως εκπρόσωπος Ν.Π. ή λογιστής), 
-ο ΑΦΜ της οντότητας που εξέδωσε το προς ακύρωση παραστατικό αποστέλλεται μέσω της παραμέτρου `entityVatNumber`,
-διαφορετικά η εν λόγω παράμετρος δε χρειάζεται να αποσταλεί.
-
-```php
 use Firebed\AadeMyData\Http\CancelInvoice;
-use Firebed\AadeMyData\Exceptions\MyDataException;
-
-$cancel = new CancelInvoice();
-try{
-    $responses = $cancel->handle(mark: "1234567890", entityVatNumber: "888888888");
-} catch (MyDataException $e) {
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
-}
-```
-
-> [!NOTE]
-> Δεν υπάρχει δυνατότητα ακύρωσης πολλαπλών παραστατικών ταυτόχρονα.
-
-## Λήψη αποτελεσμάτων
-Σε περίπτωση επιτυχίας η ακύρωση ως πράξη λαμβάνει το δικό της mark το οποίο
-επιστρέφεται στον χρήστη και το παραστατικό θεωρείται ακυρωμένο. Σε περίπτωση
-αποτυχίας επιστρέφεται το αντίστοιχο μήνυμα λάθους.
-
-> [!TIP]
-> Το αποτέλεσμα της κλήσης επιστρέφει έναν πίνακα από αντικείμενα τύπου
-> [**\Firebed\AadeMyData\Models\Response**](../models/response-type).
-
-```php
-use Firebed\AadeMyData\Http\CancelInvoice;
-use Firebed\AadeMyData\Exceptions\MyDataException;
 
 try {
-    $cancel = new CancelInvoice();
-    $responses = $cancel->handle("1234567890");
-    
-    $response = $responses->first();
-    
-    if ($response->isSuccessful()) {
-        echo "Το παραστατικό ακυρώθηκε με επιτυχία." . PHP_EOL;
-        echo "Το mark ακύρωσης του παραστατικού είναι: " . $response->getCancellationMark();
-    } else {
-        echo "Η ακύρωση απέτυχε. Λόγος: " . $response->getMessage();
-    }
+    $responses = (new CancelInvoice())->handle('1234567890');
 } catch (MyDataException $e) {
-    echo "Σφάλμα επικοινωνίας: " . $e->getMessage();
+    echo "Connection error: " . $e->getMessage();
 }
 ```
 
-Παρόλο που η ακύρωση γίνεται πάντα για 1 παραστατικό το αποτέλεσμα επιστρέφεται ως πίνακας αποτελεσμάτων.
-Αυτό γίνεται για να είναι συμβατό με τις υπόλοιπες μεθόδους που επιστρέφουν πολλαπλά αποτελέσματα.
-Στην πράξη, ο πίνακας αποτελεσμάτων θα περιέχει μόνο 1 στοιχείο και μπορείτε να έχετε πρόσβαση σ' αυτό
-μέσω:
-- `$responses->first()` όπως στο παραπάνω παράδειγμα
-- `$responses[0]`
-- `$responses->offsetGet(0)`
-- foreach loop
+With the `MyData` client:
 
-Μετά από επιτυχή ακύρωση, στα αποτελέσματα του [RequestTransmittedDocs](request-transmitted-docs),
-το παραστατικό που μόλις ακυρώσαμε θα εμπεριέχεται στον πίνακα που επιστρέφει η μέθοδος `RequestedDoc::getCancelledInvoices()`.
+```php
+use Firebed\AadeMyData\MyData;
 
-Επίσης, το αντίστοιχο παραστατικό που επιστρέφεται από τη μέθοδο `RequestedDoc::getInvoices` θα
-επισημαίνεται με τη χρήση του πεδίου `cancelledByMark`. Η τιμή του πεδίου αυτού είναι ίδια με το
-mark ακύρωσης που λάβαμε κατά την ακύρωση του παραστατικού `$response->getCancellationMark()`.
+$mydata = MyData::connect($userId, $subscriptionKey, 'dev');
+
+$responses = $mydata->cancelInvoice('1234567890');
+```
+
+## Parameters
+
+| Parameter | Required | Description |
+|---|---|---|
+| `mark` | Yes | MARK of the invoice to cancel |
+| `entityVatNumber` | No | VAT number of the issuer. Send it only when a third party (e.g. an accountant) cancels the invoice |
+
+```php
+$responses = (new CancelInvoice())->handle(mark: '1234567890', entityVatNumber: '888888888');
+```
+
+## Results
+
+`handle()` returns a `ResponseDoc` with one [Response](../models/response-type).
+On success the cancellation gets its own MARK and the invoice counts as cancelled.
+On failure the response holds the errors.
+
+```php
+use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Http\CancelInvoice;
+
+try {
+    $response = (new CancelInvoice())->handle('1234567890')->first();
+
+    if ($response->isSuccessful()) {
+        echo "Cancellation MARK: " . $response->getCancellationMark();
+    } else {
+        foreach ($response->getErrors() as $error) {
+            echo $error->getCode() . ': ' . $error->getMessage() . PHP_EOL;
+        }
+    }
+} catch (MyDataException $e) {
+    echo "Connection error: " . $e->getMessage();
+}
+```
+
+The result is a list so that it matches the other send methods. It always has one item. Read it with
+`$responses->first()`, `$responses[0]` or a `foreach`.
+
+## After the cancellation
+
+In [RequestTransmittedDocs](request-transmitted-docs) results:
+
+- `RequestedDoc::getCancelledInvoices()` lists the cancelled invoice.
+- The invoice in `RequestedDoc::getInvoices()` has `cancelledByMark` set to the cancellation MARK
+  (the same value as `$response->getCancellationMark()`).
 
 ```xml
 <RequestedDoc>

@@ -1,111 +1,140 @@
-# Παραστατικά υπό έκδοση - SendUnsignedInvoices
+# SendUnsignedInvoices <Badge type="tip" text="Provider only" />
 
 ```shell
 # production
 https://mydatapi.aade.gr/myDataProvider/SendUnsignedInvoices
 
 # development
-https://mydataapidev.aade.gr/myDATAProvider/SendUnsignedInvoices
+https://mydataapidev.aade.gr/myDataProvider/SendUnsignedInvoices
 ```
 
+Sends invoices "under issue" (official marking: «Υπό Έκδοση»). Same body as [SendInvoices](./send-invoices).
+The `InvoicesDoc` schema has no field for this marking, so the endpoint itself is the marking.
+
 > [!WARNING]
-> Μόνο για παρόχους ηλεκτρονικής τιμολόγησης.
-
-## Πότε χρησιμοποιείται
-
-Σε συναλλαγή με χρήση Μέσου Πληρωμών (POS) ή άμεσης πληρωμής (π.χ. IRIS) μέσω Παρόχου, ο Πάροχος δημιουργεί για το
-**υπό έκδοση** παραστατικό την Υπογραφή Πληρωμής ΥΠΑΗΕΣ (Provider's Signature) πριν εκδοθεί το παραστατικό. Η
-`SendUnsignedInvoices` είναι η διαβίβαση υπό έκδοση παραστατικών με την επισήμανση «Υπό Έκδοση»: το σχήμα του
-`InvoicesDoc` δεν έχει πεδίο για την επισήμανση. Το πότε οφείλεται η διαβίβαση και πότε αρκεί η καταγραφή ορίζεται
-στην Α.1155/2023 όπως τροποποιήθηκε με την Α.1160/2025.
-
-### Τι ορίζουν οι αποφάσεις
-
-Άρθρο 4 της κωδικοποιημένης [Α.1155/2023](https://www.taxheaven.gr/circulars/45062/a-1155-2023) (κάρτες / POS):
-
-> Στην περίπτωση Υπογραφών Πληρωμών - (Provider's Signatures/ECR Tokens) που δεν συσχετίστηκαν από το Ταμειακό Σύστημα
-> με παραστατικά και Μοναδική Ταυτότητα Πληρωμής, εντός του χρονικού ορίου που ορίζεται ανά περίπτωση, ο Πάροχος
-> Υπηρεσιών Ηλεκτρονικής Έκδοσης Στοιχείων (ΥΠΑΗΕΣ) ή ο ΦΗΜ με σύστημα λογισμικού (ERP), για τις ταυτόχρονες συναλλαγές
-> καταγράφουν και διαβιβάζουν στην ΑΑΔΕ τα υπό έκδοση παραστατικά που ο Χρήστης υπηρεσιών πληρωμών δεν διαβίβασε. Τα υπό
-> έκδοση παραστατικά της περίπτωσης αυτής για τη διαβίβασή τους στην ΑΑΔΕ έχουν την επισήμανση «Υπό Έκδοση».
-
-Το άρθρο 4Α παρ. 2 (άμεσες πληρωμές, π.χ. IRIS), όπως προστέθηκε με την
-[Α.1160/2025](https://www.taxheaven.gr/circulars/51494/a-1160-2025) (ΦΕΚ Β' 6123/17.11.2025), ορίζει το ίδιο για τα
-Μοναδικά Συνδυαστικά Κλειδιά που δεν συσχετίστηκαν με παραστατικά και Μοναδική Ταυτότητα Πληρωμής.
-
-Η Α.1160/2025 αντικατέστησε επίσης την περ. γ' της παρ. 2 του άρθρου 3, για τις συναλλαγές που **δεν ολοκληρώνονται**:
-
-> Στην περίπτωση μη ολοκλήρωσης της διαδικασίας εκάστης συναλλαγής με τη χρήση κάρτας ή υπηρεσιών άμεσης πληρωμής από
-> λογαριασμό σε λογαριασμό, όπως η υπηρεσία IRIS payments, το Μέσο Πληρωμών απορρίπτει αυτοματοποιημένα την Υπογραφή
-> ΥΠΑΗΕΣ (Provider's Signature) για το συγκεκριμένο παραστατικό, εντός εξήντα (60) ωρών από τη δημιουργία αυτών και ο
-> Πάροχος Υπηρεσιών Ηλεκτρονικής Έκδοσης Στοιχείων (ΥΠΑΗΕΣ) έχει την υποχρέωση καταγραφής της απόρριψης αυτής.
->
-> Στην περίπτωση μη απόρριψης της Υπογραφής ΥΠΑΗΕΣ (Provider's Signature) από το Μέσο Πληρωμών παρότι δεν συσχετίστηκε με
-> Μοναδική Ταυτότητας Πληρωμής, εντός του ως άνω διαστήματος, ο Πάροχος Υπηρεσιών Ηλεκτρονικής Έκδοσης Στοιχείων
-> (ΥΠΑΗΕΣ) υποχρεούται σε διακριτή καταγραφή και τεκμηρίωση του γεγονότος.
-
-Η [Α.1170/2023](https://www.taxheaven.gr/circulars/45181/a-1170-2023) (άρθρο 7, ιγ) προβλέπει ότι στις ταυτόχρονες
-συναλλαγές με POS τα παραστατικά διαβιβάζονται πριν την έκδοσή τους με την ένδειξη «Υπό Έκδοση». Η
-[Α.1074/2024](https://www.taxheaven.gr/circulars/46955/a-1074-2024) δεν ρυθμίζει τα υπό έκδοση παραστατικά.
-
-### Ανάγνωση
-
-Συνδυάζοντας τις διατάξεις, η πιο συνεπής ανάγνωση είναι η παρακάτω. **Δεν διατυπώνεται ρητά στις αποφάσεις** και
-πρέπει να επιβεβαιωθεί από την ΑΑΔΕ πριν εφαρμοστεί:
-
-| Περίπτωση | Υποχρέωση Παρόχου |
-|---|---|
-| Η πληρωμή δεν ολοκληρώθηκε (απορρίφθηκε, ακυρώθηκε) και το Μέσο Πληρωμών απέρριψε την υπογραφή | **Καταγραφή της απόρριψης**, χωρίς διαβίβαση (άρθρο 3 παρ. 2γ) |
-| Η υπογραφή ούτε χρησιμοποιήθηκε ούτε απορρίφθηκε εντός 60 ωρών | **Διακριτή καταγραφή και τεκμηρίωση** (άρθρο 3 παρ. 2γ) |
-| Η πληρωμή ολοκληρώθηκε (υπάρχει Μοναδική Ταυτότητα Πληρωμής), αλλά το παραστατικό δεν εκδόθηκε | **Διαβίβαση του υπό έκδοση παραστατικού** με `SendUnsignedInvoices` (άρθρο 4 / 4Α παρ. 2) |
-
-Η ακύρωση μιας υπογραφής δεν οδηγεί έτσι σε διαβίβαση, αλλά σε **καταγραφή**, που είναι επίσης υποχρέωση.
-
-Η ανάγνωση προϋποθέτει ότι ο Πάροχος γνωρίζει αν η πληρωμή ολοκληρώθηκε. Αυτό ισχύει μόνο όταν ο ίδιος ο Πάροχος
-αποδέχεται την άμεση πληρωμή μέσω του Συστήματος Ηλεκτρονικών Πληρωμών (π.χ. ΔΙΑΣ), όπως περιγράφει το παράρτημα Β: τότε
-λαμβάνει το αποτέλεσμα (`PaymentResultResponse`, με `statusID` σε επιτυχία). Όταν η πληρωμή, με κάρτα ή IRIS,
-ολοκληρώνεται σε Μέσο Πληρωμών (τερματικό, NSP), το αποτέλεσμα φτάνει στο Ταμειακό Σύστημα και όχι στον Πάροχο, που
-γνωρίζει μόνο αν η υπογραφή χρησιμοποιήθηκε σε παραστατικό, ακυρώθηκε ή έληξε αχρησιμοποίητη.
-
-Ανοιχτά ερωτήματα προς την ΑΑΔΕ:
-
-1. Πώς πληροφορείται ο Πάροχος την απόρριψη μιας υπογραφής ή την ολοκλήρωση μιας πληρωμής, όταν η πληρωμή
-   ολοκληρώνεται σε Μέσο Πληρωμών και όχι μέσω του ίδιου;
-2. Χωρίς αυτή την πληροφορία, μια υπογραφή που έληξε αχρησιμοποίητη διαβιβάζεται με `SendUnsignedInvoices` ή αρκεί η
-   καταγραφή και τεκμηρίωσή της;
-3. Ισχύει η παραπάνω ανάγνωση (ακύρωση ή απόρριψη: μόνο καταγραφή, πληρωμή χωρίς παραστατικό: διαβίβαση);
-
-## Κλήση
-
-Το σώμα είναι ίδιο με της [SendInvoices](./send-invoices): ολόκληρο το παραστατικό, με την υπογραφή στον τρόπο πληρωμής
-του (`PaymentMethodDetail::setProvidersSignature()`, μαζί με το `tid` του POS).
+> Provider channel only. On an ERP connection the call throws `UnsupportedChannelException` and sends nothing.
 
 ```php
+use Firebed\AadeMyData\Enums\PaymentType;
+use Firebed\AadeMyData\Http\MyDataRequest;
+use Firebed\AadeMyData\Http\SendUnsignedInvoices;
+use Firebed\AadeMyData\Models\PaymentMethodDetail;
+
+MyDataRequest::init($userId, $subscriptionKey, 'dev', is_provider: true);
+
+// The invoice carries the Provider's Signature in its POS payment
+$invoice->addPaymentMethod(
+    (new PaymentMethodDetail)
+        ->setType(PaymentType::POS)
+        ->setAmount(12.40)
+        ->setTid('12345678')
+        ->setProvidersSignature($signingAuthor, $signature)
+);
+
+$responses = (new SendUnsignedInvoices)->handle($invoice);
+```
+
+With the `MyData` client:
+
+```php
+use Firebed\AadeMyData\MyData;
+
+$mydata = MyData::connect($userId, $subscriptionKey, 'dev', provider: true);
+
 $responses = $mydata->sendUnsignedInvoices($invoice);
 ```
 
-## Τι απαντά το myDATA
+## Parameters
 
-Παρατηρήσεις στο δοκιμαστικό περιβάλλον παρόχων (Νοέμβριος 2026):
+| Parameter  | Required | Description                                                       |
+|------------|----------|-------------------------------------------------------------------|
+| `invoices` | Yes      | An `Invoice`, a list of `Invoice`, or an `InvoicesDoc`            |
 
-- Απαντά `Success` με το `invoiceUid` και ένα `invoiceMark` από ξεχωριστό, μικρότερο εύρος (8ψήφιο), **χωρίς**
-  `authenticationCode` και `qrUrl`.
-- Δέχτηκε το ίδιο παραστατικό δύο φορές, με νέο ΜΑΡΚ κάθε φορά: η αποστολή κάθε παραστατικού μία φορά είναι ευθύνη του
-  καλούντος.
-- Μια μεταγενέστερη `SendInvoices` με το ίδιο UID έγινε δεκτή ως κανονικό παραστατικό.
-- Δέχτηκε παραστατικό με χθεσινή ημερομηνία έκδοσης.
-- Δεν έλεγξε την υπογραφή (δέχτηκε και πληρωμή μετρητοίς χωρίς υπογραφή). Το παραγωγικό περιβάλλον μπορεί να ελέγχει
-  περισσότερα.
-- Η [RequestProviderDocs](./request-provider-docs) δεν εμφανίζει τα παραστατικά αυτά.
-- Δέχτηκε ελάχιστο σώμα με μόνο τα στοιχεία μιας υπογραφής: εκδότης (ΑΦΜ, χώρα, εγκατάσταση), σειρά, αριθμός,
-  ημερομηνία, τύπος, μία γραμμή με τα σύνολα (καθαρή αξία, κατηγορία ΦΠΑ, ΦΠΑ), σύνοψη και τρόπος πληρωμής POS με
-  `tid` και υπογραφή, χωρίς αντισυμβαλλόμενο, νόμισμα και χαρακτηρισμούς εσόδων, για τύπο 11.1 και για 1.1. Το ίδιο
-  σώμα 1.1 στη `SendInvoices` του παρόχου απορρίφθηκε μόνο για τον αντισυμβαλλόμενο και το νόμισμα (σφάλμα 204:
-  «Counterpart is mandatory for this invoice type», «Currency is mandatory for this invoice type»): οι χαρακτηρισμοί
-  εσόδων δεν απαιτούνται στο κανάλι παρόχου ούτως ή άλλως, ενώ η `SendUnsignedInvoices` δέχτηκε επιπλέον 1.1 χωρίς
-  αντισυμβαλλόμενο και νόμισμα. Το αν το ελάχιστο σώμα αρκεί νομικά δεν προκύπτει από το sandbox.
+## Result
+
+`handle()` returns a `ResponseDoc`, a list of [Response](../models/response-type) objects, as in SendInvoices.
+
+## When to use it
+
+In a POS or instant payment (e.g. IRIS) through a provider, the provider creates the Provider's Signature for the
+invoice before the invoice is issued. When that signature is never matched with an issued invoice, the decisions
+below may require you to transmit the invoice under issue. When you must transmit and when you only need to record is
+set by A.1155/2023, as amended by A.1160/2025.
+
+### What the decisions say
+
+Unofficial translations. Follow the links for the Greek text.
+
+Art. 4 of the codified [A.1155/2023](https://www.taxheaven.gr/circulars/45062/a-1155-2023) (cards / POS):
+
+> For Provider's Signatures / ECR Tokens that the cash register system did not match with invoices and a Unique
+> Payment ID within the set time limit, the provider (or the cash register with ERP software) records and transmits
+> to AADE, for simultaneous transactions, the invoices under issue that the payment service user did not transmit.
+> These invoices are transmitted to AADE marked "Under issue".
+
+Art. 4A par. 2 (instant payments, e.g. IRIS), added by [A.1160/2025](https://www.taxheaven.gr/circulars/51494/a-1160-2025)
+(Government Gazette B' 6123/17.11.2025), says the same for Unique Combined Keys not matched with invoices and a
+Unique Payment ID.
+
+A.1160/2025 also replaced art. 3 par. 2(c), for transactions that do not complete:
+
+> If a card or account-to-account instant payment (such as IRIS payments) does not complete, the payment instrument
+> automatically rejects the Provider's Signature for that invoice within sixty (60) hours of its creation, and the
+> provider must record this rejection.
+>
+> If the payment instrument does not reject the Provider's Signature within that period, although it was not matched
+> with a Unique Payment ID, the provider must record and document this separately.
+
+[A.1170/2023](https://www.taxheaven.gr/circulars/45181/a-1170-2023) (art. 7, item 13) says that in simultaneous POS
+transactions, invoices are transmitted before they are issued, marked "Under issue".
+[A.1074/2024](https://www.taxheaven.gr/circulars/46955/a-1074-2024) does not cover invoices under issue.
+
+### Our reading
+
+The decisions do not say this explicitly. Confirm it with AADE before you rely on it.
+
+| Case                                                                                    | Provider duty                                                                 |
+|-----------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| The payment did not complete (declined, cancelled) and the payment instrument rejected the signature | Record the rejection. No transmission (art. 3 par. 2c)            |
+| The signature was neither used nor rejected within 60 hours                             | Record and document it separately (art. 3 par. 2c)                            |
+| The payment completed (there is a Unique Payment ID), but no invoice was issued         | Transmit the invoice under issue with `SendUnsignedInvoices` (art. 4 / 4A par. 2) |
+
+So a cancelled signature leads to recording, not transmission. Recording is also a legal duty.
+
+This reading assumes the provider knows whether the payment completed. That is true only when the provider itself
+accepts the instant payment through the Electronic Payments System (e.g. DIAS), as Annex B describes. Then it gets the
+result (`PaymentResultResponse`, with `statusID` on success). When the payment, card or IRIS, completes on a payment
+instrument (terminal, NSP), the result goes to the cash register system, not to the provider. The provider only knows
+whether the signature was used in an invoice, cancelled, or expired unused.
+
+Open questions to AADE:
+
+1. How does the provider learn that a signature was rejected or a payment completed, when the payment completes on a
+   payment instrument and not through the provider?
+2. Without that information, do you transmit a signature that expired unused with `SendUnsignedInvoices`, or is
+   recording and documenting it enough?
+3. Is the reading above right (cancelled or rejected: record only; paid without an invoice: transmit)?
+
+## What myDATA answers
+
+Observed on the provider sandbox (November 2026):
+
+- It answers `Success` with the `invoiceUid` and an `invoiceMark` from a separate, shorter range (8 digits),
+  without `authenticationCode` and `qrUrl`.
+- It accepted the same invoice twice, with a new MARK each time. Sending each invoice once is your job.
+- A later `SendInvoices` with the same UID was accepted as a normal invoice.
+- It accepted an invoice dated yesterday.
+- It did not check the signature (it also accepted a cash payment with no signature). Production may check more.
+- [RequestProviderDocs](./request-provider-docs) does not list these invoices.
+- It accepted a minimal body with only the data of a signature: issuer (VAT number, country, branch), series, number,
+  date, type, one line with the totals (net value, VAT category, VAT), summary, and a POS payment with `tid` and
+  signature. No counterpart, currency or income classifications. This worked for types 11.1 and 1.1.
+  The same 1.1 body sent to the provider `SendInvoices` failed only for the counterpart and the currency
+  (error 204: "Counterpart is mandatory for this invoice type", "Currency is mandatory for this invoice type").
+  Income classifications are not required on the provider channel anyway. Whether the minimal body is legally enough
+  is not something the sandbox can tell.
 
 > [!IMPORTANT]
-> Τα παραπάνω είναι παρατηρήσεις στο sandbox, όχι προδιαγραφή της ΑΑΔΕ. Για τα χρονικά όρια: η Α.1160/2025 ορίζει ότι το
-> Μέσο Πληρωμών απορρίπτει την υπογραφή συναλλαγής που δεν ολοκληρώθηκε εντός 60 ωρών από τη δημιουργία της, ενώ στις
-> συναλλαγές εστίασης η απόρριψη διενεργείται μετά από δύο ώρες (άρθρο 6 παρ. 4 της Α.1155/2023).
+> The list above is sandbox observations, not an AADE spec. On time limits: A.1160/2025 says the payment instrument
+> rejects the signature of a transaction that did not complete within 60 hours of its creation. For restaurant
+> transactions the rejection happens after two hours (art. 6 par. 4 of A.1155/2023).

@@ -1,59 +1,39 @@
-# Τύπος RequestedDoc
+# RequestedDoc
 
-Στις περιπτώσεις που ο χρήστης καλέσει μια εκ των δυο μεθόδων λήψης δεδομένων
-(`\Firebed\AadeMyData\Http\RequestDocs`, `\Firebed\AadeMyData\Http\RequestTransmittedDocs`), θα λάβει 
-ένα αντικείμενο `\Firebed\AadeMyData\Models\RequestedDoc`.
-Το αντικείμενο θα περιλαμβάνει λίστες οι οποίες έχουν mark μεγαλύτερο από αυτό που εισήχθη ως παράμετρο.
-
-Σε περίπτωση που ο όγκος των δεδομένων υπερβαίνει το επιτρεπτό όριο και η λήψη τους γίνει τμηματικά
-το αντικείμενο θα περιλαμβάνει το στοιχείο continuationToken το οποίο θα περιέχει τις παραμέτρους
-`nextPartitionKey` και `nextRowKey`.
-
-## Περιγραφή
-
-| Πεδίο                      | Περιγραφή                                                          |
-|----------------------------|--------------------------------------------------------------------|
-| continuationToken          | Στοιχείο για την τμηματική λήψη αποτελεσμάτων                      |
-| invoicesDoc                | Λίστα Παραστατικών ValidationError, TechnicalError, XMLSyntaxError |
-| cancelledInvoicesDoc       | Λίστα ακυρώσεων                                                    |
-| invoiceMark                | ΜΑΡΚ παραστατικού που ακυρώθηκε                                    |
-| cancellationMark           | ΜΑΡΚ ακύρωσης                                                      |
-| cancellationDate           | Ημερομηνία ακύρωσης                                                |
-| incomeClassificationsDoc   | Λίστα Χαρακτηρισμών Εσόδων                                         |
-| expensesClassificationsDoc | Λίστα Χαρακτηρισμών Εξόδων                                         |
-| paymentMethodsDoc          | Λίστα Τρόπων Πληρωμής                                              |
-| nextPartitionKey           | Παράμετρος για επόμενη κλήση λήψης                                 |
-| nextRowKey                 | Παράμετρος για επόμενη κλήση λήψης                                 |
-
-## Παρατηρήσεις
-
-- Σε περίπτωση που θα επιστρέφεται το στοιχείο continuationToken τα πεδία
-  nextPartitionKey και nextRowKey θα είναι συμπληρωμένα από την υπηρεσία και
-  χρησιμοποιούνται στην επόμενη κλήση της ίδιας μεθόδου που είχε καλεστεί από
-  τον χρήστη
-
-## `Firebed\AadeMyData\Models\RequestedDoc`
+`RequestDocs` and `RequestTransmittedDocs` return a `RequestedDoc`. It holds the invoices, cancellations,
+classifications and payment methods with a MARK greater than the one you asked for.
 
 ```php
-use Firebed\AadeMyData\Models\RequestedDoc;
+use Firebed\AadeMyData\Http\RequestDocs;
 
-$requestedDoc = new RequestedDoc();
+$doc = (new RequestDocs())->handle(mark: '0', dateFrom: '01/01/2026', dateTo: '31/01/2026');
 
-// Για την περίπτωση που η λήψη των δεδομένων γίνεται τμηματικά
-$continuationToken = $requestedDoc->getContinuationToken();
+foreach ($doc->getInvoices() ?? [] as $invoice) {
+    echo $invoice->getMark();
+}
 
-// Λήψη λίστας παραστατικών
-$invoices = $requestedDoc->getInvoices();
-
-// Λίστα ακυρωμένων παραστατικών
-$cancelledInvoices = $requestedDoc->getCancelledInvoices();
-
-// Λίστα χαρακτηρισμών εσόδων
-$incomeClassifications = $requestedDoc->getIncomeClassifications();
-
-// Λίστα χαρακτηρισμών εξόδων
-$expensesClassifications = $requestedDoc->getExpensesClassifications();
-
-// Λίστα τρόπων πληρωμής
-$paymentMethods = $requestedDoc->getPaymentMethods();
+foreach ($doc->getCancelledInvoices() ?? [] as $cancelled) {
+    echo $cancelled->getInvoiceMark();
+}
 ```
+
+| Field                      | Getter                         | Type | Description |
+|----------------------------|--------------------------------|------|-------------|
+| continuationToken          | `getContinuationToken()`       | [ContinuationToken](continuation-token-type) | Key to the next page, `null` on the last page |
+| invoicesDoc                | `getInvoices()`                | `InvoicesDoc` of [Invoice](invoice-type) | Invoices |
+| cancelledInvoicesDoc       | `getCancelledInvoices()`       | `CancelledInvoicesDoc` of [CancelledInvoice](cancelled-invoice-type) | Cancellations |
+| incomeClassificationsDoc   | `getIncomeClassifications()`   | `IncomeClassificationsDoc` of [InvoiceIncomeClassification](invoice-income-classification-type) | Income classifications |
+| expensesClassificationsDoc | `getExpensesClassifications()` | `ExpensesClassificationsDoc` of [InvoiceExpensesClassification](invoice-expenses-classification-type) | Expense classifications |
+| paymentMethodsDoc          | `getPaymentMethods()`          | `PaymentMethodsDoc` of [PaymentMethod](payment-method-type) | Payment methods |
+
+Each getter returns `null` when myDATA sent no such list. The lists are collections: you can `foreach` them,
+`count()` them, and call `all()`, `first()` and `last()`.
+
+> [!TIP]
+> To read all pages, use `pages()` or `invoices()` instead of `handle()`:
+>
+> ```php
+> foreach ((new RequestDocs())->invoices(mark: '0') as $invoice) {
+>     // every invoice of every page
+> }
+> ```

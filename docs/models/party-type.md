@@ -1,69 +1,50 @@
-# Τύπος Party
+# Party
 
-Ο εκδότης (`issuer`) και ο λήπτης (`counterpart`) του παραστατικού είναι στοιχεία τύπου `Party` και η δομή τους
-περιγράφεται παρακάτω:
-
-## Το αντικείμενο αυτό περιέχει τα εξής πεδία:
-
-| Πεδίο                         | Υποχρεωτικό | Περιγραφή                               |
-|-------------------------------|-------------|-----------------------------------------|
-| vatNumber                     | **Ναι**     | Οποιοσδήποτε έγκυρος ΑΦΜ                |
-| country                       | **Ναι**     | Κωδικός Χώρας                           |
-| branch                        | **Ναι**     | Αριθμός Εγκατάστασης (ελάχιστη τιμή 0)  |
-| name                          | Όχι         | Επωνυμία                                |
-| [**address**](./address-type) | Όχι         | Διεύθυνση                               |
-| documentIdNo                  | Όχι         | Αριθμός επίσημου εγγράφου               |
-| supplyAccountNo               | Όχι         | Αριθμός Παροχής Ηλ. Ρεύματος            |
-| countryDocumentId             | Όχι         | Κωδικός Χώρας Έκδοσης Επίσημου Εγγράφου |
-
-## Παρατηρήσεις
-
-- Ο κωδικός της χώρας είναι δύο χαρακτήρες και προέρχεται από την αντίστοιχη
-  λίστα χωρών όπως περιγράφεται στο **ISO 3166**.
-- Σε περίπτωση που η εγκατάσταση του εκδότη είναι η έδρα ή δεν υφίσταται, το
-  πεδίο `branch` πρέπει να έχει την τιμή 0
-- Για τον εκδότη, τα στοιχεία Επωνυμία και Διεύθυνση δε γίνονται αποδεκτά στην
-  περίπτωση που αφορούν οντότητα εντός Ελλάδας (GR). Για τον λήπτη, το στοιχείο
-  Επωνυμία δε γίνονται αποδεκτό στην περίπτωση που αφορά οντότητα εντός
-  Ελλάδας (GR).
-- Ο αριθμός επίσημου εγγράφου, είναι επιτρεπτός μόνο στην περίπτωση διαβίβασης
-  παραστατικών που ανήκουν στην Ειδική Κατηγορία Παραστατικού Tax free (το
-  πεδίο της επικεφαλίδας του παραστατικού `specialInvoiceCategory` έχει την τιμή 4),
-  και μπορεί να είναι οποιοδήποτε επίσημο έγγραφο ταυτοποίησης (π.χ αριθμός
-  διαβατηρίου) του λήπτη του παραστατικού.
-- Ο αριθμός Παροχής Ηλ. Ρεύματος, είναι επιτρεπτός μόνο στην περίπτωση
-  διαβίβασης παραστατικών καυσίμων (το πεδίο της επικεφαλίδας του παραστατικού
-  `fuelInvoice` έχει την τιμή true – αποδεκτό μόνο για διαβίβαση από παρόχους) και
-  είναι πληροφορία του λήπτη του παραστατικού.
-- Ο κωδικός χώρας έκδοσης του επίσημου εγγράφου (π.χ διαβατηρίου), είναι
-  επιτρεπτός μόνο στην περίπτωση διαβίβασης παραστατικών που ανήκουν στην
-  Ειδική Κατηγορία Παραστατικού Tax free (το πεδίο της επικεφαλίδας του
-  παραστατικού `specialInvoiceCategory` έχει την τιμή 4) και εφόσον έχει συμπληρωθεί
-  το πεδίο αριθμός επίσημου εγγράφου (`documentIdNo`) και αφορά τον λήπτη του
-  παραστατικού.
-
-## Παραδείγματα
+`Party` holds the details of a person or business. The invoice issuer is an `Issuer` and the recipient is a
+`Counterpart`. Both extend `Party` and have the same fields. Use `Party` itself in
+[EntityType](entity-type).
 
 ```php
-use Firebed\AadeMyData\Models\Issuer;
+use Firebed\AadeMyData\Models\Address;
 use Firebed\AadeMyData\Models\Counterpart;
-use Firebed\AadeMyData\Models\Party;
+use Firebed\AadeMyData\Models\Issuer;
 
-// Εκδότης παραστατικού
 $issuer = new Issuer();
-$issuer->setVatNumber('123456789');
+$issuer->setVatNumber('888888888');
 $issuer->setCountry('GR');
 $issuer->setBranch(0);
 
-// Λήπτης παραστατικού
 $counterpart = new Counterpart();
-$counterpart->setVatNumber('123456789');
-$counterpart->setCountry('GR');
+$counterpart->setVatNumber('DE123456789');
+$counterpart->setCountry('DE');
 $counterpart->setBranch(0);
+$counterpart->setName('Example GmbH');
+$counterpart->setAddress(new Address([
+    'street' => 'Hauptstrasse',
+    'number' => '10',
+    'postalCode' => '10115',
+    'city' => 'Berlin',
+]));
 
-// Για χρήση σε άλλες περιπτώσεις όπως `EntityType`
-$party = new Party();
-$party->setVatNumber('123456789');
-$party->setCountry('GR');
-$party->setBranch(0);
+$invoice->setIssuer($issuer);
+$invoice->setCounterpart($counterpart);
 ```
+
+| Field             | Type                                   | Required | Description                                      |
+|-------------------|----------------------------------------|----------|--------------------------------------------------|
+| vatNumber         | `string`                               | Yes      | Any valid VAT number (max 30)                    |
+| country           | `CountryCode` or `string`              | Yes      | Country code, ISO 3166 (2 letters). The getter returns `string` |
+| branch            | `int`                                  | Yes      | Branch number. `0` for the head office or when there is no branch |
+| name              | `string`                               | No       | Name (max 200)                                   |
+| address           | [Address](address-type)                | No       | Address                                          |
+| documentIdNo      | `string`                               | No       | Official document number, e.g. passport (max 100) |
+| supplyAccountNo   | `string`                               | No       | Electricity supply number (max 100)              |
+| countryDocumentId | `CountryCode` or `string`              | No       | Country that issued the official document        |
+
+## Notes
+
+- For an issuer in Greece (`GR`), myDATA does not accept `name` and `address`.
+  For a counterpart in Greece, it does not accept `name`.
+- `documentIdNo` and `countryDocumentId` are allowed only for tax free invoices
+  (`specialInvoiceCategory` = 4) and describe the counterpart. `countryDocumentId` needs `documentIdNo`.
+- `supplyAccountNo` is allowed only on fuel invoices (`fuelInvoice = true`, provider channel only) and describes the counterpart.

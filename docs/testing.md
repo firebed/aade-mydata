@@ -1,8 +1,8 @@
-# Δοκιμές (testing)
+# Testing
 
-Στα tests της εφαρμογής σας δεν θέλετε κλήσεις προς το myDATA. Το `MyData::fake()` απαντά σε **κάθε** κλήση με
-ψεύτικη απάντηση, όποια σύνδεση κι αν χρησιμοποιεί (προεπιλεγμένη, `Connection`, `usingGateway()`), και την
-καταγράφει για έλεγχο. Δεν χρειάζονται διαπιστευτήρια.
+Your app's tests should not call myDATA. `MyData::fake()` answers every request with a fake
+response, whatever connection it uses (default, `Connection`, `usingGateway()`), and records it
+for assertions. No credentials needed.
 
 ```php
 use Firebed\AadeMyData\Http\SendInvoices;
@@ -17,29 +17,33 @@ public function test_an_order_issues_an_invoice(): void
 {
     $fake = MyData::fake();
 
-    $this->app->issueInvoice($order);
+    $this->orders->issueInvoice($order); // your code, which sends an invoice
 
     $fake->assertSent(SendInvoices::class, fn (SendInvoices $request) => $request->getInvoicesDoc()->count() === 1);
     $fake->assertSentCount(1);
 }
 ```
 
-## Προεπιλεγμένες απαντήσεις
+The assertions need PHPUnit (or Pest). To build test invoices fast, see [Factories](./factories).
 
-Χωρίς απάντηση για μια κλήση:
+## Default responses
 
-| Κλήση                                                                                           | Απάντηση                                                                                   |
-|-------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
-| `SendInvoices`                                                                                  | Επιτυχία ανά παραστατικό, με mark (από 400000000000001), uid και authenticationCode        |
-| `SendIncomeClassification`, `SendExpensesClassification`                                        | Επιτυχία ανά χαρακτηρισμό, με classificationMark                                           |
-| `SendPaymentsMethod`                                                                            | Επιτυχία ανά πληρωμή, με paymentMethodMark                                                 |
-| `CancelInvoice`, `CancelDeliveryNote`, `CancelReceivingNote`                                    | Επιτυχία με cancellationMark                                                               |
-| `RequestDocs`, `RequestTransmittedDocs`, `RequestMyIncome`, `RequestMyExpenses`, `RequestVatInfo`, `RequestE3Info` | Κανένα αποτέλεσμα                                                       |
-| `RequestProviderDocs`, `RequestReceiverInfo`                                                    | Κανένα αποτέλεσμα                                                                          |
-| `SendUnsignedInvoices`                                                                          | Επιτυχία ανά παραστατικό με uid και mark, χωρίς authenticationCode                         |
-| Δελτία αποστολής, δηλώσεις (statements), QR                                                     | `LogicException` μέχρι να δοθεί απάντηση                                                   |
+If you give no response for a request:
 
-## Απαντήσεις ανά κλήση
+| Request | Response |
+|---|---|
+| `SendInvoices` | Success per invoice, with mark (from 400000000000001), uid and authenticationCode |
+| `SendUnsignedInvoices` | Success per invoice, with mark and uid, no authenticationCode |
+| `SendIncomeClassification`, `SendExpensesClassification` | Success per classification, with classificationMark |
+| `SendPaymentsMethod` | Success per payment, with paymentMethodMark |
+| `CancelInvoice`, `CancelDeliveryNote`, `CancelReceivingNote` | Success with cancellationMark |
+| `RequestDocs`, `RequestTransmittedDocs`, `RequestMyIncome`, `RequestMyExpenses`, `RequestVatInfo`, `RequestE3Info` | No results |
+| `RequestProviderDocs`, `RequestReceiverInfo` | No results |
+| Digital Goods Movement, statements | `LogicException` until you give a response |
+
+The uid is set only when the invoice has the fields it is computed from.
+
+## Responses per request
 
 ```php
 use Firebed\AadeMyData\Exceptions\RateLimitExceededException;
@@ -51,59 +55,90 @@ use Firebed\AadeMyData\Testing\FakeGateway;
 use Firebed\AadeMyData\Testing\RecordedRequest;
 
 MyData::fake([
-    // Απόρριψη, όπως την επιστρέφει το myDATA (statusCode ValidationError)
+    // A rejection, as myDATA returns it (statusCode ValidationError)
     SendInvoices::class => FakeGateway::rejected(101, 'Invalid VAT number'),
 
-    // Μία απάντηση ανά κλήση, με τη σειρά (π.χ. σελίδες με continuationToken)
+    // One response per call, in order (e.g. pages with a continuationToken)
     RequestDocs::class => FakeGateway::sequence($page1, $page2),
 
-    // Εξαίρεση: ελέγξτε πώς χειρίζεται η εφαρμογή το rate limit
+    // An exception: test how your app handles the rate limit
     RequestVatInfo::class => new RateLimitExceededException(retryAfter: 300),
 
-    // Closure: η απάντηση εξαρτάται από την κλήση
+    // A closure: the response depends on the request
     CancelInvoice::class => fn (CancelInvoice $request, RecordedRequest $sent) => FakeGateway::accepted(),
 
-    // Οποιαδήποτε άλλη κλήση
+    // Any other request
     '*' => file_get_contents(__DIR__.'/stubs/response.xml'),
 ]);
 ```
 
-Κάθε κλάση απαντά και ελέγχεται μόνο για τις δικές της κλήσεις: η `SendInvoices::class` δεν καλύπτει τη
-`SendUnsignedInvoices`, ούτε η `CancelInvoice::class` τις ακυρώσεις δελτίων, γιατί είναι άλλες λειτουργίες του myDATA.
-Μια αφηρημένη (abstract) κλάση καλύπτει τις υποκλάσεις της: η `MyDataGetRequest::class` απαντά και στη `RequestDocs`
-και στη `RequestTransmittedDocs`, η `InvoicesDocRequest::class` στη `SendInvoices` και τη `SendUnsignedInvoices`. Οι έλεγχοι (`assertSent()` κ.λπ.) χρειάζονται το PHPUnit (ή το Pest).
+You can also add a response later: `$fake->respond(SendInvoices::class, $response)`.
 
-Μια απάντηση μπορεί να είναι:
+A class answers and asserts only its own requests. `SendInvoices::class` does not cover
+`SendUnsignedInvoices`, and `CancelInvoice::class` does not cover the note cancellations, because
+they are different myDATA actions. An abstract class covers its subclasses:
 
-- XML (string), όπως θα το έστελνε το myDATA,
-- μοντέλο: `ResponseDoc`, `Response` (μέσα σε `ResponseDoc`), `RequestedDoc`, `RequestedVatInfo`, …,
-- λίστα από `Response` (μία ανά παραστατικό) ή από `Invoice` (ως `RequestedDoc`),
-- εξαίρεση, που πετιέται,
-- closure που δέχεται την κλήση και το `RecordedRequest` και επιστρέφει κάτι από τα παραπάνω,
-- `FakeGateway::sequence(...)`, με `->whenEmpty($response)` για τις κλήσεις μετά το τέλος της.
+| Abstract class | Covers |
+|---|---|
+| `MyDataGetRequest` | `RequestDocs`, `RequestTransmittedDocs` |
+| `InvoicesDocRequest` | `SendInvoices`, `SendUnsignedInvoices` |
+| `CancellationRequest` | `CancelInvoice`, `CancelDeliveryNote`, `CancelReceivingNote` |
+| `RequestBookInfo` | `RequestMyIncome`, `RequestMyExpenses` |
 
-Σε ένα `ResponseDoc`, κάθε απάντηση χωρίς `index` παίρνει τη θέση της και κάθε επιτυχημένη χωρίς mark παίρνει το
-επόμενο mark. Έτσι, για δύο παραστατικά όπου το δεύτερο απορρίπτεται:
+A response can be:
+
+- an XML string, as myDATA would send it,
+- a model: `ResponseDoc`, `Response` (wrapped in a `ResponseDoc`), `RequestedDoc`, `RequestedVatInfo`, ...,
+- a list of `Response` (one per document) or of `Invoice` (returned as a `RequestedDoc`),
+- an exception, which is thrown,
+- a closure that gets the request and the `RecordedRequest` and returns one of the above,
+- `FakeGateway::sequence(...)`, with `->whenEmpty($response)` for the calls after it runs out.
+
+Helpers:
+
+| Method | Returns |
+|---|---|
+| `FakeGateway::accepted($mark = null, $uid = null)` | A successful `Response` |
+| `FakeGateway::rejected($code, $message, $statusCode = 'ValidationError')` | A `Response` with one error |
+| `FakeGateway::sequence(...$responses)` | One response per call, in order |
+
+In a `ResponseDoc`, a response without `index` gets its position, and a successful response without
+a mark gets the next mark. For two invoices where the second is rejected:
 
 ```php
 MyData::fake([SendInvoices::class => [FakeGateway::accepted(), FakeGateway::rejected(102, 'Wrong total')]]);
 ```
 
-## Έλεγχοι
+## Assertions
 
 ```php
 $fake->assertSent(SendInvoices::class);
 $fake->assertSent(RequestDocs::class, fn (RequestDocs $request, RecordedRequest $sent) => $sent->query['mark'] === '0');
 $fake->assertNotSent(CancelInvoice::class);
-$fake->assertSentCount(2);                      // όλες οι κλήσεις
-$fake->assertSentCount(1, SendInvoices::class); // μόνο οι SendInvoices
+$fake->assertSentCount(2);                      // all requests
+$fake->assertSentCount(1, SendInvoices::class); // only SendInvoices
 $fake->assertNothingSent();
 
-$fake->recorded(SendInvoices::class)[0]->body;  // το XML που στάλθηκε
+$fake->recorded(SendInvoices::class)[0]->body;  // the XML that was sent
 ```
 
-Το `RecordedRequest` έχει την κλήση (`request`), τη μέθοδο (`method`), τις παραμέτρους (`query`), το XML (`body`,
-`document()`) και το πλήθος των εγγράφων που στάλθηκαν (`count()`).
+`RecordedRequest` has:
 
-Οι listeners της σύνδεσης (`afterSending()`, `withLogger()`) και η επικύρωση (`withValidation()`) τρέχουν κανονικά
-και με το fake, οπότε μπορείτε να τους ελέγξετε κι αυτούς.
+| Member | Value |
+|---|---|
+| `request` | The request object |
+| `method` | `'GET'` or `'POST'` |
+| `query` | The query parameters |
+| `body` | The request XML, null when the request has no body |
+| `document()` | The request XML as a `DOMDocument` |
+| `count()` | How many documents were sent (invoices, classifications, ...) |
+| `action()` | The myDATA action, e.g. `'SendInvoices'` |
+
+Connection listeners (`afterSending()`, `withLogger()`) and validation (`withValidation()`) still
+run with the fake, so you can test them too.
+
+## Running the package's tests
+
+```shell
+composer test
+```

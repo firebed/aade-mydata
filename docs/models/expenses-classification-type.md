@@ -1,44 +1,36 @@
-# Τύπος ExpensesClassification
+# ExpensesClassification
 
-Ο τύπος `ExpensesClassification` αποτελεί τη βασική δομή του Χαρακτηρισμού Εξόδων
-και εμπεριέχεται είτε σε κάθε γραμμής του παραστατικού ξεχωριστά (χαρακτηρισμός γραμμής),
-είτε στην περίληψη παραστατικού (άθροισμα χαρακτηρισμών ανά τύπο - κατηγορία), είτε στο αντικείμενο
-`InvoiceExpensesClassification` όταν οι χαρακτηρισμοί εσόδων υποβάλλονται ξεχωριστά.
-
-## Το αντικείμενο αυτό περιέχει τα εξής πεδία:
-
-| Πεδίο                                                              | Υποχρεωτικό | Περιγραφή                   |
-|--------------------------------------------------------------------|-------------|-----------------------------|
-| [**classificationType**](../appendix/expenses-classifications)     | Όχι         | Κωδικός Χαρακτηρισμού       |
-| [**classificationCategory**](../appendix/expenses-classifications) | Όχι         | Κατηγορία Χαρακτηρισμού     |
-| amount                                                             | **Ναι**     | Ποσό                        |
-| vatAmount                                                          | Όχι         | Ποσό ΦΠΑ                    |
-| [**vatCategory**](../appendix/vat-categories)                      | Όχι         | Κατηγορία ΦΠΑ               |
-| [**vatExemptionCategory**](../appendix/vat-exemption-categories)   | Όχι         | Κατηγορία Εξαίρεσης ΦΠΑ     |
-| id                                                                 | Όχι         | Αύξων αριθμός Χαρακτηρισμού |
-
-## Παρατηρήσεις
-
-- Το πεδίο id προσφέρεται για σειριακή αρίθμηση (1,2,3… κλπ) των χαρακτηρισμών
-  εντός μιας γραμμής
-- Τα πεδία `vatAmount`, `vatCategory`, `vatExemptionCategory` χρησιμοποιούνται μόνο
-  για τους χαρακτηρισμούς εξόδων ΦΠΑ, διαφορετικά αγνοούνται.
-- Το πεδίο `classificationCategory` χρησιμοποιείται μόνο για τους χαρακτηρισμούς
-  εξόδων Ε3, αλλιώς αγνοείται.
+`ExpensesClassification` is one expense classification. You add it to an invoice row (per row), to the
+[InvoiceSummary](invoice-summary-type) (sums per type and category), or to an
+[InvoiceExpensesClassification](invoice-expenses-classification-type) when you send classifications on their own.
 
 ```php
-use Firebed\AadeMyData\Models\ExpensesClassification;
-use Firebed\AadeMyData\Enums\ExpenseClassificationType;
 use Firebed\AadeMyData\Enums\ExpenseClassificationCategory;
+use Firebed\AadeMyData\Enums\ExpenseClassificationType;
+use Firebed\AadeMyData\Models\ExpensesClassification;
 
 $ecls = new ExpensesClassification();
-
-// Εμπορεύματα έναρξης
-$ecls->ExpensesClassification(ExpenseClassificationType::E3_101);
-
-// Αγορές Εμπορευμάτων
+$ecls->setClassificationType(ExpenseClassificationType::E3_102_001);
 $ecls->setClassificationCategory(ExpenseClassificationCategory::CATEGORY_2_1);
-
-// Ποσό 
 $ecls->setAmount(45);
+
+$row->addExpensesClassification($ecls);
 ```
+
+| Field                  | Type                                                                          | Required | Description                         |
+|------------------------|-------------------------------------------------------------------------------|----------|-------------------------------------|
+| classificationType     | [`ExpenseClassificationType`](../appendix/expenses-classifications)           | No       | Classification code                 |
+| classificationCategory | [`ExpenseClassificationCategory`](../appendix/expenses-classifications)       | No       | Classification category             |
+| amount                 | `float`                                                                       | Yes      | Amount                              |
+| vatAmount              | `float`                                                                       | No       | VAT amount                          |
+| vatCategory            | [`VatCategory`](../appendix/vat-categories)                                   | No       | VAT category                        |
+| vatExemptionCategory   | [`VatExemption`](../appendix/vat-exemption-categories)                        | No       | VAT exemption category              |
+| id                     | `int`                                                                         | No       | Serial number of the classification |
+
+## Notes
+
+- `id` numbers the classifications inside one row (1, 2, 3, ...).
+- `vatAmount`, `vatCategory` and `vatExemptionCategory` apply only to VAT classifications (`VAT_...` types).
+  myDATA ignores them otherwise.
+- `classificationCategory` applies only to E3 classifications. myDATA ignores it otherwise.
+- `addAmount(float)` and `addVatAmount(float)` add to the current amounts.

@@ -373,8 +373,8 @@ class TaxesTotals extends ModelCollection
 use Firebed\AadeMyData\Http\Connection;
 use Firebed\AadeMyData\MyData;
 
-$mydata = MyData::connect($userId, $subscriptionKey, 'prod');          // or
-$mydata = new MyData(Connection::make($userId, $subscriptionKey, 'prod')   // 'dev' when omitted
+$mydata = MyData::connect($userId, $subscriptionKey, 'dev');          // or
+$mydata = new MyData(Connection::make($userId, $subscriptionKey, 'dev')   // 'prod' for production
     ->asProvider()            // myDataProvider channel
     ->withTimeout(30)
     ->withConnectionTimeout(5)
@@ -424,9 +424,9 @@ $doc->findByUid($uid);                                                 // every 
 (new RequestProviderDocs)->invoices('123456789', $lastMark);           // Generator over every page
 $mydata->requestReceiverInfo('123456789')->getReceptionProviders()?->vatNumbers();
 $mydata->sendUnsignedInvoices($invoices);                              // invoices under issue whose Provider's Signature was never
-                                                                       // matched with an invoice and payment (Α.1155/2023 art. 4, 4A,
-                                                                       // «Υπό Έκδοση»); a payment that did not complete is only recorded
-                                                                       // (Α.1160/2025 art. 3 par. 2γ); answers a mark, no auth code
+                                                                       // matched with an invoice and payment (A.1155/2023 art. 4, 4A,
+                                                                       // "under issue"); a payment that did not complete is only recorded
+                                                                       // (A.1160/2025 art. 3 par. 2c); answers a mark, no auth code
 
 $response->getDuplicate();       // ?Duplicate{uid, mark: int, authenticationCode: ?string} from error 228
 $response->getDuplicate()?->toResponse($index);   // the successful Response it stands for (no qrUrl)
@@ -477,7 +477,7 @@ XSD before sending; failure throws `Exceptions\SchemaValidationException` (`getS
 ### Listeners and logging
 
 ```php
-$connection = Connection::make($userId, $subscriptionKey, 'prod')
+$connection = Connection::make($userId, $subscriptionKey, 'dev')
     ->withLogger($psrLogger, withBodies: false)                 // info / warning (retry, 429) / error; never credentials; without
                                                                 // bodies: no XML, only safe query keys, redacted failure messages,
                                                                 // context exception_class/exception_code instead of exception;

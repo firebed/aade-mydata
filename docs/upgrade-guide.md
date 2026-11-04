@@ -1,15 +1,15 @@
-# Οδηγός Αναβάθμισης
+# Upgrade guide
 
 ## Upgrade guide from 5.x to 6.x
 
 > [!TIP]
-> Αν χρησιμοποιείτε AI assistant (Claude, Copilot, Cursor, ChatGPT) για την αναβάθμιση, δώστε του τον
-> [οδηγό αναβάθμισης για AI](./upgrade-guide-ai): περιέχει κάθε μετονομασία και κάθε αλλαγή συμπεριφοράς
-> με κανόνες find/replace και παραδείγματα πριν/μετά.
+> If an AI assistant (Claude, Copilot, Cursor, ChatGPT) does the upgrade, give it the
+> [AI upgrade guide](./upgrade-guide-ai). It lists every rename and every behaviour change,
+> with find/replace rules and before/after examples.
 
-### Ενημέρωση composer
+### Update composer
 
-Η έκδοση 6 απαιτεί **PHP 8.3** ή νεότερη.
+Version 6 needs PHP 8.3 or newer.
 
 ```json
 {
@@ -21,19 +21,19 @@
 
 ### Breaking changes
 
-- **PHP ^8.3.** Η υποστήριξη για PHP 8.1 και 8.2 σταμάτησε.
-- **Guzzle ^7.8 || ^8.0.** Υποστηρίζεται και το Guzzle 8· το Guzzle 7 παραμένει υποστηριζόμενο μέχρι την επόμενη major έκδοση.
-- **Μετονομασίες.** `Models\Type` → `Models\Model`, `Models\TypeArray` → `Models\ModelCollection`,
-  enum `Enums\PaymentMethod` → `Enums\PaymentType` (το μοντέλο `Models\PaymentMethod` δεν αλλάζει).
-  Ο φάκελος τεκμηρίωσης `types` έγινε `models`.
-- **Περιγραφικά ονόματα στα enums.** Π.χ. `PaymentType::CASH` αντί για `PaymentType::METHOD_3`,
-  `TaxType::WITHHELD_TAX` αντί για `TaxType::TYPE_1`. Τα παλιά ονόματα αφαιρέθηκαν. Το `InvoiceType` κρατά τα ονόματα
-  `TYPE_1_1`, `TYPE_1_2`, …. Οι τιμές (backing values) δεν άλλαξαν. Η στήλη «Enum» στις σελίδες του
-  [Παραρτήματος](./appendix/invoice-types) δείχνει το νέο όνομα κάθε κωδικού, και ο [οδηγός για AI](./upgrade-guide-ai)
-  περιέχει τον πλήρη πίνακα παλιό → νέο.
-- **Casts στα μοντέλα.** Η ιδιότητα `protected array $casts` αντικαταστάθηκε από τη μέθοδο `casts()`, και οι λίστες
-  δηλώνονται με `Arr::of()`. Η βασική κλάση συλλέγει πλέον μόνη της τα επαναλαμβανόμενα στοιχεία του XML, οπότε
-  αφαιρέθηκαν όλα τα overrides της `set()`. Αφορά μόνο όσους επεκτείνουν τα μοντέλα του πακέτου:
+- **PHP ^8.3.** PHP 8.1 and 8.2 are no longer supported.
+- **Guzzle ^7.8 || ^8.0.** Guzzle 8 is supported. Guzzle 7 stays supported until the next major version.
+- **Renames.** `Models\Type` → `Models\Model`, `Models\TypeArray` → `Models\ModelCollection`,
+  enum `Enums\PaymentMethod` → `Enums\PaymentType` (the model `Models\PaymentMethod` keeps its name).
+  The docs folder `types` is now `models`.
+- **Descriptive enum case names.** For example `PaymentType::CASH` instead of `PaymentType::METHOD_3`,
+  `TaxType::WITHHELD_TAX` instead of `TaxType::TYPE_1`. The old names are removed. `InvoiceType` keeps
+  `TYPE_1_1`, `TYPE_1_2`, .... The backing values did not change. The "Enum" column in the
+  [Appendix](./appendix/invoice-types) pages shows the new name of each code, and the
+  [AI guide](./upgrade-guide-ai) has the full old → new table.
+- **Model casts.** The `protected array $casts` property is now a `casts()` method, and lists are declared
+  with `Arr::of()`. The base class now collects repeated XML elements by itself, so all `set()` overrides
+  are removed. This only matters if you extend the package's models:
 
   ```php
   use Firebed\AadeMyData\Casts\Arr;
@@ -49,52 +49,53 @@
   }
   ```
 
-  Οι `ModelCollection` δεν δέχονται πλέον το όνομα του παιδιού στον constructor: το δηλώνει η μοναδική
-  εγγραφή `Arr::of()` της `casts()`.
-- **Λάθος τιμές πετούν εξαίρεση.** Μια τιμή που δεν αντιστοιχεί σε case του enum (π.χ. `setVatCategory(99)`)
-  ή λάθος τύπος για ένα cast πετάει `Firebed\AadeMyData\Exceptions\InvalidAttributeException` αντί να
-  αποθηκεύεται σιωπηλά ως `null`. Η ανάγνωση XML από το myDATA δεν επηρεάζεται: οι readers τρέχουν σε
-  `Model::lenient()` και οι άγνωστες τιμές διαβάζονται ως `null` όπως πριν.
-- **Τυποποιημένες τιμές μετά την ανάγνωση XML.** Οι getters επιστρέφουν `int`/`float`/`bool` σύμφωνα με τον
-  τύπο επιστροφής τους (π.χ. `getIndex()` δίνει `1` και όχι `'1'`), και το ίδιο ισχύει για `toArray()`/`toJson()`.
-  Ελέγξτε συγκρίσεις με `===` σε strings.
-- **Το κενό string σημαίνει «χωρίς τιμή»** σε κάθε cast attribute (`setClassificationType('')` αποθηκεύει `null`).
-- **`Invoice::getTaxesTotals()` επιστρέφει `null`** όταν δεν έχουν δηλωθεί σύνολα φόρων (πριν επέστρεφε ένα
-  κενό `TaxesTotals` που δεν ήταν συνδεδεμένο με το παραστατικό).
-- **Κενά wrapper elements δεν γράφονται** στο XML (π.χ. δεν παράγεται `<paymentMethods/>`), και το XML δεν μορφοποιείται πλέον
-  με κενά και αλλαγές γραμμής εξ ορισμού (οι `getRequestXml()` / `getResponseXML()` το μορφοποιούν κατ' απαίτηση).
-- **`TaxTotals::getTaxCategory()` επιστρέφει `?int`** (τον κωδικό της κατηγορίας) και η `HasLabels::labels()` επιστρέφει
-  `[τιμή => ετικέτα]`.
-- **`Connection::make()` / `MyData::connect()` προεπιλέγουν το δοκιμαστικό περιβάλλον** αν δεν δοθεί `'prod'`.
-- **`RequestDocs` και `RequestTransmittedDocs` μόνο για ERP.** Σε σύνδεση παρόχου πετούν `UnsupportedChannelException`
-  (έστελναν τις παραμέτρους του ERP και διάβαζαν λάθος έγγραφο). Οι πάροχοι χρησιμοποιούν τη νέα
-  [`RequestProviderDocs`](./http/request-provider-docs).
-- **Οι κλάσεις κλήσεων δεν κληρονομούν η μία την άλλη.** Οι `SendInvoices` και `SendUnsignedInvoices` έχουν κοινή βάση την
-  `InvoicesDocRequest`, και οι `CancelInvoice`, `CancelDeliveryNote`, `CancelReceivingNote` την `CancellationRequest`.
-  Ένα `instanceof SendInvoices` δεν καλύπτει πλέον τη `SendUnsignedInvoices` (ούτε το `instanceof CancelInvoice` τις
-  ακυρώσεις δελτίων): ελέγξτε τη βασική κλάση.
-- **Αφαιρέθηκαν:** `TransportDetail` και οι `Invoice::getOtherTransportDetails()/addOtherTransportDetail()/setOtherTransportDetails()`
-  (καταργήθηκαν από το myDATA 2.0.1), `InvoiceSummary::getTotalInformationalTaxAmount()/setTotalInformationalTaxAmount()`,
-  `WithheldPercentCategory::affectsTotalGrossValue()`, το trait `HasIterator` (το `RequestedBookInfo` δεν είναι πλέον
-  iterable· χρησιμοποιήστε `getBookInfo()`).
-- **`MyDataRequest`.** Η στατική ρύθμιση (`init()`, `setCredentials()`, `setEnvironment()`, `verifyClient()`, `setTimeout()`,
-  `setConnectionTimeout()`, `setRequestOptions()`, `setGateway()`, `setHandler()`) λειτουργεί όπως πριν, αλλά πλέον
-  ρυθμίζει ένα αντικείμενο `Connection` (`MyDataRequest::defaultConnection()`). Κώδικας που διάβαζε τις ιδιωτικές
-  στατικές ιδιότητες με reflection πρέπει να αλλάξει. Το περιβάλλον δέχεται μόνο `dev`/`prod` (ή το enum `Environment`).
+  A `ModelCollection` no longer takes the child name in its constructor. The single `Arr::of()` entry
+  of `casts()` declares it.
+- **Wrong values throw.** A value that is not a case of the enum (e.g. `setVatCategory(99)`), or a wrong
+  type for a cast, throws `Firebed\AadeMyData\Exceptions\InvalidAttributeException`. Before, it was stored
+  as `null` without a warning. Reading XML from myDATA is not affected: the readers run in
+  `Model::lenient()` and unknown values are read as `null` as before.
+- **Typed values after reading XML.** Getters return `int`/`float`/`bool` as their return type says
+  (e.g. `getIndex()` returns `1`, not `'1'`). The same goes for `toArray()`/`toJson()`.
+  Check `===` comparisons against strings.
+- **An empty string means "no value"** on every cast attribute (`setClassificationType('')` stores `null`).
+- **`Invoice::getTaxesTotals()` returns `null`** when no taxes totals were added. Before, it returned an
+  empty `TaxesTotals` that was not attached to the invoice.
+- **Empty wrapper elements are not written** to the XML (e.g. no `<paymentMethods/>`). The XML is no longer
+  pretty-printed by default (`getRequestXml()` / `getResponseXML()` format it on demand).
+- **`TaxTotals::getTaxCategory()` returns `?int`** (the category code), and `HasLabels::labels()` returns
+  `[value => label]`.
+- **`Connection::make()` / `MyData::connect()` default to the sandbox** unless you pass `'prod'`.
+- **`RequestDocs` and `RequestTransmittedDocs` are ERP only.** On a provider connection they throw
+  `UnsupportedChannelException` (they sent the ERP parameters and read the wrong document). Providers use
+  the new [`RequestProviderDocs`](./http/request-provider-docs).
+- **Request classes no longer extend each other.** `SendInvoices` and `SendUnsignedInvoices` share the base
+  `InvoicesDocRequest`. `CancelInvoice`, `CancelDeliveryNote` and `CancelReceivingNote` share
+  `CancellationRequest`. `instanceof SendInvoices` no longer matches `SendUnsignedInvoices` (and
+  `instanceof CancelInvoice` no longer matches the note cancellations). Check the base class instead.
+- **Removed:** `TransportDetail` and `Invoice::getOtherTransportDetails()/addOtherTransportDetail()/setOtherTransportDetails()`
+  (dropped by myDATA 2.0.1), `InvoiceSummary::getTotalInformationalTaxAmount()/setTotalInformationalTaxAmount()`,
+  `WithheldPercentCategory::affectsTotalGrossValue()`, the `HasIterator` trait (`RequestedBookInfo` is no
+  longer iterable, use `getBookInfo()`).
+- **`MyDataRequest`.** The static setup (`init()`, `setCredentials()`, `setEnvironment()`, `verifyClient()`,
+  `setTimeout()`, `setConnectionTimeout()`, `setRequestOptions()`, `setGateway()`, `setHandler()`) works as
+  before, but now configures a `Connection` object (`MyDataRequest::defaultConnection()`). Code that read
+  the private static properties through reflection must change. The environment accepts only `dev`/`prod`
+  (or the `Environment` enum).
 
 ### Features
 
-#### Σύνδεση ανά tenant και client
+#### Connection per tenant and client
 
 ```php
 use Firebed\AadeMyData\Http\Connection;
 use Firebed\AadeMyData\MyData;
 
-$mydata = MyData::connect($userId, $subscriptionKey, 'prod');
+$mydata = MyData::connect($userId, $subscriptionKey, 'dev');
 
-// ή με πλήρη ρύθμιση
+// or fully configured
 $mydata = new MyData(
-    Connection::make($userId, $subscriptionKey, 'prod')
+    Connection::make($userId, $subscriptionKey, 'dev')
         ->asProvider()
         ->withTimeout(30)
         ->withRetries(3)
@@ -103,87 +104,86 @@ $mydata = new MyData(
 $response = $mydata->sendInvoices($invoice);
 $xml = $mydata->lastRequest()->getRequestXml();
 
-// Οποιοδήποτε request μπορεί να δεθεί σε μια σύνδεση
+// Any request can use a connection
 (new SendInvoices)->using($connection)->handle($invoice);
 ```
 
-Κάθε `Connection` είναι immutable (οι `with*()` επιστρέφουν αντίγραφο) και κρατά τον δικό της Guzzle client,
-που δημιουργείται μία φορά και επαναχρησιμοποιείται.
+Each `Connection` is immutable (`with*()` returns a copy) and keeps its own Guzzle client, created once and reused.
 
-#### Αυτόματες επαναλήψεις (retries)
+#### Automatic retries
 
 ```php
-MyDataRequest::setRetries(3, 500);               // στατική ρύθμιση
-Connection::make(...)->withRetries(3, 500);      // ανά σύνδεση
+MyDataRequest::setRetries(3, 500);               // static setup
+Connection::make(...)->withRetries(3, 500);      // per connection
 ```
 
-Επαναλαμβάνονται οι κλήσεις που αποτυγχάνουν με 429, 502, 503, 504 ή αδυναμία σύνδεσης, με διπλασιασμό της
-καθυστέρησης σε κάθε προσπάθεια και σεβασμό του header `Retry-After`. Τα timeouts δεν επαναλαμβάνονται ποτέ,
-γιατί το myDATA μπορεί να έχει ήδη επεξεργαστεί το αίτημα.
+Calls that fail with 429, 502, 503, 504 or a connection failure are retried. The delay doubles on each
+attempt, and `Retry-After` is respected. Timeouts are never retried, because myDATA may have processed the request.
 
-#### Όρια κλήσεων
+#### Rate limits
 
-Το myDATA περιορίζει τις κλήσεις ανά παράθυρο περίπου πέντε λεπτών (δείτε [Εγκατάσταση › Όρια κλήσεων](./installation#όρια-κλήσεων-rate-limits)).
-Η `RateLimitExceededException` δίνει πλέον `getRetryAfter()` / `getRetryAt()`, και οι συνδέσεις δέχονται
-`withThrottle(ms)` και `withRateLimitWait(seconds)` (στατικά `setThrottle()`, `setRateLimitWait()`).
+myDATA limits calls per window of about five minutes (see [Installation › Rate limits](./installation#rate-limits)).
+`RateLimitExceededException` now has `getRetryAfter()` / `getRetryAt()`, and connections accept
+`withThrottle(ms)` and `withRateLimitWait(seconds)` (static: `setThrottle()`, `setRateLimitWait()`).
 
-#### Αυτόματη σελιδοποίηση
+#### Automatic pagination
 
 ```php
 foreach ((new RequestDocs)->pages(mark: '0', dateFrom: '01/01/2026', dateTo: '31/01/2026') as $page) {
-    // RequestedDoc ανά σελίδα, το continuationToken ακολουθείται αυτόματα
+    // a RequestedDoc per page, the continuationToken is followed for you
 }
 
 foreach ((new RequestTransmittedDocs)->invoices('0') as $invoice) {
-    // κάθε Invoice κάθε σελίδας
+    // every Invoice of every page
 }
 ```
 
-Διαθέσιμο και στα `RequestMyIncome`, `RequestMyExpenses`, `RequestVatInfo`, `RequestE3Info` (`pages()`).
+Also on `RequestMyIncome`, `RequestMyExpenses`, `RequestVatInfo`, `RequestE3Info` (`pages()`).
 
-#### Μοντέλα
+#### Models
 
 - `Model::fromArray()`, `toJson()`, `JsonSerializable`, `unset()`, `cast()`, `Model::lenient()`.
 - `ModelCollection::last()`, `map()`, `filter()`, `childKey()`, `$collection[] = $item`.
 
-#### Πάροχοι
+#### Providers
 
-Νέες κλήσεις παρόχου: [`RequestProviderDocs`](./http/request-provider-docs) (ΜΑΡΚ, UID και authentication code όσων
-διαβίβασε ο πάροχος για έναν εκδότη), [`RequestReceiverInfo`](./http/request-receiver-info) και
-[`SendUnsignedInvoices`](./http/send-unsigned-invoices). Το `Response::getDuplicate()` διαβάζει το σφάλμα 228 (το
-παραστατικό έχει ήδη σταλεί) και επιστρέφει το ΜΑΡΚ και, μόλις αποθηκευτεί, το authentication code του παραστατικού που
-κρατά ήδη το myDATA.
+New provider requests: [`RequestProviderDocs`](./http/request-provider-docs) (MARK, UID and authentication
+code of the invoices the provider sent for an issuer), [`RequestReceiverInfo`](./http/request-receiver-info)
+and [`SendUnsignedInvoices`](./http/send-unsigned-invoices). `Response::getDuplicate()` reads error 228
+(the invoice was already sent). It returns the MARK and, once stored, the authentication code of the
+invoice myDATA already holds.
 
-#### Δοκιμές με `MyData::fake()`
+#### Testing with `MyData::fake()`
 
-Στα tests της εφαρμογής σας, το `MyData::fake()` απαντά σε κάθε κλήση με ψεύτικη απάντηση, χωρίς να φτάνει στο
-myDATA, και την καταγράφει για έλεγχο με `assertSent()`, `assertSentCount()` κ.λπ. Δείτε [Δοκιμές](./testing).
+In your app's tests, `MyData::fake()` answers every request with a fake response, without reaching
+myDATA, and records it for `assertSent()`, `assertSentCount()` and so on. See [Testing](./testing).
 
-#### Επικύρωση πριν την αποστολή
+#### Validation before sending
 
-Το `Connection::withValidation()` (στατικά `MyDataRequest::setValidation()`) ελέγχει το XML κάθε αποστολής με το XSD
-του myDATA πριν φύγει· ένα άκυρο έγγραφο πετά `SchemaValidationException` με τα πεδία που απέτυχαν.
+`Connection::withValidation()` (static: `MyDataRequest::setValidation()`) checks the XML of every send
+against the myDATA XSD before it leaves. An invalid document throws `SchemaValidationException` with the failing fields.
 
-#### Καταγραφή (logging)
+#### Logging
 
-Το `Connection::withLogger($logger)` γράφει κάθε κλήση, επανάληψη και αποτυχία σε PSR-3 logger, και τα
-`afterSending()` / `beforeRetry()` δίνουν κάθε κλήση και επανάληψη στον δικό σας κώδικα (π.χ. για αρχείο ελέγχου).
+`Connection::withLogger($logger)` writes every call, retry and failure to a PSR-3 logger.
+`afterSending()` / `beforeRetry()` pass every call and retry to your own code (e.g. for an audit log).
 
-#### Εργαλεία
+#### Tooling
 
-Το πακέτο περνά από **PHPStan (level 7)** και **Laravel Pint** στο CI (`composer analyse`, `composer lint`).
+The package passes **PHPStan (level 7)** and **Laravel Pint** in CI (`composer analyse`, `composer lint`).
 
 ## Upgrade guide within 5.x (Gateway)
 
 ### Breaking changes
-- `MyDataRequest::handleTransmissionException()` (`protected`) has moved to `GuzzleGateway`.
-Requests no longer map Guzzle exceptions themselves; the gateway that carried the request does.
-If you subclassed a request to override it, move that logic into a `Gateway` implementation
-(extending `GuzzleGateway` is enough) and register it with `MyDataRequest::setGateway()`.
+
+- `MyDataRequest::handleTransmissionException()` (`protected`) moved to `GuzzleGateway`.
+  Requests no longer map Guzzle exceptions themselves. The gateway that carried the request does.
+  If you subclassed a request to override it, move that logic into a `Gateway` implementation
+  (extending `GuzzleGateway` is enough) and register it with `MyDataRequest::setGateway()`.
 
 ## Upgrade guide from 4.x to 5.x
 
-### Ενημέρωση composer
+### Update composer
 
 ```json
 {
@@ -194,155 +194,79 @@ If you subclassed a request to override it, move that logic into a `Gateway` imp
 ```
 
 ### Breaking changes
-- Removed vat-registry dependency from composer. You can include vat-registry by running `composer require firebed/vat-registry`. [See vat-registry](https://github.com/firebed/vat-registry) documentation for more information. If you were not using vat search, you can safely ignore this change.
-- Removed ext-soap dependency from composer.
- 
+
+- Removed the vat-registry dependency. To search VAT numbers, run `composer require firebed/vat-registry`.
+  See the [vat-registry](https://github.com/firebed/vat-registry) docs. If you don't search VAT numbers,
+  ignore this change.
+- Removed the ext-soap dependency.
+
 ### Features
 
-### Ability to "squash" invoice rows
+#### Squash invoice rows
 
 `$invoice->squashInvoiceRows()`
-> Ο Πάροχος ηλεκτρονικής τιμολόγησης και τα ERP διαβιβάζουν υποχρεωτικά μόνο τη σύνοψη
-γραμμών και χαρακτηρισμών των παραστατικών και όχι αναλυτικά τις γραμμές. [Δείτε Σύνοψη Γραμμών Παραστατικού](/squashing-invoice-rows) για περισσότερες λεπτομέρειες.
 
-### Ability to validate invoices
+Providers and ERPs only have to send a summary of the invoice lines and classifications, not every line.
+See [Squashing invoice rows](./squashing-invoice-rows).
+
+#### Validate invoices
 
 `$invoice->validate()`
 
-### Ability to preview invoice xml
+#### Preview the invoice XML
 
 `$invoice->toXml()`
 
-### Classification combinations
-
-[Δείτε Συνδυασμοί Χαρακτηρισμών](/classifications) για περισσότερες λεπτομέρειες.
+#### Classification combinations
 
 ```php
 use Firebed\AadeMyData\Enums\InvoiceType;
 use Firebed\AadeMyData\Services\Classifications;
 
-dump(Classifications::incomeClassifications(InvoiceType::TYPE_1_1));
-// array:9 [
-//  "category1_1" => array:3 [
-//    0 => "E3_561_001"
-//    1 => "E3_561_002"
-//    2 => "E3_561_007"
-//  ]
-//  "category1_2" => array:3 [
-//    0 => "E3_561_001"
-//    1 => "E3_561_002"
-//    2 => "E3_561_007"
-//  ]
-// ...
-// ]
-
-// Alternative 2
-IncomeClassificationType::for(InvoiceType::TYPE_1_1);
-
-// Alternative 3
-InvoiceType::TYPE_1_1->incomeClassifications();
+Classifications::incomeClassifications(InvoiceType::TYPE_1_1);
+Classifications::incomeClassifications(InvoiceType::TYPE_1_1)->toKeyLabel();
+Classifications::incomeClassificationExists('1.1', 'category1_1', 'E3_561_001'); // true
 ```
 
-### Classification combinations with labels
+See [Classifications](./classifications).
+
+#### Labels on all enums
 
 ```php
-use Firebed\AadeMyData\Enums\InvoiceType;
-use Firebed\AadeMyData\Services\Classifications;
-
-dump(Classifications::incomeClassifications(InvoiceType::TYPE_1_1)->toKeyLabel());
-//array:9 [
-//  "category1_1" => "Έσοδα από Πώληση Εμπορευμάτων"
-//  "category1_2" => "Έσοδα από Πώληση Προϊόντων"
-//  "category1_3" => "Έσοδα από Παροχή Υπηρεσιών"
-//  "category1_4" => "Έσοδα από Πώληση Παγίων"
-//  "category1_5" => "Λοιπά Έσοδα / Κέρδη"
-//  "category1_7" => "Έσοδα για λογαριασμό τρίτων"
-//  "category1_8" => "Έσοδα προηγούμενων χρήσεων"
-//  "category1_9" => "Έσοδα επομένων χρήσεων"
-//  "category1_95" => "Λοιπά Πληροφοριακά Στοιχεία Εσόδων"
-//]
-
-dump(Classifications::incomeClassifications(InvoiceType::TYPE_1_1)->toKeyLabels())
-//array:9 [
-//  "category1_1" => array:3 [
-//    "E3_561_001" => "Πωλήσεις αγαθών και υπηρεσιών Χονδρικές - Επιτηδευματιών"
-//    "E3_561_002" => "Πωλήσεις αγαθών και υπηρεσιών Χονδρικές βάσει άρθρου 39α παρ 5 του Κώδικα Φ.Π.Α. (Ν.2859/2000)"
-//    "E3_561_007" => "Πωλήσεις αγαθών και υπηρεσιών Λοιπά"
-//  ]
-//  "category1_2" => array:3 [
-//    "E3_561_001" => "Πωλήσεις αγαθών και υπηρεσιών Χονδρικές - Επιτηδευματιών"
-//    "E3_561_002" => "Πωλήσεις αγαθών και υπηρεσιών Χονδρικές βάσει άρθρου 39α παρ 5 του Κώδικα Φ.Π.Α. (Ν.2859/2000)"
-//    "E3_561_007" => "Πωλήσεις αγαθών και υπηρεσιών Λοιπά"
-//  ]
-//  "category1_3" => array:4 [
-//    "E3_561_001" => "Πωλήσεις αγαθών και υπηρεσιών Χονδρικές - Επιτηδευματιών"
-//    "E3_561_002" => "Πωλήσεις αγαθών και υπηρεσιών Χονδρικές βάσει άρθρου 39α παρ 5 του Κώδικα Φ.Π.Α. (Ν.2859/2000)"
-//    "E3_561_007" => "Πωλήσεις αγαθών και υπηρεσιών Λοιπά"
-//    "E3_563" => "Πιστωτικοί τόκοι και συναφή έσοδα"
-//  ]
-//  ...
-// ]
-
-dump(Classifications::incomeClassifications(InvoiceType::TYPE_1_1, IncomeClassificationCategory::CATEGORY_1_1)->toKeyLabel())
-//array:3 [
-//  "E3_561_001" => "Πωλήσεις αγαθών και υπηρεσιών Χονδρικές - Επιτηδευματιών"
-//  "E3_561_002" => "Πωλήσεις αγαθών και υπηρεσιών Χονδρικές βάσει άρθρου 39α παρ 5 του Κώδικα Φ.Π.Α. (Ν.2859/2000)"
-//  "E3_561_007" => "Πωλήσεις αγαθών και υπηρεσιών Λοιπά"
-//]
-```
-
-### Classification combination validation
-
-```php
-use Firebed\AadeMyData\Enums\InvoiceType;
-use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
-use Firebed\AadeMyData\Enums\IncomeClassificationType;
-use Firebed\AadeMyData\Services\Classifications;
-
-Classifications::incomeClassificationExists('1.1', 'category1_1', 'E3_561_001');
-// or
-Classifications::incomeClassificationExists(InvoiceType::TYPE_1_1, IncomeClassificationCategory::CATEGORY_1_1, IncomeClassificationType::E3_561_001);
-// Outputs: true
-
-// Same for expense classifications
-Classifications::expenseClassificationExists('1.1', 'category2_1', 'E3_102_001');
-````
-
-### Added labels to <u>ALL</u> enum types
-
-```php
+use Firebed\AadeMyData\Enums\CountryCode;
 use Firebed\AadeMyData\Enums\InvoiceType;
 use Firebed\AadeMyData\Enums\PaymentType;
 use Firebed\AadeMyData\Enums\VatCategory;
-use Firebed\AadeMyData\Enums\CountryCode;
 
 echo InvoiceType::TYPE_1_1->label();
-// Outputs: Τιμολόγιο Πώλησης
+// Τιμολόγιο Πώλησης
 
 echo InvoiceType::TYPE_1_2->label();
-// Outputs: Τιμολόγιο Πώλησης / Ενδοκοινοτικές Παραδόσεις
+// Τιμολόγιο Πώλησης / Ενδοκοινοτικές Παραδόσεις
 
 echo PaymentType::ON_CREDIT->label();
-// Outputs: Επί Πιστώσει
+// Επί Πιστώσει
 
 echo VatCategory::RATE_24->label();
-// Outputs: ΦΠΑ συντελεστής 24%
+// ΦΠΑ συντελεστής 24%
 
 echo CountryCode::BE->label();
-// Outputs: Βέλγιο
+// Βέλγιο
 
 var_dump(InvoiceType::labels());
 var_dump(PaymentType::labels());
 var_dump(VatCategory::labels());
 var_dump(CountryCode::labels());
-````
+```
 
-### Enum helper methods
+The labels are the official AADE descriptions, in Greek.
+
+#### Enum helper methods
 
 ```php
-use Firebed\AadeMyData\Enums\InvoiceType;
 use Firebed\AadeMyData\Enums\CountryCode;
 use Firebed\AadeMyData\Enums\ExpenseClassificationType;
+use Firebed\AadeMyData\Enums\InvoiceType;
 
 $invoiceType = InvoiceType::TYPE_1_1;
 $invoiceType->supportsFuelInvoice();
@@ -351,33 +275,28 @@ $invoiceType->supportsDeliveryNote();
 $invoiceType->supportsSelfPricing();
 $invoiceType->supportsTaxFree();
 
-var_dump(CountryCode::europeanUnionCountries());
-// Outputs: All countries in the European Union
+var_dump(CountryCode::europeanUnionCountries()); // all EU countries
 
-echo CountryCode::BE->isInEuropeanUnion()
-// Outputs: true
+CountryCode::BE->isInEuropeanUnion(); // true
+CountryCode::US->isInEuropeanUnion(); // false
 
-echo CountryCode::US->isInEuropeanUnion()
-// Outputs: false
+ExpenseClassificationType::VAT_361->isVatClassification(); // true
 
-$type = ExpenseClassificationType::VAT_361;
-echo $type->isVatClassification(); // true
-
-var_dump(ExpenseClassificationType::vatClassifications()); // Array of all vat classifications
+var_dump(ExpenseClassificationType::vatClassifications()); // all VAT classifications
 ```
 
-### New enum types
+#### New enums
 
 - CountryCode
 - CurrencyCode
 
-### Ability to populate model attributes within constructor
+#### Set model attributes in the constructor
 
 ```php
-use Firebed\AadeMyData\Models\InvoiceDetails;
-use Firebed\AadeMyData\Enums\RecType;
-use Firebed\AadeMyData\Enums\IncomeClassificationType;
 use Firebed\AadeMyData\Enums\IncomeClassificationCategory;
+use Firebed\AadeMyData\Enums\IncomeClassificationType;
+use Firebed\AadeMyData\Enums\RecType;
+use Firebed\AadeMyData\Models\InvoiceDetails;
 
 new InvoiceDetails([
   'lineNumber' => 1,
@@ -390,19 +309,19 @@ new InvoiceDetails([
           'amount' => '5'
       ]
   ]
-])
+]);
 ```
 
-### Fluent model setters (chainable)
+#### Chainable setters
 
 `$invoice->setIssuer(...)->setCounterpart(...)`
 
-### New methods
+#### New methods
 
-- Invoice::setTaxesTotals
-- Invoice::setOtherTransportDetails
+- `Invoice::setTaxesTotals`
+- `Invoice::setOtherTransportDetails` (removed in 6.0)
 
-### `add_` methods to top up an amount to
+#### `add` methods that top up an amount
 
 ```php
 $row->addNetValue(5);
@@ -411,21 +330,15 @@ $row->addVatAmount(1.2);
 
 ### Fixes
 
-- Fixed tax calculation when summarizing invoice.
-- Fixed InvoiceDetails::setOtherMeasurementUnitQuantity
-- Fixed InvoiceDetails::setOtherMeasurementUnitTitle
+- Fixed the tax calculation in the invoice summary.
+- Fixed `InvoiceDetails::setOtherMeasurementUnitQuantity`.
+- Fixed `InvoiceDetails::setOtherMeasurementUnitTitle`.
 
-## Αναβάθμιση από 3.x σε 4.x
+## Upgrade guide from 3.x to 4.x
 
-Η έκδοση 4.x περιέχει αρκετές αλλαγές, μεταξύ των οποίων αρκετές
-προσθήκες επιπλέον δυνατοτήτων.
+Version 4 is a full rewrite. Most changes are internal, but some change how you use the API.
 
-> [!NOTE]
-> Η έκδοση 4.x είναι μια ολική αναδιοργάνωση και οι περισσότερες αλλαγές
-> βρίσκονται στο εσωτερικό μέρος του συστήματος. Ωστόσο, ορισμένες αλλαγές
-> ενδέχεται να επηρεάσουν τον τρόπο με τον οποίο χρησιμοποιείται το API.
-
-## Ενημέρωση composer
+### Update composer
 
 ```json
 {
@@ -435,22 +348,21 @@ $row->addVatAmount(1.2);
 }
 ```
 
-## Πιθανές αλλαγές στη χρήση του API
+### API changes
 
-- Μετονομασία `InvoicesDoc`::~~addInvoice()~~ σε `add()`
-- Μετονομασία `RequestedDoc`::~~getInvoicesDoc()~~ => `getInvoices()`
-- Μετονομασία `RequestedDoc`::~~getCancelledInvoicesDoc()~~ => `getCancelledInvoices()`
-- Μετονομασία `RequestedDoc`::~~getIncomeClassificationsDoc()~~ => `getIncomeClassifications()`
-- Μετονομασία `RequestedDoc`::~~getExpensesClassificationsDoc()~~ => `getExpensesClassifications()`
-- Μετονομασία `RequestedDoc`::~~getPaymentMethodsDoc()~~ => `getPaymentMethods()`
-- Μετονομασία της μεθόδου `put` σε `set` για όλα μοντέλα που κληρονομούν την κλάση `Firebed\AadeMyData\Models\Type`
-- Τρόπος αντιμετώπισης των εξαιρέσεων (exceptions)
+- `InvoicesDoc::addInvoice()` → `add()`
+- `RequestedDoc::getInvoicesDoc()` → `getInvoices()`
+- `RequestedDoc::getCancelledInvoicesDoc()` → `getCancelledInvoices()`
+- `RequestedDoc::getIncomeClassificationsDoc()` → `getIncomeClassifications()`
+- `RequestedDoc::getExpensesClassificationsDoc()` → `getExpensesClassifications()`
+- `RequestedDoc::getPaymentMethodsDoc()` → `getPaymentMethods()`
+- `put()` → `set()` on every model that extends `Firebed\AadeMyData\Models\Type` (`Model` since 6.0)
+- Exception handling, see below
 
-## Τρόπος αντιμετώπισης των εξαιρέσεων
+### Exceptions
 
-Οι μέθοδοι αλληλεπίδρασης με το σύστημα του myDATA όπως `SendInvoices`, `CancelInvoice` κ.λπ. πλέον
-επιστρέφουν εξαιρέσεις τύπου `Firebed\AadeMyData\Exceptions\MyDataException` ή εξαιρέσεις που
-κληρονομούν αυτή την κλάση.
+Requests such as `SendInvoices` and `CancelInvoice` now throw `Firebed\AadeMyData\Exceptions\MyDataException`
+or one of its subclasses. See [Exceptions](./exceptions).
 
 ```php
 use Firebed\AadeMyData\Exceptions\MyDataException;
@@ -464,40 +376,24 @@ try {
 }
 ```
 
-## Εσωτερικές αλλαγές
+### Internal changes
 
-Οι παρακάτω αλλαγές είναι εσωτερικές και δεν επηρεάζουν τη χρήση του API:
+These changes don't affect how you use the API.
 
-### Tests
+#### Tests
 
-Ένα πράγμα που με κρατούσε ξύπνιο τα βράδια ήταν το γεγονός ότι οι παλαιές εκδόσεις του API
-δεν είχαν καθόλου δοκιμαστική κάλυψη. Όλες οι δοκιμές γινόντουσαν χειροκίνητα χωρίς
-επιβεβαίωση σωστής λειτουργίας μετά από κάθε αλλαγή στο κώδικα. Αυτό αλλάζει με την
-**έκδοση 4.x**, καθώς πλέον υπάρχει **πλήρης δοκιμαστική κάλυψη** 💥.
+Older versions had no tests. Version 4 has full test coverage.
 
-### DOMDocument
+#### DOMDocument
 
-Στις προηγούμενες εκδόσεις το API χρησιμοποιούσε την κλάση `SimpleXMLElement`
-για τη διαχείριση των xml δεδομένων. Αυτό αρχικά δεν ήταν πρόβλημα, αλλά με την αύξηση
-των δυνατοτήτων και της πολυπλοκότητας των xml δεδομένων που έφερε το myDATA, η
-`SimpleXMLElement` έδειξε τα όριά της, καθώς έβρισκα τον εαυτό μου να εργάζομαι ενάντια σε
-αυτήν, αναζητώντας τρόπους διαχείρισης των δεδομένων (ειδικά με τα namespaced tags).
+Older versions used `SimpleXMLElement`. It could not handle the growing myDATA XML well, especially
+namespaced tags. Version 4 uses `DOMDocument`.
 
-### Σύνοψη παραστατικού
+#### Invoice summary
 
-Αυτή ίσως είναι η καλύτερη προσθήκη στο API. Η σύνοψη παραστατικού είναι μια περίπλοκη διαδικασία 
-όπου πρέπει να υπολογίσουμε τα ποσά των φόρων, το καθαρό σύνολο, το τελικό σύνολο, τα σύνολα των
-χαρακτηρισμών εσόδων και εξόδων κ.λπ. Η δυσκολία επέρχεται όταν υπάρχουν διάφοροι τύποι φόρων και
-διάφοροι τύποι χαρακτηρισμών εσόδων/εξόδων, καθώς αυτά θα πρέπει να ομαδοποιούνται κατάλληλα έτσι
-ώστε να υπολογίσουμε σωστά τα απαραίτητα σύνολα. Αυτό και μόνο είναι __πάνω από 200 γραμμές__ κώδικα.
-
-Το χειρότερο (στη δικιά μου περίπτωση τουλάχιστον) είναι ότι έπρεπε να επαναλαμβάνω το ίδιο κομμάτι 
-κώδικα σε κάθε πρότζεκτ που χρησιμοποιούσε αυτό το API. Αυτό μου γινόταν εφιάλτης, καθώς μετά από
-κάθε καινούργια έκδοση που έβγαζε το myDATA, έπρεπε να ελέγχω όλα μου τα πρότζεκτ συνεχώς 😒.
-
-Στην έκδοση 4.x, η σύνοψη παραστατικού είναι πλέον μια μέθοδος `summarizeInvoice` της κλάσης 
-`Firebed\AadeMyData\Models\Invoice`. Λαμβάνει υπόψιν όλες τις παραμέτρους του παραστατικού
-και υπολογίζει τα απαραίτητα σύνολα αυτόματα χωρίς να χρειάζεται να κάνετε τίποτα άλλο 😀.
+Summarizing an invoice means computing the tax amounts, the net total, the gross total and the
+classification totals, grouped by tax and classification type. In version 4 this is one method,
+`summarizeInvoice()` on `Firebed\AadeMyData\Models\Invoice`:
 
 ```php
 use Firebed\AadeMyData\Models\Invoice;
@@ -508,22 +404,18 @@ $invoice = new Invoice();
 $invoice->summarizeInvoice();
 ```
 
-### Αυτόματη ταξινόμηση των πεδίων του xml
+#### Automatic XML field order
 
-Αυτή ίσως είναι η 2η αγαπημένη μου προσθήκη. Όλα XML που χρησιμοποιεί το myDATA βασίζονται
-σε xsd (xml schema) τα οποία καθορίζουν τη δομή του xml και τη σειρά των πεδίων. Αυτό σημαίνει
-ότι τα πεδία του xml πρέπει να είναι ταξινομημένα σύμφωνα με το σχήμα. 
+myDATA's XML follows XSD schemas that set the order of the fields. Up to 3.x, the API wrote the fields in
+the order you set them, which led to `XMLSyntaxError` responses.
 
-Αυτό ήταν πρόβλημα καθώς παλαιότερα το API έβαζε τα πεδία στο xml με τη σειρά που τα πρόσθετε ο χρήστης 
-και αυτό οδηγούσε σε λάθη `XMLSyntaxError` κατά την υποβολή των xml στο myDATA.
-
-**Παράδειγμα λανθασμένης σειράς στην έκδοση &le; 3.x**
+Wrong order in 3.x and older:
 
 ```php
-use Firebed\AadeMyData\Models\Invoice;
-use Firebed\AadeMyData\Models\Counterpart;
-use Firebed\AadeMyData\Models\Issuer;
 use Firebed\AadeMyData\Http\SendInvoices;
+use Firebed\AadeMyData\Models\Counterpart;
+use Firebed\AadeMyData\Models\Invoice;
+use Firebed\AadeMyData\Models\Issuer;
 
 $invoice = new Invoice();
 
@@ -531,14 +423,13 @@ $invoice = new Invoice();
 $invoice->setCounterpart(new Counterpart());
 
 // Issuer must come before Counterpart
-$invoice->setIssuer(new Counterpart());
+$invoice->setIssuer(new Issuer());
 
 $send = new SendInvoices();
 $send->handle($invoice);
 ```
 
-Σύμφωνα με το xsd ο `issuer` πρέπει να έρχεται πριν το `counterpart`, ενώ παραπάνω τα βάλαμε ανάποδα και αυτό 
-είναι το αποτέλεσμα της εκτέλεσης:
+The XSD puts `issuer` before `counterpart`, so myDATA answered:
 
 ```xml
 <response>
@@ -554,17 +445,9 @@ $send->handle($invoice);
 ```
 
 > [!TIP]
-> **Από την έκδοση 4.x και μετά η σωστή σειρά των πεδίων παρακολουθείται εσωτερικά, και έτσι άσχετα με τη
-> σειρά που δομείτε το παραστατικό σας το τελικό xml θα έχει πάντα τη σωστή ταξινόμηση.**
+> Since 4.x the library tracks the field order. Set the fields in any order, the XML is always in the right order.
 
-### Docs docs and docs
+#### Docs
 
-*"If I had a dollar for everytime someone asked me "How do I use this?" I'd be a millionaire by now 💰."*
-
-Εντάξει, όχι και millionaire. Λαμβάνω όμως συνέχεια ερωτήσεις για το πως μπορεί κάποιος να χρησιμοποιεί
-το API. Αρχικά νόμιζα πως το 1 README.md αρχείο στο GitHub θα ήταν αρκετό, τελικά όμως αποδείχτηκε και
-ομολογώ πως δεν ήταν. 
-
-Τώρα αντί για 1 `README.md` αρχείο έχουμε **πάνω από 60 .md αρχεία**, το καθένα αφιερωμένο σε ένα μέρος του API.
-Επιπλέον, το subdomain [**docs.invoicemaker.gr**](https://docs.invoicemaker.gr) περιέχει όλα τα αρχεία αυτά απ' ευθείας 
-από το GitHub σε πιο οργανωμένη μορφή για εύκολη πλοήγηση 🥳.
+The single `README.md` became a set of pages, one per part of the API, published at
+[docs.invoicemaker.gr](https://docs.invoicemaker.gr).

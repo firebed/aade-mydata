@@ -1,102 +1,60 @@
-# Τύπος TaxTotals
+# TaxTotals
 
-Ο τύπος `TaxTotals` περιγράφει τα στοιχεία των φόρων που αφορούν σε ένα παραστατικό.
-
-## Το αντικείμενο αυτό περιέχει τα εξής πεδία:
-
-| Πεδίο                         | Υποχρεωτικό | Περιγραφή             |
-|-------------------------------|-------------|-----------------------|
-| taxType                       | **Ναι**     | Είδος Φόρου           |
-| [**taxCategory**](party-type) | Όχι         | Κατηγορία Φόρου       |
-| underlyingValue               | Όχι         | Υποκείμενη Αξία       |
-| taxAmount                     | **Ναι**     | Ποσό Φόρου            |
-| id                            | Όχι         | Αύξων αριθμός γραμμής |
-
-## Παρατηρήσεις
-
-- Το πεδίο `taxType` περιέχει τον κωδικό του φόρου. Μπορεί να πάρει κάθε τιμή
-  από τον αντίστοιχο πίνακα του Παραρτήματος.
-  - `TaxType::WITHHELD_TAX` για τον [Παρακρατούμενο Φόρο](../appendix/withheld-percent-categories)
-  - `TaxType::FEES` για τα [Τέλη](../appendix/fees-percent-categories)
-  - `TaxType::OTHER_TAXES` για τους [Λοιπούς Φόρους](../appendix/other-taxes-percent-categories)
-  - `TaxType::STAMP_DUTY` για το [Ψηφιακό Τέλος Συναλλαγής](../appendix/stamp-categories)
-  - `TaxType::DEDUCTIONS` για τις Κρατήσεις
-- Το πεδίο `taxCategory` μπορεί να πάρει κάθε φορά οποιαδήποτε τιμή από τον
-  αντίστοιχο πίνακα του Παραρτήματος του φόρου που αναφέρεται στο πεδίο
-  `taxType`.
-- Το πεδίο `underlyingValue` υποδηλώνει την αξία στην οποία εφαρμόζεται ο
-  συγκεκριμένος φόρος.
-
-## Παραδείγματα
-
-### Παρακρατούμενος Φόρος (Αμοιβές Συμβουλών Διοίκησης - 20%)
+`TaxTotals` is one tax (other than VAT) that applies to the whole invoice. Add it with `Invoice::addTaxesTotals()`.
 
 ```php
+use Firebed\AadeMyData\Enums\TaxType;
+use Firebed\AadeMyData\Enums\WithheldPercentCategory;
 use Firebed\AadeMyData\Models\TaxTotals;
-use \Firebed\AadeMyData\Enums\TaxType;
-use \Firebed\AadeMyData\Enums\WithheldPercentCategory;
 
 $tax = new TaxTotals();
-
-// Παρακρατούμενος Φόρος
 $tax->setTaxType(TaxType::WITHHELD_TAX);
-
-// Περιπτ. δ’ - Αμοιβές Συμβουλών Διοίκησης - 20%
 $tax->setTaxCategory(WithheldPercentCategory::MANAGEMENT_CONSULTING_FEES_20);
-
+$tax->setUnderlyingValue(500);
 $tax->setTaxAmount(100);
+
+$invoice->addTaxesTotals($tax);
 ```
 
-### Τέλη (Τέλος στη συνδρομητική τηλεόραση)
+| Field           | Type                    | Required | Description                                   |
+|-----------------|-------------------------|----------|-----------------------------------------------|
+| taxType         | `TaxType`               | Yes      | Tax type, see below                           |
+| taxCategory     | enum or `int`           | No       | Tax category from the list of the `taxType`. The getter returns the `int` code |
+| underlyingValue | `float`                 | No       | Value the tax applies to                      |
+| taxAmount       | `float`                 | Yes      | Tax amount                                    |
+| id              | `int`                   | No       | Line serial number                            |
+
+| `taxType`               | `taxCategory` enum                                                                     |
+|-------------------------|----------------------------------------------------------------------------------------|
+| `TaxType::WITHHELD_TAX` | [`WithheldPercentCategory`](../appendix/withheld-percent-categories)                   |
+| `TaxType::FEES`         | [`FeesPercentCategory`](../appendix/fees-percent-categories)                           |
+| `TaxType::OTHER_TAXES`  | [`OtherTaxesPercentCategory`](../appendix/other-taxes-percent-categories)              |
+| `TaxType::STAMP_DUTY`   | [`StampCategory`](../appendix/stamp-categories)                                        |
+| `TaxType::DEDUCTIONS`   | none, leave `taxCategory` empty                                                        |
+
+> [!WARNING]
+> When you use `taxesTotals`, you cannot put taxes other than VAT on the invoice rows.
+
+## More examples
 
 ```php
-use Firebed\AadeMyData\Models\TaxTotals;
-use \Firebed\AadeMyData\Enums\TaxType;
-use \Firebed\AadeMyData\Enums\FeesPercentCategory;
+use Firebed\AadeMyData\Enums\FeesPercentCategory;
+use Firebed\AadeMyData\Enums\OtherTaxesPercentCategory;
 
-$tax = new TaxTotals();
+// Fees: subscription TV fee
+$fees = new TaxTotals();
+$fees->setTaxType(TaxType::FEES);
+$fees->setTaxCategory(FeesPercentCategory::SUBSCRIPTION_TV_10);
+$fees->setTaxAmount(52.66);
 
-// Τέλη
-$tax->setTaxType(TaxType::FEES);
+// Other taxes: life insurance premiums 4%
+$other = new TaxTotals();
+$other->setTaxType(TaxType::OTHER_TAXES);
+$other->setTaxCategory(OtherTaxesPercentCategory::LIFE_INSURANCE_PREMIUMS_4);
+$other->setTaxAmount(133.56);
 
-// Τέλος στη συνδρομητική τηλεόραση
-$tax->setTaxCategory(FeesPercentCategory::SUBSCRIPTION_TV_10);
-
-$tax->setTaxAmount(52.66);
-```
-
-### Λοιποί Φόροι (Ασφάλιστρα κλάδου ζωής 4%)
-
-```php
-
-use Firebed\AadeMyData\Models\TaxTotals;
-use \Firebed\AadeMyData\Enums\TaxType;
-use \Firebed\AadeMyData\Enums\OtherTaxesPercentCategory;
-
-$tax = new TaxTotals();
-
-// Λοιποί Φόροι
-$tax->setTaxType(TaxType::OTHER_TAXES);
-
-// Ασφάλιστρα κλάδου ζωής 4%
-$tax->setTaxCategory(OtherTaxesPercentCategory::LIFE_INSURANCE_PREMIUMS_4);
-
-$tax->setTaxAmount(133.56);
-```
-
-### Κρατήσεις
-
-Στις κρατήσεις δε χρειάζεται να οριστεί κατηγορία φόρου (`taxCategory`).
-
-```php
-
-use Firebed\AadeMyData\Models\TaxTotals;
-use \Firebed\AadeMyData\Enums\TaxType;
-
-$tax = new TaxTotals();
-
-// Λοιποί Φόροι
-$tax->setTaxType(TaxType::DEDUCTIONS);
-
-$tax->setTaxAmount(20);
+// Deductions: no category
+$deductions = new TaxTotals();
+$deductions->setTaxType(TaxType::DEDUCTIONS);
+$deductions->setTaxAmount(20);
 ```

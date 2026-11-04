@@ -1,47 +1,35 @@
-# Τύπος OtherDeliveryNoteHeader
+# OtherDeliveryNoteHeader
 
-Αφορά τα Λοιπά Γενικά Στοιχεία Διακίνησης Εμπορευμάτων. Συμπληρώνεται
-για παραστατικά που είναι δελτία αποστολής (π.χ `9.3`) ή τιμολόγιο
-και δελτίο αποστολής (`isDeliveryNote = true`).
-
-## Το αντικείμενο αυτό περιέχει τα εξής πεδία:
-
-| Πεδίο                               | Υποχρεωτικό | Περιγραφή                                  |
-|-------------------------------------|-------------|--------------------------------------------|
-| [**loadingAddress**](address-type)  | **Ναι**     | Διεύθυνση Φόρτωσης                         |
-| [**deliveryAddress**](address-type) | **Ναι**     | Διεύθυνση Παράδοσης                        |
-| startShippingBranch                 | Όχι         | Εγκατάσταση έναρξης διακίνησης (Εκδότη)    |
-| completeShippingBranch              | Όχι         | Εγκατάσταση ολοκλήρωσης διακίνησης (Λήπτη) |
-
-## Παρατηρήσεις
-
-- Με το πεδίο `startShippingBranch` ορίζεται το υποκατάστημα από το οποίο έγινε η
-  έναρξη της διακίνησης, σε περίπτωση που η έναρξη της διακίνησης γίνεται από
-  κάποιο υποκατάστημα (εγκατάσταση) του εκδότη του παραστατικού, το οποίο είναι
-  διαφορετικό από το υποκατάστημα του εκδότη του δελτίου.
-- Με το πεδίο `completeShippingBranch` ορίζεται το υποκατάστημα στο οποίο θα
-  ολοκληρωθεί η διακίνηση, σε περίπτωση που η διακίνηση θα ολοκληρωθεί σε
-  κάποιο υποκατάστημα (εγκατάσταση) του λήπτη του παραστατικού, το οποίο είναι
-  διαφορετικό από το υποκατάστημα του λήπτη του δελτίου.
-
-## Παραδείγματα
+`OtherDeliveryNoteHeader` holds the general delivery details. Set it on the [InvoiceHeader](invoice-header-type)
+of a delivery note (e.g. type `9.3`) or of an invoice that is also a delivery note (`isDeliveryNote = true`).
 
 ```php
-use Firebed\AadeMyData\Models\OtherDeliveryNoteHeader;
 use Firebed\AadeMyData\Models\Address;
+use Firebed\AadeMyData\Models\OtherDeliveryNoteHeader;
 
-// Initialize loading address
-$loadingAddress = new Address();
-$loadingAddress->setPostalCode('12345');
-$loadingAddress->setCity('Αθήνα');
+$loading = new Address();
+$loading->setPostalCode('12345');
+$loading->setCity('Athens');
 
-// Initialize delivery address
-$deliveryAddress = new Address();
-$deliveryAddress->setPostalCode('54321');
-$deliveryAddress->setCity('Θεσσαλονίκη');
+$delivery = new Address();
+$delivery->setPostalCode('54321');
+$delivery->setCity('Thessaloniki');
 
-// Initialize delivery note
-$deliveryNote = new OtherDeliveryNoteHeader();
-$deliveryNote->setLoadingAddress($loadingAddress);
-$deliveryNote->setDeliveryAddress($deliveryAddress);
+$deliveryHeader = new OtherDeliveryNoteHeader();
+$deliveryHeader->setLoadingAddress($loading);
+$deliveryHeader->setDeliveryAddress($delivery);
+
+$header->setOtherDeliveryNoteHeader($deliveryHeader);
 ```
+
+| Field                  | Type                    | Required | Description                                       |
+|------------------------|-------------------------|----------|---------------------------------------------------|
+| loadingAddress         | [Address](address-type) | Yes      | Loading address                                   |
+| deliveryAddress        | [Address](address-type) | Yes      | Delivery address                                  |
+| startShippingBranch    | `int`                   | No       | Issuer branch where the delivery starts           |
+| completeShippingBranch | `int`                   | No       | Counterpart branch where the delivery ends        |
+
+## Notes
+
+- Set `startShippingBranch` when the delivery starts from an issuer branch other than the one that issues the note.
+- Set `completeShippingBranch` when the delivery ends at a counterpart branch other than the one on the note.

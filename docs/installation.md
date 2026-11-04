@@ -1,50 +1,42 @@
-# Εγκατάσταση
+# Installation
 
-## Εγκατάσταση μέσω του Composer
-
-Για εγκατάσταση μέσω του Composer, εκτελέστε την ακόλουθη εντολή:
 ```shell
 composer require firebed/aade-mydata
 ```
 
-### Απαιτήσεις
+### Requirements
 
 ```json
 {
     "require": {
       "php": "^8.3",
       "ext-dom": "*",
-      "guzzlehttp/guzzle": "^7.8 || ^8.0"
+      "ext-libxml": "*",
+      "guzzlehttp/guzzle": "^7.8 || ^8.0",
+      "psr/log": "^2.0 || ^3.0"
     }
 }
 ```
 
-## Χειροκίνητη εγκατάσταση
+## Credentials
 
-Σε περίπτωση που η εγκατάσταση γίνεται χειροκίνητα και όχι μέσω του composer θα πρέπει να φορτώσετε χειροκίνητα και τα 
-απαραίτητα αρχεία με τη χρήση της μεθόδου <code>[spl_autoload_register](https://www.php.net/manual/en/function.spl-autoload-register.php)</code> (δε συνιστάται).
+You need a user id and a subscription key. You get them when you sign up to the myDATA REST API.
 
-## Παράμετροι εγκατάστασης
+## Links
 
-Αρχικά θα χρειαστείτε ένα αναγνωριστικό χρήστη (***user id***) και ένα κλειδί συνδρομής (***subscription key***).
-Μπορείτε να λάβετε αυτά τα διαπιστευτήρια με την εγγραφή σας στο mydata rest api.
+- [Sandbox (AADE)](https://www.aade.gr/mydata/dokimastiko-periballon)
+- [Sign up to the sandbox](https://mydata-dev-register.azurewebsites.net/)
+- [Sign up to production](https://www.aade.gr/mydata)
+- [Official AADE myDATA documentation (PDF v2.0.2)](https://www.aade.gr/sites/default/files/2026-09/myDATA%20API%20Documentation%20v2.0.2_official_erp_1.pdf)
 
-## Σύνδεσμοι
+## Setup
 
-- [Δοκιμαστικό περιβάλλον](https://www.aade.gr/mydata/dokimastiko-periballon)
-- [Εγγραφή στο δοκιμαστικό περιβάλλον](https://mydata-dev-register.azurewebsites.net/)
-- [Εγγραφή στο παραγωγικό περιβάλλον](https://www.aade.gr/mydata)
-- [Επίσημη τεκμηρίωση ΑΑΔΕ myDATA (PDF v2.0.2)](https://www.aade.gr/sites/default/files/2026-09/myDATA%20API%20Documentation%20v2.0.2_official_erp_1.pdf)
-
-## Αρχικοποίηση
-
-Αφού έχετε το αναγνωριστικό χρήστη και το κλειδί συνδρομής, χρησιμοποιήστε τον ακόλουθο κώδικα για να ορίσετε το
-περιβάλλον και τα διαπιστευτήρια:
+Set the environment and the credentials once:
 
 ```php
 use Firebed\AadeMyData\Http\MyDataRequest;
 
-$env = "dev"; // For production use "prod"
+$env = "dev"; // "prod" for production
 $user_id = "your-user-id";
 $subscription_key = "your-subscription-key";
 
@@ -52,89 +44,98 @@ MyDataRequest::setEnvironment($env);
 MyDataRequest::setCredentials($user_id, $subscription_key);
 ```
 
-Ή εναλλακτικά, μπορείτε να ορίσετε το περιβάλλον και τα διαπιστευτήρια μέσω της μεθόδου `init`:
+Or in one call:
 
 ```php
 MyDataRequest::init($user_id, $subscription_key, $env);
 ```
 
-Για το στάδιο της ανάπτυξη, μπορεί να χρειαστεί να απενεργοποιήσετε την επαλήθευση πελάτη εάν δεν χρησιμοποιείτε ***https***:
+For a provider (e-invoicing provider channel), pass `true` as the fourth argument:
+`MyDataRequest::init($user_id, $subscription_key, $env, true)`.
+
+During development, you may need to turn off client verification if you don't use https:
 
 ```php
 MyDataRequest::verifyClient(false);
 ```
 
-### Σύνδεση ανά tenant (`Connection` και `MyData`)
+### Connection per tenant (`Connection` and `MyData`)
 
-Οι παραπάνω στατικές μέθοδοι ρυθμίζουν την προεπιλεγμένη σύνδεση της διεργασίας. Αν η ίδια εφαρμογή
-εξυπηρετεί πολλούς πελάτες (tenants) ή προτιμάτε ένα αντικείμενο, δημιουργήστε μια `Connection` και έναν
-client `MyData` πάνω της. Η σύνδεση είναι immutable, κρατά τον δικό της HTTP client και την πολιτική επαναλήψεων:
+The static methods above set the default connection of the process. If one app serves many
+tenants, or you prefer an object, create a `Connection` and a `MyData` client on it.
+See [MyData client](mydata-client) for every option, tenants and both channels.
 
 ```php
 use Firebed\AadeMyData\Http\Connection;
+use Firebed\AadeMyData\Http\SendInvoices;
 use Firebed\AadeMyData\MyData;
 
 $mydata = MyData::connect($user_id, $subscription_key, $env);
 
-// ή με πλήρη ρύθμιση
-$mydata = new MyData(
-    Connection::make($user_id, $subscription_key, $env)
-        ->withTimeout(30)
-        ->withRetries(3)
-);
+// or fully configured
+$connection = Connection::make($user_id, $subscription_key, $env)
+    ->withTimeout(30)
+    ->withRetries(3);
+
+$mydata = new MyData($connection);
 
 $responses = $mydata->sendInvoices($invoices);
 
-// Οποιοδήποτε request μπορεί να δεθεί σε μια σύνδεση
+// Any request can use a connection
 (new SendInvoices())->using($connection)->handle($invoices);
 ```
 
-### Επαναλήψεις (retries)
+`Connection::make()` and `MyData::connect()` use the sandbox unless you pass `'prod'`.
+Call `->asProvider()` for the provider channel.
+
+### Retries
 
 ```php
-MyDataRequest::setRetries(3, 500);           // προεπιλεγμένη σύνδεση
-Connection::make(...)->withRetries(3, 500);  // ανά σύνδεση
+MyDataRequest::setRetries(3, 500);           // default connection
+Connection::make(...)->withRetries(3, 500);  // one connection
 ```
 
-Επαναλαμβάνονται οι κλήσεις που αποτυγχάνουν με 429, 502, 503, 504 ή αδυναμία σύνδεσης, με διπλασιασμό της
-καθυστέρησης (σε ms) σε κάθε προσπάθεια. Τα timeouts δεν επαναλαμβάνονται ποτέ.
+Requests that fail with 429, 502, 503, 504 or a connection failure are retried. The delay (ms)
+doubles on every attempt. Timeouts are never retried, because myDATA may have processed the request.
 
-### Όρια κλήσεων (rate limits)
+### Rate limits
 
-Το myDATA περιορίζει κάθε subscription key με βάση τον **αριθμό κλήσεων σε παράθυρο περίπου πέντε λεπτών**.
-Μετρήσεις στο δοκιμαστικό περιβάλλον (Νοέμβριος 2026): οι `RequestDocs` και `RequestTransmittedDocs` μοιράζονται
-έναν μετρητή **11 κλήσεων ανά παράθυρο 300 δευτερολέπτων** (μετρήθηκε δύο φορές, με και χωρίς
-απόσταση μεταξύ κλήσεων)· μετά, κάθε κλήση τους απαντά HTTP 429 με header `Retry-After`
-και μήνυμα `Rate limit is exceeded. Try again in 298 seconds.` μέχρι να λήξει το παράθυρο. Οι `RequestVatInfo`,
-`RequestMyIncome`, `RequestE3Info` συνέχισαν να απαντούν κανονικά, άρα οι μετρητές είναι ανά ομάδα λειτουργιών.
-Τα όρια του παραγωγικού περιβάλλοντος δεν δημοσιεύονται και μπορεί να διαφέρουν· η βιβλιοθήκη διαβάζει το `Retry-After`.
+myDATA limits each subscription key by the number of calls in a window of about five minutes.
+Measured on the sandbox (November 2026): `RequestDocs` and `RequestTransmittedDocs` share one counter
+of 11 calls per 300-second window. After that, every call to them answers HTTP 429 with a `Retry-After`
+header and the message `Rate limit is exceeded. Try again in 298 seconds.` until the window ends.
+`RequestVatInfo`, `RequestMyIncome` and `RequestE3Info` kept working, so the counters are per group of
+operations. Production limits are not published and may differ. The library reads `Retry-After`.
 
-- Μικρές αναμονές (έως 10 δευτερόλεπτα) επαναλαμβάνονται με `withRetries()`. Μεγαλύτερες **δεν** επαναλαμβάνονται
-  τυφλά: η κλήση αποτυγχάνει με `RateLimitExceededException`, της οποίας οι `getRetryAfter()` / `getRetryAt()`
-  λένε πότε γίνεται ξανά δεκτό το κλειδί.
-- `withRateLimitWait(600)`: περιμένει το `Retry-After` (έως τόσα δευτερόλεπτα) και ξαναστέλνει την κλήση.
-- `withThrottle(28000)`: κρατά τουλάχιστον τόσα ms ανάμεσα σε δύο κλήσεις της σύνδεσης, ώστε μια μεγάλη λήψη
-  να μένει κάτω από το όριο.
+- Short waits (up to 10 seconds) are retried with `withRetries()`. Longer waits are not retried.
+  The call fails with `RateLimitExceededException`. Its `getRetryAfter()` / `getRetryAt()` tell you
+  when the key is accepted again.
+- `withRateLimitWait(600)` waits for `Retry-After` (up to this many seconds) and sends the call again.
+- `withThrottle(28000)` keeps at least this many ms between two calls of the connection, so a long
+  download stays under the limit.
 
 ```php
+use Firebed\AadeMyData\Http\RequestTransmittedDocs;
+
 $connection = Connection::make($user_id, $subscription_key, $env)
     ->withThrottle(28_000)
     ->withRateLimitWait(600);
 
-foreach ((new RequestTransmittedDocs)->using($connection)->invoices(mark: $lastMark) as $invoice) {
+foreach ((new RequestTransmittedDocs())->using($connection)->invoices(mark: (string) $lastMark) as $invoice) {
     $lastMark = max($lastMark, (int) $invoice->getMark());
 }
 ```
 
-Κρατήστε το τελευταίο mark που επεξεργαστήκατε και ζητάτε μόνο τα νεότερα παραστατικά. Αν σταματήσετε στην
-εξαίρεση, συνεχίστε αργότερα από το `continuationToken` της τελευταίας σελίδας (`pages(..., nextPartitionKey:, nextRowKey:)`).
-Στατικά: `MyDataRequest::setThrottle()` και `MyDataRequest::setRateLimitWait()`.
+Keep the last mark you processed and only ask for newer invoices. If you stop on the exception,
+continue later from the `continuationToken` of the last page (`pages(..., nextPartitionKey:, nextRowKey:)`).
+Static: `MyDataRequest::setThrottle()` and `MyDataRequest::setRateLimitWait()`.
 
-### Επικύρωση πριν την αποστολή
+### Validation before sending
 
-Με `withValidation()` το XML κάθε κλήσης που στέλνει έγγραφο (`SendInvoices`, χαρακτηρισμοί, `SendPaymentsMethod`,
-δελτία αποστολής, `SendStatement`) ελέγχεται με το XSD του myDATA πριν σταλεί. Ένα άκυρο έγγραφο δεν στέλνεται: πετά
-`SchemaValidationException` με τα πεδία που απέτυχαν, αντί να ξοδευτεί μια κλήση που το myDATA θα απέρριπτε.
+With `withValidation()`, the XML of every call that sends a document (`SendInvoices`, the classifications,
+`SendPaymentsMethod`, the delivery note calls, `SendStatement`) is checked against the myDATA XSD before it
+is sent. An invalid document is not sent. You get a `SchemaValidationException` with the failing fields,
+instead of spending a call that myDATA would reject.
 
 ```php
 use Firebed\AadeMyData\Exceptions\SchemaValidationException;
@@ -148,14 +149,20 @@ try {
 }
 ```
 
-Είναι απενεργοποιημένη από προεπιλογή· στατικά `MyDataRequest::setValidation()`.
+It is off by default. Static: `MyDataRequest::setValidation()`.
 
-### Καταγραφή (logging) και listeners
+To check one invoice without a connection, call `$invoice->validate()`. It returns the errors, or an empty array.
 
-Το `withLogger()` γράφει κάθε κλήση σε PSR-3 logger (Monolog, `Log` του Laravel, …): επιτυχία ως `info`, επανάληψη
-ή 429 ως `warning`, άλλη αποτυχία ως `error`. Τα διαπιστευτήρια δεν καταγράφονται ποτέ. Χωρίς `withBodies: true`
-δεν καταγράφονται επίσης τα XML και όσες παράμετροι της κλήσης ταυτοποιούν πρόσωπα (ΑΦΜ, QR URL), τα μηνύματα των
-αποτυχιών καταγράφονται χωρίς query και ΑΦΜ, και η εξαίρεση κατονομάζεται (κλάση, κωδικός) αντί να επισυνάπτεται. Νέο `withLogger()` αντικαθιστά το προηγούμενο· `withLogger(null)` το αφαιρεί.
+### Logging and listeners
+
+`withLogger()` writes every call to a PSR-3 logger (Monolog, Laravel's `Log`, ...): success as `info`,
+a retry or a 429 as `warning`, any other failure as `error`.
+
+- Credentials are never logged.
+- Without `withBodies: true`, the log also leaves out the XML and the query parameters that identify
+  someone (VAT numbers, QR URLs). Failure messages are logged without query and VAT numbers, and the
+  exception is named (class, code) instead of attached.
+- A new `withLogger()` replaces the old one. `withLogger(null)` removes it.
 
 ```php
 use Firebed\AadeMyData\Http\Exchange;
@@ -166,37 +173,82 @@ $connection = Connection::make($user_id, $subscription_key, $env)
     ->afterSending(fn (Exchange $e) => AuditLog::create([
         'action' => $e->action(),
         'request' => $e->requestBody,
-        'response' => $e->responseBody,     // null όταν η κλήση απέτυχε
+        'response' => $e->responseBody,     // null when the call failed
         'error' => $e->exception?->getMessage(),
     ]))
-    ->beforeRetry(fn (Retry $r) => logger()->notice("Retry {$r->attempt} σε {$r->delay} ms"));
+    ->beforeRetry(fn (Retry $r) => logger()->notice("Retry {$r->attempt} in {$r->delay} ms"));
 ```
 
-Το `afterSending()` καλείται μία φορά ανά κλήση, μετά τις επαναλήψεις της· το `beforeRetry()` πριν από κάθε
-επανάληψη. Ένας listener που πετά εξαίρεση παραλείπεται: δεν κρύβει ποτέ την απάντηση του myDATA (και τα ΜΑΡΚ) ή την
-αποτυχία της κλήσης.
+`afterSending()` runs once per call, after its retries. `beforeRetry()` runs before each retry.
+A listener that throws is skipped. It never hides the myDATA response (and the MARKs) or the failure of the call.
 
-Ένας listener με κλειδί (`afterSending($audit, key: 'audit')`) αντικαθιστά όποιον έχει το ίδιο κλειδί, ώστε κώδικας
-που τρέχει πολλές φορές (εκκίνηση worker, queue job) να τον καταχωρεί μία φορά. Αφαίρεση με `withoutListener('audit')`
-(ή με τον ίδιο τον listener) και `withoutListeners()` για όλους· ο logger μένει, το `withLogger(null)` τον αφαιρεί.
+A listener with a key (`afterSending($audit, key: 'audit')`) replaces any listener with the same key.
+So code that runs many times (worker boot, queue job) registers it once. Remove one with
+`withoutListener('audit')` (or with the listener itself), or all with `withoutListeners()`.
+The logger stays. `withLogger(null)` removes it.
 
-Στατικά: `MyDataRequest::setLogger()`, `afterSending()`, `beforeRetry()`, `removeListener()`, `removeListeners()`.
-## Διαθέσιμες λειτουργίες
-- Λήψη Βασικών Στοιχείων Μητρώου ΑΦΜ ([SearchVat](./http/search-vat))
-- Αποστολή παραστατικών ([SendInvoices](./http/send-invoices))
-- Ακύρωση παραστατικού ([CancelInvoice](./http/cancel-invoice))
-- Λήψη παραστατικών ([RequestDocs](./http/request-docs))
-- Λήψη εκδοθέντων παραστατικών ([RequestTransmittedDocs](./http/request-transmitted-docs))
-- Λήψη εσόδων ([RequestMyIncome](./http/request-my-income))
-- Λήψη εξόδων ([RequestMyExpenses](./http/request-my-expenses))
-- Λήψη αναφορών ΦΠΑ ([RequestVatInfo](./http/request-vat-info))
-- Λήψη αναφορών Ε3 ([RequestE3Info](./http/request-e3-info))
-- Διαβίβαση πληρωμών ([SendPaymentsMethod](./http/send-payments-method))
-- Διαβίβαση χαρακτηρισμών εσόδων ([SendIncomeClassification](./http/send-income-classification))
-- Διαβίβαση χαρακτηρισμών εξόδων ([SendExpensesClassification](./http/send-expenses-classification))
-- Ακύρωση δελτίων αποστολής ([CancelDeliveryNote](./http/cancel-delivery-note))
+Static: `MyDataRequest::setLogger()`, `afterSending()`, `beforeRetry()`, `removeListener()`, `removeListeners()`.
 
-## Αρχεία XSD
+## Available methods
+
+Each request is a class in `Firebed\AadeMyData\Http`, and a method on the `MyData` client.
+Requests marked "ERP only" or "Provider only" throw `UnsupportedChannelException` on the other channel.
+
+### Invoices
+
+| Request | `MyData` method | Channel |
+|---|---|---|
+| [SendInvoices](./http/send-invoices) | `sendInvoices()` | |
+| [CancelInvoice](./http/cancel-invoice) | `cancelInvoice()` | |
+| [RequestDocs](./http/request-docs) | `requestDocs()` | ERP only |
+| [RequestTransmittedDocs](./http/request-transmitted-docs) | `requestTransmittedDocs()` | ERP only |
+| [SendPaymentsMethod](./http/send-payments-method) | `sendPaymentsMethod()` | |
+| [SendIncomeClassification](./http/send-income-classification) | `sendIncomeClassification()` | |
+| [SendExpensesClassification](./http/send-expenses-classification) | `sendExpensesClassification()` | |
+
+### Reports
+
+| Request | `MyData` method | Channel |
+|---|---|---|
+| [RequestMyIncome](./http/request-my-income) | `requestMyIncome()` | |
+| [RequestMyExpenses](./http/request-my-expenses) | `requestMyExpenses()` | |
+| [RequestVatInfo](./http/request-vat-info) | `requestVatInfo()` | |
+| [RequestE3Info](./http/request-e3-info) | `requestE3Info()` | |
+
+`RequestMyIncome` and `RequestMyExpenses` share the base class [RequestBookInfo](./http/request-book-info).
+
+### Providers
+
+| Request | `MyData` method | Channel |
+|---|---|---|
+| [RequestProviderDocs](./http/request-provider-docs) | `requestProviderDocs()` | Provider only |
+| [RequestReceiverInfo](./http/request-receiver-info) | `requestReceiverInfo()` | Provider only |
+| [SendUnsignedInvoices](./http/send-unsigned-invoices) | `sendUnsignedInvoices()` | Provider only |
+| [CancelDeliveryNote](./http/cancel-delivery-note) | `cancelDeliveryNote()` | Provider only |
+| [CancelReceivingNote](./http/cancel-receiving-note) | `cancelReceivingNote()` | Provider only |
+| [SendStatement](./http/statements) | `sendStatement()` | Provider only |
+| [RequestStatements](./http/statements) | `requestStatements()` | Provider only |
+| [RecallStatement](./http/statements) | `recallStatement()` | Provider only |
+
+### Digital Goods Movement
+
+Classes in `Firebed\AadeMyData\Http\DigitalGoodsMovement`. All are ERP only.
+
+| Request | `MyData` method |
+|---|---|
+| [RegisterTransfer](./http/digital-goods-movement#registertransfer) | `registerTransfer()` |
+| [ConfirmDeliveryOutcome](./http/digital-goods-movement#confirmdeliveryoutcome) | `confirmDeliveryOutcome()` |
+| [ConfirmDeliveryReturn](./http/digital-goods-movement#confirmdeliveryreturn) | `confirmDeliveryReturn()` |
+| [RejectDeliveryNote](./http/digital-goods-movement#rejectdeliverynote) | `rejectDeliveryNote()` |
+| [RequestDeliveryNoteStatus](./http/digital-goods-movement#requestdeliverynotestatus) | `requestDeliveryNoteStatus()`, `requestDeliveryNoteStatusByQrUrl()` |
+| [GenerateGroupQrCode](./http/digital-goods-movement#generategroupqrcode) | `generateGroupQrCode()` |
+| [RequestGroupQrDetails](./http/digital-goods-movement#requestgroupqrdetails) | `requestGroupQrDetails()` |
+
+### Other
+
+- VAT number lookup: [SearchVat](./http/search-vat) (separate package, `firebed/vat-registry`)
+
+## XSD files
 
 - [ConfirmDeliveryOutcome-v2.0.2.xsd](../xsd/ConfirmDeliveryOutcome-v2.0.2.xsd)
 - [ConfirmDeliveryReturn-v2.0.2.xsd](../xsd/ConfirmDeliveryReturn-v2.0.2.xsd)

@@ -1,27 +1,26 @@
-# Τύπος EntityType
+# EntityType
 
-Ο τύπος `EntityType` αναφέρεται στις λοιπές συσχετιζόμενες οντότητες του παραστατικού.
-
-## Το αντικείμενο αυτό περιέχει τα εξής πεδία:
-
-| Πεδίο                                | Υποχρεωτικό | Περιγραφή                     |
-|--------------------------------------|-------------|-------------------------------|
-| [**type**](../appendix/entity-types) | **Ναι**     | Κατηγορία Οντότητας           |
-| [**entityData**](party-type)         | **Ναι**     | Στοιχεία Οντότητας (Προσώπου) |
-
-## Παραδείγματα
+`EntityType` is another entity related to the invoice, e.g. the carrier. Add it to the
+[InvoiceHeader](invoice-header-type) with `addOtherCorrelatedEntities()`.
 
 ```php
+use Firebed\AadeMyData\Enums\EntityTypes;
 use Firebed\AadeMyData\Models\EntityType;
 use Firebed\AadeMyData\Models\Party;
-use Firebed\AadeMyData\Enums\EntityTypes;
+
+$carrier = new Party();
+$carrier->setVatNumber('123456789');
+$carrier->setCountry('GR');
+$carrier->setBranch(0);
 
 $entity = new EntityType();
-$entity->setType(EntityTypes::CARRIER); // Μεταφορέας
+$entity->setType(EntityTypes::CARRIER);
+$entity->setEntityData($carrier);
 
-$party = new Party();
-$party->setVatNumber('123456789');
-$party->setCountry('GR');
-$party->setBranch(0);
-$entity->setEntityData($party);
+$header->addOtherCorrelatedEntities($entity);
 ```
+
+| Field      | Type                                         | Required | Description          |
+|------------|----------------------------------------------|----------|----------------------|
+| type       | [`EntityTypes`](../appendix/entity-types)    | Yes      | Entity category      |
+| entityData | [Party](party-type)                          | Yes      | Entity details       |
