@@ -116,6 +116,22 @@ class RetryTest extends TestCase
         $this->assertSame([299_000, 4_000], $this->gateway->sleeps);
     }
 
+    public function test_rate_limit_waits_spend_neither_retries_nor_backoff(): void
+    {
+        $connection = $this->connection([
+            new HttpResponse(429, ['Retry-After' => '2']),
+            new HttpResponse(429, ['Retry-After' => '2']),
+            new HttpResponse(503),
+            new HttpResponse(200, body: $this->getStub('request-vat-info-response')),
+        ], retries: 1)->withRateLimitWait(600);
+
+        $result = (new RequestVatInfo)->using($connection)->handle('01/01/2026', '31/01/2026');
+
+        $this->assertNotNull($result->getVatInfo());
+        // The 503 still gets its one retry, with the first backoff delay
+        $this->assertSame([3_000, 3_000, 100], $this->gateway->sleeps);
+    }
+
     public function test_a_rate_limit_longer_than_the_allowed_wait_is_not_waited_out(): void
     {
         $connection = $this->connection([

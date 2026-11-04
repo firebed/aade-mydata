@@ -75,9 +75,10 @@ class GuzzleGateway implements Gateway
 
         $client = $connection->httpClient();
         $url = $request->getUrl();
-        $waited = 0;
+        $retries = 0; // retries spent, out of Connection::retries()
+        $waited = 0;  // milliseconds spent sitting out rate limits, out of Connection::rateLimitWait()
 
-        for ($attempt = 0; ; $attempt++) {
+        for ($attempt = 1; ; $attempt++) {
             $pause = $connection->throttle()?->pause() ?? 0;
 
             if ($pause > 0) {
@@ -90,40 +91,48 @@ class GuzzleGateway implements Gateway
                 $body = $this->body($e);
                 $retryAfter = $e->getCode() === 429 ? RateLimitExceededException::parseRetryAfter($this->header($e, 'Retry-After'), $body) : null;
 
-                $delay = $this->delayBefore($attempt, $waited, $retryAfter, $e, $connection);
-
-                if ($delay === null) {
+                // Sitting out a rate limit spends the wait, not a retry
+                if (($delay = $this->rateLimitDelay($waited, $retryAfter, $connection)) !== null) {
+                    $waited += $delay;
+                } elseif (($delay = $this->delayBefore($retries, $retryAfter, $e, $connection)) !== null) {
+                    $retries++;
+                } else {
                     throw $this->exception($e, $body, $retryAfter);
                 }
 
-                $connection->retrying(new Retry($request, $attempt + 1, $delay, $this->exception($e, $body, $retryAfter)));
+                $connection->retrying(new Retry($request, $attempt, $delay, $this->exception($e, $body, $retryAfter)));
 
-                $waited += $delay;
                 $this->sleep($delay);
             }
         }
     }
 
     /**
-     * How long to wait before trying again, in milliseconds, or null to give up:
-     *
-     * - a 429 is waited out as long as the connection's rate-limit wait allows (not
-     *   counted as a retry, but bounded, so a key that stays throttled still fails),
-     * - otherwise a retryable failure gets the Retry-After myDATA asks for when it fits
-     *   in MAX_RETRY_DELAY, else the connection's backoff doubled on every attempt,
-     * - while retries remain.
+     * How long to sit out a 429, in milliseconds: the Retry-After myDATA asks for, while it
+     * fits in what is left of the connection's rate-limit wait. Null when the connection does
+     * not wait out rate limits, the failure is not one, or the wait is used up.
      */
-    protected function delayBefore(int $attempt, int $waited, ?int $retryAfter, GuzzleException $exception, Connection $connection): ?int
+    protected function rateLimitDelay(int $waited, ?int $retryAfter, Connection $connection): ?int
     {
-        if ($retryAfter !== null && $connection->rateLimitWait() > 0) {
-            $wait = ($retryAfter + 1) * 1000; // one second more: myDATA counts whole seconds
-
-            if ($waited + $wait <= $connection->rateLimitWait() * 1000) {
-                return $wait;
-            }
+        if ($retryAfter === null || $connection->rateLimitWait() === 0) {
+            return null;
         }
 
-        if ($attempt >= $connection->retries() || ! $this->isRetryable($exception)) {
+        $wait = ($retryAfter + 1) * 1000; // one second more: myDATA counts whole seconds
+
+        return $waited + $wait <= $connection->rateLimitWait() * 1000 ? $wait : null;
+    }
+
+    /**
+     * How long to wait before retrying, in milliseconds, or null to give up: a retryable
+     * failure gets the Retry-After myDATA asks for when it fits in MAX_RETRY_DELAY, else the
+     * connection's backoff doubled on every retry, while retries remain.
+     *
+     * @param  int  $retries  The retries spent so far; rate-limit waits do not count
+     */
+    protected function delayBefore(int $retries, ?int $retryAfter, GuzzleException $exception, Connection $connection): ?int
+    {
+        if ($retries >= $connection->retries() || ! $this->isRetryable($exception)) {
             return null;
         }
 
@@ -131,7 +140,7 @@ class GuzzleGateway implements Gateway
             return $retryAfter * 1000 <= static::MAX_RETRY_DELAY ? $retryAfter * 1000 : null;
         }
 
-        return (int) min($connection->retryDelay() * 2 ** $attempt, static::MAX_RETRY_DELAY);
+        return (int) min($connection->retryDelay() * 2 ** $retries, static::MAX_RETRY_DELAY);
     }
 
     /**

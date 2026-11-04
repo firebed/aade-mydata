@@ -13,7 +13,7 @@ use Firebed\AadeMyData\Exceptions\RateLimitExceededException;
 final readonly class Retry
 {
     /**
-     * @param  int  $attempt  The number of the retry about to happen: 1 for the first one
+     * @param  int  $attempt  The number of the resend about to happen: 1 for the first one; sitting out a rate limit (withRateLimitWait()) counts too, though it spends no retry
      * @param  int  $delay  Milliseconds the request waits before it is sent again
      * @param  MyDataException  $reason  What the failed attempt would have thrown
      */
