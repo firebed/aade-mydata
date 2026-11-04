@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Http;
 
 use Firebed\AadeMyData\Exceptions\RateLimitExceededException;
+use Firebed\AadeMyData\Exceptions\TransmissionFailedException;
 use Firebed\AadeMyData\Http\Connection;
 use Firebed\AadeMyData\Http\Exchange;
 use Firebed\AadeMyData\Http\GuzzleGateway;
@@ -95,5 +96,72 @@ class ListenerFailureTest extends TestCase
 
         $this->assertSame(['mark' => 400001], $plain->records[0]['context']['query']);
         $this->assertSame('123456789', $full->records[0]['context']['query']['entityVatNumber']);
+    }
+
+    public function test_only_known_safe_query_parameters_are_logged_without_the_bodies(): void
+    {
+        MyData::fake();
+        $logger = new MemoryLogger;
+        $provider = new MyData(Connection::make('u', 'k', 'dev', provider: true)->withLogger($logger));
+
+        $provider->requestReceiverInfo('123456789');
+        $provider->requestProviderDocs('123456789', 400001);
+
+        $this->assertSame([], $logger->records[0]['context']['query']);
+        $this->assertSame(['mark' => 400001], $logger->records[1]['context']['query']);
+        $this->assertStringNotContainsString('123456789', (string) json_encode($logger->records));
+    }
+
+    public function test_foreign_vat_numbers_are_redacted_but_marks_uids_and_amounts_are_not(): void
+    {
+        $message = 'Counterpart ATU12345678, FR12345678901, 12345678901 and 987654321; mark 900000000000201, uid 0000000000000000000000000000000000000A01, amount 12.40';
+        MyData::fake(['*' => new TransmissionFailedException($message, 400)]);
+        $logger = new MemoryLogger;
+
+        try {
+            (new MyData(Connection::make('u', 'k')->withLogger($logger)))->cancelInvoice(1);
+        } catch (TransmissionFailedException) {
+        }
+
+        $logged = $logger->records[0]['message'];
+        foreach (['ATU12345678', 'FR12345678901', '12345678901', '987654321'] as $vat) {
+            $this->assertStringNotContainsString($vat, $logged);
+        }
+        foreach (['900000000000201', '0000000000000000000000000000000000000A01', '12.40'] as $kept) {
+            $this->assertStringContainsString($kept, $logged);
+        }
+    }
+
+    public function test_continuation_keys_are_not_logged_without_the_bodies(): void
+    {
+        MyData::fake();
+        $logger = new MemoryLogger;
+
+        (new MyData(Connection::make('u', 'k')->withLogger($logger)))->requestDocs('0', nextPartitionKey: '123456789', nextRowKey: 'row');
+
+        $this->assertSame(['mark' => '0'], $logger->records[0]['context']['query']);
+    }
+
+    public function test_failure_messages_are_redacted_without_the_bodies(): void
+    {
+        $leak = 'Client error: `GET https://mydataapidev.aade.gr/RequestTransmittedDocs?mark=0&receiverVatNumber=123456789` resulted in a `400 Bad Request` response: invoice for 987654321';
+        MyData::fake(['*' => new TransmissionFailedException($leak, 400)]);
+        [$plain, $full] = [new MemoryLogger, new MemoryLogger];
+
+        foreach ([$plain, $full] as $logger) {
+            try {
+                (new MyData(Connection::make('u', 'k')->withLogger($logger, withBodies: $logger === $full)))->requestTransmittedDocs('0');
+            } catch (TransmissionFailedException) {
+            }
+        }
+
+        $message = $plain->records[0]['message'];
+        $this->assertStringContainsString('https://mydataapidev.aade.gr/RequestTransmittedDocs?…', $message);
+        $this->assertStringNotContainsString('123456789', $message);
+        $this->assertStringNotContainsString('987654321', $message);
+        $this->assertSame(['exception_class' => TransmissionFailedException::class, 'exception_code' => 400], array_intersect_key($plain->records[0]['context'], ['exception_class' => 1, 'exception_code' => 1]));
+
+        $this->assertStringContainsString('receiverVatNumber=123456789', $full->records[0]['message']);
+        $this->assertInstanceOf(TransmissionFailedException::class, $full->records[0]['context']['exception']);
     }
 }

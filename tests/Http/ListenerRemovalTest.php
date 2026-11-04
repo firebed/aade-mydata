@@ -45,6 +45,19 @@ class ListenerRemovalTest extends TestCase
         $this->assertSame(['second', 'unkeyed'], $this->calls);
     }
 
+    public function test_a_numeric_key_neither_replaces_an_unkeyed_listener_nor_escapes_removal(): void
+    {
+        $connection = Connection::make('u', 'k')
+            ->afterSending($this->record('unkeyed'))
+            ->afterSending($this->record('keyed'), key: '0');
+
+        (new MyData($connection))->cancelInvoice(1);
+        $this->assertSame(['unkeyed', 'keyed'], $this->calls);
+
+        (new MyData($connection->withoutListener('0')))->cancelInvoice(1);
+        $this->assertSame(['unkeyed', 'keyed', 'unkeyed'], $this->calls);
+    }
+
     public function test_a_listener_is_removed_by_key_from_both_lists(): void
     {
         $connection = Connection::make('u', 'k')

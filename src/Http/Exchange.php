@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Firebed\AadeMyData\Http;
 
+use Firebed\AadeMyData\Exceptions\RateLimitExceededException;
 use Throwable;
 
 /**
@@ -45,5 +46,13 @@ final readonly class Exchange
     public function successful(): bool
     {
         return $this->exception === null;
+    }
+
+    /**
+     * Whether myDATA throttled the key (RateLimitExceededException).
+     */
+    public function rateLimited(): bool
+    {
+        return $this->exception instanceof RateLimitExceededException;
     }
 }

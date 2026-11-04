@@ -37,6 +37,15 @@ final class Connection
 {
     private ?Client $client = null;
 
+    /** @var array<array-key, callable(Exchange): void> Listeners, a keyed one under slot($key) */
+    private array $afterSending = [];
+
+    /** @var array<array-key, callable(Retry): void> Listeners, a keyed one under slot($key) */
+    private array $beforeRetry = [];
+
+    /** The logger of withLogger(), kept apart from the listeners so that withoutListeners() leaves it */
+    private ?ExchangeLogger $logger = null;
+
     /**
      * @param  array<string, mixed>  $requestOptions  Guzzle request options (verify, timeout, connect_timeout, proxy, …)
      * @param  int  $retries  How many times a request is retried on 429, 502, 503, 504 or a connection failure (0 = never)
@@ -44,9 +53,6 @@ final class Connection
      * @param  HandlerStack<Handler>|null  $handler  A Guzzle handler stack, e.g. built on a MockHandler in tests; null uses Guzzle's default
      * @param  int  $rateLimitWait  Longest total wait, in seconds, to sit out a 429 before giving up (0 = never wait)
      * @param  bool  $validate  Validate the request XML against the myDATA XSD before sending it
-     * @param  array<array-key, callable(Exchange): void>  $afterSending  Listeners, under their key when given one
-     * @param  array<array-key, callable(Retry): void>  $beforeRetry  Listeners, under their key when given one
-     * @param  ExchangeLogger|null  $logger  The PSR-3 logger of withLogger(), kept apart from the listeners so that it is replaced, not added
      */
     public function __construct(
         private string $userId = '',
@@ -61,9 +67,6 @@ final class Connection
         private ?Throttle $throttle = null,
         private int $rateLimitWait = 0,
         private bool $validate = false,
-        private array $afterSending = [],
-        private array $beforeRetry = [],
-        private ?ExchangeLogger $logger = null,
     ) {}
 
     public static function make(string $userId, string $subscriptionKey, Environment|string $environment = Environment::Development, bool $provider = false): self
@@ -71,17 +74,12 @@ final class Connection
         return new self($userId, $subscriptionKey, Environment::parse($environment), $provider);
     }
 
-    public function __clone()
-    {
-        // The Guzzle client depends on the options, so a changed copy builds its own
-        $this->client = null;
-    }
-
     public function withCredentials(string $userId, string $subscriptionKey): self
     {
         $copy = clone $this;
         $copy->userId = $userId;
         $copy->subscriptionKey = $subscriptionKey;
+        $copy->client = null; // the credentials are headers of the client
 
         return $copy;
     }
@@ -116,6 +114,7 @@ final class Connection
     {
         $copy = clone $this;
         $copy->requestOptions = $requestOptions;
+        $copy->client = null;
 
         return $copy;
     }
@@ -226,7 +225,7 @@ final class Connection
     public function afterSending(callable $listener, ?string $key = null): self
     {
         $copy = clone $this;
-        $key === null ? $copy->afterSending[] = $listener : $copy->afterSending[$key] = $listener;
+        $key === null ? $copy->afterSending[] = $listener : $copy->afterSending[self::slot($key)] = $listener;
 
         return $copy;
     }
@@ -242,7 +241,7 @@ final class Connection
     public function beforeRetry(callable $listener, ?string $key = null): self
     {
         $copy = clone $this;
-        $key === null ? $copy->beforeRetry[] = $listener : $copy->beforeRetry[$key] = $listener;
+        $key === null ? $copy->beforeRetry[] = $listener : $copy->beforeRetry[self::slot($key)] = $listener;
 
         return $copy;
     }
@@ -256,7 +255,7 @@ final class Connection
     public function withoutListener(string|callable $listener): self
     {
         $keep = is_string($listener)
-            ? fn (mixed $registered, int|string $key) => $key !== $listener
+            ? fn (mixed $registered, int|string $key) => $key !== self::slot($listener)
             : fn (mixed $registered) => $registered !== $listener;
 
         $copy = clone $this;
@@ -264,6 +263,15 @@ final class Connection
         $copy->beforeRetry = array_filter($copy->beforeRetry, $keep, ARRAY_FILTER_USE_BOTH);
 
         return $copy;
+    }
+
+    /**
+     * Where a keyed listener is kept: under a prefix, so that a numeric key ('0') is not
+     * turned into an int and mistaken for the index of an unkeyed listener.
+     */
+    private static function slot(string $key): string
+    {
+        return 'key:'.$key;
     }
 
     /**
@@ -311,6 +319,7 @@ final class Connection
     {
         $copy = clone $this;
         $copy->handler = $handler;
+        $copy->client = null;
 
         return $copy;
     }
@@ -343,6 +352,11 @@ final class Connection
     public function isProvider(): bool
     {
         return $this->provider;
+    }
+
+    public function channel(): Channel
+    {
+        return $this->provider ? Channel::Provider : Channel::Erp;
     }
 
     public function hasCredentials(): bool
@@ -396,11 +410,7 @@ final class Connection
      */
     public function sent(Exchange $exchange): void
     {
-        self::notify(fn () => $this->logger?->sent($exchange));
-
-        foreach ($this->afterSending as $listener) {
-            self::notify(fn () => $listener($exchange));
-        }
+        self::notify($this->logger === null ? $this->afterSending : [$this->logger->sent(...), ...$this->afterSending], $exchange);
     }
 
     /**
@@ -408,22 +418,22 @@ final class Connection
      */
     public function retrying(Retry $retry): void
     {
-        self::notify(fn () => $this->logger?->retrying($retry));
-
-        foreach ($this->beforeRetry as $listener) {
-            self::notify(fn () => $listener($retry));
-        }
+        self::notify($this->logger === null ? $this->beforeRetry : [$this->logger->retrying(...), ...$this->beforeRetry], $retry);
     }
 
     /**
-     * Calls a listener, ignoring its failure: a broken audit log or log sink must not turn a
-     * request myDATA accepted into a failure the caller would send again.
+     * Calls the listeners, ignoring their failures: a broken audit log or log sink must not
+     * turn a request myDATA accepted into a failure the caller would send again.
+     *
+     * @param  array<array-key, callable>  $listeners
      */
-    private static function notify(Closure $call): void
+    private static function notify(array $listeners, Exchange|Retry $event): void
     {
-        try {
-            $call();
-        } catch (Throwable) {
+        foreach ($listeners as $listener) {
+            try {
+                $listener($event);
+            } catch (Throwable) {
+            }
         }
     }
 

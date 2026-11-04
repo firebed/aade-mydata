@@ -92,6 +92,21 @@ class ConnectionTest extends TestCase
         $this->assertNotSame($client, $connection->withTimeout(10)->httpClient());
     }
 
+    public function test_a_copy_keeps_the_client_unless_its_transport_changes(): void
+    {
+        $connection = Connection::make('u', 'k');
+        $client = $connection->httpClient();
+
+        // Listeners, retries, throttle, validation, channel and environment are not part of the client
+        $same = $connection->afterSending(fn () => null, key: 'audit')->beforeRetry(fn () => null)->withoutListeners()
+            ->withRetries(3)->withThrottle(1000)->withRateLimitWait(60)->withValidation()->asProvider()->withEnvironment('prod');
+        $this->assertSame($client, $same->httpClient());
+
+        $this->assertNotSame($client, $connection->withCredentials('u2', 'k2')->httpClient());
+        $this->assertNotSame($client, $connection->withRequestOption('timeout', 5)->httpClient());
+        $this->assertNotSame($client, $connection->withHandler(HandlerStack::create(new MockHandler))->httpClient());
+    }
+
     public function test_custom_headers_are_added_to_the_authentication_headers(): void
     {
         $client = Connection::make('u', 'k')->withRequestOption('headers', ['User-Agent' => 'erp/1.0'])->httpClient();

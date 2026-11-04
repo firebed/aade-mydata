@@ -81,6 +81,7 @@ class GuzzleGateway implements Gateway
         for ($attempt = 1; ; $attempt++) {
             $pause = $connection->throttle()?->pause() ?? 0;
 
+            // sleep() is the extension point for waits: call it only for a real pause
             if ($pause > 0) {
                 $this->sleep($pause);
             }
@@ -90,6 +91,7 @@ class GuzzleGateway implements Gateway
             } catch (GuzzleException $e) {
                 $body = $this->body($e);
                 $retryAfter = $e->getCode() === 429 ? RateLimitExceededException::parseRetryAfter($this->header($e, 'Retry-After'), $body) : null;
+                $failure = $this->exception($e, $body, $retryAfter);
 
                 // Sitting out a rate limit spends the wait, not a retry
                 if (($delay = $this->rateLimitDelay($waited, $retryAfter, $connection)) !== null) {
@@ -97,10 +99,10 @@ class GuzzleGateway implements Gateway
                 } elseif (($delay = $this->delayBefore($retries, $retryAfter, $e, $connection)) !== null) {
                     $retries++;
                 } else {
-                    throw $this->exception($e, $body, $retryAfter);
+                    throw $failure;
                 }
 
-                $connection->retrying(new Retry($request, $attempt, $delay, $this->exception($e, $body, $retryAfter)));
+                $connection->retrying(new Retry($request, $attempt, $delay, $failure));
 
                 $this->sleep($delay);
             }

@@ -162,7 +162,9 @@ class ListenersTest extends TestCase
         $this->assertMatchesRegularExpression('/^myDATA RequestVatInfo answered in \d+ ms$/', $logger->records[1]['message']);
         $this->assertStringContainsString('failed after', $logger->records[2]['message']);
         $this->assertStringContainsString('Try again in 300 seconds', $logger->records[2]['message']);
-        $this->assertInstanceOf(RateLimitExceededException::class, $logger->records[2]['context']['exception']);
+        // Without the bodies the exception is named, not attached: its message is not redacted
+        $this->assertSame(RateLimitExceededException::class, $logger->records[2]['context']['exception_class']);
+        $this->assertArrayNotHasKey('exception', $logger->records[2]['context']);
 
         $this->assertSame(['action', 'method', 'url', 'query', 'duration_ms'], array_keys($logger->records[1]['context']));
 
