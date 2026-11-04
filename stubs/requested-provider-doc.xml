@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RequestedProviderDoc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <continuationToken>
+    <nextPartitionKey>123456789</nextPartitionKey>
+    <nextRowKey>900000000000103</nextRowKey>
+  </continuationToken>
+  <InvoiceProviderType>
+    <issuerVAT>123456789</issuerVAT>
+    <invoiceProviderMark>900000000000101</invoiceProviderMark>
+    <invoiceUid>0000000000000000000000000000000000000A01</invoiceUid>
+    <authenticationCode>000000000000000000000000000000000000AC01</authenticationCode>
+  </InvoiceProviderType>
+  <InvoiceProviderType>
+    <issuerVAT>123456789</issuerVAT>
+    <invoiceProviderMark>900000000000102</invoiceProviderMark>
+    <invoiceUid>0000000000000000000000000000000000000A02</invoiceUid>
+    <authenticationCode>000000000000000000000000000000000000AC02</authenticationCode>
+  </InvoiceProviderType>
+  <InvoiceProviderType>
+    <issuerVAT>123456789</issuerVAT>
+    <invoiceProviderMark>900000000000103</invoiceProviderMark>
+    <invoiceUid>0000000000000000000000000000000000000A02</invoiceUid>
+    <authenticationCode>000000000000000000000000000000000000AC03</authenticationCode>
+  </InvoiceProviderType>
+</RequestedProviderDoc>

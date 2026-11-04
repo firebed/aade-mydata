@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ResponseDoc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <response>
+    <index>1</index>
+    <statusCode>ValidationError</statusCode>
+    <errors>
+      <error>
+        <message>The UID: 0000000000000000000000000000000000000B01 is invalid . It has already been sent for another invoice (MARK:900000000000201 , AUTHENTICATION_CODE:000000000000000000000000000000000000AC11)</message>
+        <code>228</code>
+      </error>
+    </errors>
+  </response>
+  <response>
+    <index>2</index>
+    <statusCode>ValidationError</statusCode>
+    <errors>
+      <error>
+        <message>The UID: 0000000000000000000000000000000000000B02 is invalid . It has already been sent for another invoice (MARK:900000000000202 )</message>
+        <code>228</code>
+      </error>
+    </errors>
+  </response>
+  <response>
+    <index>3</index>
+    <statusCode>ValidationError</statusCode>
+    <errors>
+      <error>
+        <message>IssueDate is invalid, it must be equal with current date</message>
+        <code>238</code>
+      </error>
+    </errors>
+  </response>
+</ResponseDoc>

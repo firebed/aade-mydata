@@ -24,12 +24,15 @@ use Firebed\AadeMyData\Http\RequestDocs;
 use Firebed\AadeMyData\Http\RequestE3Info;
 use Firebed\AadeMyData\Http\RequestMyExpenses;
 use Firebed\AadeMyData\Http\RequestMyIncome;
+use Firebed\AadeMyData\Http\RequestProviderDocs;
+use Firebed\AadeMyData\Http\RequestReceiverInfo;
 use Firebed\AadeMyData\Http\RequestTransmittedDocs;
 use Firebed\AadeMyData\Http\RequestVatInfo;
 use Firebed\AadeMyData\Http\SendExpensesClassification;
 use Firebed\AadeMyData\Http\SendIncomeClassification;
 use Firebed\AadeMyData\Http\SendInvoices;
 use Firebed\AadeMyData\Http\SendPaymentsMethod;
+use Firebed\AadeMyData\Http\SendUnsignedInvoices;
 use Firebed\AadeMyData\Http\Statements\RecallStatement;
 use Firebed\AadeMyData\Http\Statements\RequestStatements;
 use Firebed\AadeMyData\Http\Statements\SendStatement;
@@ -50,9 +53,11 @@ use Firebed\AadeMyData\Models\InvoiceIncomeClassification;
 use Firebed\AadeMyData\Models\InvoicesDoc;
 use Firebed\AadeMyData\Models\PaymentMethod;
 use Firebed\AadeMyData\Models\PaymentMethodsDoc;
+use Firebed\AadeMyData\Models\ReceiverInfoDoc;
 use Firebed\AadeMyData\Models\RequestedBookInfo;
 use Firebed\AadeMyData\Models\RequestedDoc;
 use Firebed\AadeMyData\Models\RequestedE3Info;
+use Firebed\AadeMyData\Models\RequestedProviderDoc;
 use Firebed\AadeMyData\Models\RequestedVatInfo;
 use Firebed\AadeMyData\Models\ResponseDoc;
 use Firebed\AadeMyData\Models\Statements\RequestedStatementDoc;
@@ -222,6 +227,38 @@ final class MyData
     public function requestTransmittedDocs(string $mark = '', ?string $dateFrom = null, ?string $dateTo = null, ?string $receiverVatNumber = null, ?string $entityVatNumber = null, InvoiceType|string|null $invType = null, ?string $maxMark = null, ?string $nextPartitionKey = null, ?string $nextRowKey = null): RequestedDoc
     {
         return $this->request(new RequestTransmittedDocs)->handle($mark, $dateFrom, $dateTo, $receiverVatNumber, $entityVatNumber, $invType, $maxMark, $nextPartitionKey, $nextRowKey);
+    }
+
+    /**
+     * The invoices this provider transmitted for an issuer, with a mark greater than $mark (provider channel).
+     *
+     * @throws MyDataException
+     */
+    public function requestProviderDocs(string $issuerVat, string|int $mark = 0, ?string $nextPartitionKey = null, ?string $nextRowKey = null): RequestedProviderDoc
+    {
+        return $this->request(new RequestProviderDocs)->handle($issuerVat, $mark, $nextPartitionKey, $nextRowKey);
+    }
+
+    /**
+     * The providers an entity invoices through and the emails it accepts invoices at (provider channel).
+     *
+     * @throws MyDataException
+     */
+    public function requestReceiverInfo(string $vatNumber): ReceiverInfoDoc
+    {
+        return $this->request(new RequestReceiverInfo)->handle($vatNumber);
+    }
+
+    /**
+     * The providers signatures of invoices under issue that were not issued (provider channel).
+     *
+     * @param  InvoicesDoc|Invoice|list<Invoice>  $invoices
+     *
+     * @throws MyDataException
+     */
+    public function sendUnsignedInvoices(InvoicesDoc|Invoice|array $invoices): ResponseDoc
+    {
+        return $this->request(new SendUnsignedInvoices)->handle($invoices);
     }
 
     /**

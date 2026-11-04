@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReceiverInfoDoc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <receptionProviders>
+    <ProviderInfo>
+      <providerVATNumber>800000001</providerVATNumber>
+    </ProviderInfo>
+    <ProviderInfo>
+      <providerVATNumber>800000002</providerVATNumber>
+    </ProviderInfo>
+  </receptionProviders>
+  <receptionEmails>
+    <email>invoices@example.com</email>
+  </receptionEmails>
+</ReceiverInfoDoc>

@@ -6,6 +6,7 @@ namespace Firebed\AadeMyData\Http;
 
 use Firebed\AadeMyData\Enums\InvoiceType;
 use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Exceptions\UnsupportedChannelException;
 use Firebed\AadeMyData\Http\Traits\HasResponseDom;
 use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\RequestedDoc;
@@ -53,10 +54,13 @@ abstract class MyDataGetRequest extends MyDataRequest
      * @param  string|null  $nextPartitionKey  Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
      * @param  string|null  $nextRowKey  Παράμετρος για την τμηματική λήψη των αποτελεσμάτων
      *
+     * @throws UnsupportedChannelException On the provider channel, which has its own search: RequestProviderDocs
      * @throws MyDataException
      */
     public function handle(string $mark = '', ?string $dateFrom = null, ?string $dateTo = null, ?string $receiverVatNumber = null, ?string $entityVatNumber = null, InvoiceType|string|null $invType = null, ?string $maxMark = null, ?string $nextPartitionKey = null, ?string $nextRowKey = null): RequestedDoc
     {
+        $this->ensureERP();
+
         $query = ['mark' => $mark] + $this->filterArray(compact('dateFrom', 'dateTo', 'receiverVatNumber', 'entityVatNumber', 'invType', 'maxMark', 'nextPartitionKey', 'nextRowKey'));
 
         return $this->read($this->get($query), new RequestedDocReader);

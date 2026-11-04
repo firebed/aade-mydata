@@ -12,11 +12,14 @@ use Firebed\AadeMyData\Http\MyDataGetRequest;
 use Firebed\AadeMyData\Http\MyDataRequest;
 use Firebed\AadeMyData\Http\RequestBookInfo;
 use Firebed\AadeMyData\Http\RequestE3Info;
+use Firebed\AadeMyData\Http\RequestProviderDocs;
+use Firebed\AadeMyData\Http\RequestReceiverInfo;
 use Firebed\AadeMyData\Http\RequestVatInfo;
 use Firebed\AadeMyData\Http\SendExpensesClassification;
 use Firebed\AadeMyData\Http\SendIncomeClassification;
 use Firebed\AadeMyData\Http\SendInvoices;
 use Firebed\AadeMyData\Http\SendPaymentsMethod;
+use Firebed\AadeMyData\Http\SendUnsignedInvoices;
 use Firebed\AadeMyData\Models\Error;
 use Firebed\AadeMyData\Models\Errors;
 use Firebed\AadeMyData\Models\Invoice;
@@ -74,6 +77,8 @@ final class FakeGateway implements Gateway
         RequestBookInfo::class => '<RequestedBookInfo/>',
         RequestVatInfo::class => '<RequestedVatInfo/>',
         RequestE3Info::class => '<RequestedE3Info/>',
+        RequestProviderDocs::class => '<RequestedProviderDoc/>',
+        RequestReceiverInfo::class => '<ReceiverInfoDoc/>',
     ];
 
     /** @var array<class-string<MyDataRequest>|'*', mixed> Responses by request class */
@@ -296,6 +301,15 @@ final class FakeGateway implements Gateway
         foreach ($doc->all() as $i => $response) {
             if (! $response->has('index')) {
                 $response->setIndex($i + 1);
+            }
+
+            // An invoice under issue that was not issued gets no mark, only its uid
+            if ($request instanceof SendUnsignedInvoices) {
+                if ($response->isSuccessful() && ! $response->has('invoiceUid')) {
+                    $response->set('invoiceUid', self::uid($invoices[$i] ?? null));
+                }
+
+                continue;
             }
 
             if ($markKey === null || ! $response->isSuccessful() || $response->has($markKey)) {

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ResponseDoc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <response>
+    <index>1</index>
+    <invoiceUid>0000000000000000000000000000000000000B01</invoiceUid>
+    <invoiceMark>900000000000201</invoiceMark>
+    <authenticationCode>000000000000000000000000000000000000AC11</authenticationCode>
+    <qrUrl>https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=EXAMPLE</qrUrl>
+    <statusCode>Success</statusCode>
+    <receptionProviders>
+      <ProviderInfo>
+        <providerVATNumber>800000001</providerVATNumber>
+      </ProviderInfo>
+    </receptionProviders>
+    <receptionEmails>
+      <email>accounting@example.com</email>
+    </receptionEmails>
+  </response>
+</ResponseDoc>
