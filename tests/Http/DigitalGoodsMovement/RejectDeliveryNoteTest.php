@@ -81,7 +81,7 @@ class RejectDeliveryNoteTest extends DigitalGoodsMovementTestCase
         $this->assertFalse($response->first()->isFailed());
 
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('reject-delivery-note-by-mark.xml'), $reject->getRequestXml());
-        $this->assertXmlStringEqualsXmlFile($this->stubsPath('reject-delivery-note-response.xml'), $reject->getResponseXML());
+        $this->assertXmlStringEqualsXmlFile($this->stubsPath('reject-delivery-note-response.xml'), $reject->getResponseXml());
     }
 
     /**
@@ -109,7 +109,7 @@ class RejectDeliveryNoteTest extends DigitalGoodsMovementTestCase
         $this->assertFalse($response->first()->isFailed());
 
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('reject-delivery-note-by-qr-url.xml'), $reject->getRequestXml());
-        $this->assertXmlStringEqualsXmlFile($this->stubsPath('reject-delivery-note-response.xml'), $reject->getResponseXML());
+        $this->assertXmlStringEqualsXmlFile($this->stubsPath('reject-delivery-note-response.xml'), $reject->getResponseXml());
     }
 
     /**

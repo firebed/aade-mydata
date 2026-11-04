@@ -113,7 +113,7 @@ For example, `requestDocs()` is ERP only and `requestProviderDocs()` is provider
 $responses = $mydata->sendInvoices($invoice);
 
 $requestXml = $mydata->lastRequest()->getRequestXml();
-$responseXml = $mydata->lastRequest()->getResponseXML();
+$responseXml = $mydata->lastRequest()->getResponseXml();
 ```
 
 ## Any request

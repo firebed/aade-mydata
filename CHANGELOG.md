@@ -59,7 +59,8 @@ with find/replace rules.
 - `InvoiceHeader::setAa()` accepts `string|int`; `CancelInvoice`, `CancelDeliveryNote` and `CancelReceivingNote` accept `string|int` marks and VAT numbers.
 - `TaxTotals::getTaxCategory()` returns `?int`, the category code; `setTaxCategory()` still accepts the category enums.
 - `HasLabels::labels()` returns the labels keyed by case value.
-- Request XML is no longer pretty-printed by default; `getRequestXml()` and `getResponseXML()` format on demand.
+- Request XML is no longer pretty-printed by default; `getRequestXml()` and `getResponseXml()` format on demand.
+- `getResponseXML()` is spelled `getResponseXml()`, matching `getRequestXml()`. PHP method names are case-insensitive, so existing calls keep working.
 - `Connection::make()` and `MyData::connect()` default to the development environment.
 - `ModelCollection::push()` appends one item; `set()` with a list replaces the items.
 - Enums that can be resolved from a case name implement `Enums\TryFromName` (`DeliveryStatus`), which the casts fall back to.

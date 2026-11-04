@@ -50,7 +50,7 @@ class RequestDocsTest extends MyDataHttpTestCase
             $this->assertCount(4, $e->getErrors());
             $this->assertSame(402, $e->getCode());
             $this->assertStringStartsWith('402: At least one payment method detail must be of POS type', $e->getMessage());
-            $this->assertStringContainsString('<ResponseDoc', $request->getResponseXML());
+            $this->assertStringContainsString('<ResponseDoc', $request->getResponseXml());
         }
     }
 }

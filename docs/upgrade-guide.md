@@ -62,7 +62,7 @@ Version 6 needs PHP 8.3 or newer.
 - **`Invoice::getTaxesTotals()` returns `null`** when no taxes totals were added. Before, it returned an
   empty `TaxesTotals` that was not attached to the invoice.
 - **Empty wrapper elements are not written** to the XML (e.g. no `<paymentMethods/>`). The XML is no longer
-  pretty-printed by default (`getRequestXml()` / `getResponseXML()` format it on demand).
+  pretty-printed by default (`getRequestXml()` / `getResponseXml()` format it on demand).
 - **`TaxTotals::getTaxCategory()` returns `?int`** (the category code), and `HasLabels::labels()` returns
   `[value => label]`.
 - **`Connection::make()` / `MyData::connect()` default to the sandbox** unless you pass `'prod'`.

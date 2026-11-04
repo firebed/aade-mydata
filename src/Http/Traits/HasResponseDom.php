@@ -19,7 +19,7 @@ trait HasResponseDom
         return $this->responseDom;
     }
 
-    public function getResponseXML(bool $formatOutput = true): ?string
+    public function getResponseXml(bool $formatOutput = true): ?string
     {
         if ($this->responseDom === null) {
             return null;
@@ -42,7 +42,7 @@ trait HasResponseDom
     }
 
     /**
-     * Parse the response with the given reader and keep its DOM for getResponseXML(),
+     * Parse the response with the given reader and keep its DOM for getResponseXml(),
      * also when the reader finds myDATA's errors in it and throws ErrorResponseException.
      *
      * @template T of Model

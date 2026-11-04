@@ -129,7 +129,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
             $this->assertSame('807: Invalid QR', $e->getMessage());
             $this->assertSame(807, $e->getCode());
             $this->assertSame('807', $e->getErrors()->first()->getCode());
-            $this->assertStringContainsString('<ResponseDoc', $request->getResponseXML());
+            $this->assertStringContainsString('<ResponseDoc', $request->getResponseXml());
         }
     }
 
@@ -167,7 +167,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
     {
         $request = new RequestDeliveryNoteStatus;
 
-        $this->assertNull($request->getResponseXML());
+        $this->assertNull($request->getResponseXml());
     }
 
     /**
@@ -233,7 +233,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
         $request = new RequestDeliveryNoteStatus;
         $response = $request->handle(111111111111111);
 
-        $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-delivery-note-status-response-registered.xml'), $request->getResponseXML());
+        $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-delivery-note-status-response-registered.xml'), $request->getResponseXml());
 
         $this->assertEquals(111111111111111, $response->getInvoiceMark());
         $this->assertEquals(DeliveryStatus::REGISTERED, $response->getStatus());
@@ -251,7 +251,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
         $request = new RequestDeliveryNoteStatus;
         $response = $request->handle(111111111111111);
 
-        $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-delivery-note-status-response-in-transit.xml'), $request->getResponseXML());
+        $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-delivery-note-status-response-in-transit.xml'), $request->getResponseXml());
         $this->assertEquals(111111111111111, $response->getInvoiceMark());
         $this->assertEquals(DeliveryStatus::IN_TRANSIT, $response->getStatus());
         $this->assertEquals('2026-02-07T10:00:00Z', $response->getDispatchTimestamp());
@@ -273,7 +273,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
         $request = new RequestDeliveryNoteStatus;
         $response = $request->handle(111111111111111);
 
-        $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-delivery-note-status-response-delivered-by-carrier.xml'), $request->getResponseXML());
+        $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-delivery-note-status-response-delivered-by-carrier.xml'), $request->getResponseXml());
         $this->assertEquals(111111111111111, $response->getInvoiceMark());
         $this->assertEquals(DeliveryStatus::DELIVERED_BY_CARRIER, $response->getStatus());
         $this->assertEquals('2026-02-07T10:00:00Z', $response->getDispatchTimestamp());
@@ -296,7 +296,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
         $request = new RequestDeliveryNoteStatus;
         $response = $request->handle(111111111111111);
 
-        $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-delivery-note-status-response-rejected.xml'), $request->getResponseXML());
+        $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-delivery-note-status-response-rejected.xml'), $request->getResponseXml());
         $this->assertEquals(111111111111111, $response->getInvoiceMark());
         $this->assertEquals(DeliveryStatus::REJECTED, $response->getStatus());
         $this->assertEquals('2026-02-07T10:00:00Z', $response->getDispatchTimestamp());
@@ -325,7 +325,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
         $request = new RequestDeliveryNoteStatus;
         $response = $request->handle(111111111111111);
 
-        $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-delivery-note-status-response-completed.xml'), $request->getResponseXML());
+        $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-delivery-note-status-response-completed.xml'), $request->getResponseXml());
         $this->assertEquals(111111111111111, $response->getInvoiceMark());
         $this->assertEquals(DeliveryStatus::COMPLETED, $response->getStatus());
         $this->assertEquals('2026-02-07T10:00:00Z', $response->getDispatchTimestamp());
@@ -349,7 +349,7 @@ class RequestDeliveryNoteStatusTest extends DigitalGoodsMovementTestCase
         $request = new RequestDeliveryNoteStatus;
         $response = $request->handle(111111111111111);
 
-        $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-delivery-note-status-response-failed-delivery.xml'), $request->getResponseXML());
+        $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-delivery-note-status-response-failed-delivery.xml'), $request->getResponseXml());
         $this->assertEquals(111111111111111, $response->getInvoiceMark());
         $this->assertEquals(DeliveryStatus::FAILED_DELIVERY, $response->getStatus());
         $this->assertEquals('2026-02-07T10:00:00Z', $response->getDispatchTimestamp());

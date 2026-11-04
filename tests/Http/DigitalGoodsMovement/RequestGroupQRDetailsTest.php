@@ -80,7 +80,7 @@ class RequestGroupQRDetailsTest extends DigitalGoodsMovementTestCase
         $this->assertEquals('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url_1', $qrUrls[0]);
         $this->assertEquals('https://mydataapidev.aade.gr/TimologioQR/QRInfo?q=test_url_2', $qrUrls[1]);
 
-        $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-group-qr-details-response.xml'), $request->getResponseXML());
+        $this->assertXmlStringEqualsXmlFile($this->stubsPath('request-group-qr-details-response.xml'), $request->getResponseXml());
     }
 
     /**

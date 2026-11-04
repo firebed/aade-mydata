@@ -83,7 +83,7 @@ class GenerateGroupQrCodeTest extends DigitalGoodsMovementTestCase
         $this->assertEquals('Success', $response->getStatusCode());
 
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('generate-group-qr-code-request.xml'), $generate->getRequestXml());
-        $this->assertXmlStringEqualsXmlFile($this->stubsPath('generate-group-qr-code-response.xml'), $generate->getResponseXML());
+        $this->assertXmlStringEqualsXmlFile($this->stubsPath('generate-group-qr-code-response.xml'), $generate->getResponseXml());
     }
 
     /**
@@ -124,7 +124,7 @@ class GenerateGroupQrCodeTest extends DigitalGoodsMovementTestCase
             $this->fail('An ErrorResponseException was expected.');
         } catch (ErrorResponseException $e) {
             $this->assertSame('807: Invalid QR', $e->getMessage());
-            $this->assertStringContainsString('<ResponseDoc', $generate->getResponseXML());
+            $this->assertStringContainsString('<ResponseDoc', $generate->getResponseXml());
         }
     }
 }

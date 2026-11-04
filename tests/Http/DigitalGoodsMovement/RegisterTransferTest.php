@@ -90,6 +90,6 @@ class RegisterTransferTest extends DigitalGoodsMovementTestCase
         $this->assertFalse($response->first()->isFailed());
 
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('register-transfer-request.xml'), $registerTransfer->getRequestXml());
-        $this->assertXmlStringEqualsXmlFile($this->stubsPath('register-transfer-response.xml'), $registerTransfer->getResponseXML());
+        $this->assertXmlStringEqualsXmlFile($this->stubsPath('register-transfer-response.xml'), $registerTransfer->getResponseXml());
     }
 }

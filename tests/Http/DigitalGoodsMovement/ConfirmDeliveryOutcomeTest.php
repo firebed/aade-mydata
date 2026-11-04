@@ -85,6 +85,6 @@ class ConfirmDeliveryOutcomeTest extends DigitalGoodsMovementTestCase
         $this->assertFalse($response->first()->isFailed());
 
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('confirm-delivery-outcome-request.xml'), $confirm->getRequestXml());
-        $this->assertXmlStringEqualsXmlFile($this->stubsPath('confirm-delivery-outcome-response.xml'), $confirm->getResponseXML());
+        $this->assertXmlStringEqualsXmlFile($this->stubsPath('confirm-delivery-outcome-response.xml'), $confirm->getResponseXml());
     }
 }

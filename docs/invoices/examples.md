@@ -44,7 +44,7 @@ try {
     $responses = $request->handle($invoice);
 
     $requestXml = $request->getRequestXml();   // or $request->getRequestDom()
-    $responseXml = $request->getResponseXML(); // or $request->getResponseDom()
+    $responseXml = $request->getResponseXml(); // or $request->getResponseDom()
 
     $response = $responses->first();
     if ($response->isSuccessful()) {

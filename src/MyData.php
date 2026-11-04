@@ -79,7 +79,7 @@ use Firebed\AadeMyData\Testing\FakeGateway;
  * </pre>
  *
  * Every method builds the matching request, binds it to the connection and handles it.
- * The request object itself (e.g. for getRequestXml() / getResponseXML()) is available
+ * The request object itself (e.g. for getRequestXml() / getResponseXml()) is available
  * from lastRequest(), or build one yourself with request().
  */
 final class MyData

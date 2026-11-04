@@ -53,7 +53,7 @@ class GatewayTest extends MyDataHttpTestCase
         $this->assertNull($gateway->query);
         $this->assertStringContainsString('<InvoicesDoc', $gateway->body);
         $this->assertSame('400001', $responseDoc->first()->getInvoiceMark());
-        $this->assertStringContainsString('<invoiceMark>400001</invoiceMark>', $sendInvoices->getResponseXML());
+        $this->assertStringContainsString('<invoiceMark>400001</invoiceMark>', $sendInvoices->getResponseXml());
         $this->assertStringContainsString('<InvoicesDoc', $sendInvoices->getRequestXml());
     }
 

@@ -30,6 +30,7 @@ then run the verification steps at the end. The human-oriented guide is
 | `Firebed\AadeMyData\Models\TransportDetail` | removed | dropped by myDATA in v2.0.1 |
 | `XMLWriter::buildType()` | `XMLWriter::buildModel()` | only matters if you extend the writers |
 | `XMLReader::createType()` | `XMLReader::createModel()` | only matters if you extend the readers |
+| `getResponseXML()` | `getResponseXml()` | casing only: PHP method names are case-insensitive, so old calls still work; rename them to match the declaration |
 | docs folder `docs/types` | `docs/models` | links |
 
 Enum **case names** became descriptive and the old code-like names are gone (`PaymentType::CASH`
@@ -359,7 +360,7 @@ class TaxesTotals extends ModelCollection
 7. **Setting a single value on a list appends it; setting a list replaces it; setting `null` clears it.** `ModelCollection::set($key, $item)` appends (5.x replaced the list with `[$item]`).
 8. **`TaxTotals::getTaxCategory()` returns `?int`**, the code of the category (which enum it belongs to depends on `taxType`). `setTaxCategory()` still accepts the enums and stores their value. In 5.x the getter returned the enum you had set, or failed on values read from XML.
 9. **`HasLabels::labels()`** returns `[value => label, …]` instead of a list of single-entry arrays.
-10. **Request XML is not pretty-printed by default** (`toXml()`, the body sent to myDATA). `getRequestXml()` and `getResponseXML()` still format on demand. Less bytes on the wire, same content.
+10. **Request XML is not pretty-printed by default** (`toXml()`, the body sent to myDATA). `getRequestXml()` and `getResponseXml()` still format on demand. Less bytes on the wire, same content.
 11. **`Connection::make()` and `MyData::connect()` default to the sandbox** (`dev`); pass `'prod'` or `Environment::Production` explicitly.
 12. **The library runs with `declare(strict_types=1)`.** This only affects calls made *inside* the library; your own files keep their own mode. Setters that commonly received ints were widened (`InvoiceHeader::setAa(string|int)`, `CancelInvoice::handle(string|int $mark, string|int|null $entityVatNumber)`).
 13. **`Environment`**: `MyDataRequest::setEnvironment()`/`init()` accept `'dev'`/`'prod'` (any case) or the new `Firebed\AadeMyData\Http\Environment` enum; any other string throws `InvalidArgumentException` (5.x silently treated it as dev).

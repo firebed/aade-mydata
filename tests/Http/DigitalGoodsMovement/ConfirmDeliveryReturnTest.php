@@ -65,6 +65,6 @@ class ConfirmDeliveryReturnTest extends DigitalGoodsMovementTestCase
         $this->assertSame(444444444444444, $response->first()->getDeliveryReturnMark());
 
         $this->assertXmlStringEqualsXmlFile($this->stubsPath('confirm-delivery-return-request.xml'), $confirm->getRequestXml());
-        $this->assertXmlStringEqualsXmlFile($this->stubsPath('confirm-delivery-return-response.xml'), $confirm->getResponseXML());
+        $this->assertXmlStringEqualsXmlFile($this->stubsPath('confirm-delivery-return-response.xml'), $confirm->getResponseXml());
     }
 }
