@@ -13,6 +13,8 @@ use Generator;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use Psr\Log\LoggerInterface;
+use Throwable;
 
 /**
  * Base of every myDATA request. A request is carried over a Connection: the one given
@@ -185,6 +187,51 @@ abstract class MyDataRequest
     }
 
     /**
+     * Log every request, retry and failure of the default connection to a PSR-3 logger,
+     * in place of the logger set before; null stops logging.
+     */
+    public static function setLogger(?LoggerInterface $logger, bool $withBodies = false): void
+    {
+        self::$default = self::defaultConnection()->withLogger($logger, $withBodies);
+    }
+
+    /**
+     * Call the listener after every request of the default connection, see Connection::afterSending().
+     *
+     * @param  callable(Exchange): void  $listener
+     */
+    public static function afterSending(callable $listener, ?string $key = null): void
+    {
+        self::$default = self::defaultConnection()->afterSending($listener, $key);
+    }
+
+    /**
+     * Call the listener before every retry of the default connection, see Connection::beforeRetry().
+     *
+     * @param  callable(Retry): void  $listener
+     */
+    public static function beforeRetry(callable $listener, ?string $key = null): void
+    {
+        self::$default = self::defaultConnection()->beforeRetry($listener, $key);
+    }
+
+    /**
+     * Remove a listener of the default connection by key or by itself, see Connection::withoutListener().
+     */
+    public static function removeListener(string|callable $listener): void
+    {
+        self::$default = self::defaultConnection()->withoutListener($listener);
+    }
+
+    /**
+     * Remove every listener of the default connection, see Connection::withoutListeners().
+     */
+    public static function removeListeners(): void
+    {
+        self::$default = self::defaultConnection()->withoutListeners();
+    }
+
+    /**
      * Carry every request through this gateway, whatever its connection or usingGateway()
      * says, until called with null. MyData::fake() uses it, so that no request of the
      * code under test reaches myDATA.
@@ -280,7 +327,7 @@ abstract class MyDataRequest
      */
     protected function get(array $query): string
     {
-        return self::ensureXml($this->resolveGateway()->get($this, $query));
+        return $this->transmit('GET', $query);
     }
 
     /**
@@ -290,7 +337,31 @@ abstract class MyDataRequest
      */
     protected function post(?array $query = null, ?string $body = null): string
     {
-        return self::ensureXml($this->resolveGateway()->post($this, $query, $body));
+        return $this->transmit('POST', $query, $body);
+    }
+
+    /**
+     * Carries the request through its gateway and reports the outcome to the
+     * connection's listeners (Connection::afterSending()).
+     *
+     * @param  'GET'|'POST'  $method
+     * @param  array<string, mixed>|null  $query
+     *
+     * @throws MyDataException
+     */
+    private function transmit(string $method, ?array $query, ?string $body = null): string
+    {
+        $gateway = $this->resolveGateway();
+        $start = hrtime(true);
+        $response = $error = null;
+
+        try {
+            return $response = self::ensureXml($method === 'GET' ? $gateway->get($this, $query ?? []) : $gateway->post($this, $query, $body));
+        } catch (Throwable $error) {
+            throw $error;
+        } finally {
+            $this->connection()->sent(new Exchange($this, $method, $this->getUrl(), $query ?? [], $body, $response, $error, (hrtime(true) - $start) / 1e9));
+        }
     }
 
     /**

@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Firebed\AadeMyData\Http;
 
+use Closure;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Promise\PromiseInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
+use Throwable;
 
 /**
  * Everything a request needs to reach myDATA: the credentials, the environment, the
@@ -40,6 +43,9 @@ final class Connection
      * @param  int  $retryDelay  Delay before the first retry in milliseconds; it doubles on every further retry
      * @param  HandlerStack<Handler>|null  $handler  A Guzzle handler stack, e.g. built on a MockHandler in tests; null uses Guzzle's default
      * @param  int  $rateLimitWait  Longest total wait, in seconds, to sit out a 429 before giving up (0 = never wait)
+     * @param  array<array-key, callable(Exchange): void>  $afterSending  Listeners, under their key when given one
+     * @param  array<array-key, callable(Retry): void>  $beforeRetry  Listeners, under their key when given one
+     * @param  ExchangeLogger|null  $logger  The PSR-3 logger of withLogger(), kept apart from the listeners so that it is replaced, not added
      */
     public function __construct(
         private string $userId = '',
@@ -53,6 +59,9 @@ final class Connection
         private ?HandlerStack $handler = null,
         private ?Throttle $throttle = null,
         private int $rateLimitWait = 0,
+        private array $afterSending = [],
+        private array $beforeRetry = [],
+        private ?ExchangeLogger $logger = null,
     ) {}
 
     public static function make(string $userId, string $subscriptionKey, Environment|string $environment = Environment::Development, bool $provider = false): self
@@ -186,6 +195,86 @@ final class Connection
     }
 
     /**
+     * Call the listener after every request this connection sends, answered or failed, with
+     * the request and response XML and the time it took (e.g. for an audit log). It is
+     * called once per request, after its retries. A listener that throws is skipped: it
+     * never hides myDATA's answer (and its marks) or the failure from the caller.
+     *
+     * Listeners add up. A listener given a key replaces the one with the same key, so code
+     * that runs more than once (a worker's boot, a queue job) registers it only once;
+     * withoutListener() removes it.
+     *
+     * @param  callable(Exchange): void  $listener
+     */
+    public function afterSending(callable $listener, ?string $key = null): self
+    {
+        $copy = clone $this;
+        $key === null ? $copy->afterSending[] = $listener : $copy->afterSending[$key] = $listener;
+
+        return $copy;
+    }
+
+    /**
+     * Call the listener before every retry of a request of this connection, with the
+     * failure and the delay before the next attempt (Connection::withRetries(), withRateLimitWait()).
+     * A listener that throws is skipped and the request is still retried. A key replaces the
+     * listener with the same key, as with afterSending().
+     *
+     * @param  callable(Retry): void  $listener
+     */
+    public function beforeRetry(callable $listener, ?string $key = null): self
+    {
+        $copy = clone $this;
+        $key === null ? $copy->beforeRetry[] = $listener : $copy->beforeRetry[$key] = $listener;
+
+        return $copy;
+    }
+
+    /**
+     * Without the afterSending() and beforeRetry() listeners registered under this key, or
+     * without this listener (the same closure or callable that was registered).
+     *
+     * @param  string|callable  $listener  A key; a string is always taken as a key, not as a function name
+     */
+    public function withoutListener(string|callable $listener): self
+    {
+        $keep = is_string($listener)
+            ? fn (mixed $registered, int|string $key) => $key !== $listener
+            : fn (mixed $registered) => $registered !== $listener;
+
+        $copy = clone $this;
+        $copy->afterSending = array_filter($copy->afterSending, $keep, ARRAY_FILTER_USE_BOTH);
+        $copy->beforeRetry = array_filter($copy->beforeRetry, $keep, ARRAY_FILTER_USE_BOTH);
+
+        return $copy;
+    }
+
+    /**
+     * Without any afterSending() or beforeRetry() listener. The logger stays; withLogger(null) removes it.
+     */
+    public function withoutListeners(): self
+    {
+        $copy = clone $this;
+        $copy->afterSending = [];
+        $copy->beforeRetry = [];
+
+        return $copy;
+    }
+
+    /**
+     * Log every request, retry and failure of this connection to a PSR-3 logger, in place
+     * of the logger given before; null stops logging. The credentials are never logged;
+     * the request and response XML and the VAT numbers of the query only with $withBodies.
+     */
+    public function withLogger(?LoggerInterface $logger, bool $withBodies = false): self
+    {
+        $copy = clone $this;
+        $copy->logger = $logger === null ? null : new ExchangeLogger($logger, $withBodies);
+
+        return $copy;
+    }
+
+    /**
      * The component that carries the requests. Null restores the default GuzzleGateway.
      */
     public function withGateway(?Gateway $gateway): self
@@ -276,6 +365,44 @@ final class Connection
     public function rateLimitWait(): int
     {
         return $this->rateLimitWait;
+    }
+
+    /**
+     * Hands a finished request to the afterSending() listeners.
+     *
+     * @internal Called by MyDataRequest
+     */
+    public function sent(Exchange $exchange): void
+    {
+        self::notify(fn () => $this->logger?->sent($exchange));
+
+        foreach ($this->afterSending as $listener) {
+            self::notify(fn () => $listener($exchange));
+        }
+    }
+
+    /**
+     * Hands a retry to the beforeRetry() listeners. A custom Gateway that retries calls it too.
+     */
+    public function retrying(Retry $retry): void
+    {
+        self::notify(fn () => $this->logger?->retrying($retry));
+
+        foreach ($this->beforeRetry as $listener) {
+            self::notify(fn () => $listener($retry));
+        }
+    }
+
+    /**
+     * Calls a listener, ignoring its failure: a broken audit log or log sink must not turn a
+     * request myDATA accepted into a failure the caller would send again.
+     */
+    private static function notify(Closure $call): void
+    {
+        try {
+            $call();
+        } catch (Throwable) {
+        }
     }
 
     public function gateway(): Gateway

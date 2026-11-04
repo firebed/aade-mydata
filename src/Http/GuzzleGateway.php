@@ -93,8 +93,10 @@ class GuzzleGateway implements Gateway
                 $delay = $this->delayBefore($attempt, $waited, $retryAfter, $e, $connection);
 
                 if ($delay === null) {
-                    $this->fail($e, $body, $retryAfter);
+                    throw $this->exception($e, $body, $retryAfter);
                 }
+
+                $connection->retrying(new Retry($request, $attempt + 1, $delay, $this->exception($e, $body, $retryAfter)));
 
                 $waited += $delay;
                 $this->sleep($delay);
@@ -175,35 +177,33 @@ class GuzzleGateway implements Gateway
     /**
      * Maps a failed transfer to the matching MyDataException: timeout, unreachable host,
      * authentication, throttling, an error document, or any other HTTP error.
-     *
-     * @throws MyDataAuthenticationException|MyDataException
      */
-    protected function fail(GuzzleException $exception, string $body, ?int $retryAfter): never
+    protected function exception(GuzzleException $exception, string $body, ?int $retryAfter): MyDataException
     {
         if ($this->isTimeout($exception)) {
-            throw new MyDataTimeoutException(previous: $exception);
+            return new MyDataTimeoutException(previous: $exception);
         }
 
         // No response at all (a wrong endpoint, DNS failure, refused connection or
         // connect timeout): myDATA is unreachable
         if ($exception->getCode() === 0) {
-            throw new MyDataConnectionException($exception->getCode(), $exception);
+            return new MyDataConnectionException($exception->getCode(), $exception);
         }
 
         // Authentication failed, or the user is not authorized for the requested
         // resource. Keep the reason myDATA gives so the two can be told apart.
         if ($exception->getCode() === 401) {
-            throw new MyDataAuthenticationException(401, $exception, $this->reason($body));
+            return new MyDataAuthenticationException(401, $exception, $this->reason($body));
         }
 
         // myDATA throttled the subscription key; it says how long to wait
         if ($exception->getCode() === 429) {
-            throw new RateLimitExceededException($this->reason($body) ?? $exception->getMessage(), 429, $exception, $retryAfter);
+            return new RateLimitExceededException($this->reason($body) ?? $exception->getMessage(), 429, $exception, $retryAfter);
         }
 
         // myDATA can also answer a bad request with an error document (e.g. HTTP 400).
         // The HTTP status stays the exception code, as it was before the errors were read.
-        throw ErrorResponseException::fromXml($body, $exception->getCode(), $exception)
+        return ErrorResponseException::fromXml($body, $exception->getCode(), $exception)
             ?? new TransmissionFailedException($body ?: $exception->getMessage(), $exception->getCode(), $exception);
     }
 

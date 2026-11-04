@@ -18,7 +18,8 @@
     "php": "^8.3",
     "ext-dom": "*",
     "ext-libxml": "*",
-    "guzzlehttp/guzzle": "^7.8 || ^8.0"
+    "guzzlehttp/guzzle": "^7.8 || ^8.0",
+    "psr/log": "^2.0 || ^3.0"
   },
   "require-dev": {
     "fakerphp/faker": "^1.23",
