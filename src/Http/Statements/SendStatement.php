@@ -14,6 +14,8 @@ use Firebed\AadeMyData\Xml\Statements\StatementResponseDocReader;
 
 class SendStatement extends MyDataXmlRequest
 {
+    protected const ?string SCHEMA = 'SendStatement';
+
     /**
      * Η κλήση της μεθόδου SendStatement είναι διαθέσιμη μόνο για πιστοποιημένους παρόχους και αποστέλει
      * μια νέα δήλωση.

@@ -19,6 +19,8 @@ use Firebed\AadeMyData\Xml\ResponseDocReader;
  */
 class SendPaymentsMethod extends MyDataXmlRequest
 {
+    protected const ?string SCHEMA = 'paymentMethods';
+
     private ?PaymentMethodsDoc $paymentMethodsDoc = null;
 
     /**

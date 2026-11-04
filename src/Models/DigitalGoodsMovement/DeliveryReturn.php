@@ -4,19 +4,16 @@ declare(strict_types=1);
 
 namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
-use Firebed\AadeMyData\Models\HasSchemaValidation;
-use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\Model;
 use Firebed\AadeMyData\Models\ValidatesSchema;
 use Firebed\AadeMyData\Xml\DigitalGoodsMovement\DeliveryReturnWriter;
+use Firebed\AadeMyData\Xml\Schema;
 
 /**
  * @version 2.0.2
  */
 class DeliveryReturn extends Model implements ValidatesSchema
 {
-    use HasSchemaValidation;
-
     protected array $expectedOrder = [
         'qrUrl',
     ];
@@ -59,6 +56,6 @@ class DeliveryReturn extends Model implements ValidatesSchema
     {
         $xml = (new DeliveryReturnWriter)->asXml($this);
 
-        return $this->validateSchema($xml, 'ConfirmDeliveryReturn-'.Invoice::VERSION.'.xsd');
+        return Schema::validate($xml, 'ConfirmDeliveryReturn');
     }
 }

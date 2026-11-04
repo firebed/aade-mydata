@@ -14,6 +14,8 @@ use Firebed\AadeMyData\Xml\DigitalGoodsMovement\TransportWriter;
 
 class RegisterTransfer extends MyDataXmlRequest
 {
+    protected const ?string SCHEMA = 'RegisterTransfer';
+
     /**
      * 1. Η μέθοδος καλείται από τον μεταφορέα για να δηλώσει την παραλαβή των αγαθών
      *    και την έναρξη της διακίνησης, ή την παραλαβή από προηγούμενο μεταφορέα (μεταφόρτωση).

@@ -4,19 +4,16 @@ declare(strict_types=1);
 
 namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
-use Firebed\AadeMyData\Models\HasSchemaValidation;
-use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\Model;
 use Firebed\AadeMyData\Models\ValidatesSchema;
 use Firebed\AadeMyData\Xml\DigitalGoodsMovement\TransportWriter;
+use Firebed\AadeMyData\Xml\Schema;
 
 /**
  * @version 2.0.1
  */
 class Transport extends Model implements ValidatesSchema
 {
-    use HasSchemaValidation;
-
     protected array $expectedOrder = [
         'qrUrl',
         'transportDetail',
@@ -88,6 +85,6 @@ class Transport extends Model implements ValidatesSchema
     {
         $xml = (new TransportWriter)->asXml($this);
 
-        return $this->validateSchema($xml, 'RegisterTransfer-'.Invoice::VERSION.'.xsd');
+        return Schema::validate($xml, 'RegisterTransfer');
     }
 }

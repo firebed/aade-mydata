@@ -24,6 +24,8 @@ use Firebed\AadeMyData\Xml\DigitalGoodsMovement\ResponseDocReader;
  */
 class ConfirmDeliveryReturn extends MyDataXmlRequest
 {
+    protected const ?string SCHEMA = 'ConfirmDeliveryReturn';
+
     /**
      * @throws MyDataAuthenticationException
      * @throws MyDataException

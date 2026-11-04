@@ -187,6 +187,14 @@ abstract class MyDataRequest
     }
 
     /**
+     * Validate the XML of every document request of the default connection against the myDATA XSD before sending it.
+     */
+    public static function setValidation(bool $validate = true): void
+    {
+        self::$default = self::defaultConnection()->withValidation($validate);
+    }
+
+    /**
      * Log every request, retry and failure of the default connection to a PSR-3 logger,
      * in place of the logger set before; null stops logging.
      */

@@ -13,6 +13,8 @@ use Firebed\AadeMyData\Xml\ResponseDocReader;
 
 class SendExpensesClassification extends MyDataXmlRequest
 {
+    protected const ?string SCHEMA = 'expensesClassification';
+
     /**
      * <ul>
      * <li>Το πεδίο transactionMode όταν παίρνει την τιμή 1 υποδηλώνει απόρριψη του

@@ -43,6 +43,7 @@ final class Connection
      * @param  int  $retryDelay  Delay before the first retry in milliseconds; it doubles on every further retry
      * @param  HandlerStack<Handler>|null  $handler  A Guzzle handler stack, e.g. built on a MockHandler in tests; null uses Guzzle's default
      * @param  int  $rateLimitWait  Longest total wait, in seconds, to sit out a 429 before giving up (0 = never wait)
+     * @param  bool  $validate  Validate the request XML against the myDATA XSD before sending it
      * @param  array<array-key, callable(Exchange): void>  $afterSending  Listeners, under their key when given one
      * @param  array<array-key, callable(Retry): void>  $beforeRetry  Listeners, under their key when given one
      * @param  ExchangeLogger|null  $logger  The PSR-3 logger of withLogger(), kept apart from the listeners so that it is replaced, not added
@@ -59,6 +60,7 @@ final class Connection
         private ?HandlerStack $handler = null,
         private ?Throttle $throttle = null,
         private int $rateLimitWait = 0,
+        private bool $validate = false,
         private array $afterSending = [],
         private array $beforeRetry = [],
         private ?ExchangeLogger $logger = null,
@@ -195,10 +197,25 @@ final class Connection
     }
 
     /**
+     * Validate the XML of every request that sends a document (SendInvoices,
+     * SendIncomeClassification, RegisterTransfer, …) against the myDATA XSD before
+     * sending it. An invalid document throws SchemaValidationException, which names
+     * the failing fields, instead of costing a call that myDATA answers with an error.
+     */
+    public function withValidation(bool $validate = true): self
+    {
+        $copy = clone $this;
+        $copy->validate = $validate;
+
+        return $copy;
+    }
+
+    /**
      * Call the listener after every request this connection sends, answered or failed, with
      * the request and response XML and the time it took (e.g. for an audit log). It is
-     * called once per request, after its retries. A listener that throws is skipped: it
-     * never hides myDATA's answer (and its marks) or the failure from the caller.
+     * called once per request, after its retries; a request that fails validation is never
+     * sent, so it is not reported. A listener that throws is skipped: it never hides
+     * myDATA's answer (and its marks) or the failure from the caller.
      *
      * Listeners add up. A listener given a key replaces the one with the same key, so code
      * that runs more than once (a worker's boot, a queue job) registers it only once;
@@ -365,6 +382,11 @@ final class Connection
     public function rateLimitWait(): int
     {
         return $this->rateLimitWait;
+    }
+
+    public function validatesRequests(): bool
+    {
+        return $this->validate;
     }
 
     /**

@@ -8,6 +8,7 @@ use Firebed\AadeMyData\Casts\Arr;
 use Firebed\AadeMyData\Traits\HasFactory;
 use Firebed\AadeMyData\Xml\Dom;
 use Firebed\AadeMyData\Xml\PaymentMethodsDocWriter;
+use Firebed\AadeMyData\Xml\Schema;
 
 /**
  * @version 1.0.8
@@ -15,7 +16,6 @@ use Firebed\AadeMyData\Xml\PaymentMethodsDocWriter;
 class PaymentMethod extends Model
 {
     use HasFactory;
-    use HasSchemaValidation;
 
     protected array $expectedOrder = [
         'invoiceMark',
@@ -144,6 +144,6 @@ class PaymentMethod extends Model
     {
         $xml = (new PaymentMethodsDocWriter)->asXML(new PaymentMethodsDoc($this));
 
-        return $this->validateSchema($xml, 'paymentMethods-'.Invoice::VERSION.'.xsd');
+        return Schema::validate($xml, 'paymentMethods');
     }
 }

@@ -13,6 +13,8 @@ use Firebed\AadeMyData\Xml\ResponseDocReader;
 
 class SendInvoices extends MyDataXmlRequest
 {
+    protected const ?string SCHEMA = 'InvoicesDoc';
+
     private ?InvoicesDoc $invoicesDoc = null;
 
     /**

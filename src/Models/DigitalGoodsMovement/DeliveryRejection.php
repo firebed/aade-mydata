@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
-use Firebed\AadeMyData\Models\HasSchemaValidation;
-use Firebed\AadeMyData\Models\Invoice;
 use Firebed\AadeMyData\Models\Model;
 use Firebed\AadeMyData\Models\ValidatesSchema;
 use Firebed\AadeMyData\Xml\DigitalGoodsMovement\DeliveryRejectionWriter;
+use Firebed\AadeMyData\Xml\Schema;
 
 class DeliveryRejection extends Model implements ValidatesSchema
 {
-    use HasSchemaValidation;
-
     protected array $expectedOrder = [
         'qrUrl',
         'invoiceMark',
@@ -100,7 +97,7 @@ class DeliveryRejection extends Model implements ValidatesSchema
     {
         $xml = (new DeliveryRejectionWriter)->asXml($this);
 
-        return $this->validateSchema($xml, 'RejectDeliveryNote-'.Invoice::VERSION.'.xsd');
+        return Schema::validate($xml, 'RejectDeliveryNote');
 
     }
 }

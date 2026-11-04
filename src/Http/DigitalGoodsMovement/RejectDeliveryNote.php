@@ -15,6 +15,8 @@ use Firebed\AadeMyData\Xml\DigitalGoodsMovement\ResponseDocReader;
 
 class RejectDeliveryNote extends MyDataXmlRequest
 {
+    protected const ?string SCHEMA = 'RejectDeliveryNote';
+
     /**
      * 1. Η μέθοδος καλείται αποκλειστικά από τον Λήπτη για να δηλώσει την ολική
      * απόρριψη των ειδών του Δελτίου Αποστολής.

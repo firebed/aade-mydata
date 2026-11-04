@@ -16,12 +16,12 @@ use Firebed\AadeMyData\Models\DigitalGoodsMovement\PackingsDeclaration;
 use Firebed\AadeMyData\Traits\HasFactory;
 use Firebed\AadeMyData\Xml\Dom;
 use Firebed\AadeMyData\Xml\InvoicesDocWriter;
+use Firebed\AadeMyData\Xml\Schema;
 
 class Invoice extends Model
 {
     use HasExtraFields;
     use HasFactory;
-    use HasSchemaValidation;
 
     public const string VERSION = 'v2.0.2';
 
@@ -466,6 +466,6 @@ class Invoice extends Model
     {
         $xml = (new InvoicesDocWriter)->asXML(new InvoicesDoc($this));
 
-        return $this->validateSchema($xml, 'InvoicesDoc-'.self::VERSION.'.xsd');
+        return Schema::validate($xml, 'InvoicesDoc');
     }
 }

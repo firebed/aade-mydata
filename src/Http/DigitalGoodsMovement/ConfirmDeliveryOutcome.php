@@ -17,6 +17,8 @@ use Firebed\AadeMyData\Xml\DigitalGoodsMovement\ResponseDocReader;
  */
 class ConfirmDeliveryOutcome extends MyDataXmlRequest
 {
+    protected const ?string SCHEMA = 'ConfirmDeliveryOutcome';
+
     /**
      * 1. Η μέθοδος καλείται είτε από τον Μεταφορέα για να δηλώσει το αποτέλεσμα της
      * παράδοσης, είτε από τον Λήπτη για να επιβεβαιώσει την παραλαβή.

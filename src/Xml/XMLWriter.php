@@ -115,6 +115,10 @@ abstract class XMLWriter
      */
     protected function createElement(string $nodeName, ?string $nodeValue = null, ?string $namespaceURI = null): DOMElement
     {
+        // An element without a namespace of its own is in the document's default namespace,
+        // as it reads once serialized, so the DOM validates against the XSD as it is
+        $namespaceURI ??= $this->document->documentElement?->namespaceURI;
+
         // Create the element (with or without namespace)
         $newNode = $namespaceURI
             ? $this->document->createElementNS($namespaceURI, $nodeName)

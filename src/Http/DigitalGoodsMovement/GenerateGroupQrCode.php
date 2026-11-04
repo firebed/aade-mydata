@@ -17,6 +17,8 @@ use Firebed\AadeMyData\Xml\DigitalGoodsMovement\GroupQrCodeWriter;
  */
 class GenerateGroupQrCode extends MyDataXmlRequest
 {
+    protected const ?string SCHEMA = 'GenerateGroupQRCode';
+
     protected string $action = 'GenerateGroupQRCode';
 
     /**
