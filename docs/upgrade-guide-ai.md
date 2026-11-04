@@ -424,7 +424,9 @@ $doc->findByUid($uid);                                                 // every 
 (new RequestProviderDocs)->invoices('123456789', $lastMark);           // Generator over every page
 $mydata->requestReceiverInfo('123456789')->getReceptionProviders()?->vatNumbers();
 $mydata->sendUnsignedInvoices($invoices);                              // invoices under issue whose Provider's Signature was never
-                                                                       // matched (Α.1155/2023, «Υπό Έκδοση»); answers a mark, no auth code
+                                                                       // matched with an invoice and payment (Α.1155/2023 art. 4, 4A,
+                                                                       // «Υπό Έκδοση»); a payment that did not complete is only recorded
+                                                                       // (Α.1160/2025 art. 3 par. 2γ); answers a mark, no auth code
 
 $response->getDuplicate();       // ?Duplicate{uid, mark: int, authenticationCode: ?string} from error 228
 $response->getDuplicate()?->toResponse($index);   // the successful Response it stands for (no qrUrl)
