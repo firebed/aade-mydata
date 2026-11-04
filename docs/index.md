@@ -22,6 +22,9 @@
 | Περιγραφή λειτουργιών     | SendExpensesClassification            | http/send-expenses-classification       |
 | Περιγραφή λειτουργιών     | CancelDeliveryNote                    | http/cancel-delivery-note               |
 | Περιγραφή λειτουργιών     | DigitalGoodsMovement                  | http/digital-goods-movement             |
+| Περιγραφή λειτουργιών     | RequestProviderDocs (πάροχοι)         | http/request-provider-docs              |
+| Περιγραφή λειτουργιών     | RequestReceiverInfo (πάροχοι)         | http/request-receiver-info              |
+| Περιγραφή λειτουργιών     | SendUnsignedInvoices (πάροχοι)        | http/send-unsigned-invoices             |
 | Παραδείγματα παραστατικών | Παραδείγματα                          | invoices/examples                       |
 | Παραδείγματα παραστατικών | Τιμολόγιο Πώλησης                     | invoices/sale-invoice                   |
 | Παραδείγματα παραστατικών | Τιμολόγιο Παροχής                     | invoices/service-invoice                |

@@ -29,6 +29,7 @@ with find/replace rules.
 - `MyDataRequest` keeps its static configuration API, but it now configures a `Connection` object (`MyDataRequest::defaultConnection()`); the private static properties are gone. The environment must be `dev` or `prod` (or the `Environment` enum).
 - `XMLWriter::buildType()` is `buildModel()`, `XMLReader::createType()` is `createModel()`.
 - The docs folder `docs/types` is `docs/models`.
+- `RequestDocs` and `RequestTransmittedDocs` are ERP-only and throw `UnsupportedChannelException` on a provider connection, where they sent the ERP parameters and read the wrong document. Providers use `RequestProviderDocs`.
 
 ### Added
 
@@ -46,6 +47,8 @@ with find/replace rules.
 - Listeners and logging: `Connection::afterSending()` receives an `Http\Exchange` per request (request and response XML or the exception, duration), `Connection::beforeRetry()` an `Http\Retry` per retry, and `Connection::withLogger()` writes both to a PSR-3 logger without credentials, and without the XML and the query's VAT numbers unless `withBodies: true`; a second `withLogger()` replaces the first, `null` removes it. A listener that throws is skipped, so it never hides myDATA's answer or the failure. A listener given a `key` replaces the one with the same key; `Connection::withoutListener($keyOrListener)` and `withoutListeners()` remove them. Static: `MyDataRequest::afterSending()`, `beforeRetry()`, `setLogger()`, `removeListener()`, `removeListeners()`.
 - `MyDataRequest::action()` (the myDATA action, e.g. `'SendInvoices'`), `Xml\Schema` (XSD validation), `Xml\ModelWriter` (any model as XML).
 - Dependency: `psr/log` (`^2.0 || ^3.0`).
+- Provider channel: `RequestProviderDocs` (myDATA's provider `RequestTransmittedDocs`, by `issuervat` and `mark`) answers a `RequestedProviderDoc` of `ProviderInvoice` (issuer VAT, mark, uid, authentication code) with `pages()`, `invoices()` and `findByUid()`; `RequestReceiverInfo` answers a `ReceiverInfoDoc` (reception providers and emails); `SendUnsignedInvoices` sends the providers signatures of invoices under issue that were not issued. `MyData::requestProviderDocs()`, `requestReceiverInfo()`, `sendUnsignedInvoices()`.
+- `Response::getDuplicate()` reads error 228 ("It has already been sent for another invoice") into a `Duplicate` (uid, mark, and the authentication code once myDATA has stored the invoice), and `Duplicate::toResponse()` builds the successful response it stands for. `Response::getReceptionProviders()` reads the providers myDATA names in a provider response.
 
 ### Changed
 

@@ -327,6 +327,32 @@ try {
 | [SendExpensesClassification](http://docs.invoicemaker.gr/http/send-expenses-classification) | :white_check_mark: |
 | [CancelDeliveryNote](http://docs.invoicemaker.gr/http/cancel-delivery-note) (Για παρόχους)  | :white_check_mark: |
 | [CancelReceivingNote](http://docs.invoicemaker.gr/http/cancel-receiving-note) (Για παρόχους) | :white_check_mark: |
+| [RequestProviderDocs](http://docs.invoicemaker.gr/http/request-provider-docs) (Για παρόχους) | :white_check_mark: |
+| [RequestReceiverInfo](http://docs.invoicemaker.gr/http/request-receiver-info) (Για παρόχους) | :white_check_mark: |
+| [SendUnsignedInvoices](http://docs.invoicemaker.gr/http/send-unsigned-invoices) (Για παρόχους) | :white_check_mark: |
+
+### Provider channel
+
+The provider channel has its own search, `RequestProviderDocs` (myDATA's provider `RequestTransmittedDocs`): for one
+issuer it lists the mark, uid and authentication code of every invoice the provider transmitted after a mark. The ERP
+`RequestDocs` and `RequestTransmittedDocs` throw `UnsupportedChannelException` on a provider connection.
+
+When an answer is lost (a timeout) and the invoice is sent again, myDATA rejects the resend with error 228 and names
+the invoice it already holds. `Response::getDuplicate()` reads it:
+
+```php
+$response = $mydata->sendInvoices($invoice)->first();
+
+if ($duplicate = $response->getDuplicate()) {
+    $duplicate->mark;                // the mark of the invoice myDATA holds
+    $duplicate->authenticationCode;  // null until myDATA has stored it, which can take hours
+    $duplicate->toResponse();        // the successful Response it stands for (without the qrUrl, which myDATA never repeats)
+}
+```
+
+myDATA stores submissions from a queue, so the search lists an invoice only once it is stored, possibly hours after
+it was accepted. Two submissions sent at the same moment can both be accepted (same uid, two marks): `findByUid()`
+returns every mark of a uid. A resend dated a past day is rejected for its issue date (error 238), never as a duplicate.
 
 ## Digital Goods Movement (Ψηφιακή Διακίνηση Αγαθών)
 

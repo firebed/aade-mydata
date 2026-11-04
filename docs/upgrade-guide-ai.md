@@ -360,6 +360,7 @@ class TaxesTotals extends ModelCollection
 11. **`Connection::make()` and `MyData::connect()` default to the sandbox** (`dev`); pass `'prod'` or `Environment::Production` explicitly.
 12. **The library runs with `declare(strict_types=1)`.** This only affects calls made *inside* the library; your own files keep their own mode. Setters that commonly received ints were widened (`InvoiceHeader::setAa(string|int)`, `CancelInvoice::handle(string|int $mark, string|int|null $entityVatNumber)`).
 13. **`Environment`**: `MyDataRequest::setEnvironment()`/`init()` accept `'dev'`/`'prod'` (any case) or the new `Firebed\AadeMyData\Http\Environment` enum; any other string throws `InvalidArgumentException` (5.x silently treated it as dev).
+14. **`RequestDocs` / `RequestTransmittedDocs` are ERP-only.** On a provider connection (`asProvider()`, `init(..., true)`) they throw `UnsupportedChannelException`. Replace provider calls with `RequestProviderDocs::handle(string $issuerVat, string|int $mark = 0, ?string $nextPartitionKey = null, ?string $nextRowKey = null): RequestedProviderDoc` (or `MyData::requestProviderDocs()`). It returns `ProviderInvoice` entries (`getIssuerVAT()`, `getInvoiceProviderMark(): ?int`, `getInvoiceUid()`, `getAuthenticationCode()`), not invoices.
 
 ## 5. New APIs you may adopt
 
@@ -410,6 +411,24 @@ foreach ((new RequestTransmittedDocs)->invoices('0') as $invoice) { /* every Inv
 (new RequestVatInfo)->pages($from, $to);    // RequestedVatInfo pages
 (new RequestE3Info)->pages($from, $to);     // RequestedE3Info pages
 ```
+
+### Provider channel
+
+```php
+$doc = $mydata->requestProviderDocs('123456789', mark: $lastMark);     // RequestedProviderDoc, provider only
+$doc->getInvoices();                                                   // list<ProviderInvoice>
+$doc->findByUid($uid);                                                 // every mark of a uid (2+ = registered twice)
+(new RequestProviderDocs)->invoices('123456789', $lastMark);           // Generator over every page
+$mydata->requestReceiverInfo('123456789')->getReceptionProviders()?->vatNumbers();
+$mydata->sendUnsignedInvoices($invoices);                              // providers signatures of unissued invoices, no mark
+
+$response->getDuplicate();       // ?Duplicate{uid, mark: int, authenticationCode: ?string} from error 228
+$response->getDuplicate()?->toResponse($index);   // the successful Response it stands for (no qrUrl)
+$response->getReceptionProviders();               // ?ReceptionProviders
+```
+
+A provider that parses error 228 itself (regex on "It has already been sent for another invoice") can switch to
+`getDuplicate()`. The authentication code is null while myDATA has not stored the invoice yet.
 
 ### Faking myDATA in tests
 

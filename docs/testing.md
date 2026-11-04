@@ -35,6 +35,8 @@ public function test_an_order_issues_an_invoice(): void
 | `SendPaymentsMethod`                                                                            | Επιτυχία ανά πληρωμή, με paymentMethodMark                                                 |
 | `CancelInvoice`, `CancelDeliveryNote`, `CancelReceivingNote`                                    | Επιτυχία με cancellationMark                                                               |
 | `RequestDocs`, `RequestTransmittedDocs`, `RequestMyIncome`, `RequestMyExpenses`, `RequestVatInfo`, `RequestE3Info` | Κανένα αποτέλεσμα                                                       |
+| `RequestProviderDocs`, `RequestReceiverInfo`                                                    | Κανένα αποτέλεσμα                                                                          |
+| `SendUnsignedInvoices`                                                                          | Επιτυχία ανά παραστατικό με uid, χωρίς mark                                                |
 | Δελτία αποστολής, δηλώσεις (statements), QR                                                     | `LogicException` μέχρι να δοθεί απάντηση                                                   |
 
 ## Απαντήσεις ανά κλήση

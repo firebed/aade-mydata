@@ -66,6 +66,9 @@
 - **`TaxTotals::getTaxCategory()` επιστρέφει `?int`** (τον κωδικό της κατηγορίας) και η `HasLabels::labels()` επιστρέφει
   `[τιμή => ετικέτα]`.
 - **`Connection::make()` / `MyData::connect()` προεπιλέγουν το δοκιμαστικό περιβάλλον** αν δεν δοθεί `'prod'`.
+- **`RequestDocs` και `RequestTransmittedDocs` μόνο για ERP.** Σε σύνδεση παρόχου πετούν `UnsupportedChannelException`
+  (έστελναν τις παραμέτρους του ERP και διάβαζαν λάθος έγγραφο). Οι πάροχοι χρησιμοποιούν τη νέα
+  [`RequestProviderDocs`](./http/request-provider-docs).
 - **Αφαιρέθηκαν:** `TransportDetail` και οι `Invoice::getOtherTransportDetails()/addOtherTransportDetail()/setOtherTransportDetails()`
   (καταργήθηκαν από το myDATA 2.0.1), `InvoiceSummary::getTotalInformationalTaxAmount()/setTotalInformationalTaxAmount()`,
   `WithheldPercentCategory::affectsTotalGrossValue()`, το trait `HasIterator` (το `RequestedBookInfo` δεν είναι πλέον
@@ -138,6 +141,14 @@ foreach ((new RequestTransmittedDocs)->invoices('0') as $invoice) {
 
 - `Model::fromArray()`, `toJson()`, `JsonSerializable`, `unset()`, `cast()`, `Model::lenient()`.
 - `ModelCollection::last()`, `map()`, `filter()`, `childKey()`, `$collection[] = $item`.
+
+#### Πάροχοι
+
+Νέες κλήσεις παρόχου: [`RequestProviderDocs`](./http/request-provider-docs) (ΜΑΡΚ, UID και authentication code όσων
+διαβίβασε ο πάροχος για έναν εκδότη), [`RequestReceiverInfo`](./http/request-receiver-info) και
+[`SendUnsignedInvoices`](./http/send-unsigned-invoices). Το `Response::getDuplicate()` διαβάζει το σφάλμα 228 (το
+παραστατικό έχει ήδη σταλεί) και επιστρέφει το ΜΑΡΚ και, μόλις αποθηκευτεί, το authentication code του παραστατικού που
+κρατά ήδη το myDATA.
 
 #### Δοκιμές με `MyData::fake()`
 
