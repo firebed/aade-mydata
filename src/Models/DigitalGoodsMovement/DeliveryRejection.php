@@ -7,7 +7,6 @@ namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 use Firebed\AadeMyData\Models\Model;
 use Firebed\AadeMyData\Models\ValidatesSchema;
 use Firebed\AadeMyData\Xml\DigitalGoodsMovement\DeliveryRejectionWriter;
-use Firebed\AadeMyData\Xml\Schema;
 
 class DeliveryRejection extends Model implements ValidatesSchema
 {
@@ -95,9 +94,7 @@ class DeliveryRejection extends Model implements ValidatesSchema
 
     public function validate(): array
     {
-        $xml = (new DeliveryRejectionWriter)->asXml($this);
-
-        return Schema::validate($xml, 'RejectDeliveryNote');
+        return (new DeliveryRejectionWriter)->validate($this, 'RejectDeliveryNote');
 
     }
 }

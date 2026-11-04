@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Firebed\AadeMyData\Http;
 
-use Firebed\AadeMyData\Models\ResponseDoc;
-
 /**
  * <p>Αυτή η POST μέθοδος, που είναι διαθέσιμη μόνο για πιστοποιημένους παρόχους,
  * χρησιμοποιείται για την ακύρωση ενός Δελτίου Ποσοτικής Παραλαβής (τύπου 10.1 / 10.2).
@@ -19,12 +17,7 @@ use Firebed\AadeMyData\Models\ResponseDoc;
  *
  * @version 2.0.2
  */
-class CancelReceivingNote extends CancelInvoice
+class CancelReceivingNote extends CancellationRequest
 {
-    public function handle(string|int $mark, string|int|null $entityVatNumber = null): ResponseDoc
-    {
-        $this->ensureProvider();
-
-        return parent::handle($mark, $entityVatNumber);
-    }
+    protected const ?Channel CHANNEL = Channel::Provider;
 }

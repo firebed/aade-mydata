@@ -36,6 +36,9 @@ abstract class MyDataXmlRequest extends MyDataRequest
      */
     protected function request(XMLWriter $writer, XMLReader $reader, mixed $data, ?array $query = null): Model
     {
+        // Before the document is written and validated, so a wrong channel is the error reported
+        $this->ensureChannel();
+
         $requestXML = $writer->asXML($data);
         $this->requestDom = $writer->getDomDocument();
 

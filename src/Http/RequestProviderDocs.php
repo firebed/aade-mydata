@@ -20,10 +20,15 @@ use Generator;
  *
  * myDATA lists an invoice only once it has stored it, which can be hours after the
  * SendInvoices that registered it answered: an invoice missing here may still be on its way.
+ * Invoices sent with SendUnsignedInvoices are not listed. On the sandbox, mark 0 listed every
+ * invoice, while a mark with fewer digits than the issuer's marks (8 instead of 15) listed none:
+ * pass 0 or a mark myDATA gave.
  */
 class RequestProviderDocs extends MyDataRequest
 {
     use HasResponseDom;
+
+    protected const ?Channel CHANNEL = Channel::Provider;
 
     protected string $action = 'RequestTransmittedDocs';
 
@@ -41,8 +46,6 @@ class RequestProviderDocs extends MyDataRequest
      */
     public function handle(string $issuerVat, string|int $mark = 0, ?string $nextPartitionKey = null, ?string $nextRowKey = null): RequestedProviderDoc
     {
-        $this->ensureProvider();
-
         $query = ['issuervat' => $issuerVat, 'mark' => $mark] + $this->filterArray(compact('nextPartitionKey', 'nextRowKey'));
 
         return $this->read($this->get($query), new RequestedProviderDocReader);

@@ -8,7 +8,6 @@ use Firebed\AadeMyData\Casts\Arr;
 use Firebed\AadeMyData\Traits\HasFactory;
 use Firebed\AadeMyData\Xml\Dom;
 use Firebed\AadeMyData\Xml\PaymentMethodsDocWriter;
-use Firebed\AadeMyData\Xml\Schema;
 
 /**
  * @version 1.0.8
@@ -142,8 +141,6 @@ class PaymentMethod extends Model
      */
     public function validate(): array
     {
-        $xml = (new PaymentMethodsDocWriter)->asXML(new PaymentMethodsDoc($this));
-
-        return Schema::validate($xml, 'paymentMethods');
+        return (new PaymentMethodsDocWriter)->validate(new PaymentMethodsDoc($this), 'paymentMethods');
     }
 }

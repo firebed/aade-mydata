@@ -28,6 +28,11 @@ abstract class MyDataRequest
      */
     protected string $action;
 
+    /**
+     * The channel the request belongs to, checked before it is sent; null for requests both channels offer.
+     */
+    protected const ?Channel CHANNEL = null;
+
     private static ?Connection $default = null;
 
     private static ?Gateway $intercept = null;
@@ -359,6 +364,8 @@ abstract class MyDataRequest
      */
     private function transmit(string $method, ?array $query, ?string $body = null): string
     {
+        $this->ensureChannel();
+
         $gateway = $this->resolveGateway();
         $start = hrtime(true);
         $response = $error = null;
@@ -450,22 +457,12 @@ abstract class MyDataRequest
     }
 
     /**
-     * @throws UnsupportedChannelException
+     * @throws UnsupportedChannelException When the connection is not on the request's channel (CHANNEL)
      */
-    protected function ensureProvider(): void
+    protected function ensureChannel(): void
     {
-        if (! $this->connection()->isProvider()) {
-            throw new UnsupportedChannelException($this->shortName().' can only be used with the Provider route.');
-        }
-    }
-
-    /**
-     * @throws UnsupportedChannelException
-     */
-    protected function ensureERP(): void
-    {
-        if ($this->connection()->isProvider()) {
-            throw new UnsupportedChannelException($this->shortName().' can only be used with the ERP route.');
+        if (static::CHANNEL !== null && static::CHANNEL !== $this->connection()->channel()) {
+            throw new UnsupportedChannelException($this->shortName().' can only be used with the '.static::CHANNEL->value.' route.');
         }
     }
 }

@@ -6,7 +6,6 @@ namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Models\ValidatesSchema;
 use Firebed\AadeMyData\Xml\DigitalGoodsMovement\DeliveryOutcomeWriter;
-use Firebed\AadeMyData\Xml\Schema;
 
 /**
  * @version 2.0.1
@@ -47,8 +46,6 @@ class DeliveryOutcome extends OutcomeDetails implements ValidatesSchema
 
     public function validate(): array
     {
-        $xml = (new DeliveryOutcomeWriter)->asXml($this);
-
-        return Schema::validate($xml, 'ConfirmDeliveryOutcome');
+        return (new DeliveryOutcomeWriter)->validate($this, 'ConfirmDeliveryOutcome');
     }
 }

@@ -7,7 +7,6 @@ namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 use Firebed\AadeMyData\Models\Model;
 use Firebed\AadeMyData\Models\ValidatesSchema;
 use Firebed\AadeMyData\Xml\DigitalGoodsMovement\DeliveryReturnWriter;
-use Firebed\AadeMyData\Xml\Schema;
 
 /**
  * @version 2.0.2
@@ -54,8 +53,6 @@ class DeliveryReturn extends Model implements ValidatesSchema
 
     public function validate(): array
     {
-        $xml = (new DeliveryReturnWriter)->asXml($this);
-
-        return Schema::validate($xml, 'ConfirmDeliveryReturn');
+        return (new DeliveryReturnWriter)->validate($this, 'ConfirmDeliveryReturn');
     }
 }

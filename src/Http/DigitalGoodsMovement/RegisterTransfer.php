@@ -6,6 +6,7 @@ namespace Firebed\AadeMyData\Http\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Http\Channel;
 use Firebed\AadeMyData\Http\MyDataXmlRequest;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\ResponseDoc;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\Transport;
@@ -14,6 +15,8 @@ use Firebed\AadeMyData\Xml\DigitalGoodsMovement\TransportWriter;
 
 class RegisterTransfer extends MyDataXmlRequest
 {
+    protected const ?Channel CHANNEL = Channel::Erp;
+
     protected const ?string SCHEMA = 'RegisterTransfer';
 
     /**
@@ -29,8 +32,6 @@ class RegisterTransfer extends MyDataXmlRequest
      */
     public function handle(Transport $transport): ResponseDoc
     {
-        $this->ensureERP();
-
         return $this->request(new TransportWriter, new ResponseDocReader, $transport);
     }
 }

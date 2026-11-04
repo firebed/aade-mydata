@@ -16,7 +16,6 @@ use Firebed\AadeMyData\Models\DigitalGoodsMovement\PackingsDeclaration;
 use Firebed\AadeMyData\Traits\HasFactory;
 use Firebed\AadeMyData\Xml\Dom;
 use Firebed\AadeMyData\Xml\InvoicesDocWriter;
-use Firebed\AadeMyData\Xml\Schema;
 
 class Invoice extends Model
 {
@@ -464,8 +463,6 @@ class Invoice extends Model
      */
     public function validate(): array
     {
-        $xml = (new InvoicesDocWriter)->asXML(new InvoicesDoc($this));
-
-        return Schema::validate($xml, 'InvoicesDoc');
+        return (new InvoicesDocWriter)->validate(new InvoicesDoc($this), 'InvoicesDoc');
     }
 }

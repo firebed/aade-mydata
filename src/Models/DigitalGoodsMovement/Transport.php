@@ -7,7 +7,6 @@ namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 use Firebed\AadeMyData\Models\Model;
 use Firebed\AadeMyData\Models\ValidatesSchema;
 use Firebed\AadeMyData\Xml\DigitalGoodsMovement\TransportWriter;
-use Firebed\AadeMyData\Xml\Schema;
 
 /**
  * @version 2.0.1
@@ -83,8 +82,6 @@ class Transport extends Model implements ValidatesSchema
 
     public function validate(): array
     {
-        $xml = (new TransportWriter)->asXml($this);
-
-        return Schema::validate($xml, 'RegisterTransfer');
+        return (new TransportWriter)->validate($this, 'RegisterTransfer');
     }
 }

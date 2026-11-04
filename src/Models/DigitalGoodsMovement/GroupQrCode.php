@@ -7,7 +7,6 @@ namespace Firebed\AadeMyData\Models\DigitalGoodsMovement;
 use Firebed\AadeMyData\Models\Model;
 use Firebed\AadeMyData\Models\ValidatesSchema;
 use Firebed\AadeMyData\Xml\DigitalGoodsMovement\GroupQrCodeWriter;
-use Firebed\AadeMyData\Xml\Schema;
 
 /**
  * @version 2.0.1
@@ -65,8 +64,6 @@ class GroupQrCode extends Model implements ValidatesSchema
 
     public function validate(): array
     {
-        $xml = (new GroupQrCodeWriter)->asXml($this);
-
-        return Schema::validate($xml, 'GenerateGroupQRCode');
+        return (new GroupQrCodeWriter)->validate($this, 'GenerateGroupQRCode');
     }
 }

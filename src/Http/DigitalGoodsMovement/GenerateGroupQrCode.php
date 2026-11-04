@@ -6,6 +6,7 @@ namespace Firebed\AadeMyData\Http\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Http\Channel;
 use Firebed\AadeMyData\Http\MyDataXmlRequest;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\GroupQrCode;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\GroupQrCodeResponse;
@@ -17,6 +18,8 @@ use Firebed\AadeMyData\Xml\DigitalGoodsMovement\GroupQrCodeWriter;
  */
 class GenerateGroupQrCode extends MyDataXmlRequest
 {
+    protected const ?Channel CHANNEL = Channel::Erp;
+
     protected const ?string SCHEMA = 'GenerateGroupQRCode';
 
     protected string $action = 'GenerateGroupQRCode';
@@ -38,8 +41,6 @@ class GenerateGroupQrCode extends MyDataXmlRequest
      */
     public function handle(GroupQrCode $groupQrCode): GroupQrCodeResponse
     {
-        $this->ensureERP();
-
         return $this->request(new GroupQrCodeWriter, new GroupQrCodeReader, $groupQrCode);
     }
 

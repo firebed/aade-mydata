@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Firebed\AadeMyData\Http\Statements;
 
 use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Http\Channel;
 use Firebed\AadeMyData\Http\MyDataXmlRequest;
 use Firebed\AadeMyData\Models\Statements\Statement;
 use Firebed\AadeMyData\Models\Statements\StatementDoc;
@@ -14,6 +15,8 @@ use Firebed\AadeMyData\Xml\Statements\StatementResponseDocReader;
 
 class SendStatement extends MyDataXmlRequest
 {
+    protected const ?Channel CHANNEL = Channel::Provider;
+
     protected const ?string SCHEMA = 'SendStatement';
 
     /**
@@ -26,8 +29,6 @@ class SendStatement extends MyDataXmlRequest
      */
     public function handle(StatementDoc|Statement $statement): StatementResponseDoc
     {
-        $this->ensureProvider();
-
         if ($statement instanceof Statement) {
             $doc = new StatementDoc;
             $doc->set('statement', $statement);

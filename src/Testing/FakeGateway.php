@@ -7,7 +7,9 @@ namespace Firebed\AadeMyData\Testing;
 use Closure;
 use Error as PhpError;
 use Firebed\AadeMyData\Http\CancelInvoice;
+use Firebed\AadeMyData\Http\CancellationRequest;
 use Firebed\AadeMyData\Http\Gateway;
+use Firebed\AadeMyData\Http\InvoicesDocRequest;
 use Firebed\AadeMyData\Http\MyDataGetRequest;
 use Firebed\AadeMyData\Http\MyDataRequest;
 use Firebed\AadeMyData\Http\RequestBookInfo;
@@ -38,8 +40,10 @@ use Throwable;
  * without reaching myDATA. Install it with MyData::fake(); it then carries every
  * request, whatever connection it uses.
  *
- * Responses are given per request class (the request's own class first, then a parent
- * class in the order given, then '*' for any request), as:
+ * Responses are given per request class: the request's own class first, then a parent in the
+ * order given (MyDataGetRequest for RequestDocs and RequestTransmittedDocs, InvoicesDocRequest
+ * for SendInvoices and SendUnsignedInvoices), then '*' for any request. Every myDATA action is
+ * its own class, so SendInvoices does not cover SendUnsignedInvoices. A response is given as:
  * - a response XML string,
  * - a model: a ResponseDoc, a Response (wrapped in a ResponseDoc), a RequestedDoc, …,
  * - a list of Response models (a ResponseDoc) or of Invoice models (a RequestedDoc),
@@ -60,11 +64,11 @@ final class FakeGateway implements Gateway
      * @var array<class-string<MyDataRequest>, string>
      */
     private const array MARKS = [
-        SendInvoices::class => 'invoiceMark',
+        InvoicesDocRequest::class => 'invoiceMark', // SendInvoices, SendUnsignedInvoices
         SendIncomeClassification::class => 'classificationMark',
         SendExpensesClassification::class => 'classificationMark',
         SendPaymentsMethod::class => 'paymentMethodMark',
-        CancelInvoice::class => 'cancellationMark', // and the delivery and receiving notes
+        CancellationRequest::class => 'cancellationMark', // CancelInvoice and the delivery and receiving notes
     ];
 
     /**
@@ -296,31 +300,32 @@ final class FakeGateway implements Gateway
     {
         $request = $recorded->request;
         $markKey = self::lookup(self::MARKS, $request);
-        $invoices = $request instanceof SendInvoices ? $request->getInvoicesDoc()?->all() ?? [] : [];
+        $invoices = $request instanceof InvoicesDocRequest ? $request->getInvoicesDoc()?->all() ?? [] : null;
+        // myDATA answers an unsigned invoice with a mark but no authentication code
+        $authenticates = $invoices !== null && ! $request instanceof SendUnsignedInvoices;
 
         foreach ($doc->all() as $i => $response) {
             if (! $response->has('index')) {
                 $response->setIndex($i + 1);
             }
 
-            // An invoice under issue that was not issued gets no mark, only its uid
-            if ($request instanceof SendUnsignedInvoices) {
-                if ($response->isSuccessful() && ! $response->has('invoiceUid')) {
-                    $response->set('invoiceUid', self::uid($invoices[$i] ?? null));
-                }
-
+            if (! $response->isSuccessful()) {
                 continue;
             }
 
-            if ($markKey === null || ! $response->isSuccessful() || $response->has($markKey)) {
+            if ($invoices !== null && ! $response->has('invoiceUid')) {
+                $response->set('invoiceUid', self::uid($invoices[$i] ?? null));
+            }
+
+            if ($markKey === null || $response->has($markKey)) {
                 continue;
             }
 
             $mark = (string) ++$this->mark;
             $response->set($markKey, $mark);
 
-            if ($request instanceof SendInvoices) {
-                $response->set('invoiceUid', $response->getInvoiceUid() ?? self::uid($invoices[$i] ?? null))->setAuthenticationCode(strtoupper(sha1($mark)));
+            if ($authenticates) {
+                $response->setAuthenticationCode(strtoupper(sha1($mark)));
             }
         }
     }

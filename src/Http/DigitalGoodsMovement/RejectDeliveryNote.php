@@ -7,6 +7,7 @@ namespace Firebed\AadeMyData\Http\DigitalGoodsMovement;
 use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
 use Firebed\AadeMyData\Exceptions\UnsupportedChannelException;
+use Firebed\AadeMyData\Http\Channel;
 use Firebed\AadeMyData\Http\MyDataXmlRequest;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\DeliveryRejection;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\ResponseDoc;
@@ -15,6 +16,8 @@ use Firebed\AadeMyData\Xml\DigitalGoodsMovement\ResponseDocReader;
 
 class RejectDeliveryNote extends MyDataXmlRequest
 {
+    protected const ?Channel CHANNEL = Channel::Erp;
+
     protected const ?string SCHEMA = 'RejectDeliveryNote';
 
     /**
@@ -34,8 +37,6 @@ class RejectDeliveryNote extends MyDataXmlRequest
      */
     public function handle(DeliveryRejection $rejection): ResponseDoc
     {
-        $this->ensureERP();
-
         return $this->request(new DeliveryRejectionWriter, new ResponseDocReader, $rejection);
     }
 

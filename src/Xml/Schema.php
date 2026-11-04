@@ -16,7 +16,7 @@ final class Schema
     /**
      * The path of a myDATA XSD by its name without the version, e.g. 'InvoicesDoc'.
      */
-    public static function path(string $name): string
+    private static function path(string $name): string
     {
         return dirname(__DIR__, 2).'/xsd/'.$name.'-'.Invoice::VERSION.'.xsd';
     }

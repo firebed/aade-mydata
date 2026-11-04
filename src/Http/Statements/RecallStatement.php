@@ -7,6 +7,7 @@ namespace Firebed\AadeMyData\Http\Statements;
 use Firebed\AadeMyData\Enums\Statements\RecallStatus;
 use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Http\Channel;
 use Firebed\AadeMyData\Http\MyDataRequest;
 use Firebed\AadeMyData\Http\Traits\HasResponseDom;
 use Firebed\AadeMyData\Models\Statements\StatementResponseDoc;
@@ -15,6 +16,8 @@ use Firebed\AadeMyData\Xml\Statements\StatementResponseDocReader;
 class RecallStatement extends MyDataRequest
 {
     use HasResponseDom;
+
+    protected const ?Channel CHANNEL = Channel::Provider;
 
     /**
      * Αυτή η POST μέθοδος, που είναι διαθέσιμη μόνο για πιστοποιημένους παρόχους, χρησιμοποιείται για την ανάκληση δήλωσης.
@@ -31,8 +34,6 @@ class RecallStatement extends MyDataRequest
      */
     public function handle(string $statementId, string $entityVatNumber, RecallStatus|int $recallStatus, ?string $recallDate = null): StatementResponseDoc
     {
-        $this->ensureProvider();
-
         $query = $this->filterArray([
             'stmtId' => $statementId,
             'entityVatNumber' => $entityVatNumber,

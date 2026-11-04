@@ -17,6 +17,8 @@ abstract class MyDataGetRequest extends MyDataRequest
 {
     use HasResponseDom;
 
+    protected const ?Channel CHANNEL = Channel::Erp;
+
     /**
      * <ol>
      * <li>Στην περίπτωση που τα αποτελέσματα αναζήτησης ξεπερνούν σε μέγεθος το
@@ -59,8 +61,6 @@ abstract class MyDataGetRequest extends MyDataRequest
      */
     public function handle(string $mark = '', ?string $dateFrom = null, ?string $dateTo = null, ?string $receiverVatNumber = null, ?string $entityVatNumber = null, InvoiceType|string|null $invType = null, ?string $maxMark = null, ?string $nextPartitionKey = null, ?string $nextRowKey = null): RequestedDoc
     {
-        $this->ensureERP();
-
         $query = ['mark' => $mark] + $this->filterArray(compact('dateFrom', 'dateTo', 'receiverVatNumber', 'entityVatNumber', 'invType', 'maxMark', 'nextPartitionKey', 'nextRowKey'));
 
         return $this->read($this->get($query), new RequestedDocReader);

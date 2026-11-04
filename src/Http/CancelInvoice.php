@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace Firebed\AadeMyData\Http;
 
-use Firebed\AadeMyData\Exceptions\MyDataException;
-use Firebed\AadeMyData\Http\Traits\HasResponseDom;
-use Firebed\AadeMyData\Models\ResponseDoc;
-use Firebed\AadeMyData\Xml\ResponseDocReader;
-
 /**
  * <p>Αυτή η POST μέθοδος χρησιμοποιείται για την ακύρωση παραστατικού χωρίς
  * επαναϋποβολή καινούργιου. Ο χρήστης την καλεί υποβάλλοντας ως παράμετρο το mark
@@ -22,20 +17,4 @@ use Firebed\AadeMyData\Xml\ResponseDocReader;
  * επιστρέφεται στον χρήστη και το παραστατικό θεωρείται ακυρωμένο. Σε περίπτωση
  * αποτυχίας επιστρέφεται το αντίστοιχο μήνυμα λάθους.</p>
  */
-class CancelInvoice extends MyDataRequest
-{
-    use HasResponseDom;
-
-    /**
-     * @param  string  $mark  Μοναδικός αριθμός καταχώρησης παραστατικού προς ακύρωση
-     * @param  string|null  $entityVatNumber  ΑΦΜ οντότητας
-     *
-     * @throws MyDataException
-     */
-    public function handle(string|int $mark, string|int|null $entityVatNumber = null): ResponseDoc
-    {
-        $query = $this->filterArray(['mark' => $mark, 'entityVatNumber' => $entityVatNumber]);
-
-        return $this->read($this->post($query), new ResponseDocReader);
-    }
-}
+class CancelInvoice extends CancellationRequest {}

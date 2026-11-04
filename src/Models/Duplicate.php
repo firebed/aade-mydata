@@ -29,7 +29,7 @@ final readonly class Duplicate
 
     /**
      * The successful response myDATA gave, or would have given, the invoice it holds. The
-     * qrUrl is not part of it: myDATA never repeats it.
+     * qrUrl is not part of it: neither error 228 nor RequestProviderDocs carries it.
      */
     public function toResponse(?int $index = null): Response
     {

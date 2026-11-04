@@ -23,9 +23,9 @@ final class ModelWriter extends XMLWriter
     /**
      * The model under a root element named after its class, e.g. ResponseDoc as <ResponseDoc>.
      */
-    public static function write(Model $model, ?string $root = null): string
+    public static function write(Model $model): string
     {
-        return (new self($root ?? substr($model::class, (int) strrpos($model::class, '\\') + 1)))->asXml($model);
+        return (new self(substr($model::class, (int) strrpos($model::class, '\\') + 1)))->asXml($model);
     }
 
     /**

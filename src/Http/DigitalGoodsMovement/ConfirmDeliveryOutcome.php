@@ -6,6 +6,7 @@ namespace Firebed\AadeMyData\Http\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Http\Channel;
 use Firebed\AadeMyData\Http\MyDataXmlRequest;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\DeliveryOutcome;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\ResponseDoc;
@@ -17,6 +18,8 @@ use Firebed\AadeMyData\Xml\DigitalGoodsMovement\ResponseDocReader;
  */
 class ConfirmDeliveryOutcome extends MyDataXmlRequest
 {
+    protected const ?Channel CHANNEL = Channel::Erp;
+
     protected const ?string SCHEMA = 'ConfirmDeliveryOutcome';
 
     /**
@@ -36,8 +39,6 @@ class ConfirmDeliveryOutcome extends MyDataXmlRequest
      */
     public function handle(DeliveryOutcome $deliveryOutcome): ResponseDoc
     {
-        $this->ensureERP();
-
         return $this->request(new DeliveryOutcomeWriter, new ResponseDocReader, $deliveryOutcome);
     }
 }

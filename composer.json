@@ -29,6 +29,9 @@
     "roave/security-advisories": "dev-latest",
     "symfony/var-dumper": "^7.0"
   },
+  "suggest": {
+    "phpunit/phpunit": "Required by the assertions of MyData::fake() (Testing\\FakeGateway)"
+  },
   "autoload": {
     "psr-4": {
       "Firebed\\AadeMyData\\": "src/"

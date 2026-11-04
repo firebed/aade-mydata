@@ -18,6 +18,8 @@ class RequestReceiverInfo extends MyDataRequest
 {
     use HasResponseDom;
 
+    protected const ?Channel CHANNEL = Channel::Provider;
+
     /**
      * Με αυτή την μέθοδο ο πάροχος λαμβάνει για μια οντότητα τους ΑΦΜ των παρόχων μέσω
      * των οποίων τιμολογεί και τα email στα οποία έχει δηλώσει ότι λαμβάνει παραστατικά.
@@ -29,8 +31,6 @@ class RequestReceiverInfo extends MyDataRequest
      */
     public function handle(string $vatNumber): ReceiverInfoDoc
     {
-        $this->ensureProvider();
-
         return $this->read($this->get(['vatNumber' => $vatNumber]), new ReceiverInfoDocReader);
     }
 }

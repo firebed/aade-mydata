@@ -250,7 +250,8 @@ final class MyData
     }
 
     /**
-     * The providers signatures of invoices under issue that were not issued (provider channel).
+     * Invoices under issue whose Provider's Signature was never matched with an issued invoice,
+     * marked "Υπό Έκδοση" (Α.1155/2023; provider channel), see SendUnsignedInvoices.
      *
      * @param  InvoicesDoc|Invoice|list<Invoice>  $invoices
      *

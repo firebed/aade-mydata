@@ -6,6 +6,7 @@ namespace Firebed\AadeMyData\Http\DigitalGoodsMovement;
 
 use Firebed\AadeMyData\Exceptions\MyDataAuthenticationException;
 use Firebed\AadeMyData\Exceptions\MyDataException;
+use Firebed\AadeMyData\Http\Channel;
 use Firebed\AadeMyData\Http\MyDataRequest;
 use Firebed\AadeMyData\Http\Traits\HasResponseDom;
 use Firebed\AadeMyData\Models\DigitalGoodsMovement\DeliveryNoteStatusResponse;
@@ -14,6 +15,8 @@ use Firebed\AadeMyData\Xml\DigitalGoodsMovement\DeliveryNoteStatusResponseReader
 class RequestDeliveryNoteStatus extends MyDataRequest
 {
     use HasResponseDom;
+
+    protected const ?Channel CHANNEL = Channel::Erp;
 
     protected string $action = 'GetDeliveryNoteStatus';
 
@@ -25,8 +28,6 @@ class RequestDeliveryNoteStatus extends MyDataRequest
      */
     public function handle(int $mark, ?string $issuerVatNumber = null): DeliveryNoteStatusResponse
     {
-        $this->ensureERP();
-
         return $this->request($this->filterArray([
             'mark' => $mark,
             'issuerVatNumber' => $issuerVatNumber,
@@ -47,8 +48,6 @@ class RequestDeliveryNoteStatus extends MyDataRequest
      */
     public function handleUsingQrUrl(string $qrUrl, ?string $issuerVatNumber = null): DeliveryNoteStatusResponse
     {
-        $this->ensureERP();
-
         // myDATA hands out QR URLs already percent-encoded (…q=POiz…%2f…%3d), while the
         // query string gets encoded on the way out. Decode once so it isn't encoded twice.
         return $this->request(['qrUrl' => rawurldecode($qrUrl)]);

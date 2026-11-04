@@ -170,6 +170,19 @@ abstract class XMLWriter
     }
 
     /**
+     * Writes the data and validates the document against a myDATA XSD by name (e.g. 'InvoicesDoc').
+     *
+     * @param  T  $data
+     * @return list<array{field: string|null, message: string|null}> The validation errors, empty when valid
+     */
+    public function validate(mixed $data, string $schema): array
+    {
+        $this->asXml($data);
+
+        return Schema::validate($this->document, $schema);
+    }
+
+    /**
      * @param  T  $data
      */
     abstract public function asXml(mixed $data): string;

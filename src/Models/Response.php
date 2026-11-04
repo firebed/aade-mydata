@@ -211,8 +211,8 @@ class Response extends Model
      * Its mark settles a resend after a lost answer; its authentication code is null
      * until myDATA has stored that invoice, which can take hours.
      *
-     * Null for any other answer. A resend dated a past day is rejected for its issue
-     * date (error 238) before myDATA checks the uid, so it never yields a duplicate.
+     * Null for any other answer. On the provider sandbox, a resend dated a past day was
+     * rejected for its issue date (error 238) alone, without a 228 naming the mark.
      */
     public function getDuplicate(): ?Duplicate
     {
