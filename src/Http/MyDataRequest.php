@@ -28,6 +28,8 @@ abstract class MyDataRequest
 
     private static ?Connection $default = null;
 
+    private static ?Gateway $intercept = null;
+
     private ?Connection $connection = null;
 
     private ?Gateway $gateway_override = null;
@@ -182,6 +184,16 @@ abstract class MyDataRequest
         self::$default = self::defaultConnection()->withRateLimitWait($maxSeconds);
     }
 
+    /**
+     * Carry every request through this gateway, whatever its connection or usingGateway()
+     * says, until called with null. MyData::fake() uses it, so that no request of the
+     * code under test reaches myDATA.
+     */
+    public static function intercept(?Gateway $gateway): void
+    {
+        self::$intercept = $gateway;
+    }
+
     public static function isProduction(): bool
     {
         return self::defaultConnection()->isProduction();
@@ -258,7 +270,7 @@ abstract class MyDataRequest
 
     private function resolveGateway(): Gateway
     {
-        return $this->gateway_override ?? $this->connection()->gateway();
+        return self::$intercept ?? $this->gateway_override ?? $this->connection()->gateway();
     }
 
     /**
@@ -319,7 +331,7 @@ abstract class MyDataRequest
 
     public function getUrl(): string
     {
-        return $this->connection()->url($this->getAction());
+        return $this->connection()->url($this->action());
     }
 
     /**
@@ -345,7 +357,10 @@ abstract class MyDataRequest
         } while ($nextPartitionKey !== null && $nextRowKey !== null && [$nextPartitionKey, $nextRowKey] !== $previous);
     }
 
-    private function getAction(): string
+    /**
+     * The myDATA action of the request, e.g. 'SendInvoices'.
+     */
+    public function action(): string
     {
         return $this->action ?? $this->shortName();
     }

@@ -59,6 +59,7 @@ use Firebed\AadeMyData\Models\Statements\RequestedStatementDoc;
 use Firebed\AadeMyData\Models\Statements\Statement;
 use Firebed\AadeMyData\Models\Statements\StatementDoc;
 use Firebed\AadeMyData\Models\Statements\StatementResponseDoc;
+use Firebed\AadeMyData\Testing\FakeGateway;
 
 /**
  * A myDATA client bound to one Connection, for code that serves several tenants or
@@ -85,6 +86,39 @@ final class MyData
     public static function connect(string $userId, string $subscriptionKey, Environment|string $environment = Environment::Development, bool $provider = false): self
     {
         return new self(Connection::make($userId, $subscriptionKey, $environment, $provider));
+    }
+
+    /**
+     * Answer every request with fake responses instead of sending it to myDATA, whatever
+     * connection it uses, and record it for assertions. Call stopFaking() when the test ends.
+     *
+     * <pre>
+     * $fake = MyData::fake([
+     *     SendInvoices::class => FakeGateway::rejected(101, 'Invalid VAT number'),
+     *     RequestDocs::class => FakeGateway::sequence($page1, $page2),
+     * ]);
+     *
+     * // … run the code under test …
+     *
+     * $fake->assertSent(SendInvoices::class, fn (SendInvoices $request) => $request->getInvoicesDoc()->count() === 1);
+     * </pre>
+     *
+     * @param  array<class-string<MyDataRequest>|'*', mixed>  $responses  Responses by request class, see FakeGateway
+     */
+    public static function fake(array $responses = []): FakeGateway
+    {
+        $fake = new FakeGateway($responses);
+        MyDataRequest::intercept($fake);
+
+        return $fake;
+    }
+
+    /**
+     * Send requests to myDATA again, after fake().
+     */
+    public static function stopFaking(): void
+    {
+        MyDataRequest::intercept(null);
     }
 
     public function connection(): Connection
