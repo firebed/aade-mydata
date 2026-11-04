@@ -69,6 +69,10 @@
 - **`RequestDocs` και `RequestTransmittedDocs` μόνο για ERP.** Σε σύνδεση παρόχου πετούν `UnsupportedChannelException`
   (έστελναν τις παραμέτρους του ERP και διάβαζαν λάθος έγγραφο). Οι πάροχοι χρησιμοποιούν τη νέα
   [`RequestProviderDocs`](./http/request-provider-docs).
+- **Οι κλάσεις κλήσεων δεν κληρονομούν η μία την άλλη.** Οι `SendInvoices` και `SendUnsignedInvoices` έχουν κοινή βάση την
+  `InvoicesDocRequest`, και οι `CancelInvoice`, `CancelDeliveryNote`, `CancelReceivingNote` την `CancellationRequest`.
+  Ένα `instanceof SendInvoices` δεν καλύπτει πλέον τη `SendUnsignedInvoices` (ούτε το `instanceof CancelInvoice` τις
+  ακυρώσεις δελτίων): ελέγξτε τη βασική κλάση.
 - **Αφαιρέθηκαν:** `TransportDetail` και οι `Invoice::getOtherTransportDetails()/addOtherTransportDetail()/setOtherTransportDetails()`
   (καταργήθηκαν από το myDATA 2.0.1), `InvoiceSummary::getTotalInformationalTaxAmount()/setTotalInformationalTaxAmount()`,
   `WithheldPercentCategory::affectsTotalGrossValue()`, το trait `HasIterator` (το `RequestedBookInfo` δεν είναι πλέον

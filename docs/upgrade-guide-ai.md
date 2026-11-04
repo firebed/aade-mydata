@@ -344,6 +344,9 @@ class TaxesTotals extends ModelCollection
 | `MyDataRequest::httpClient()` building a new Guzzle client per call | still exists, returns the default connection's cached client |
 | Trait `Models\HasSchemaValidation` (`$this->validateSchema($xml, 'InvoicesDoc-v2.0.2.xsd')`) | `Xml\Schema::validate($xml, 'InvoicesDoc')` (name without the version) |
 | `GuzzleGateway::fail()` (in a subclass) | override `GuzzleGateway::exception(GuzzleException, string $body, ?int $retryAfter): MyDataException`; return the exception instead of throwing it |
+| `$request instanceof SendInvoices` meant to cover every invoice send (e.g. in a custom `Gateway`) | `$request instanceof InvoicesDocRequest` (SendInvoices and SendUnsignedInvoices); SendUnsignedInvoices no longer extends SendInvoices |
+| `$request instanceof CancelInvoice` meant to cover the note cancellations | `$request instanceof CancellationRequest`; CancelDeliveryNote and CancelReceivingNote no longer extend CancelInvoice |
+| `$this->ensureProvider()` / `$this->ensureERP()` in a custom request's `handle()` | declare `protected const ?Channel CHANNEL = Channel::Provider;` (or `Channel::Erp`; `use Firebed\AadeMyData\Http\Channel;`) and delete the call; the request is checked before it is sent and still throws `UnsupportedChannelException` |
 
 ## 4. Behaviour changes to check in your code
 
@@ -420,7 +423,8 @@ $doc->getInvoices();                                                   // list<P
 $doc->findByUid($uid);                                                 // every mark of a uid (2+ = registered twice)
 (new RequestProviderDocs)->invoices('123456789', $lastMark);           // Generator over every page
 $mydata->requestReceiverInfo('123456789')->getReceptionProviders()?->vatNumbers();
-$mydata->sendUnsignedInvoices($invoices);                              // providers signatures of unissued invoices, no mark
+$mydata->sendUnsignedInvoices($invoices);                              // invoices under issue whose Provider's Signature was never
+                                                                       // matched (Α.1155/2023, «Υπό Έκδοση»); answers a mark, no auth code
 
 $response->getDuplicate();       // ?Duplicate{uid, mark: int, authenticationCode: ?string} from error 228
 $response->getDuplicate()?->toResponse($index);   // the successful Response it stands for (no qrUrl)
@@ -453,6 +457,10 @@ $fake->assertNothingSent();
 MyData::stopFaking();                                    // in tearDown()
 ```
 
+A class answers and asserts its own requests only (`SendInvoices::class` does not cover `SendUnsignedInvoices`, nor
+`CancelInvoice::class` the note cancellations); an abstract parent (`MyDataGetRequest`, `RequestBookInfo`) covers its
+children. The assertions call PHPUnit's `Assert` (`phpunit/phpunit` is suggested, not required).
+
 Response values: XML string | model (`ResponseDoc`, `Response`, `RequestedDoc`, …) | `list<Response>` | `list<Invoice>`
 (→ `RequestedDoc`) | `Throwable` (thrown) | `Closure(MyDataRequest, RecordedRequest)` returning any of these | `FakeGateway::sequence(...)`.
 
@@ -468,7 +476,9 @@ XSD before sending; failure throws `Exceptions\SchemaValidationException` (`getS
 
 ```php
 $connection = Connection::make($userId, $subscriptionKey, 'prod')
-    ->withLogger($psrLogger, withBodies: false)                 // info / warning (retry, 429) / error; never credentials;
+    ->withLogger($psrLogger, withBodies: false)                 // info / warning (retry, 429) / error; never credentials; without
+                                                                // bodies: no XML, only safe query keys, redacted failure messages,
+                                                                // context exception_class/exception_code instead of exception;
                                                                 // replaces an earlier logger, null removes it
     ->afterSending(fn (Exchange $e) => ...)                     // once per request: action(), method, url, query,
                                                                 // requestBody, responseBody, exception, duration (s), successful()

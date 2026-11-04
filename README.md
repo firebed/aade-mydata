@@ -216,9 +216,11 @@ Validation is off by default; `MyDataRequest::setValidation()` turns it on for t
 
 `withLogger()` writes every request of a connection to a PSR-3 logger (Monolog, Laravel's `Log`, …):
 an answered request at `info`, a retry or a throttled request at `warning`, any other failure at
-`error`. The credentials are never logged. The request and response XML and the VAT numbers of the
-query, which identify taxpayers, are logged only with `withBodies: true`. Calling `withLogger()` again
-replaces the logger; `withLogger(null)` stops logging.
+`error`. The credentials are never logged. Without `withBodies: true`, the log also leaves out the
+request and response XML and every query parameter that identifies someone (VAT numbers, QR URLs).
+Failure messages are redacted (URL queries and VAT numbers), and the exception is named by class and
+code rather than attached, since its message and previous exceptions can carry them. Calling
+`withLogger()` again replaces the logger; `withLogger(null)` stops logging.
 
 ```php
 $connection = Connection::make($user_id, $subscription_key, 'prod')
@@ -346,13 +348,14 @@ $response = $mydata->sendInvoices($invoice)->first();
 if ($duplicate = $response->getDuplicate()) {
     $duplicate->mark;                // the mark of the invoice myDATA holds
     $duplicate->authenticationCode;  // null until myDATA has stored it, which can take hours
-    $duplicate->toResponse();        // the successful Response it stands for (without the qrUrl, which myDATA never repeats)
+    $duplicate->toResponse();        // the successful Response it stands for (no qrUrl: neither error 228 nor the search carries it)
 }
 ```
 
 myDATA stores submissions from a queue, so the search lists an invoice only once it is stored, possibly hours after
 it was accepted. Two submissions sent at the same moment can both be accepted (same uid, two marks): `findByUid()`
-returns every mark of a uid. A resend dated a past day is rejected for its issue date (error 238), never as a duplicate.
+returns every mark of a uid. On the sandbox, a resend dated a past day was rejected for its issue date (error 238)
+alone, without a 228 naming the mark.
 
 ## Digital Goods Movement (Ψηφιακή Διακίνηση Αγαθών)
 
@@ -445,6 +448,11 @@ A response can be an XML string, a model (`ResponseDoc`, `Response`, `RequestedD
 of `Response` models (one per document) or of `Invoice` models (a `RequestedDoc`), an exception,
 a closure returning any of these, or a `FakeGateway::sequence()`. Requests with no default
 response (the delivery note and statement calls) need one, so no request can slip through to myDATA.
+
+A class answers and asserts its own requests only: `SendInvoices::class` does not cover
+`SendUnsignedInvoices`, nor `CancelInvoice::class` the delivery and receiving note cancellations,
+since they are other myDATA actions. An abstract parent covers its children (`MyDataGetRequest::class`
+answers both `RequestDocs` and `RequestTransmittedDocs`). The assertions need PHPUnit (or Pest).
 
 ### Running the package's tests
 

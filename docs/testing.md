@@ -36,7 +36,7 @@ public function test_an_order_issues_an_invoice(): void
 | `CancelInvoice`, `CancelDeliveryNote`, `CancelReceivingNote`                                    | Επιτυχία με cancellationMark                                                               |
 | `RequestDocs`, `RequestTransmittedDocs`, `RequestMyIncome`, `RequestMyExpenses`, `RequestVatInfo`, `RequestE3Info` | Κανένα αποτέλεσμα                                                       |
 | `RequestProviderDocs`, `RequestReceiverInfo`                                                    | Κανένα αποτέλεσμα                                                                          |
-| `SendUnsignedInvoices`                                                                          | Επιτυχία ανά παραστατικό με uid, χωρίς mark                                                |
+| `SendUnsignedInvoices`                                                                          | Επιτυχία ανά παραστατικό με uid και mark, χωρίς authenticationCode                         |
 | Δελτία αποστολής, δηλώσεις (statements), QR                                                     | `LogicException` μέχρι να δοθεί απάντηση                                                   |
 
 ## Απαντήσεις ανά κλήση
@@ -67,6 +67,11 @@ MyData::fake([
     '*' => file_get_contents(__DIR__.'/stubs/response.xml'),
 ]);
 ```
+
+Κάθε κλάση απαντά και ελέγχεται μόνο για τις δικές της κλήσεις: η `SendInvoices::class` δεν καλύπτει τη
+`SendUnsignedInvoices`, ούτε η `CancelInvoice::class` τις ακυρώσεις δελτίων, γιατί είναι άλλες λειτουργίες του myDATA.
+Μια αφηρημένη (abstract) κλάση καλύπτει τις υποκλάσεις της: η `MyDataGetRequest::class` απαντά και στη `RequestDocs`
+και στη `RequestTransmittedDocs`, η `InvoicesDocRequest::class` στη `SendInvoices` και τη `SendUnsignedInvoices`. Οι έλεγχοι (`assertSent()` κ.λπ.) χρειάζονται το PHPUnit (ή το Pest).
 
 Μια απάντηση μπορεί να είναι:
 
