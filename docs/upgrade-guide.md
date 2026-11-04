@@ -139,6 +139,21 @@ foreach ((new RequestTransmittedDocs)->invoices('0') as $invoice) {
 - `Model::fromArray()`, `toJson()`, `JsonSerializable`, `unset()`, `cast()`, `Model::lenient()`.
 - `ModelCollection::last()`, `map()`, `filter()`, `childKey()`, `$collection[] = $item`.
 
+#### Δοκιμές με `MyData::fake()`
+
+Στα tests της εφαρμογής σας, το `MyData::fake()` απαντά σε κάθε κλήση με ψεύτικη απάντηση, χωρίς να φτάνει στο
+myDATA, και την καταγράφει για έλεγχο με `assertSent()`, `assertSentCount()` κ.λπ. Δείτε [Δοκιμές](./testing).
+
+#### Επικύρωση πριν την αποστολή
+
+Το `Connection::withValidation()` (στατικά `MyDataRequest::setValidation()`) ελέγχει το XML κάθε αποστολής με το XSD
+του myDATA πριν φύγει· ένα άκυρο έγγραφο πετά `SchemaValidationException` με τα πεδία που απέτυχαν.
+
+#### Καταγραφή (logging)
+
+Το `Connection::withLogger($logger)` γράφει κάθε κλήση, επανάληψη και αποτυχία σε PSR-3 logger, και τα
+`afterSending()` / `beforeRetry()` δίνουν κάθε κλήση και επανάληψη στον δικό σας κώδικα (π.χ. για αρχείο ελέγχου).
+
 #### Εργαλεία
 
 Το πακέτο περνά από **PHPStan (level 7)** και **Laravel Pint** στο CI (`composer analyse`, `composer lint`).

@@ -7,6 +7,7 @@
 | Εισαγωγή                  | Σύνοψη Γραμμών                        | squashing-invoice-rows                  |
 | Εισαγωγή                  | Χαρακτηρισμοί / Classifications       | classifications                         |
 | Εισαγωγή                  | Σφάλματα                              | exceptions                              |
+| Εισαγωγή                  | Δοκιμές (testing)                     | testing                                 |
 | Εισαγωγή                  | Contributing                          | contributing                            |
 | Περιγραφή λειτουργιών     | Αναζήτηση ΑΦΜ                         | http/search-vat                         |
 | Περιγραφή λειτουργιών     | SendInvoices                          | http/send-invoices                      |

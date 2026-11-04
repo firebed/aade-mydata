@@ -342,6 +342,8 @@ class TaxesTotals extends ModelCollection
 | `Type::isEnum()` static enum cache (`Type::$enumCache`) | `Model::cast($key)?->isEnum()`; nothing to migrate unless you used reflection on it |
 | `MyDataRequest` private statics `$user_id`, `$subscription_key`, `$env`, `$is_provider`, `$request_options`, `$handler`, `$gateway` | `MyDataRequest::defaultConnection()` (a `Connection`); only matters for code that reached them by reflection |
 | `MyDataRequest::httpClient()` building a new Guzzle client per call | still exists, returns the default connection's cached client |
+| Trait `Models\HasSchemaValidation` (`$this->validateSchema($xml, 'InvoicesDoc-v2.0.2.xsd')`) | `Xml\Schema::validate($xml, 'InvoicesDoc')` (name without the version) |
+| `GuzzleGateway::fail()` (in a subclass) | override `GuzzleGateway::exception(GuzzleException, string $body, ?int $retryAfter): MyDataException`; return the exception instead of throwing it |
 
 ## 4. Behaviour changes to check in your code
 
@@ -408,6 +410,57 @@ foreach ((new RequestTransmittedDocs)->invoices('0') as $invoice) { /* every Inv
 (new RequestVatInfo)->pages($from, $to);    // RequestedVatInfo pages
 (new RequestE3Info)->pages($from, $to);     // RequestedE3Info pages
 ```
+
+### Faking myDATA in tests
+
+Replace hand-built Guzzle `MockHandler` stacks or custom test gateways in application tests with the fake:
+
+```php
+use Firebed\AadeMyData\MyData;
+use Firebed\AadeMyData\Testing\FakeGateway;
+use Firebed\AadeMyData\Testing\RecordedRequest;
+
+$fake = MyData::fake([                                   // intercepts every request, any connection
+    SendInvoices::class => FakeGateway::rejected(101, 'Invalid VAT number'),
+    RequestDocs::class  => FakeGateway::sequence($page1, $page2),
+    '*'                 => new RateLimitExceededException(retryAfter: 300),
+]);
+// no response given: sends/cancellations succeed (marks from 400000000000001, invoice uid), searches return nothing,
+// delivery-note/statement calls throw LogicException until given one
+$fake->assertSent(SendInvoices::class, fn (SendInvoices $r, RecordedRequest $sent) => $sent->count() === 1);
+$fake->assertNotSent(CancelInvoice::class);
+$fake->assertSentCount(1);
+$fake->assertNothingSent();
+MyData::stopFaking();                                    // in tearDown()
+```
+
+Response values: XML string | model (`ResponseDoc`, `Response`, `RequestedDoc`, …) | `list<Response>` | `list<Invoice>`
+(→ `RequestedDoc`) | `Throwable` (thrown) | `Closure(MyDataRequest, RecordedRequest)` returning any of these | `FakeGateway::sequence(...)`.
+
+### Validation before sending
+
+`Connection::withValidation()` (static: `MyDataRequest::setValidation()`) validates each document request against its
+XSD before sending; failure throws `Exceptions\SchemaValidationException` (`getSchema()`, `getErrors()` as
+`list<array{field: ?string, message: ?string}>`). Off by default. Applies to `SendInvoices`, `SendIncomeClassification`,
+`SendExpensesClassification`, `SendPaymentsMethod`, `RegisterTransfer`, `ConfirmDeliveryOutcome`, `ConfirmDeliveryReturn`,
+`RejectDeliveryNote`, `GenerateGroupQrCode`, `SendStatement`.
+
+### Listeners and logging
+
+```php
+$connection = Connection::make($userId, $subscriptionKey, 'prod')
+    ->withLogger($psrLogger, withBodies: false)                 // info / warning (retry, 429) / error; never credentials;
+                                                                // replaces an earlier logger, null removes it
+    ->afterSending(fn (Exchange $e) => ...)                     // once per request: action(), method, url, query,
+                                                                // requestBody, responseBody, exception, duration (s), successful()
+    ->beforeRetry(fn (Retry $r) => ...);                        // attempt, delay (ms), reason (MyDataException), rateLimited()
+```
+
+Static: `MyDataRequest::setLogger()`, `afterSending()`, `beforeRetry()`, `removeListener()`, `removeListeners()`.
+Listeners add up, also run for faked requests, and are skipped when they throw (they never change the request's
+outcome). A request rejected by `withValidation()` is never sent, so no listener sees it. `afterSending($l, key: 'audit')`
+replaces the listener under that key (register once in code that boots repeatedly); `withoutListener('audit' | $l)`,
+`withoutListeners()` remove them (the logger stays; `withLogger(null)` removes it).
 
 ### Models
 

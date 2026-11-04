@@ -16,6 +16,11 @@
 
 Αυτό το σφάλμα εμφανίζεται όταν δεν είναι δυνατή η σύνδεση με τον διακομιστή του myDATA.
 
+### `Firebed\AadeMyData\Exceptions\SchemaValidationException`
+
+Το έγγραφο δεν ταιριάζει με το XSD του myDATA και **δεν στάλθηκε** (μόνο με `Connection::withValidation()` ή
+`MyDataRequest::setValidation()`). Το `getErrors()` επιστρέφει το πεδίο και το μήνυμα κάθε σφάλματος.
+
 ### `Firebed\AadeMyData\Exceptions\MyDataException`
 
 Αφορά τα υπόλοιπα τεχνικά σφάλματα. Το σφάλμα περιέχει τον κωδικό σφάλματος και το μήνυμα σφάλματος.

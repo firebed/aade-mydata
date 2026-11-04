@@ -129,6 +129,57 @@ foreach ((new RequestTransmittedDocs)->using($connection)->invoices(mark: $lastM
 Κρατήστε το τελευταίο mark που επεξεργαστήκατε και ζητάτε μόνο τα νεότερα παραστατικά. Αν σταματήσετε στην
 εξαίρεση, συνεχίστε αργότερα από το `continuationToken` της τελευταίας σελίδας (`pages(..., nextPartitionKey:, nextRowKey:)`).
 Στατικά: `MyDataRequest::setThrottle()` και `MyDataRequest::setRateLimitWait()`.
+
+### Επικύρωση πριν την αποστολή
+
+Με `withValidation()` το XML κάθε κλήσης που στέλνει έγγραφο (`SendInvoices`, χαρακτηρισμοί, `SendPaymentsMethod`,
+δελτία αποστολής, `SendStatement`) ελέγχεται με το XSD του myDATA πριν σταλεί. Ένα άκυρο έγγραφο δεν στέλνεται: πετά
+`SchemaValidationException` με τα πεδία που απέτυχαν, αντί να ξοδευτεί μια κλήση που το myDATA θα απέρριπτε.
+
+```php
+use Firebed\AadeMyData\Exceptions\SchemaValidationException;
+
+$mydata = new MyData(Connection::make($user_id, $subscription_key, $env)->withValidation());
+
+try {
+    $mydata->sendInvoices($invoices);
+} catch (SchemaValidationException $e) {
+    $e->getErrors(); // [['field' => '{http://www.aade.gr/myDATA/invoice/v1.0}totalGrossValue', 'message' => '...']]
+}
+```
+
+Είναι απενεργοποιημένη από προεπιλογή· στατικά `MyDataRequest::setValidation()`.
+
+### Καταγραφή (logging) και listeners
+
+Το `withLogger()` γράφει κάθε κλήση σε PSR-3 logger (Monolog, `Log` του Laravel, …): επιτυχία ως `info`, επανάληψη
+ή 429 ως `warning`, άλλη αποτυχία ως `error`. Τα διαπιστευτήρια δεν καταγράφονται ποτέ· τα XML και οι ΑΦΜ των
+παραμέτρων της κλήσης μόνο με `withBodies: true`. Νέο `withLogger()` αντικαθιστά το προηγούμενο· `withLogger(null)` το αφαιρεί.
+
+```php
+use Firebed\AadeMyData\Http\Exchange;
+use Firebed\AadeMyData\Http\Retry;
+
+$connection = Connection::make($user_id, $subscription_key, $env)
+    ->withLogger($logger)
+    ->afterSending(fn (Exchange $e) => AuditLog::create([
+        'action' => $e->action(),
+        'request' => $e->requestBody,
+        'response' => $e->responseBody,     // null όταν η κλήση απέτυχε
+        'error' => $e->exception?->getMessage(),
+    ]))
+    ->beforeRetry(fn (Retry $r) => logger()->notice("Retry {$r->attempt} σε {$r->delay} ms"));
+```
+
+Το `afterSending()` καλείται μία φορά ανά κλήση, μετά τις επαναλήψεις της· το `beforeRetry()` πριν από κάθε
+επανάληψη. Ένας listener που πετά εξαίρεση παραλείπεται: δεν κρύβει ποτέ την απάντηση του myDATA (και τα ΜΑΡΚ) ή την
+αποτυχία της κλήσης.
+
+Ένας listener με κλειδί (`afterSending($audit, key: 'audit')`) αντικαθιστά όποιον έχει το ίδιο κλειδί, ώστε κώδικας
+που τρέχει πολλές φορές (εκκίνηση worker, queue job) να τον καταχωρεί μία φορά. Αφαίρεση με `withoutListener('audit')`
+(ή με τον ίδιο τον listener) και `withoutListeners()` για όλους· ο logger μένει, το `withLogger(null)` τον αφαιρεί.
+
+Στατικά: `MyDataRequest::setLogger()`, `afterSending()`, `beforeRetry()`, `removeListener()`, `removeListeners()`.
 ## Διαθέσιμες λειτουργίες
 - Λήψη Βασικών Στοιχείων Μητρώου ΑΦΜ ([SearchVat](./http/search-vat))
 - Αποστολή παραστατικών ([SendInvoices](./http/send-invoices))

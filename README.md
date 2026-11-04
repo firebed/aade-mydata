@@ -190,6 +190,80 @@ biggest saver of calls. If you stop on the exception instead, resume later with 
 page's continuation token: `pages(..., nextPartitionKey: $token->getNextPartitionKey(),
 nextRowKey: $token->getNextRowKey())`. The static equivalents are `MyDataRequest::setThrottle()`
 and `MyDataRequest::setRateLimitWait()`.
+
+### Validation before sending
+
+`withValidation()` checks the XML of every request that sends a document (`SendInvoices`, the
+classifications, `SendPaymentsMethod`, the delivery note calls, `SendStatement`) against the
+myDATA XSD before it is sent. An invalid document throws `SchemaValidationException`, which
+names the failing fields, instead of costing a call that myDATA answers with an error:
+
+```php
+use Firebed\AadeMyData\Exceptions\SchemaValidationException;
+
+$mydata = new MyData(Connection::make($user_id, $subscription_key, 'prod')->withValidation());
+
+try {
+    $mydata->sendInvoices($invoices);
+} catch (SchemaValidationException $e) {
+    $e->getErrors(); // [['field' => '{http://www.aade.gr/myDATA/invoice/v1.0}totalGrossValue', 'message' => "The value '-10' is less than …"]]
+}
+```
+
+Validation is off by default; `MyDataRequest::setValidation()` turns it on for the default connection.
+
+### Logging and listeners
+
+`withLogger()` writes every request of a connection to a PSR-3 logger (Monolog, Laravel's `Log`, …):
+an answered request at `info`, a retry or a throttled request at `warning`, any other failure at
+`error`. The credentials are never logged. The request and response XML and the VAT numbers of the
+query, which identify taxpayers, are logged only with `withBodies: true`. Calling `withLogger()` again
+replaces the logger; `withLogger(null)` stops logging.
+
+```php
+$connection = Connection::make($user_id, $subscription_key, 'prod')
+    ->withRetries(3)
+    ->withLogger($logger);
+```
+
+For an audit trail or metrics, listen to the requests yourself. `afterSending()` is called once per
+request, after its retries, with the request and response XML, or the exception it failed with,
+and the time it took. `beforeRetry()` is called before each retry:
+
+```php
+use Firebed\AadeMyData\Http\Exchange;
+use Firebed\AadeMyData\Http\Retry;
+
+$connection = Connection::make($user_id, $subscription_key, 'prod')
+    ->afterSending(fn (Exchange $e) => AuditLog::create([
+        'action' => $e->action(),          // 'SendInvoices'
+        'request' => $e->requestBody,      // the XML sent
+        'response' => $e->responseBody,    // the XML myDATA answered, null on failure
+        'error' => $e->exception?->getMessage(),
+        'seconds' => $e->duration,
+    ]))
+    ->beforeRetry(fn (Retry $r) => $r->rateLimited() && Metrics::increment('mydata.throttled'));
+```
+
+Listeners add up and also run for faked requests (see [Testing](#testing)). A listener that throws is
+skipped: a broken audit log never turns an invoice myDATA accepted into a failure you would send
+again. A document rejected by `withValidation()` is never sent, so listeners don't see it.
+
+Give a listener a key when the code that registers it can run more than once (a worker's boot, a
+queue job): a listener with the same key replaces it instead of adding up. Remove listeners by key or
+by the listener itself:
+
+```php
+$connection = $connection->afterSending($audit, key: 'audit');  // registered once, however often this runs
+
+$connection->withoutListener('audit');   // by key, from afterSending() and beforeRetry()
+$connection->withoutListener($audit);    // by the same closure or callable
+$connection->withoutListeners();         // every listener; the logger stays (withLogger(null) removes it)
+```
+
+The static equivalents are `MyDataRequest::setLogger()`, `afterSending()`, `beforeRetry()`,
+`removeListener()` and `removeListeners()`.
+
 ## Send invoice example
 
 ```php
@@ -305,6 +379,48 @@ It provides a robust, seamless and complete solution for managing customer and v
 If you are upgrading from a previous version, please see [upgrade guide](docs/upgrade-guide.md)
 
 ## Testing
+
+### Faking myDATA in your application's tests
+
+`MyData::fake()` answers every request with a fake response instead of sending it, whatever
+connection the request uses, and records it for assertions:
+
+```php
+use Firebed\AadeMyData\MyData;
+use Firebed\AadeMyData\Http\SendInvoices;
+use Firebed\AadeMyData\Http\RequestDocs;
+use Firebed\AadeMyData\Testing\FakeGateway;
+
+$fake = MyData::fake();
+
+$app->issueInvoice($order);   // SendInvoices succeeds with mark 400000000000001
+
+$fake->assertSent(SendInvoices::class, fn (SendInvoices $request) => $request->getInvoicesDoc()->count() === 1);
+$fake->assertSentCount(1);
+
+MyData::stopFaking();         // e.g. in tearDown()
+```
+
+Without a response, the requests that send documents and the cancellations succeed. Each document
+gets a mark, numbered from 400000000000001, and an invoice also gets its uid. The searches find
+nothing. Give the response per request class:
+
+```php
+MyData::fake([
+    SendInvoices::class => FakeGateway::rejected(101, 'Invalid VAT number'),      // a ValidationError
+    RequestDocs::class => FakeGateway::sequence($page1, $page2),                    // one per call
+    RequestVatInfo::class => new RateLimitExceededException(retryAfter: 300),      // thrown
+    CancelInvoice::class => fn (CancelInvoice $request, RecordedRequest $sent) => FakeGateway::accepted(),
+    '*' => file_get_contents('stubs/response.xml'),                                 // any other request
+]);
+```
+
+A response can be an XML string, a model (`ResponseDoc`, `Response`, `RequestedDoc`, …), a list
+of `Response` models (one per document) or of `Invoice` models (a `RequestedDoc`), an exception,
+a closure returning any of these, or a `FakeGateway::sequence()`. Requests with no default
+response (the delivery note and statement calls) need one, so no request can slip through to myDATA.
+
+### Running the package's tests
 
 ```shell
 composer test

@@ -25,7 +25,7 @@ with find/replace rules.
 - Scalar attributes are cast from their getter's return type, so values read from XML come back typed (`getIndex()` returns `1`, not `'1'`), in `toArray()` and `toJson()` too. An empty string means no value.
 - `Invoice::getTaxesTotals()` returns `null` when no taxes totals exist. Empty wrapper elements (`<paymentMethods/>`, `<taxesTotals/>`, `<packingsDeclarations/>`) are no longer written.
 - `ModelCollection::set()` with a single value appends it; a list replaces the items; `null` clears them.
-- Removed: `TransportDetail` and `Invoice::{get,add,set}OtherTransportDetails()` (dropped by myDATA 2.0.1), `InvoiceSummary::{get,set}TotalInformationalTaxAmount()`, `WithheldPercentCategory::affectsTotalGrossValue()`, the `HasIterator` trait (`RequestedBookInfo` is no longer iterable; use `getBookInfo()`).
+- Removed: `TransportDetail` and `Invoice::{get,add,set}OtherTransportDetails()` (dropped by myDATA 2.0.1), `InvoiceSummary::{get,set}TotalInformationalTaxAmount()`, `WithheldPercentCategory::affectsTotalGrossValue()`, the `HasIterator` trait (`RequestedBookInfo` is no longer iterable; use `getBookInfo()`), the `Models\HasSchemaValidation` trait (use `Xml\Schema::validate($xml, 'InvoicesDoc')`), `GuzzleGateway::fail()` (override `GuzzleGateway::exception()`, which builds the exception every failure throws and every `beforeRetry()` listener sees).
 - `MyDataRequest` keeps its static configuration API, but it now configures a `Connection` object (`MyDataRequest::defaultConnection()`); the private static properties are gone. The environment must be `dev` or `prod` (or the `Environment` enum).
 - `XMLWriter::buildType()` is `buildModel()`, `XMLReader::createType()` is `createModel()`.
 - The docs folder `docs/types` is `docs/models`.
@@ -35,12 +35,17 @@ with find/replace rules.
 - `Http\Connection`: credentials, environment, channel, Guzzle options, gateway and retry policy as an immutable object with a cached Guzzle client. `MyDataRequest::using($connection)` carries one request over it; `MyDataRequest::defaultConnection()` / `setDefaultConnection()` expose the default.
 - `MyData` client bound to a connection, with a method per myDATA call (`sendInvoices()`, `requestDocs()`, `cancelInvoice()`, …), `request()` to bind any request and `lastRequest()` for its XML. Built for multi-tenant code.
 - Retries with exponential backoff on 429, 502, 503, 504 and connection failures, honouring `Retry-After`: `Connection::withRetries()` and `MyDataRequest::setRetries()`. Timeouts are never retried.
-- Rate-limit awareness: `RateLimitExceededException::getRetryAfter()` / `getRetryAt()` read myDATA's `Retry-After` header or its "Try again in N seconds" message; a 429 is retried only when the wait is at most 10 seconds, otherwise it is thrown at once instead of hammering a throttled key. `Connection::withThrottle()` / `MyDataRequest::setThrottle()` space the requests of a connection, and `Connection::withRateLimitWait()` / `MyDataRequest::setRateLimitWait()` sit out the wait and resend. The README documents the limits measured on the sandbox.
+- Rate-limit awareness: `RateLimitExceededException::getRetryAfter()` / `getRetryAt()` read myDATA's `Retry-After` header or its "Try again in N seconds" message; a 429 is retried only when the wait is at most 10 seconds, otherwise it is thrown at once instead of hammering a throttled key. `Connection::withThrottle()` / `MyDataRequest::setThrottle()` space the requests of a connection, and `Connection::withRateLimitWait()` / `MyDataRequest::setRateLimitWait()` sit out the wait and resend; sitting out a rate limit spends neither a retry nor the backoff of `withRetries()`. The README documents the limits measured on the sandbox.
 - Pagination generators that follow the continuation token: `pages()` on `RequestDocs`, `RequestTransmittedDocs`, `RequestMyIncome`, `RequestMyExpenses`, `RequestVatInfo` and `RequestE3Info`, and `invoices()` on the document requests, all resumable from a continuation token (`nextPartitionKey`, `nextRowKey`).
 - `Http\Environment` enum.
 - `Model::fromArray()`, `toJson()`, `JsonSerializable`, `unset()`, `cast()`, `Model::lenient()`; `ModelCollection::last()`, `map()`, `filter()`, `childKey()` and `$collection[] = $item`.
 - `Casts\Arr`, `Casts\Cast`, `Exceptions\InvalidAttributeException`.
 - PHPStan (level 7) and Laravel Pint, run in CI with `composer analyse` and `composer lint`.
+- `MyData::fake()` for application tests: a `Testing\FakeGateway` answers every request, whatever its connection, with the given responses (an XML string, a model, a list of responses or invoices, an exception, a closure or a `FakeGateway::sequence()`) or with defaults (sent documents and cancellations succeed with sequential marks and the invoice uid, searches find nothing), and records them for `assertSent()`, `assertNotSent()`, `assertSentCount()` and `assertNothingSent()`. `FakeGateway::accepted()` / `rejected()` build responses; `MyData::stopFaking()` ends it. Built on `MyDataRequest::intercept()`.
+- Validation before sending: `Connection::withValidation()` / `MyDataRequest::setValidation()` check the XML of every document request against its myDATA XSD and throw `SchemaValidationException` (with `getErrors()`) instead of sending an invalid document. Off by default.
+- Listeners and logging: `Connection::afterSending()` receives an `Http\Exchange` per request (request and response XML or the exception, duration), `Connection::beforeRetry()` an `Http\Retry` per retry, and `Connection::withLogger()` writes both to a PSR-3 logger without credentials, and without the XML and the query's VAT numbers unless `withBodies: true`; a second `withLogger()` replaces the first, `null` removes it. A listener that throws is skipped, so it never hides myDATA's answer or the failure. A listener given a `key` replaces the one with the same key; `Connection::withoutListener($keyOrListener)` and `withoutListeners()` remove them. Static: `MyDataRequest::afterSending()`, `beforeRetry()`, `setLogger()`, `removeListener()`, `removeListeners()`.
+- `MyDataRequest::action()` (the myDATA action, e.g. `'SendInvoices'`), `Xml\Schema` (XSD validation), `Xml\ModelWriter` (any model as XML).
+- Dependency: `psr/log` (`^2.0 || ^3.0`).
 
 ### Changed
 
@@ -55,6 +60,8 @@ with find/replace rules.
 - `ModelCollection::push()` appends one item; `set()` with a list replaces the items.
 - Enums that can be resolved from a case name implement `Enums\TryFromName` (`DeliveryStatus`), which the casts fall back to.
 - Dev dependencies: PHPUnit 11/12, symfony/var-dumper 7. CI tests PHP 8.3, 8.4 and 8.5.
+- The XML writers create every element in the document's default namespace, so `getRequestDom()` validates against the XSD as it is; the serialized XML is unchanged.
+- `validate()` on the models reports the whole libxml message of an error it cannot split into field and message, instead of `null`, and restores the libxml error handling it found.
 
 ## [5.14.2] - 2026-11-01
 
