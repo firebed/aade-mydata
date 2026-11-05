@@ -52,6 +52,18 @@ class InvoiceHeader extends Model
         'withoutDigitalTransportTracking',
     ];
 
+    protected array $trueOnly = [
+        'vatPaymentSuspension',
+        'selfPricing',
+        'fuelInvoice',
+        'isDeliveryNote',
+        'thirdPartyCollection',
+        'totalCancelDeliveryOrders',
+        'reverseDeliveryNote',
+        'nonObligatedRecipient',
+        'withoutDigitalTransportTracking',
+    ];
+
     protected function casts(): array
     {
         return [

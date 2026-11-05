@@ -80,6 +80,11 @@ class InvoiceDetails extends Model
         'otherMovePurposeLineTitle',
     ];
 
+    protected array $trueOnly = [
+        'discountOption',
+        'notVAT195',
+    ];
+
     protected function casts(): array
     {
         return [

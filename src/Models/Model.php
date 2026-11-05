@@ -28,11 +28,29 @@ abstract class Model implements JsonSerializable
     /** @var array<string, mixed> */
     protected array $attributes = [];
 
-    /** @var list<string> */
+    /**
+     * The myDATA elements of the model, in XSD order. Read once per class, so set it in
+     * the declaration, not per instance.
+     *
+     * @var list<string>
+     */
     protected array $expectedOrder = [];
+
+    /**
+     * Booleans written only when true; a false stays on the model. Needs $expectedOrder.
+     * List one only after the sandbox shows that myDATA rejects its false (error 214) or
+     * stores the same value when it is missing: dropping a false that myDATA stores
+     * changes the record.
+     *
+     * @var list<string>
+     */
+    protected array $trueOnly = [];
 
     /** @var array<class-string<static>, array<string, Cast|null>> */
     private static array $resolvedCasts = [];
+
+    /** @var array<class-string<static>, array{array<string, int>, array<string, true>}> */
+    private static array $layouts = [];
 
     /** @var array<class-string<Model>, ReflectionClass<Model>> */
     private static array $reflections = [];
@@ -195,8 +213,9 @@ abstract class Model implements JsonSerializable
     }
 
     /**
-     * The non-null attributes in the order myDATA expects them. Attributes that are not
-     * in $expectedOrder are left out when the order is declared, so they never reach the XML.
+     * The attributes as they reach the XML, in the order myDATA expects them. Left out:
+     * null values, false values of $trueOnly attributes, and, when the order is declared,
+     * attributes that are not in $expectedOrder.
      *
      * @return array<string, mixed>
      */
@@ -206,14 +225,18 @@ abstract class Model implements JsonSerializable
             return $this->attributes;
         }
 
+        [$positions, $trueOnly] = self::$layouts[static::class] ??= [array_flip($this->expectedOrder), array_fill_keys($this->trueOnly, true)];
+
+        // Walk the attributes, usually far fewer than the declared order, and let
+        // array_intersect_key() put the survivors in the declared order.
         $attributes = [];
-        foreach ($this->expectedOrder as $key) {
-            if (($this->attributes[$key] ?? null) !== null) {
-                $attributes[$key] = $this->attributes[$key];
+        foreach ($this->attributes as $key => $value) {
+            if ($value !== null && isset($positions[$key]) && ($value !== false || ! isset($trueOnly[$key]))) {
+                $attributes[$key] = $value;
             }
         }
 
-        return $attributes;
+        return array_replace(array_intersect_key($positions, $attributes), $attributes);
     }
 
     /**
@@ -274,6 +297,14 @@ abstract class Model implements JsonSerializable
     public function getExpectedOrder(): array
     {
         return $this->expectedOrder;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getTrueOnly(): array
+    {
+        return $this->trueOnly;
     }
 
     /**

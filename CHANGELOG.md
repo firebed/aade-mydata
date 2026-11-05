@@ -68,6 +68,10 @@ with find/replace rules.
 - The XML writers create every element in the document's default namespace, so `getRequestDom()` validates against the XSD as it is; the serialized XML is unchanged.
 - `validate()` on the models reports the whole libxml message of an error it cannot split into field and message, instead of `null`, and restores the libxml error handling it found.
 
+### Fixed
+
+- Invoice booleans that myDATA rejects as `false` (error 214, "must be sent only if it is true") are left out of the XML when they are `false`; the model keeps the `false`. Header: `selfPricing`, `fuelInvoice`, `isDeliveryNote`, `thirdPartyCollection`, `totalCancelDeliveryOrders`, `reverseDeliveryNote`, `nonObligatedRecipient`, `withoutDigitalTransportTracking`. Row: `discountOption`, `notVAT195`. `vatPaymentSuspension = false` is left out too: myDATA records `false` either way. `toWeigh = false` is still sent. A model lists these booleans in the new `$trueOnly` property.
+
 ## [5.14.2] - 2026-11-01
 
 ### Fixed

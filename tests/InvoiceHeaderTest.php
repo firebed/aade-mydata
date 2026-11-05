@@ -38,7 +38,9 @@ class InvoiceHeaderTest extends TestCase
         $header = $invoice->getInvoiceHeader();
         $headerXml = $this->toXML($invoice)->InvoicesDoc->invoice->invoiceHeader;
 
-        $this->assertCount(28, $headerXml);
+        // The factory sets the booleans at random; a false true-only flag is left out of the XML
+        $dropped = array_filter($header->getTrueOnly(), fn ($flag) => $header->get($flag) === false);
+        $this->assertCount(28 - count($dropped), $headerXml);
         $this->assertEquals($header->getSeries(), $headerXml->series);
         $this->assertEquals($header->getAa(), $headerXml->aa);
         $this->assertEquals($header->getIssueDate(), $headerXml->issueDate);

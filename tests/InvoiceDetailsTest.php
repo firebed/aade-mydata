@@ -75,10 +75,11 @@ class InvoiceDetailsTest extends TestCase
 
         $this->assertCount(1, $rows);
 
-        // Invoice rows assertions
-        $this->assertCount(31, $rowXml);
-
+        // Invoice rows assertions. The factory sets the booleans at random; a false true-only flag is left out of the XML
         $row = $rows[0];
+        $dropped = array_filter($row->getTrueOnly(), fn ($flag) => $row->get($flag) === false);
+        $this->assertCount(31 - count($dropped), $rowXml);
+
         $this->assertEquals($row->getLineNumber(), $rowXml->lineNumber);
         $this->assertEquals($row->getRecType()->value, $rowXml->recType);
         $this->assertEquals($row->getTaricNo(), $rowXml->TaricNo);

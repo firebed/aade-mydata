@@ -58,6 +58,11 @@ e-invoicing provider read it to build the issue date and time.
 
 ## Notes
 
+- These fields are sent only when `true`: `vatPaymentSuspension`, `selfPricing`, `fuelInvoice`, `isDeliveryNote`,
+  `thirdPartyCollection`, `totalCancelDeliveryOrders`, `reverseDeliveryNote`, `nonObligatedRecipient` and
+  `withoutDigitalTransportTracking`. myDATA rejects `false` on them (error 214), except `vatPaymentSuspension`,
+  which it records as `false` when left out. Setting one to `false` is fine: the header keeps the value, but the
+  field is left out of the XML. `toWeigh = false` is sent as is.
 - `correlatedInvoices` is a list of MARKs.
 - `isDeliveryNote = true` makes an invoice (e.g. type `1.1`) also a delivery note. Then you must send the delivery
   details too.

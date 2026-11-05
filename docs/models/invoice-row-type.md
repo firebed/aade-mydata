@@ -100,3 +100,5 @@ e-invoicing provider read them.
 - With `measurementUnit` = `UnitMeasurement::PIECES_OTHER_CASES` (7), fill `otherMeasurementUnitQuantity` and
   `otherMeasurementUnitTitle`, e.g. `3` and `Pallets`. `quantity` is still the number of items moved, not packages.
 - `notVAT195 = true` keeps the row out of the VAT return (output). Allowed only on income invoices of types 1.1 to 11.5.
+- myDATA accepts `discountOption` and `notVAT195` only as `true` (error 214 otherwise). Setting them to `false` is
+  fine: the row keeps the value, but the field is left out of the XML.
