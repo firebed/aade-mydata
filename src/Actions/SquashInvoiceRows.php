@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Firebed\AadeMyData\Actions;
 
+use BackedEnum;
 use Firebed\AadeMyData\Enums\VatCategory;
 use Firebed\AadeMyData\Models\ExpensesClassification;
 use Firebed\AadeMyData\Models\IncomeClassification;
@@ -11,6 +12,22 @@ use Firebed\AadeMyData\Models\InvoiceDetails;
 
 class SquashInvoiceRows
 {
+    /**
+     * The attributes rows are grouped by. A squashed row takes them from the first row of its
+     * group; every other attribute is summed or left out.
+     */
+    private const array GROUP_BY = [
+        'vatCategory',
+        'vatExemptionCategory',
+        'withheldPercentCategory',
+        'feesPercentCategory',
+        'otherTaxesPercentCategory',
+        'stampDutyPercentCategory',
+        'notVAT195',
+        'discountOption',
+        'invoiceDetailType',
+    ];
+
     /**
      * @var InvoiceDetails[] Variable to store rows with RecType.
      */
@@ -152,39 +169,33 @@ class SquashInvoiceRows
     }
 
     /**
-     * Generates a unique key for each row based on its categories.
+     * The key of the group of a row: its GROUP_BY values, with a flag as '1' when true and
+     * '' when false or unset (a false flag is never sent, so the two are the same row).
      */
     private function generateRowKey(InvoiceDetails $row): string
     {
-        return implode('-', [
-            $row->getVatCategory()->value ?? '',
-            $row->getVatExemptionCategory()->value ?? '',
-            $row->getWithheldPercentCategory()->value ?? '',
-            $row->getFeesPercentCategory()->value ?? '',
-            $row->getOtherTaxesPercentCategory()->value ?? '',
-            $row->getStampDutyPercentCategory()->value ?? '',
-            $row->getNotVAT195() ? '1' : '',
-            $row->getInvoiceDetailType()->value ?? '',
-        ]);
+        $key = '';
+        foreach (self::GROUP_BY as $attribute) {
+            $value = $row->get($attribute);
+            $key .= ($value instanceof BackedEnum ? $value->value : ($value === true ? '1' : '')).'-';
+        }
+
+        return $key;
     }
 
     /**
-     * Extracts data from the row for initializing a new squashed row.
+     * The GROUP_BY values of a row, to start a squashed row with.
      *
      * @return array<string, mixed>
      */
     private function extractConcreteData(InvoiceDetails $row): array
     {
-        return [
-            'vatCategory' => $row->getVatCategory(),
-            'vatExemptionCategory' => $row->getVatExemptionCategory(),
-            'withheldPercentCategory' => $row->getWithheldPercentCategory(),
-            'feesPercentCategory' => $row->getFeesPercentCategory(),
-            'otherTaxesPercentCategory' => $row->getOtherTaxesPercentCategory(),
-            'stampDutyPercentCategory' => $row->getStampDutyPercentCategory(),
-            'notVAT195' => $row->getNotVAT195(),
-            'invoiceDetailType' => $row->getInvoiceDetailType(),
-        ];
+        $data = [];
+        foreach (self::GROUP_BY as $attribute) {
+            $data[$attribute] = $row->get($attribute);
+        }
+
+        return $data;
     }
 
     /**

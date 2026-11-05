@@ -12,6 +12,7 @@ Lines are grouped when they have the same:
 - other taxes category
 - stamp duty category
 - `notVAT195`
+- `discountOption`
 - invoice detail type (`invoiceDetailType`)
 
 Lines with a `recType` are not squashed. They stay as they are, after the squashed lines.

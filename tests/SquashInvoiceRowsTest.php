@@ -506,6 +506,25 @@ class SquashInvoiceRowsTest extends TestCase
         }
     }
 
+    public function test_discount_option_rows_are_squashed_separately(): void
+    {
+        $invoice = new Invoice;
+        $invoice->addInvoiceDetails(new InvoiceDetails(['vatCategory' => VatCategory::RATE_24, 'netValue' => 10, 'discountOption' => true]));
+        $invoice->addInvoiceDetails(new InvoiceDetails(['vatCategory' => VatCategory::RATE_24, 'netValue' => 40]));
+        $invoice->addInvoiceDetails(new InvoiceDetails(['vatCategory' => VatCategory::RATE_24, 'netValue' => 5, 'discountOption' => false]));
+        $invoice->addInvoiceDetails(new InvoiceDetails(['vatCategory' => VatCategory::RATE_24, 'netValue' => 20, 'discountOption' => true]));
+
+        $invoice->squashInvoiceRows();
+        $rows = $invoice->getInvoiceDetails();
+
+        // discountOption=false is never sent, so false and unset rows share a row
+        $this->assertCount(2, $rows);
+        $this->assertTrue($rows[0]->isDiscountOption());
+        $this->assertEquals(30, $rows[0]->getNetValue());
+        $this->assertNotTrue($rows[1]->isDiscountOption());
+        $this->assertEquals(45, $rows[1]->getNetValue());
+    }
+
     public function test_similar_invoice_detail_types_are_squashed_separately()
     {
         $invoice = new Invoice;

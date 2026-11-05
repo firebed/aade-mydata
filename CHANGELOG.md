@@ -71,6 +71,7 @@ with find/replace rules.
 ### Fixed
 
 - Invoice booleans that myDATA rejects as `false` (error 214, "must be sent only if it is true") are left out of the XML when they are `false`; the model keeps the `false`. Header: `selfPricing`, `fuelInvoice`, `isDeliveryNote`, `thirdPartyCollection`, `totalCancelDeliveryOrders`, `reverseDeliveryNote`, `nonObligatedRecipient`, `withoutDigitalTransportTracking`. Row: `discountOption`, `notVAT195`. `vatPaymentSuspension = false` is left out too: myDATA records `false` either way. `toWeigh = false` is still sent. A model lists these booleans in the new `$trueOnly` property.
+- Squashing invoice rows keeps `discountOption`. Before, a row with `discountOption = true` was merged with rows without it, and the squashed row lost the flag. Rows are now grouped by `discountOption` too, like `notVAT195`.
 
 ## [5.14.2] - 2026-11-01
 
