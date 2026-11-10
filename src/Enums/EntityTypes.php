@@ -9,47 +9,47 @@ enum EntityTypes: int
     /**
      * Φορολογικός Εκπρόσωπος
      */
-    case TYPE_1 = 1;
+    case TAX_REPRESENTATIVE = 1;
 
 
     /**
      * Διαμεσολαβητής
      */
-    case TYPE_2 = 2;
+    case INTERMEDIARY = 2;
 
 
     /**
      * Μεταφορέας
      */
-    case TYPE_3 = 3;
+    case CARRIER = 3;
 
 
     /**
      * Λήπτης του Αποστολέα (Πωλητή)
      */
-    case TYPE_4 = 4;
+    case RECIPIENT_OF_SENDER = 4;
 
 
     /**
      * Αποστολέας (Πωλητής)
      */
-    case TYPE_5 = 5;
+    case SENDER = 5;
 
 
     /**
      * Λοιπές Συσχετιζόμενες Οντότητες
      */
-    case TYPE_6 = 6;
+    case OTHER_RELATED_ENTITIES = 6;
 
     public function label(): string
     {
         return match ($this) {
-            self::TYPE_1 => "Φορολογικός Εκπρόσωπος",
-            self::TYPE_2 => "Διαμεσολαβητής",
-            self::TYPE_3 => "Μεταφορέας",
-            self::TYPE_4 => "Λήπτης του Αποστολέα (Πωλητή)",
-            self::TYPE_5 => "Αποστολέας (Πωλητής)",
-            self::TYPE_6 => "Λοιπές Συσχετιζόμενες Οντότητες",
+            self::TAX_REPRESENTATIVE => "Φορολογικός Εκπρόσωπος",
+            self::INTERMEDIARY => "Διαμεσολαβητής",
+            self::CARRIER => "Μεταφορέας",
+            self::RECIPIENT_OF_SENDER => "Λήπτης του Αποστολέα (Πωλητή)",
+            self::SENDER => "Αποστολέας (Πωλητής)",
+            self::OTHER_RELATED_ENTITIES => "Λοιπές Συσχετιζόμενες Οντότητες",
         };
     }
 }
